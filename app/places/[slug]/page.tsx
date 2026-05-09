@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { getSafePlaceImageUrl } from "@/lib/image-url";
 
 type Category = {
     id: string;
@@ -12,7 +13,7 @@ type Tag = {
     id: string;
     name: string;
     slug: string;
-    type: string;
+    type: string | null;
 };
 
 type PlaceTagRelation = {
@@ -58,6 +59,48 @@ function getSingleTag(tag: Tag | Tag[] | null) {
     }
 
     return tag;
+}
+
+function groupTagsByType(tags: Tag[]) {
+    return tags.reduce<Record<string, Tag[]>>((result, tag) => {
+        const type = tag.type || "other";
+
+        if (!result[type]) {
+            result[type] = [];
+        }
+
+        result[type].push(tag);
+
+        return result;
+    }, {});
+}
+
+function getTagGroupLabel(type: string) {
+    const labels: Record<string, string> = {
+        mood: "Cocok Untuk",
+        facility: "Fasilitas",
+        time: "Waktu Terbaik",
+        budget: "Budget",
+        vibe: "Vibes",
+        ambience: "Suasana",
+        other: "Info Lainnya",
+    };
+
+    return labels[type] || "Info Lainnya";
+}
+
+function getTagGroupDescription(type: string) {
+    const descriptions: Record<string, string> = {
+        mood: "Kebutuhan atau aktivitas yang paling pas di tempat ini.",
+        facility: "Fasilitas yang bisa kamu manfaatkan.",
+        time: "Waktu yang cocok untuk datang.",
+        budget: "Gambaran budget atau segmentasi harga.",
+        vibe: "Nuansa dan karakter tempat.",
+        ambience: "Suasana utama yang ditawarkan.",
+        other: "Informasi tambahan dari tempat ini.",
+    };
+
+    return descriptions[type] || "Informasi tambahan dari tempat ini.";
 }
 
 async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> {
@@ -123,9 +166,9 @@ export default async function PlaceDetailPage({
             ?.map((item) => getSingleTag(item.tags))
             .filter((tag): tag is Tag => Boolean(tag)) ?? [];
 
-    const imageUrl =
-        place.image_url ||
-        "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=1200&auto=format&fit=crop";
+    const groupedTags = groupTagsByType(tags);
+
+    const imageUrl = getSafePlaceImageUrl(place.image_url);
 
     return (
         <main className="min-h-screen bg-neutral-950 px-5 py-12 text-white">
@@ -143,6 +186,7 @@ export default async function PlaceDetailPage({
                             src={imageUrl}
                             alt={place.name}
                             className="h-full w-full object-cover"
+                            referrerPolicy="no-referrer"
                         />
 
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
@@ -172,16 +216,40 @@ export default async function PlaceDetailPage({
 
                             {tags.length > 0 ? (
                                 <div className="mt-8">
-                                    <h3 className="mb-4 text-lg font-black">Cocok untuk</h3>
+                                    <h2 className="text-2xl font-black">Highlight Tempat</h2>
 
-                                    <div className="flex flex-wrap gap-2">
-                                        {tags.map((tag) => (
-                                            <span
-                                                key={tag.id}
-                                                className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-bold text-neutral-200"
+                                    <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-400">
+                                        Tag dipisahkan berdasarkan fungsi biar informasinya lebih
+                                        nyambung dan gampang dibaca.
+                                    </p>
+
+                                    <div className="mt-5 grid gap-4 md:grid-cols-2">
+                                        {Object.entries(groupedTags).map(([type, tagList]) => (
+                                            <div
+                                                key={type}
+                                                className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5"
                                             >
-                                                {tag.name}
-                                            </span>
+                                                <div className="mb-4">
+                                                    <h3 className="text-lg font-black">
+                                                        {getTagGroupLabel(type)}
+                                                    </h3>
+
+                                                    <p className="mt-1 text-sm leading-6 text-neutral-500">
+                                                        {getTagGroupDescription(type)}
+                                                    </p>
+                                                </div>
+
+                                                <div className="flex flex-wrap gap-2">
+                                                    {tagList.map((tag) => (
+                                                        <span
+                                                            key={tag.id}
+                                                            className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-bold text-neutral-200"
+                                                        >
+                                                            {tag.name}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
                                         ))}
                                     </div>
                                 </div>

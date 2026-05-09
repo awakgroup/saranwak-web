@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Place } from "@/types/database";
+import { getSafePlaceImageUrl } from "@/lib/image-url";
 
 type PlaceCardProps = {
     place: Place;
@@ -12,13 +12,23 @@ function formatPrice(value?: number | null) {
 }
 
 function getCategoryLabel(place: Place) {
+    if (Array.isArray(place.categories)) {
+        return place.categories[0]?.name || "Tempat";
+    }
+
     return place.categories?.name || "Tempat";
 }
 
 function getMainTags(place: Place) {
     return (
         place.place_tags
-            ?.map((item) => item.tags)
+            ?.map((item) => {
+                if (Array.isArray(item.tags)) {
+                    return item.tags[0];
+                }
+
+                return item.tags;
+            })
             .filter(Boolean)
             .slice(0, 2) || []
     );
@@ -27,23 +37,23 @@ function getMainTags(place: Place) {
 export function PlaceCard({ place }: PlaceCardProps) {
     const tags = getMainTags(place);
 
+    const imageUrl = getSafePlaceImageUrl(
+        place.image_url || place.main_image_url
+    );
+
     return (
         <Link
             href={`/places/${place.slug}`}
             className="group relative overflow-hidden rounded-[32px] border border-[#E3DED4] bg-[#FFFDF8] shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-[#181818]/20 hover:shadow-[0_28px_80px_rgba(20,20,20,0.14)]"
         >
             <div className="relative h-56 overflow-hidden bg-[#E3DED4]">
-                {place.image_url ? (
-                    <img
-                        src={place.image_url}
-                        alt={place.name}
-                        className="h-full w-full object-cover grayscale-[20%] transition duration-700 group-hover:scale-110 group-hover:grayscale-0"
-                    />
-                ) : (
-                    <div className="flex h-full items-center justify-center text-sm font-bold text-[#6F6A61]">
-                        Belum ada foto
-                    </div>
-                )}
+                <img
+                    src={imageUrl}
+                    alt={place.name}
+                    className="h-full w-full object-cover grayscale-[20%] transition duration-700 group-hover:scale-110 group-hover:grayscale-0"
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 

@@ -31,6 +31,7 @@ function getSingleCategory(category: Category | Category[] | null) {
     return category;
 }
 
+
 async function getPlaces() {
     const { data, error } = await supabase
         .from("places")

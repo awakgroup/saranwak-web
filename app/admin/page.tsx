@@ -57,7 +57,11 @@ type FormState = {
     google_maps_url: string;
     instagram_url: string;
     price_range: string;
+    price_min_input: string;
+    price_max_input: string;
     opening_hours: string;
+    open_time: string;
+    close_time: string;
     is_featured: boolean;
     is_published: boolean;
     tag_ids: string[];
@@ -76,11 +80,122 @@ const initialForm: FormState = {
     google_maps_url: "",
     instagram_url: "",
     price_range: "",
+    price_min_input: "",
+    price_max_input: "",
     opening_hours: "",
+    open_time: "",
+    close_time: "",
     is_featured: true,
     is_published: true,
     tag_ids: [],
 };
+
+function formatShortRupiah(value: string) {
+    const numericValue = Number(value.replace(/\D/g, ""));
+
+    if (!numericValue) return "";
+
+    if (numericValue >= 1000) {
+        return `Rp${numericValue / 1000}k`;
+    }
+
+    return `Rp${numericValue}`;
+}
+
+function formatPriceRange(min: string, max: string) {
+    const minFormatted = formatShortRupiah(min);
+    const maxFormatted = formatShortRupiah(max);
+
+    if (minFormatted && maxFormatted) {
+        return `${minFormatted} - ${maxFormatted}`;
+    }
+
+    if (minFormatted) {
+        return `Mulai ${minFormatted}`;
+    }
+
+    if (maxFormatted) {
+        return `Sampai ${maxFormatted}`;
+    }
+
+    return "";
+}
+
+function formatOpeningHours(openTime: string, closeTime: string) {
+    if (!openTime && !closeTime) return "";
+
+    const formatTime = (value: string) => value.replace(":", ".");
+
+    if (openTime && closeTime) {
+        return `${formatTime(openTime)} - ${formatTime(closeTime)}`;
+    }
+
+    if (openTime) {
+        return `Buka ${formatTime(openTime)}`;
+    }
+
+    return `Tutup ${formatTime(closeTime)}`;
+}
+
+function parsePriceRange(priceRange?: string | null) {
+    if (!priceRange) {
+        return {
+            min: "",
+            max: "",
+        };
+    }
+
+    const numbers = priceRange.match(/\d+/g);
+
+    if (!numbers || numbers.length === 0) {
+        return {
+            min: "",
+            max: "",
+        };
+    }
+
+    const normalize = (value: string) => {
+        const number = Number(value);
+
+        if (!number) return "";
+
+        if (number < 1000) {
+            return String(number * 1000);
+        }
+
+        return String(number);
+    };
+
+    return {
+        min: normalize(numbers[0]),
+        max: normalize(numbers[1] ?? ""),
+    };
+}
+
+function parseOpeningHours(openingHours?: string | null) {
+    if (!openingHours) {
+        return {
+            open: "",
+            close: "",
+        };
+    }
+
+    const matches = openingHours.match(/\d{1,2}[.:]\d{2}/g);
+
+    if (!matches || matches.length === 0) {
+        return {
+            open: "",
+            close: "",
+        };
+    }
+
+    const normalize = (value: string) => value.replace(".", ":");
+
+    return {
+        open: normalize(matches[0]),
+        close: normalize(matches[1] ?? ""),
+    };
+}
 
 export default function AdminPage() {
     const router = useRouter();
@@ -100,8 +215,13 @@ export default function AdminPage() {
     const groupedTags = useMemo(() => {
         return tags.reduce<Record<string, Tag[]>>((result, tag) => {
             const type = tag.type || "general";
-            if (!result[type]) result[type] = [];
+
+            if (!result[type]) {
+                result[type] = [];
+            }
+
             result[type].push(tag);
+
             return result;
         }, {});
     }, [tags]);
@@ -174,6 +294,9 @@ export default function AdminPage() {
                 ?.map((item) => item.tag_id)
                 .filter((value): value is string => Boolean(value)) ?? [];
 
+        const parsedPrice = parsePriceRange(place.price_range);
+        const parsedHours = parseOpeningHours(place.opening_hours);
+
         setForm({
             id: place.id,
             name: place.name ?? "",
@@ -187,7 +310,11 @@ export default function AdminPage() {
             google_maps_url: place.google_maps_url ?? "",
             instagram_url: place.instagram_url ?? "",
             price_range: place.price_range ?? "",
+            price_min_input: parsedPrice.min,
+            price_max_input: parsedPrice.max,
             opening_hours: place.opening_hours ?? "",
+            open_time: parsedHours.open,
+            close_time: parsedHours.close,
             is_featured: Boolean(place.is_featured),
             is_published: Boolean(place.is_published),
             tag_ids: tagIds,
@@ -234,6 +361,16 @@ export default function AdminPage() {
             return;
         }
 
+        const formattedPriceRange = formatPriceRange(
+            form.price_min_input,
+            form.price_max_input
+        );
+
+        const formattedOpeningHours = formatOpeningHours(
+            form.open_time,
+            form.close_time
+        );
+
         try {
             setLoadingSubmit(true);
 
@@ -254,8 +391,8 @@ export default function AdminPage() {
                     image_url: form.image_url,
                     google_maps_url: form.google_maps_url,
                     instagram_url: form.instagram_url,
-                    price_range: form.price_range,
-                    opening_hours: form.opening_hours,
+                    price_range: formattedPriceRange,
+                    opening_hours: formattedOpeningHours,
                     is_featured: form.is_featured,
                     is_published: form.is_published,
                     tag_ids: form.tag_ids,
@@ -380,7 +517,9 @@ export default function AdminPage() {
                                         <Field label="Nama Tempat">
                                             <input
                                                 value={form.name}
-                                                onChange={(e) => updateField("name", e.target.value)}
+                                                onChange={(event) =>
+                                                    updateField("name", event.target.value)
+                                                }
                                                 placeholder="Contoh: Kopi Saranwak"
                                                 className="input-cms"
                                             />
@@ -389,7 +528,9 @@ export default function AdminPage() {
                                         <Field label="Slug Optional">
                                             <input
                                                 value={form.slug}
-                                                onChange={(e) => updateField("slug", e.target.value)}
+                                                onChange={(event) =>
+                                                    updateField("slug", event.target.value)
+                                                }
                                                 placeholder="kopi-saranwak"
                                                 className="input-cms"
                                             />
@@ -399,8 +540,8 @@ export default function AdminPage() {
                                     <Field label="Kategori">
                                         <select
                                             value={form.category_id}
-                                            onChange={(e) =>
-                                                updateField("category_id", e.target.value)
+                                            onChange={(event) =>
+                                                updateField("category_id", event.target.value)
                                             }
                                             className="input-cms"
                                         >
@@ -419,8 +560,8 @@ export default function AdminPage() {
                                     <Field label="Deskripsi">
                                         <textarea
                                             value={form.description}
-                                            onChange={(e) =>
-                                                updateField("description", e.target.value)
+                                            onChange={(event) =>
+                                                updateField("description", event.target.value)
                                             }
                                             placeholder="Deskripsi singkat tempat..."
                                             rows={5}
@@ -433,7 +574,9 @@ export default function AdminPage() {
                                     <Field label="Alamat">
                                         <textarea
                                             value={form.address}
-                                            onChange={(e) => updateField("address", e.target.value)}
+                                            onChange={(event) =>
+                                                updateField("address", event.target.value)
+                                            }
                                             placeholder="Alamat lengkap"
                                             rows={3}
                                             className="input-cms resize-none"
@@ -444,7 +587,9 @@ export default function AdminPage() {
                                         <Field label="Area">
                                             <input
                                                 value={form.area}
-                                                onChange={(e) => updateField("area", e.target.value)}
+                                                onChange={(event) =>
+                                                    updateField("area", event.target.value)
+                                                }
                                                 placeholder="Contoh: Padang Barat"
                                                 className="input-cms"
                                             />
@@ -453,7 +598,9 @@ export default function AdminPage() {
                                         <Field label="Kota">
                                             <input
                                                 value={form.city}
-                                                onChange={(e) => updateField("city", e.target.value)}
+                                                onChange={(event) =>
+                                                    updateField("city", event.target.value)
+                                                }
                                                 placeholder="Padang"
                                                 className="input-cms"
                                             />
@@ -461,27 +608,83 @@ export default function AdminPage() {
                                     </div>
 
                                     <div className="grid gap-5 md:grid-cols-2">
-                                        <Field label="Range Harga">
-                                            <input
-                                                value={form.price_range}
-                                                onChange={(e) =>
-                                                    updateField("price_range", e.target.value)
-                                                }
-                                                placeholder="Rp20k - Rp50k"
-                                                className="input-cms"
-                                            />
-                                        </Field>
+                                        <div>
+                                            <p className="mb-2 block text-sm font-bold text-neutral-300">
+                                                Range Harga
+                                            </p>
 
-                                        <Field label="Jam Buka">
-                                            <input
-                                                value={form.opening_hours}
-                                                onChange={(e) =>
-                                                    updateField("opening_hours", e.target.value)
-                                                }
-                                                placeholder="10.00 - 23.00"
-                                                className="input-cms"
-                                            />
-                                        </Field>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    value={form.price_min_input}
+                                                    onChange={(event) =>
+                                                        updateField(
+                                                            "price_min_input",
+                                                            event.target.value
+                                                        )
+                                                    }
+                                                    placeholder="Min. 20000"
+                                                    className="input-cms"
+                                                />
+
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    value={form.price_max_input}
+                                                    onChange={(event) =>
+                                                        updateField(
+                                                            "price_max_input",
+                                                            event.target.value
+                                                        )
+                                                    }
+                                                    placeholder="Max. 50000"
+                                                    className="input-cms"
+                                                />
+                                            </div>
+
+                                            <p className="mt-2 text-xs font-bold text-neutral-500">
+                                                Preview:{" "}
+                                                {formatPriceRange(
+                                                    form.price_min_input,
+                                                    form.price_max_input
+                                                ) || "Belum ada info"}
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <p className="mb-2 block text-sm font-bold text-neutral-300">
+                                                Jam Buka
+                                            </p>
+
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <input
+                                                    type="time"
+                                                    value={form.open_time}
+                                                    onChange={(event) =>
+                                                        updateField("open_time", event.target.value)
+                                                    }
+                                                    className="input-cms"
+                                                />
+
+                                                <input
+                                                    type="time"
+                                                    value={form.close_time}
+                                                    onChange={(event) =>
+                                                        updateField("close_time", event.target.value)
+                                                    }
+                                                    className="input-cms"
+                                                />
+                                            </div>
+
+                                            <p className="mt-2 text-xs font-bold text-neutral-500">
+                                                Preview:{" "}
+                                                {formatOpeningHours(
+                                                    form.open_time,
+                                                    form.close_time
+                                                ) || "Belum ada info"}
+                                            </p>
+                                        </div>
                                     </div>
                                 </Panel>
 
@@ -489,10 +692,10 @@ export default function AdminPage() {
                                     <Field label="Image URL">
                                         <input
                                             value={form.image_url}
-                                            onChange={(e) =>
-                                                updateField("image_url", e.target.value)
+                                            onChange={(event) =>
+                                                updateField("image_url", event.target.value)
                                             }
-                                            placeholder="https://..."
+                                            placeholder="https://images.unsplash.com/..."
                                             className="input-cms"
                                         />
                                     </Field>
@@ -500,8 +703,8 @@ export default function AdminPage() {
                                     <Field label="Google Maps URL">
                                         <input
                                             value={form.google_maps_url}
-                                            onChange={(e) =>
-                                                updateField("google_maps_url", e.target.value)
+                                            onChange={(event) =>
+                                                updateField("google_maps_url", event.target.value)
                                             }
                                             placeholder="https://maps.google.com/..."
                                             className="input-cms"
@@ -511,8 +714,8 @@ export default function AdminPage() {
                                     <Field label="Instagram URL">
                                         <input
                                             value={form.instagram_url}
-                                            onChange={(e) =>
-                                                updateField("instagram_url", e.target.value)
+                                            onChange={(event) =>
+                                                updateField("instagram_url", event.target.value)
                                             }
                                             placeholder="https://instagram.com/..."
                                             className="input-cms"
@@ -533,8 +736,8 @@ export default function AdminPage() {
                                             <input
                                                 type="checkbox"
                                                 checked={form.is_published}
-                                                onChange={(e) =>
-                                                    updateField("is_published", e.target.checked)
+                                                onChange={(event) =>
+                                                    updateField("is_published", event.target.checked)
                                                 }
                                                 className="h-5 w-5"
                                             />
@@ -551,8 +754,8 @@ export default function AdminPage() {
                                             <input
                                                 type="checkbox"
                                                 checked={form.is_featured}
-                                                onChange={(e) =>
-                                                    updateField("is_featured", e.target.checked)
+                                                onChange={(event) =>
+                                                    updateField("is_featured", event.target.checked)
                                                 }
                                                 className="h-5 w-5"
                                             />
