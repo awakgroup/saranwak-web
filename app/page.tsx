@@ -1,65 +1,307 @@
-import Image from "next/image";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import { PlaceCard } from "@/components/PlaceCard";
+import type { Place } from "@/types/database";
 
-export default function Home() {
+async function getFeaturedPlaces() {
+  const { data, error } = await supabase
+    .from("places")
+    .select(`
+      *,
+      categories (
+        id,
+        name,
+        slug,
+        icon
+      ),
+      place_tags (
+        id,
+        tags (
+          id,
+          name,
+          slug,
+          type
+        )
+      )
+    `)
+    .eq("is_published", true)
+    .eq("is_featured", true)
+    .limit(6);
+
+  if (error) {
+    console.error("Supabase error:", error.message);
+    return [];
+  }
+
+  return data as Place[];
+}
+
+const categories = [
+  {
+    label: "Coffee Shop",
+    emoji: "☕",
+    desc: "Nugas, nongkrong, meeting, atau sekadar ngopi santai.",
+    href: "/places?category=coffee-shop",
+  },
+  {
+    label: "Resto",
+    emoji: "🍜",
+    desc: "Tempat makan enak dari yang hemat sampai yang niat.",
+    href: "/places?category=resto",
+  },
+  {
+    label: "Wisata",
+    emoji: "🌊",
+    desc: "Spot jalan-jalan, foto, dan healing sekitar kota.",
+    href: "/places?category=wisata",
+  },
+  {
+    label: "Olahraga",
+    emoji: "🏸",
+    desc: "Padel, badminton, futsal, dan aktivitas bareng teman.",
+    href: "/places?category=badminton",
+  },
+];
+
+const moods = [
+  {
+    label: "Nugas",
+    href: "/places?mood=nugas",
+  },
+  {
+    label: "Healing",
+    href: "/places?mood=healing",
+  },
+  {
+    label: "First Date",
+    href: "/places?mood=date",
+  },
+  {
+    label: "Low Budget",
+    href: "/places?mood=budget-mahasiswa",
+  },
+  {
+    label: "Outdoor",
+    href: "/places?mood=outdoor",
+  },
+  {
+    label: "Dekat dari sini",
+    href: "/places",
+  },
+];
+
+const areas = [
+  "Padang Barat",
+  "Purus",
+  "Khatib Sulaiman",
+  "Gajah Mada",
+  "Pondok",
+  "Air Tawar",
+];
+
+export default async function Home() {
+  const places = await getFeaturedPlaces();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-[#F4F1EA] text-[#141414]">
+      <section className="relative px-5 pb-14 pt-14 md:pb-20 md:pt-18">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_12%,#C8784A20,transparent_34%),radial-gradient(circle_at_88%_18%,#1F5A4A1C,transparent_30%)]" />
+
+        <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-[1.08fr_0.92fr] md:items-center">
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-4 py-2 text-sm font-bold text-[#1F5A4A] shadow-sm">
+              <span className="h-2 w-2 rounded-full bg-[#C8784A]" />
+              Local spot guide dari Padang
+            </div>
+
+            <h1 className="max-w-3xl text-5xl font-black leading-[0.96] tracking-tight md:text-7xl">
+              Cari tempat yang
+              <span className="block text-[#1F5A4A]">
+                pas sama mood kamu.
+              </span>
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#756A60]">
+              Saranwak bantu kamu menemukan tempat di satu daerah berdasarkan
+              kategori, mood, kebutuhan, dan lokasi. Mulai dari coffee shop
+              Padang dulu, nanti bisa lanjut ke resto, wisata, padel, badminton,
+              coworking, dan hidden gem lainnya.
+            </p>
+
+            <div className="mt-8 max-w-2xl rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-3 shadow-[0_20px_70px_rgba(32,24,19,0.08)]">
+              <div className="flex flex-col gap-3 md:flex-row">
+                <div className="flex min-h-14 flex-1 items-center rounded-2xl bg-[#F6F0E7] px-5 text-sm font-medium text-[#756A60]">
+                  Cari coffee shop, tempat makan, area, atau mood...
+                </div>
+
+                <Link
+                  href="/places"
+                  className="flex min-h-14 items-center justify-center rounded-2xl bg-[#1F5A4A] px-6 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#18483B]"
+                >
+                  Mulai Cari
+                </Link>
+              </div>
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {moods.map((mood) => (
+                <Link
+                  key={mood.label}
+                  href={mood.href}
+                  className="rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-4 py-2 text-sm font-bold text-[#4B4038] transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
+                >
+                  {mood.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="rounded-[36px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-[0_25px_80px_rgba(32,24,19,0.12)]">
+              <div className="rounded-[28px] bg-[#F6F0E7] p-5">
+                <div className="mb-5 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.22em] text-[#C8784A]">
+                      Pilih kebutuhan
+                    </p>
+                    <h2 className="mt-1 text-2xl font-black text-[#201813]">
+                      Mau cari apa?
+                    </h2>
+                  </div>
+
+                  <div className="rounded-full bg-[#1F5A4A] px-3 py-1 text-xs font-black text-white">
+                    Padang
+                  </div>
+                </div>
+
+                <div className="grid gap-3">
+                  {categories.map((category) => (
+                    <Link
+                      key={category.label}
+                      href={category.href}
+                      className="group rounded-[24px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 transition hover:-translate-y-1 hover:border-[#1F5A4A] hover:shadow-lg"
+                    >
+                      <div className="flex gap-4">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#F6F0E7] text-2xl">
+                          {category.emoji}
+                        </div>
+
+                        <div>
+                          <h3 className="font-black text-[#201813]">
+                            {category.label}
+                          </h3>
+                          <p className="mt-1 text-sm leading-6 text-[#756A60]">
+                            {category.desc}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute -bottom-5 -left-4 hidden rounded-2xl bg-[#C8784A] px-5 py-3 text-sm font-black text-white shadow-xl rotate-[-3deg] md:block">
+              Mulai dari Padang dulu
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section className="px-5 py-8">
+        <div className="mx-auto max-w-6xl rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 md:p-8">
+          <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-center">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                Explore Area
+              </p>
+              <h2 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">
+                Cari berdasarkan daerah
+              </h2>
+              <p className="mt-3 max-w-xl leading-7 text-[#756A60]">
+                Pilih area biar rekomendasinya lebih masuk akal. Karena tempat
+                bagus tapi jauh kadang cuma cocok buat niat yang kuat.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3 md:justify-end">
+              {areas.map((area) => (
+                <Link
+                  href={`/places?area=${encodeURIComponent(area)}`}
+                  key={area}
+                  className="rounded-full border border-[#E7D8C8] bg-[#F6F0E7] px-4 py-2 text-sm font-bold text-[#4B4038] transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
+                >
+                  {area}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-5 py-16">
+        <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.2em] text-[#C8784A]">
+              Featured Places
+            </p>
+            <h2 className="mt-2 text-4xl font-black tracking-tight">
+              Rekomendasi pilihan
+            </h2>
+            <p className="mt-3 max-w-2xl leading-7 text-[#756A60]">
+              Tempat yang bisa kamu cek dulu sebelum berangkat. Biar pilih
+              tempatnya bukan modal nebak dan doa.
+            </p>
+          </div>
+
+          <Link
+            href="/places"
+            className="w-fit rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-5 py-3 text-sm font-black text-[#1F5A4A] transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
+          >
+            Lihat semua
+          </Link>
+        </div>
+
+        {places.length === 0 ? (
+          <div className="rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-10 text-center">
+            <p className="text-lg font-black text-[#201813]">
+              Belum ada data tempat.
+            </p>
+            <p className="mt-2 text-[#756A60]">
+              Cek tabel <span className="font-bold">places</span> di Supabase.
+              Pastikan data sudah published dan featured.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-3">
+            {places.map((place) => (
+              <PlaceCard key={place.id} place={place} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="px-5 pb-20">
+        <div className="mx-auto max-w-6xl rounded-[36px] bg-[#1F5A4A] p-8 text-white md:p-12">
+          <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-end">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.2em] text-[#F2C38B]">
+                Roadmap Saranwak
+              </p>
+              <h2 className="mt-3 text-4xl font-black leading-tight">
+                Mulai dari coffee shop. Besarnya jadi guide lokal.
+              </h2>
+            </div>
+
+            <p className="text-lg leading-8 text-white/80">
+              Fondasinya harus dynamic dari awal: satu database untuk banyak
+              kategori tempat, filter mood, area, fasilitas, foto, menu, dan
+              detail lokasi. Jadi nanti ketika masuk resto, wisata, padel, atau
+              badminton, kamu tidak perlu bongkar ulang sistem.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
