@@ -33,14 +33,27 @@ type AdminPlace = {
     is_featured: boolean;
     is_published: boolean;
     created_at: string;
-    categories?: {
+    categories?:
+    | {
         id: string;
         name: string;
         slug: string;
-    } | null;
+    }
+    | {
+        id: string;
+        name: string;
+        slug: string;
+    }[]
+    | null;
     place_tags?: {
         tag_id: string;
-        tags?: Tag | null;
+        tags?: Tag | Tag[] | null;
+    }[];
+    place_photos?: {
+        id: string;
+        image_url: string;
+        caption?: string | null;
+        sort_order?: number | null;
     }[];
 };
 
@@ -62,6 +75,8 @@ type FormState = {
     opening_hours: string;
     open_time: string;
     close_time: string;
+    is_24_hours: boolean;
+    photo_urls_text: string;
     is_featured: boolean;
     is_published: boolean;
     tag_ids: string[];
@@ -85,6 +100,8 @@ const initialForm: FormState = {
     opening_hours: "",
     open_time: "",
     close_time: "",
+    is_24_hours: false,
+    photo_urls_text: "",
     is_featured: true,
     is_published: true,
     tag_ids: [],
@@ -121,7 +138,13 @@ function formatPriceRange(min: string, max: string) {
     return "";
 }
 
-function formatOpeningHours(openTime: string, closeTime: string) {
+function formatOpeningHours(
+    openTime: string,
+    closeTime: string,
+    is24Hours: boolean
+) {
+    if (is24Hours) return "Buka 24 Jam";
+
     if (!openTime && !closeTime) return "";
 
     const formatTime = (value: string) => value.replace(":", ".");
@@ -177,6 +200,21 @@ function parseOpeningHours(openingHours?: string | null) {
         return {
             open: "",
             close: "",
+            is24Hours: false,
+        };
+    }
+
+    const normalized = openingHours.toLowerCase();
+
+    if (
+        normalized.includes("24") ||
+        normalized.includes("buka 24 jam") ||
+        normalized.includes("24 jam")
+    ) {
+        return {
+            open: "",
+            close: "",
+            is24Hours: true,
         };
     }
 
@@ -186,6 +224,7 @@ function parseOpeningHours(openingHours?: string | null) {
         return {
             open: "",
             close: "",
+            is24Hours: false,
         };
     }
 
@@ -194,7 +233,30 @@ function parseOpeningHours(openingHours?: string | null) {
     return {
         open: normalize(matches[0]),
         close: normalize(matches[1] ?? ""),
+        is24Hours: false,
     };
+}
+
+function getCategoryName(
+    category:
+        | {
+            id: string;
+            name: string;
+            slug: string;
+        }
+        | {
+            id: string;
+            name: string;
+            slug: string;
+        }[]
+        | null
+        | undefined
+) {
+    if (Array.isArray(category)) {
+        return category[0]?.name ?? "Tanpa kategori";
+    }
+
+    return category?.name ?? "Tanpa kategori";
 }
 
 export default function AdminPage() {
@@ -297,6 +359,13 @@ export default function AdminPage() {
         const parsedPrice = parsePriceRange(place.price_range);
         const parsedHours = parseOpeningHours(place.opening_hours);
 
+        const photoUrlsText =
+            place.place_photos
+                ?.slice()
+                .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+                .map((photo) => photo.image_url)
+                .join("\n") ?? "";
+
         setForm({
             id: place.id,
             name: place.name ?? "",
@@ -315,6 +384,8 @@ export default function AdminPage() {
             opening_hours: place.opening_hours ?? "",
             open_time: parsedHours.open,
             close_time: parsedHours.close,
+            is_24_hours: parsedHours.is24Hours,
+            photo_urls_text: photoUrlsText,
             is_featured: Boolean(place.is_featured),
             is_published: Boolean(place.is_published),
             tag_ids: tagIds,
@@ -368,8 +439,14 @@ export default function AdminPage() {
 
         const formattedOpeningHours = formatOpeningHours(
             form.open_time,
-            form.close_time
+            form.close_time,
+            form.is_24_hours
         );
+
+        const photoUrls = form.photo_urls_text
+            .split("\n")
+            .map((url) => url.trim())
+            .filter(Boolean);
 
         try {
             setLoadingSubmit(true);
@@ -396,6 +473,7 @@ export default function AdminPage() {
                     is_featured: form.is_featured,
                     is_published: form.is_published,
                     tag_ids: form.tag_ids,
+                    photo_urls: photoUrls,
                 }),
             });
 
@@ -475,8 +553,8 @@ export default function AdminPage() {
                         </h1>
 
                         <p className="mt-4 max-w-2xl text-neutral-400">
-                            Tambahkan, update, atau hapus coffee shop, resto, wisata, dan
-                            tempat lainnya dari database Saranwak.
+                            Tambahkan, update, atau hapus coffee shop dan data tempat dari
+                            database Saranwak.
                         </p>
                     </div>
 
@@ -619,10 +697,7 @@ export default function AdminPage() {
                                                     min="0"
                                                     value={form.price_min_input}
                                                     onChange={(event) =>
-                                                        updateField(
-                                                            "price_min_input",
-                                                            event.target.value
-                                                        )
+                                                        updateField("price_min_input", event.target.value)
                                                     }
                                                     placeholder="Min. 20000"
                                                     className="input-cms"
@@ -633,10 +708,7 @@ export default function AdminPage() {
                                                     min="0"
                                                     value={form.price_max_input}
                                                     onChange={(event) =>
-                                                        updateField(
-                                                            "price_max_input",
-                                                            event.target.value
-                                                        )
+                                                        updateField("price_max_input", event.target.value)
                                                     }
                                                     placeholder="Max. 50000"
                                                     className="input-cms"
@@ -657,23 +729,43 @@ export default function AdminPage() {
                                                 Jam Buka
                                             </p>
 
+                                            <label className="mb-3 flex cursor-pointer items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                                                <div>
+                                                    <p className="font-bold text-white">Buka 24 Jam</p>
+                                                    <p className="text-xs text-neutral-500">
+                                                        Aktifkan kalau tempat buka seharian.
+                                                    </p>
+                                                </div>
+
+                                                <input
+                                                    type="checkbox"
+                                                    checked={form.is_24_hours}
+                                                    onChange={(event) =>
+                                                        updateField("is_24_hours", event.target.checked)
+                                                    }
+                                                    className="h-5 w-5"
+                                                />
+                                            </label>
+
                                             <div className="grid grid-cols-2 gap-3">
                                                 <input
                                                     type="time"
                                                     value={form.open_time}
+                                                    disabled={form.is_24_hours}
                                                     onChange={(event) =>
                                                         updateField("open_time", event.target.value)
                                                     }
-                                                    className="input-cms"
+                                                    className="input-cms disabled:cursor-not-allowed disabled:opacity-40"
                                                 />
 
                                                 <input
                                                     type="time"
                                                     value={form.close_time}
+                                                    disabled={form.is_24_hours}
                                                     onChange={(event) =>
                                                         updateField("close_time", event.target.value)
                                                     }
-                                                    className="input-cms"
+                                                    className="input-cms disabled:cursor-not-allowed disabled:opacity-40"
                                                 />
                                             </div>
 
@@ -681,7 +773,8 @@ export default function AdminPage() {
                                                 Preview:{" "}
                                                 {formatOpeningHours(
                                                     form.open_time,
-                                                    form.close_time
+                                                    form.close_time,
+                                                    form.is_24_hours
                                                 ) || "Belum ada info"}
                                             </p>
                                         </div>
@@ -698,6 +791,27 @@ export default function AdminPage() {
                                             placeholder="https://images.unsplash.com/..."
                                             className="input-cms"
                                         />
+                                    </Field>
+
+                                    <Field label="Gallery Photo URLs">
+                                        <textarea
+                                            value={form.photo_urls_text}
+                                            onChange={(event) =>
+                                                updateField("photo_urls_text", event.target.value)
+                                            }
+                                            placeholder={`Masukkan satu URL foto per baris:
+https://drive.google.com/file/d/xxx/view
+https://images.unsplash.com/...
+https://lh3.googleusercontent.com/...`}
+                                            rows={6}
+                                            className="input-cms resize-none"
+                                        />
+
+                                        <p className="mt-2 text-xs font-bold text-neutral-500">
+                                            Satu baris untuk satu foto. Bisa pakai Google Drive
+                                            public link, direct image URL, Unsplash, Cloudinary, atau
+                                            ImageKit.
+                                        </p>
                                     </Field>
 
                                     <Field label="Google Maps URL">
@@ -886,7 +1000,7 @@ export default function AdminPage() {
                                                                     : "text-neutral-500"
                                                                 }`}
                                                         >
-                                                            {place.categories?.name ?? "Tanpa kategori"} ·{" "}
+                                                            {getCategoryName(place.categories)} ·{" "}
                                                             {place.area || "Tanpa area"}
                                                         </p>
                                                     </div>

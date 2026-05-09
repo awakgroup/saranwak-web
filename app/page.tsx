@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { PlaceCard } from "@/components/PlaceCard";
+import { HeroSearch } from "@/components/HeroSearch";
 import type { Place } from "@/types/database";
 
 async function getFeaturedPlaces() {
@@ -8,7 +9,7 @@ async function getFeaturedPlaces() {
     .from("places")
     .select(`
       *,
-      categories (
+      categories!inner (
         id,
         name,
         slug,
@@ -26,6 +27,7 @@ async function getFeaturedPlaces() {
     `)
     .eq("is_published", true)
     .eq("is_featured", true)
+    .eq("categories.slug", "coffee-shop")
     .limit(6);
 
   if (error) {
@@ -42,51 +44,6 @@ const categories = [
     emoji: "☕",
     desc: "Nugas, nongkrong, meeting, atau sekadar ngopi santai.",
     href: "/places?category=coffee-shop",
-  },
-  {
-    label: "Resto",
-    emoji: "🍜",
-    desc: "Tempat makan enak dari yang hemat sampai yang niat.",
-    href: "/places?category=resto",
-  },
-  {
-    label: "Wisata",
-    emoji: "🌊",
-    desc: "Spot jalan-jalan, foto, dan healing sekitar kota.",
-    href: "/places?category=wisata",
-  },
-  {
-    label: "Olahraga",
-    emoji: "🏸",
-    desc: "Padel, badminton, futsal, dan aktivitas bareng teman.",
-    href: "/places?category=badminton",
-  },
-];
-
-const moods = [
-  {
-    label: "Nugas",
-    href: "/places?mood=nugas",
-  },
-  {
-    label: "Healing",
-    href: "/places?mood=healing",
-  },
-  {
-    label: "First Date",
-    href: "/places?mood=date",
-  },
-  {
-    label: "Low Budget",
-    href: "/places?mood=budget-mahasiswa",
-  },
-  {
-    label: "Outdoor",
-    href: "/places?mood=outdoor",
-  },
-  {
-    label: "Dekat dari sini",
-    href: "/places",
   },
 ];
 
@@ -122,38 +79,12 @@ export default async function Home() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[#756A60]">
-              Saranwak bantu kamu menemukan tempat di satu daerah berdasarkan
-              kategori, mood, kebutuhan, dan lokasi. Mulai dari coffee shop
-              Padang dulu, nanti bisa lanjut ke resto, wisata, padel, badminton,
-              coworking, dan hidden gem lainnya.
+              Saranwak bantu kamu menemukan coffee shop di Padang berdasarkan
+              mood, kebutuhan, area, dan fasilitas. Fokus awal kita coffee shop
+              dulu, biar datanya rapi dan rekomendasinya nggak asal comot.
             </p>
 
-            <div className="mt-8 max-w-2xl rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-3 shadow-[0_20px_70px_rgba(32,24,19,0.08)]">
-              <div className="flex flex-col gap-3 md:flex-row">
-                <div className="flex min-h-14 flex-1 items-center rounded-2xl bg-[#F6F0E7] px-5 text-sm font-medium text-[#756A60]">
-                  Cari coffee shop, tempat makan, area, atau mood...
-                </div>
-
-                <Link
-                  href="/places"
-                  className="flex min-h-14 items-center justify-center rounded-2xl bg-[#1F5A4A] px-6 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#18483B]"
-                >
-                  Mulai Cari
-                </Link>
-              </div>
-            </div>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              {moods.map((mood) => (
-                <Link
-                  key={mood.label}
-                  href={mood.href}
-                  className="rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-4 py-2 text-sm font-bold text-[#4B4038] transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
-                >
-                  {mood.label}
-                </Link>
-              ))}
-            </div>
+            <HeroSearch />
           </div>
 
           <div className="relative">
@@ -201,7 +132,7 @@ export default async function Home() {
               </div>
             </div>
 
-            <div className="absolute -bottom-5 -left-4 hidden rounded-2xl bg-[#C8784A] px-5 py-3 text-sm font-black text-white shadow-xl rotate-[-3deg] md:block">
+            <div className="absolute -bottom-5 -left-4 hidden rotate-[-3deg] rounded-2xl bg-[#C8784A] px-5 py-3 text-sm font-black text-white shadow-xl md:block">
               Mulai dari Padang dulu
             </div>
           </div>
@@ -227,7 +158,9 @@ export default async function Home() {
             <div className="flex flex-wrap gap-3 md:justify-end">
               {areas.map((area) => (
                 <Link
-                  href={`/places?area=${encodeURIComponent(area)}`}
+                  href={`/places?category=coffee-shop&area=${encodeURIComponent(
+                    area
+                  )}`}
                   key={area}
                   className="rounded-full border border-[#E7D8C8] bg-[#F6F0E7] px-4 py-2 text-sm font-bold text-[#4B4038] transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
                 >
@@ -243,19 +176,19 @@ export default async function Home() {
         <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.2em] text-[#C8784A]">
-              Featured Places
+              Featured Coffee Shops
             </p>
             <h2 className="mt-2 text-4xl font-black tracking-tight">
               Rekomendasi pilihan
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-[#756A60]">
-              Tempat yang bisa kamu cek dulu sebelum berangkat. Biar pilih
+              Coffee shop yang bisa kamu cek dulu sebelum berangkat. Biar pilih
               tempatnya bukan modal nebak dan doa.
             </p>
           </div>
 
           <Link
-            href="/places"
+            href="/places?category=coffee-shop"
             className="w-fit rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-5 py-3 text-sm font-black text-[#1F5A4A] transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
           >
             Lihat semua
@@ -265,11 +198,12 @@ export default async function Home() {
         {places.length === 0 ? (
           <div className="rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-10 text-center">
             <p className="text-lg font-black text-[#201813]">
-              Belum ada data tempat.
+              Belum ada data coffee shop.
             </p>
             <p className="mt-2 text-[#756A60]">
               Cek tabel <span className="font-bold">places</span> di Supabase.
-              Pastikan data sudah published dan featured.
+              Pastikan data sudah published, featured, dan kategorinya Coffee
+              Shop.
             </p>
           </div>
         ) : (
@@ -294,10 +228,10 @@ export default async function Home() {
             </div>
 
             <p className="text-lg leading-8 text-white/80">
-              Fondasinya harus dynamic dari awal: satu database untuk banyak
+              Fondasinya tetap dynamic dari awal: satu database untuk banyak
               kategori tempat, filter mood, area, fasilitas, foto, menu, dan
-              detail lokasi. Jadi nanti ketika masuk resto, wisata, padel, atau
-              badminton, kamu tidak perlu bongkar ulang sistem.
+              detail lokasi. Tapi untuk sekarang, publik kita fokuskan dulu ke
+              coffee shop Padang biar MVP cepat matang.
             </p>
           </div>
         </div>

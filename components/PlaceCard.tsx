@@ -6,9 +6,24 @@ type PlaceCardProps = {
     place: Place;
 };
 
-function formatPrice(value?: number | null) {
-    if (!value) return "Belum ada info";
-    return `Rp${value.toLocaleString("id-ID")}`;
+function formatPrice(place: Place) {
+    if (place.price_range) {
+        return place.price_range;
+    }
+
+    if (place.price_min && place.price_max) {
+        return `Rp${place.price_min.toLocaleString("id-ID")} - Rp${place.price_max.toLocaleString("id-ID")}`;
+    }
+
+    if (place.price_min) {
+        return `Mulai Rp${place.price_min.toLocaleString("id-ID")}`;
+    }
+
+    if (place.price_max) {
+        return `Sampai Rp${place.price_max.toLocaleString("id-ID")}`;
+    }
+
+    return "Belum ada info";
 }
 
 function getCategoryLabel(place: Place) {
@@ -108,7 +123,7 @@ export function PlaceCard({ place }: PlaceCardProps) {
                     <div>
                         <p className="text-xs font-bold text-[#6F6A61]">Mulai dari</p>
                         <p className="font-black text-[#181818]">
-                            {formatPrice(place.price_min)}
+                            {formatPrice(place)}
                         </p>
                     </div>
 

@@ -33,6 +33,30 @@ function makeSlug(value: string) {
         .replace(/^-+|-+$/g, "");
 }
 
+function getPhotoUrls(body: any) {
+    const photoUrls: string[] = Array.isArray(body.photo_urls)
+        ? body.photo_urls
+            .map((url: string) => String(url).trim())
+            .filter(Boolean)
+        : [];
+
+    return photoUrls;
+}
+
+async function insertPlacePhotos(placeId: string, photoUrls: string[]) {
+    if (photoUrls.length === 0) return null;
+
+    const { error } = await supabaseAdmin.from("place_photos").insert(
+        photoUrls.map((url, index) => ({
+            place_id: placeId,
+            image_url: url,
+            sort_order: index,
+        }))
+    );
+
+    return error;
+}
+
 export async function GET() {
     try {
         const [categoriesResult, tagsResult, placesResult] = await Promise.all([
@@ -81,6 +105,12 @@ export async function GET() {
               slug,
               type
             )
+          ),
+          place_photos (
+            id,
+            image_url,
+            caption,
+            sort_order
           )
         `
                 )
@@ -219,6 +249,21 @@ export async function POST(request: Request) {
             }
         }
 
+        const photoUrls = getPhotoUrls(body);
+        const photosError = await insertPlacePhotos(place.id, photoUrls);
+
+        if (photosError) {
+            return NextResponse.json(
+                {
+                    message:
+                        "Tempat berhasil dibuat, tapi foto gagal disimpan: " +
+                        photosError.message,
+                    place,
+                },
+                { status: 207 }
+            );
+        }
+
         return NextResponse.json({
             message: "Tempat berhasil ditambahkan.",
             place,
@@ -323,7 +368,9 @@ export async function PATCH(request: Request) {
         if (deleteTagError) {
             return NextResponse.json(
                 {
-                    message: "Tempat berhasil diupdate, tapi gagal reset tags: " + deleteTagError.message,
+                    message:
+                        "Tempat berhasil diupdate, tapi gagal reset tags: " +
+                        deleteTagError.message,
                 },
                 { status: 500 }
             );
@@ -350,6 +397,38 @@ export async function PATCH(request: Request) {
                     { status: 207 }
                 );
             }
+        }
+
+        const photoUrls = getPhotoUrls(body);
+
+        const { error: deletePhotosError } = await supabaseAdmin
+            .from("place_photos")
+            .delete()
+            .eq("place_id", placeId);
+
+        if (deletePhotosError) {
+            return NextResponse.json(
+                {
+                    message:
+                        "Tempat berhasil diupdate, tapi gagal reset foto: " +
+                        deletePhotosError.message,
+                },
+                { status: 500 }
+            );
+        }
+
+        const insertPhotosError = await insertPlacePhotos(placeId, photoUrls);
+
+        if (insertPhotosError) {
+            return NextResponse.json(
+                {
+                    message:
+                        "Tempat berhasil diupdate, tapi foto gagal disimpan: " +
+                        insertPhotosError.message,
+                    place,
+                },
+                { status: 207 }
+            );
         }
 
         return NextResponse.json({
