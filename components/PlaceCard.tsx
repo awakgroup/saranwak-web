@@ -33,13 +33,11 @@ export function PlaceCard({ place }: PlaceCardProps) {
             className="group relative overflow-hidden rounded-[32px] border border-[#E3DED4] bg-[#FFFDF8] shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-[#181818]/20 hover:shadow-[0_28px_80px_rgba(20,20,20,0.14)]"
         >
             <div className="relative h-56 overflow-hidden bg-[#E3DED4]">
-                {place.main_image_url ? (
-                    <Image
-                        src={place.main_image_url}
+                {place.image_url ? (
+                    <img
+                        src={place.image_url}
                         alt={place.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover grayscale-[20%] transition duration-700 group-hover:scale-110 group-hover:grayscale-0"
+                        className="h-full w-full object-cover grayscale-[20%] transition duration-700 group-hover:scale-110 group-hover:grayscale-0"
                     />
                 ) : (
                     <div className="flex h-full items-center justify-center text-sm font-bold text-[#6F6A61]">
