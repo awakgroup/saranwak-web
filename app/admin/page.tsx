@@ -30,6 +30,8 @@ type AdminPlace = {
     google_maps_url: string | null;
     instagram_url: string | null;
     price_range: string | null;
+    price_min: number | null;
+    price_max: number | null;
     opening_hours: string | null;
     is_featured: boolean;
     is_published: boolean;
@@ -411,7 +413,19 @@ export default function AdminPage() {
                 ?.map((item) => item.tag_id)
                 .filter((value): value is string => Boolean(value)) ?? [];
 
-        const parsedPrice = parsePriceRange(place.price_range);
+        const parsedPriceFromRange = parsePriceRange(place.price_range);
+
+        const parsedPrice = {
+            min:
+                typeof place.price_min === "number"
+                    ? String(place.price_min)
+                    : parsedPriceFromRange.min,
+            max:
+                typeof place.price_max === "number"
+                    ? String(place.price_max)
+                    : parsedPriceFromRange.max,
+        };
+
         const parsedHours = parseOpeningHours(place.opening_hours);
 
         const photoUrls =
@@ -490,6 +504,29 @@ export default function AdminPage() {
             return;
         }
 
+        const priceMin = form.price_min_input
+            ? Number(form.price_min_input)
+            : null;
+
+        const priceMax = form.price_max_input
+            ? Number(form.price_max_input)
+            : null;
+
+        if (priceMin !== null && Number.isNaN(priceMin)) {
+            setErrorMessage("Harga minimum harus berupa angka.");
+            return;
+        }
+
+        if (priceMax !== null && Number.isNaN(priceMax)) {
+            setErrorMessage("Harga maksimum harus berupa angka.");
+            return;
+        }
+
+        if (priceMin !== null && priceMax !== null && priceMin > priceMax) {
+            setErrorMessage("Harga minimum tidak boleh lebih besar dari harga maksimum.");
+            return;
+        }
+
         const formattedPriceRange = formatPriceRange(
             form.price_min_input,
             form.price_max_input
@@ -527,6 +564,8 @@ export default function AdminPage() {
                     google_maps_url: form.google_maps_url,
                     instagram_url: form.instagram_url,
                     price_range: formattedPriceRange,
+                    price_min: priceMin,
+                    price_max: priceMax,
                     opening_hours: formattedOpeningHours,
                     is_featured: form.is_featured,
                     is_published: form.is_published,
@@ -788,7 +827,7 @@ export default function AdminPage() {
                                                     onChange={(event) =>
                                                         updateField("price_min_input", event.target.value)
                                                     }
-                                                    placeholder="Min. 20000"
+                                                    placeholder="Min. 0"
                                                     className="input-cms"
                                                 />
 
@@ -799,12 +838,16 @@ export default function AdminPage() {
                                                     onChange={(event) =>
                                                         updateField("price_max_input", event.target.value)
                                                     }
-                                                    placeholder="Max. 50000"
+                                                    placeholder="Max. 99999"
                                                     className="input-cms"
                                                 />
                                             </div>
 
                                             <p className="mt-2 text-xs font-bold text-neutral-500">
+                                                Isi angka saja. Contoh: 15000, bukan 15k.
+                                            </p>
+
+                                            <p className="mt-1 text-xs font-bold text-neutral-500">
                                                 Preview:{" "}
                                                 {formatPriceRange(
                                                     form.price_min_input,
@@ -1198,6 +1241,15 @@ export default function AdminPage() {
                                                             {getCategoryName(place.categories)} ·{" "}
                                                             {place.area || "Tanpa area"}
                                                         </p>
+
+                                                        <p
+                                                            className={`mt-2 text-xs font-bold ${form.id === place.id
+                                                                ? "text-black/60"
+                                                                : "text-neutral-500"
+                                                                }`}
+                                                        >
+                                                            Harga: {place.price_range || "Belum ada"}
+                                                        </p>
                                                     </div>
 
                                                     <div
@@ -1248,35 +1300,35 @@ export default function AdminPage() {
             </section>
 
             <style jsx global>{`
-        .input-cms {
-          width: 100%;
-          border-radius: 16px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          background: rgba(255, 255, 255, 0.04);
-          padding: 13px 14px;
-          color: white;
-          outline: none;
-          transition: 0.2s ease;
-          font-size: 14px;
-        }
+                .input-cms {
+                    width: 100%;
+                    border-radius: 16px;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    background: rgba(255, 255, 255, 0.04);
+                    padding: 13px 14px;
+                    color: white;
+                    outline: none;
+                    transition: 0.2s ease;
+                    font-size: 14px;
+                }
 
-        @media (min-width: 640px) {
-          .input-cms {
-            border-radius: 18px;
-            padding: 14px 16px;
-            font-size: 15px;
-          }
-        }
+                @media (min-width: 640px) {
+                    .input-cms {
+                        border-radius: 18px;
+                        padding: 14px 16px;
+                        font-size: 15px;
+                    }
+                }
 
-        .input-cms::placeholder {
-          color: rgba(255, 255, 255, 0.35);
-        }
+                .input-cms::placeholder {
+                    color: rgba(255, 255, 255, 0.35);
+                }
 
-        .input-cms:focus {
-          border-color: rgba(255, 255, 255, 0.35);
-          background: rgba(255, 255, 255, 0.07);
-        }
-      `}</style>
+                .input-cms:focus {
+                    border-color: rgba(255, 255, 255, 0.35);
+                    background: rgba(255, 255, 255, 0.07);
+                }
+            `}</style>
         </main>
     );
 }

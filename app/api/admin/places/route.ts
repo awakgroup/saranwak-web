@@ -34,11 +34,90 @@ function makeSlug(value: string) {
         .replace(/^-+|-+$/g, "");
 }
 
+function parsePriceToNumber(value?: string | number | null) {
+    if (typeof value === "number") {
+        return Number.isFinite(value) ? value : null;
+    }
+
+    if (!value) {
+        return null;
+    }
+
+    const raw = String(value).toLowerCase().trim();
+
+    const cleaned = raw
+        .replace(/rp/g, "")
+        .replace(/\./g, "")
+        .replace(/,/g, "")
+        .replace(/\s/g, "")
+        .replace(/ribu/g, "000")
+        .replace(/rb/g, "000")
+        .replace(/k/g, "000");
+
+    const result = Number(cleaned);
+
+    return Number.isNaN(result) ? null : result;
+}
+
+function parsePriceRangeToMinMax(priceRange?: string | null) {
+    if (!priceRange) {
+        return {
+            price_min: null,
+            price_max: null,
+        };
+    }
+
+    const matches = String(priceRange)
+        .toLowerCase()
+        .match(/\d+\s*(k|rb|ribu)?|\d+[.,]\d+/g);
+
+    if (!matches || matches.length === 0) {
+        return {
+            price_min: null,
+            price_max: null,
+        };
+    }
+
+    const prices = matches
+        .map((item) => parsePriceToNumber(item))
+        .filter((item): item is number => typeof item === "number");
+
+    if (prices.length === 0) {
+        return {
+            price_min: null,
+            price_max: null,
+        };
+    }
+
+    return {
+        price_min: Math.min(...prices),
+        price_max: Math.max(...prices),
+    };
+}
+
+function getNormalizedPrice(body: any) {
+    const rawPriceRange = body.price_range
+        ? String(body.price_range).trim()
+        : null;
+
+    const parsedFromRange = parsePriceRangeToMinMax(rawPriceRange);
+
+    const priceMinFromBody = parsePriceToNumber(body.price_min);
+    const priceMaxFromBody = parsePriceToNumber(body.price_max);
+
+    const price_min = priceMinFromBody ?? parsedFromRange.price_min;
+    const price_max = priceMaxFromBody ?? parsedFromRange.price_max;
+
+    return {
+        price_range: rawPriceRange,
+        price_min,
+        price_max,
+    };
+}
+
 function getPhotoUrls(body: any) {
     const photoUrls: string[] = Array.isArray(body.photo_urls)
-        ? body.photo_urls
-            .map((url: string) => String(url).trim())
-            .filter(Boolean)
+        ? body.photo_urls.map((url: string) => String(url).trim()).filter(Boolean)
         : [];
 
     return photoUrls;
@@ -89,6 +168,8 @@ export async function GET() {
           google_maps_url,
           instagram_url,
           price_range,
+          price_min,
+          price_max,
           opening_hours,
           is_featured,
           is_published,
@@ -183,6 +264,7 @@ export async function POST(request: Request) {
         }
 
         const slug = body.slug?.trim() ? makeSlug(body.slug) : makeSlug(name);
+        const normalizedPrice = getNormalizedPrice(body);
 
         const { data: place, error: placeError } = await supabaseAdmin
             .from("places")
@@ -197,7 +279,9 @@ export async function POST(request: Request) {
                 image_url: body.image_url || null,
                 google_maps_url: body.google_maps_url || null,
                 instagram_url: body.instagram_url || null,
-                price_range: body.price_range || null,
+                price_range: normalizedPrice.price_range,
+                price_min: normalizedPrice.price_min,
+                price_max: normalizedPrice.price_max,
                 opening_hours: body.opening_hours || null,
                 is_featured: Boolean(body.is_featured),
                 is_published: Boolean(body.is_published),
@@ -228,14 +312,12 @@ export async function POST(request: Request) {
         const tagIds: string[] = Array.isArray(body.tag_ids) ? body.tag_ids : [];
 
         if (tagIds.length > 0) {
-            const { error: tagError } = await supabaseAdmin
-                .from("place_tags")
-                .insert(
-                    tagIds.map((tagId) => ({
-                        place_id: place.id,
-                        tag_id: tagId,
-                    }))
-                );
+            const { error: tagError } = await supabaseAdmin.from("place_tags").insert(
+                tagIds.map((tagId) => ({
+                    place_id: place.id,
+                    tag_id: tagId,
+                }))
+            );
 
             if (tagError) {
                 return NextResponse.json(
@@ -264,8 +346,10 @@ export async function POST(request: Request) {
                 { status: 207 }
             );
         }
+
         revalidatePath("/");
         revalidatePath("/places");
+
         return NextResponse.json({
             message: "Tempat berhasil ditambahkan.",
             place,
@@ -317,6 +401,7 @@ export async function PATCH(request: Request) {
         }
 
         const slug = body.slug?.trim() ? makeSlug(body.slug) : makeSlug(name);
+        const normalizedPrice = getNormalizedPrice(body);
 
         const { data: place, error: placeError } = await supabaseAdmin
             .from("places")
@@ -331,7 +416,9 @@ export async function PATCH(request: Request) {
                 image_url: body.image_url || null,
                 google_maps_url: body.google_maps_url || null,
                 instagram_url: body.instagram_url || null,
-                price_range: body.price_range || null,
+                price_range: normalizedPrice.price_range,
+                price_min: normalizedPrice.price_min,
+                price_max: normalizedPrice.price_max,
                 opening_hours: body.opening_hours || null,
                 is_featured: Boolean(body.is_featured),
                 is_published: Boolean(body.is_published),
@@ -432,6 +519,7 @@ export async function PATCH(request: Request) {
                 { status: 207 }
             );
         }
+
         revalidatePath("/");
         revalidatePath("/places");
         revalidatePath(`/places/${place.slug}`);
@@ -492,8 +580,10 @@ export async function DELETE(request: Request) {
                 { status: 500 }
             );
         }
+
         revalidatePath("/");
         revalidatePath("/places");
+
         return NextResponse.json({
             message: "Tempat berhasil dihapus.",
         });

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const navItems = [
     {
-        label: "Semua",
+        label: "Explore",
         href: "/places?category=coffee-shop",
     },
     {

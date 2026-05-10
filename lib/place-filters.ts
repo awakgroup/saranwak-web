@@ -1,4 +1,14 @@
-export const placeFilterGroups = [
+export type PlaceTagFilter = {
+    label: string;
+    tag: string;
+};
+
+export type PlaceFilterGroup = {
+    title: string;
+    options: PlaceTagFilter[];
+};
+
+export const placeFilterGroups: PlaceFilterGroup[] = [
     {
         title: "Aktivitas",
         options: [
@@ -22,9 +32,7 @@ export const placeFilterGroups = [
     },
     {
         title: "Operasional",
-        options: [
-            { label: "24 Jam", tag: "24-jam" },
-        ],
+        options: [{ label: "24 Jam", tag: "24-jam" }],
     },
     {
         title: "Vibe",
@@ -43,3 +51,29 @@ export const placeFilterGroups = [
 export const placeFilterOptions = placeFilterGroups.flatMap(
     (group) => group.options
 );
+
+export type PriceFilterValue = "all" | "under-20k" | "20k-40k" | "above-40k";
+
+export type PriceFilterOption = {
+    label: string;
+    value: PriceFilterValue;
+};
+
+export const priceFilterOptions: PriceFilterOption[] = [
+    {
+        label: "Semua Harga",
+        value: "all",
+    },
+    {
+        label: "Dibawah 20k",
+        value: "under-20k",
+    },
+    {
+        label: "20k - 40k",
+        value: "20k-40k",
+    },
+    {
+        label: "Diatas 40k",
+        value: "above-40k",
+    },
+];
