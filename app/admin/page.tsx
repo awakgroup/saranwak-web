@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getSafePlaceImageUrl } from "@/lib/image-url";
 
 type Category = {
     id: string;
@@ -259,6 +260,13 @@ function getCategoryName(
     return category?.name ?? "Tanpa kategori";
 }
 
+function getPreviewUrls(photoUrls: string[]) {
+    return photoUrls
+        .map((url) => url.trim())
+        .filter(Boolean)
+        .slice(0, 5);
+}
+
 export default function AdminPage() {
     const router = useRouter();
 
@@ -273,6 +281,16 @@ export default function AdminPage() {
     const [errorMessage, setErrorMessage] = useState("");
 
     const isEditMode = Boolean(form.id);
+
+    const previewPhotoUrls = getPreviewUrls(form.photo_urls);
+
+    const mainImagePreviewUrl = form.image_url.trim()
+        ? getSafePlaceImageUrl(form.image_url)
+        : "";
+
+    const galleryPreviewUrls = previewPhotoUrls.map((url) =>
+        getSafePlaceImageUrl(url)
+    );
 
     const groupedTags = useMemo(() => {
         return tags.reduce<Record<string, Tag[]>>((result, tag) => {
@@ -527,6 +545,7 @@ export default function AdminPage() {
             }));
 
             await loadMeta();
+            router.refresh();
         } catch (error) {
             setErrorMessage(
                 error instanceof Error ? error.message : "Gagal menyimpan tempat."
@@ -566,6 +585,7 @@ export default function AdminPage() {
             }
 
             await loadMeta();
+            router.refresh();
         } catch (error) {
             setErrorMessage(
                 error instanceof Error ? error.message : "Gagal menghapus tempat."
@@ -576,28 +596,28 @@ export default function AdminPage() {
     }
 
     return (
-        <main className="min-h-screen bg-neutral-950 px-5 py-10 text-white">
+        <main className="min-h-screen bg-neutral-950 px-4 py-6 text-white sm:px-5 sm:py-8 lg:py-10">
             <section className="mx-auto max-w-7xl">
-                <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-                    <div>
-                        <p className="text-xs font-black uppercase tracking-[0.35em] text-neutral-500">
+                <div className="mb-6 flex flex-col gap-4 sm:mb-8 lg:mb-10 lg:flex-row lg:items-end lg:justify-between">
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500 sm:text-xs sm:tracking-[0.35em]">
                             Saranwak CMS
                         </p>
 
-                        <h1 className="mt-3 text-4xl font-black tracking-tight md:text-6xl">
+                        <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
                             {isEditMode ? "Update Data Tempat" : "Input Data Tempat"}
                         </h1>
 
-                        <p className="mt-4 max-w-2xl text-neutral-400">
+                        <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-400 sm:mt-4 sm:text-base">
                             Tambahkan, update, atau hapus coffee shop dan data tempat dari
                             database Saranwak.
                         </p>
                     </div>
 
-                    <div className="flex flex-wrap gap-3">
+                    <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
                         <a
                             href="/"
-                            className="w-fit rounded-full border border-white/10 px-5 py-3 text-sm font-bold transition hover:bg-white hover:text-black"
+                            className="inline-flex justify-center rounded-full border border-white/10 px-4 py-3 text-center text-xs font-bold transition hover:bg-white hover:text-black sm:px-5 sm:text-sm"
                         >
                             Lihat Website
                         </a>
@@ -605,7 +625,7 @@ export default function AdminPage() {
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="w-fit rounded-full border border-red-400/20 px-5 py-3 text-sm font-bold text-red-300 transition hover:bg-red-400/10"
+                            className="inline-flex justify-center rounded-full border border-red-400/20 px-4 py-3 text-center text-xs font-bold text-red-300 transition hover:bg-red-400/10 sm:px-5 sm:text-sm"
                         >
                             Logout
                         </button>
@@ -613,13 +633,13 @@ export default function AdminPage() {
                 </div>
 
                 {loadingMeta ? (
-                    <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-8 text-neutral-300">
+                    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-6 text-sm text-neutral-300 sm:rounded-[28px] sm:p-8">
                         Loading CMS...
                     </div>
                 ) : (
-                    <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
-                        <div className="space-y-6">
-                            <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+                        <div className="min-w-0 space-y-5 sm:space-y-6">
+                            <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                                 <Panel title="Data Utama">
                                     {isEditMode ? (
                                         <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-sm font-bold text-amber-200">
@@ -627,7 +647,7 @@ export default function AdminPage() {
                                         </div>
                                     ) : null}
 
-                                    <div className="grid gap-5 md:grid-cols-2">
+                                    <div className="grid gap-4 md:grid-cols-2 md:gap-5">
                                         <Field label="Nama Tempat">
                                             <input
                                                 value={form.name}
@@ -697,7 +717,7 @@ export default function AdminPage() {
                                         />
                                     </Field>
 
-                                    <div className="grid gap-5 md:grid-cols-2">
+                                    <div className="grid gap-4 md:grid-cols-2 md:gap-5">
                                         <Field label="Area">
                                             <input
                                                 value={form.area}
@@ -727,7 +747,7 @@ export default function AdminPage() {
                                                 Range Harga
                                             </p>
 
-                                            <div className="grid grid-cols-2 gap-3">
+                                            <div className="grid gap-3 sm:grid-cols-2">
                                                 <input
                                                     type="number"
                                                     min="0"
@@ -765,10 +785,10 @@ export default function AdminPage() {
                                                 Jam Buka
                                             </p>
 
-                                            <label className="mb-3 flex cursor-pointer items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                                            <label className="mb-3 flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                                                 <div>
                                                     <p className="font-bold text-white">Buka 24 Jam</p>
-                                                    <p className="text-xs text-neutral-500">
+                                                    <p className="text-xs leading-5 text-neutral-500">
                                                         Aktifkan kalau tempat buka seharian.
                                                     </p>
                                                 </div>
@@ -779,11 +799,11 @@ export default function AdminPage() {
                                                     onChange={(event) =>
                                                         updateField("is_24_hours", event.target.checked)
                                                     }
-                                                    className="h-5 w-5"
+                                                    className="h-5 w-5 shrink-0"
                                                 />
                                             </label>
 
-                                            <div className="grid grid-cols-2 gap-3">
+                                            <div className="grid gap-3 sm:grid-cols-2">
                                                 <input
                                                     type="time"
                                                     value={form.open_time}
@@ -824,33 +844,56 @@ export default function AdminPage() {
                                             onChange={(event) =>
                                                 updateField("image_url", event.target.value)
                                             }
-                                            placeholder="https://images.unsplash.com/..."
+                                            placeholder="https://images.unsplash.com/... atau Google Drive public link"
                                             className="input-cms"
                                         />
+
+                                        <div className="mt-3 overflow-hidden rounded-[22px] border border-white/10 bg-white/[0.03]">
+                                            {form.image_url.trim() ? (
+                                                <img
+                                                    src={mainImagePreviewUrl}
+                                                    alt="Preview image utama"
+                                                    className="h-48 w-full object-cover"
+                                                    referrerPolicy="no-referrer"
+                                                />
+                                            ) : (
+                                                <div className="flex h-48 items-center justify-center px-5 text-center text-sm font-bold text-neutral-500">
+                                                    Preview image utama akan muncul di sini
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <p className="mt-2 text-xs font-bold text-neutral-500">
+                                            Bisa pakai Google Drive public link, Unsplash, Cloudinary,
+                                            ImageKit, atau direct image URL.
+                                        </p>
                                     </Field>
 
                                     <div>
-                                        <div className="mb-3 flex items-center justify-between gap-4">
+                                        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                                             <div>
                                                 <p className="text-sm font-bold text-neutral-300">
                                                     Gallery Photo URLs
                                                 </p>
 
-                                                <p className="mt-1 text-xs font-bold text-neutral-500">
+                                                <p className="mt-1 text-xs font-bold leading-5 text-neutral-500">
                                                     Default 1 foto, bisa tambah sampai maksimal 5 foto.
                                                     Bisa pakai Google Drive public link, direct image URL,
                                                     Unsplash, Cloudinary, atau ImageKit.
                                                 </p>
                                             </div>
 
-                                            <span className="shrink-0 rounded-full border border-white/10 px-3 py-1 text-xs font-black text-neutral-400">
+                                            <span className="w-fit shrink-0 rounded-full border border-white/10 px-3 py-1 text-xs font-black text-neutral-400">
                                                 {form.photo_urls.length}/5
                                             </span>
                                         </div>
 
                                         <div className="space-y-3">
                                             {form.photo_urls.map((url, index) => (
-                                                <div key={index} className="flex gap-3">
+                                                <div
+                                                    key={index}
+                                                    className="grid gap-2 sm:grid-cols-[1fr_auto]"
+                                                >
                                                     <input
                                                         value={url}
                                                         onChange={(event) =>
@@ -868,7 +911,7 @@ export default function AdminPage() {
                                                         <button
                                                             type="button"
                                                             onClick={() => removePhotoUrlField(index)}
-                                                            className="shrink-0 rounded-2xl border border-red-400/20 px-4 text-sm font-black text-red-300 transition hover:bg-red-400/10"
+                                                            className="rounded-2xl border border-red-400/20 px-4 py-3 text-sm font-black text-red-300 transition hover:bg-red-400/10 sm:py-0"
                                                         >
                                                             Hapus
                                                         </button>
@@ -881,10 +924,56 @@ export default function AdminPage() {
                                             type="button"
                                             onClick={addPhotoUrlField}
                                             disabled={form.photo_urls.length >= 5}
-                                            className="mt-4 rounded-2xl border border-white/10 px-5 py-3 text-sm font-black text-white transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
+                                            className="mt-4 w-full rounded-2xl border border-white/10 px-5 py-3 text-sm font-black text-white transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-40 sm:w-fit"
                                         >
                                             + Tambah Foto
                                         </button>
+
+                                        <div className="mt-5 rounded-[22px] border border-white/10 bg-white/[0.03] p-4">
+                                            <div className="mb-3 flex items-center justify-between gap-3">
+                                                <div>
+                                                    <p className="text-sm font-black text-white">
+                                                        Preview Gallery
+                                                    </p>
+
+                                                    <p className="mt-1 text-xs font-bold text-neutral-500">
+                                                        Foto yang terisi akan muncul di bawah ini.
+                                                    </p>
+                                                </div>
+
+                                                <span className="shrink-0 rounded-full bg-white px-3 py-1 text-xs font-black text-black">
+                                                    {previewPhotoUrls.length} foto
+                                                </span>
+                                            </div>
+
+                                            {galleryPreviewUrls.length > 0 ? (
+                                                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                                                    {galleryPreviewUrls.map((url, index) => (
+                                                        <div
+                                                            key={`${previewPhotoUrls[index]}-${index}`}
+                                                            className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-900"
+                                                        >
+                                                            <img
+                                                                src={url}
+                                                                alt={`Preview gallery ${index + 1}`}
+                                                                className="h-32 w-full object-cover"
+                                                                referrerPolicy="no-referrer"
+                                                            />
+
+                                                            <div className="px-3 py-2">
+                                                                <p className="truncate text-xs font-bold text-neutral-400">
+                                                                    Foto {index + 1}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-white/10 px-5 text-center text-sm font-bold text-neutral-500">
+                                                    Gallery preview akan muncul setelah URL foto diisi
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <Field label="Google Maps URL">
@@ -926,7 +1015,7 @@ export default function AdminPage() {
                                                 onChange={(event) =>
                                                     updateField("is_published", event.target.checked)
                                                 }
-                                                className="h-5 w-5"
+                                                className="h-5 w-5 shrink-0"
                                             />
                                         </label>
 
@@ -944,7 +1033,7 @@ export default function AdminPage() {
                                                 onChange={(event) =>
                                                     updateField("is_featured", event.target.checked)
                                                 }
-                                                className="h-5 w-5"
+                                                className="h-5 w-5 shrink-0"
                                             />
                                         </label>
                                     </div>
@@ -1001,11 +1090,11 @@ export default function AdminPage() {
                                         </div>
                                     ) : null}
 
-                                    <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                                    <div className="mt-6 grid gap-3 sm:grid-cols-[1fr_auto]">
                                         <button
                                             type="submit"
                                             disabled={loadingSubmit}
-                                            className="flex-1 rounded-2xl bg-white px-5 py-4 text-sm font-black text-black transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-60"
+                                            className="rounded-2xl bg-white px-5 py-4 text-sm font-black text-black transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-60"
                                         >
                                             {loadingSubmit
                                                 ? "Menyimpan..."
@@ -1028,8 +1117,8 @@ export default function AdminPage() {
                             </form>
                         </div>
 
-                        <aside className="space-y-6">
-                            <div className="sticky top-6 rounded-[28px] border border-white/10 bg-white/[0.03] p-5 md:p-7">
+                        <aside className="min-w-0 space-y-6">
+                            <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-4 sm:rounded-[28px] sm:p-5 md:p-7 xl:sticky xl:top-6">
                                 <div className="mb-5 flex items-center justify-between gap-4">
                                     <div>
                                         <h2 className="text-2xl font-black">Data Tempat</h2>
@@ -1052,7 +1141,7 @@ export default function AdminPage() {
                                         Belum ada data tempat.
                                     </p>
                                 ) : (
-                                    <div className="max-h-[calc(100vh-220px)] space-y-3 overflow-y-auto pr-1">
+                                    <div className="space-y-3 overflow-y-auto pr-1 xl:max-h-[calc(100vh-220px)]">
                                         {places.map((place) => (
                                             <div
                                                 key={place.id}
@@ -1062,13 +1151,13 @@ export default function AdminPage() {
                                                     }`}
                                             >
                                                 <div className="flex items-start justify-between gap-3">
-                                                    <div>
-                                                        <h3 className="font-black leading-tight">
+                                                    <div className="min-w-0">
+                                                        <h3 className="truncate font-black leading-tight">
                                                             {place.name}
                                                         </h3>
 
                                                         <p
-                                                            className={`mt-1 text-xs ${form.id === place.id
+                                                            className={`mt-1 line-clamp-2 text-xs ${form.id === place.id
                                                                     ? "text-black/60"
                                                                     : "text-neutral-500"
                                                                 }`}
@@ -1079,7 +1168,7 @@ export default function AdminPage() {
                                                     </div>
 
                                                     <div
-                                                        className={`rounded-full px-2 py-1 text-[10px] font-black uppercase ${place.is_published
+                                                        className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black uppercase ${place.is_published
                                                                 ? form.id === place.id
                                                                     ? "bg-black text-white"
                                                                     : "bg-emerald-400/10 text-emerald-300"
@@ -1092,11 +1181,11 @@ export default function AdminPage() {
                                                     </div>
                                                 </div>
 
-                                                <div className="mt-4 flex gap-2">
+                                                <div className="mt-4 grid grid-cols-2 gap-2">
                                                     <button
                                                         type="button"
                                                         onClick={() => handleEdit(place)}
-                                                        className={`flex-1 rounded-xl px-3 py-2 text-xs font-black transition ${form.id === place.id
+                                                        className={`rounded-xl px-3 py-2 text-xs font-black transition ${form.id === place.id
                                                                 ? "bg-black text-white"
                                                                 : "bg-white text-black hover:bg-neutral-200"
                                                             }`}
@@ -1126,13 +1215,22 @@ export default function AdminPage() {
             <style jsx global>{`
         .input-cms {
           width: 100%;
-          border-radius: 18px;
+          border-radius: 16px;
           border: 1px solid rgba(255, 255, 255, 0.1);
           background: rgba(255, 255, 255, 0.04);
-          padding: 14px 16px;
+          padding: 13px 14px;
           color: white;
           outline: none;
           transition: 0.2s ease;
+          font-size: 14px;
+        }
+
+        @media (min-width: 640px) {
+          .input-cms {
+            border-radius: 18px;
+            padding: 14px 16px;
+            font-size: 15px;
+          }
         }
 
         .input-cms::placeholder {
@@ -1156,8 +1254,8 @@ function Panel({
     children: React.ReactNode;
 }) {
     return (
-        <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-5 md:p-7">
-            <h2 className="mb-6 text-2xl font-black">{title}</h2>
+        <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-4 sm:rounded-[28px] sm:p-5 md:p-7">
+            <h2 className="mb-5 text-xl font-black sm:mb-6 sm:text-2xl">{title}</h2>
             <div className="space-y-5">{children}</div>
         </div>
     );

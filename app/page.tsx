@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { PlaceCard } from "@/components/PlaceCard";
 import { HeroSearch } from "@/components/HeroSearch";
 import type { Place } from "@/types/database";
-
+import { WhySaranwak } from "@/components/WhySaranwak";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -62,7 +62,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#F4F1EA] text-[#141414]">
-      <section className="relative overflow-hidden px-5 pb-16 pt-10 md:pb-20 md:pt-14 lg:pt-16">
+      <section className="relative overflow-hidden px-4 pb-12 pt-10 sm:px-5 sm:pt-14 md:pb-20 md:pt-20 lg:pb-24 lg:pt-24">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_12%,#C8784A20,transparent_34%),radial-gradient(circle_at_88%_18%,#1F5A4A1C,transparent_30%)]" />
 
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-14">
@@ -212,8 +212,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
-
-      <section className="mx-auto max-w-6xl px-4 pb-5 sm:px-5">
+      <WhySaranwak />
+      <section className="mx-auto max-w-6xl pt-10 pb-10 sm:px-5">
         <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.2em] text-[#C8784A] sm:text-sm">

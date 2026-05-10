@@ -1,47 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-const filterGroups = [
-    {
-        title: "Aktivitas",
-        options: [
-            { label: "Nugas", tag: "nugas" },
-            { label: "Nongkrong", tag: "nongkrong" },
-            { label: "Me Time", tag: "me-time" },
-            { label: "First Date", tag: "first-date" },
-        ],
-    },
-    {
-        title: "Fasilitas",
-        options: [
-            { label: "WiFi", tag: "wifi" },
-            { label: "Colokan", tag: "colokan" },
-            { label: "Outdoor", tag: "outdoor" },
-            { label: "Indoor", tag: "indoor" },
-        ],
-    },
-    {
-        title: "Budget & Waktu",
-        options: [
-            { label: "Budget Mahasiswa", tag: "budget-mahasiswa" },
-            { label: "Buka Pagi", tag: "buka-pagi" },
-            { label: "Buka Malam", tag: "buka-malam" },
-            { label: "24 Jam", tag: "24-jam" },
-        ],
-    },
-];
+import { placeFilterGroups, placeFilterOptions } from "@/lib/place-filters";
 
 export function HeroSearch() {
     const router = useRouter();
 
     const [keyword, setKeyword] = useState("");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-    const allOptions = useMemo(() => {
-        return filterGroups.flatMap((group) => group.options);
-    }, []);
 
     function toggleTag(tag: string) {
         setSelectedTags((prev) => {
@@ -112,6 +79,7 @@ export function HeroSearch() {
                         <p className="text-sm font-black text-[#201813]">
                             Filter kebutuhan
                         </p>
+
                         <p className="mt-1 text-xs font-semibold text-[#756A60]">
                             Filter ini terpisah dari search bar. Pilih beberapa, lalu klik
                             Terapkan Filter.
@@ -124,7 +92,7 @@ export function HeroSearch() {
                 </div>
 
                 <div className="space-y-4">
-                    {filterGroups.map((group) => (
+                    {placeFilterGroups.map((group) => (
                         <div key={group.title}>
                             <p className="mb-2 text-xs font-black uppercase tracking-[0.2em] text-[#C8784A]">
                                 {group.title}
@@ -161,7 +129,7 @@ export function HeroSearch() {
                             <span className="text-[#201813]">
                                 {selectedTags
                                     .map((tag) => {
-                                        const option = allOptions.find(
+                                        const option = placeFilterOptions.find(
                                             (item) => item.tag === tag
                                         );
 

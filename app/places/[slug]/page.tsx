@@ -3,6 +3,11 @@ import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import { GallerySlider } from "@/components/GallerySlider";
+import { PlaceCard } from "@/components/PlaceCard";
+import type { Place } from "@/types/database";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type Category = {
     id: string;
@@ -163,6 +168,59 @@ async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> {
     return data as unknown as PlaceDetail;
 }
 
+async function getRelatedPlaces(currentPlaceId: string): Promise<Place[]> {
+    const { data, error } = await supabase
+        .from("places")
+        .select(
+            `
+      id,
+      category_id,
+      name,
+      slug,
+      description,
+      short_description,
+      address,
+      area,
+      city,
+      image_url,
+      main_image_url,
+      price_min,
+      price_max,
+      price_range,
+      opening_hours,
+      is_featured,
+      is_verified,
+      is_published,
+      categories!inner (
+        id,
+        name,
+        slug
+      ),
+      place_tags (
+        tag_id,
+        tags (
+          id,
+          name,
+          slug,
+          type
+        )
+      )
+    `
+        )
+        .eq("is_published", true)
+        .eq("categories.slug", "coffee-shop")
+        .neq("id", currentPlaceId)
+        .order("created_at", { ascending: false })
+        .limit(3);
+
+    if (error || !data) {
+        console.error("GET related places error:", error);
+        return [];
+    }
+
+    return data as unknown as Place[];
+}
+
 export default async function PlaceDetailPage({
     params,
 }: PlaceDetailPageProps) {
@@ -173,6 +231,8 @@ export default async function PlaceDetailPage({
     if (!place) {
         notFound();
     }
+
+    const relatedPlaces = await getRelatedPlaces(place.id);
 
     const category = getSingleCategory(place.categories);
 
@@ -191,7 +251,7 @@ export default async function PlaceDetailPage({
     const heroImageUrl = getSafePlaceImageUrl(place.image_url);
 
     return (
-        <main className="min-h-screen bg-neutral-950 px-5 py-12 text-white">
+        <main className="min-h-screen bg-neutral-950 px-4 py-10 text-white sm:px-5 sm:py-12">
             <section className="mx-auto max-w-6xl">
                 <Link
                     href="/places?category=coffee-shop"
@@ -200,7 +260,7 @@ export default async function PlaceDetailPage({
                     ← Kembali ke Tempat
                 </Link>
 
-                <div className="mt-8 overflow-hidden rounded-[36px] border border-white/10 bg-white/[0.03]">
+                <div className="mt-8 overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03] sm:rounded-[36px]">
                     <div className="relative h-[320px] bg-neutral-900 md:h-[460px]">
                         <img
                             src={heroImageUrl}
@@ -211,16 +271,16 @@ export default async function PlaceDetailPage({
 
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-                        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
-                            <p className="text-sm font-black uppercase tracking-[0.3em] text-neutral-300">
+                        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 md:p-10">
+                            <p className="text-xs font-black uppercase tracking-[0.3em] text-neutral-300 sm:text-sm">
                                 {category?.name ?? "Tempat"}
                             </p>
 
-                            <h1 className="mt-3 max-w-4xl text-5xl font-black tracking-tight md:text-7xl">
+                            <h1 className="mt-3 max-w-4xl text-4xl font-black tracking-tight sm:text-5xl md:text-7xl">
                                 {place.name}
                             </h1>
 
-                            <p className="mt-4 text-neutral-300">
+                            <p className="mt-4 text-sm text-neutral-300 sm:text-base">
                                 {place.area || "Padang"} {place.city ? `· ${place.city}` : ""}
                             </p>
                         </div>
@@ -230,11 +290,11 @@ export default async function PlaceDetailPage({
                         <GallerySlider photos={galleryPhotos} placeName={place.name} />
                     ) : null}
 
-                    <div className="grid gap-8 p-6 md:grid-cols-[1fr_360px] md:p-10">
+                    <div className="grid gap-8 p-5 sm:p-6 md:grid-cols-[1fr_360px] md:p-10">
                         <div>
                             <h2 className="text-2xl font-black">Tentang Tempat</h2>
 
-                            <p className="mt-4 max-w-3xl text-lg leading-8 text-neutral-300">
+                            <p className="mt-4 max-w-3xl text-base leading-8 text-neutral-300 sm:text-lg">
                                 {place.description || "Belum ada deskripsi untuk tempat ini."}
                             </p>
 
@@ -317,6 +377,40 @@ export default async function PlaceDetailPage({
                         </aside>
                     </div>
                 </div>
+
+                {relatedPlaces.length > 0 ? (
+                    <section className="mt-10">
+                        <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                            <div>
+                                <p className="text-xs font-black uppercase tracking-[0.35em] text-neutral-500">
+                                    Tempat Serupa
+                                </p>
+
+                                <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">
+                                    Coffee shop lain yang bisa kamu cek
+                                </h2>
+
+                                <p className="mt-3 max-w-2xl text-sm leading-7 text-neutral-400">
+                                    Kalau tempat ini belum pas, coba cek beberapa pilihan lain.
+                                    Siapa tahu mood kamu pindah arah, wajar, manusiawi.
+                                </p>
+                            </div>
+
+                            <Link
+                                href="/places?category=coffee-shop"
+                                className="w-fit rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white transition hover:bg-white hover:text-black"
+                            >
+                                Lihat Semua
+                            </Link>
+                        </div>
+
+                        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                            {relatedPlaces.map((relatedPlace) => (
+                                <PlaceCard key={relatedPlace.id} place={relatedPlace} />
+                            ))}
+                        </div>
+                    </section>
+                ) : null}
             </section>
         </main>
     );
