@@ -83,6 +83,8 @@ type FormState = {
     tag_ids: string[];
 };
 
+type AdminTab = "places" | "analytics";
+
 const initialForm: FormState = {
     id: "",
     name: "",
@@ -279,6 +281,7 @@ export default function AdminPage() {
     const [loadingDeleteId, setLoadingDeleteId] = useState("");
     const [message, setMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [activeTab, setActiveTab] = useState<AdminTab>("places");
 
     const isEditMode = Boolean(form.id);
 
@@ -401,6 +404,7 @@ export default function AdminPage() {
     function handleEdit(place: AdminPlace) {
         setMessage("");
         setErrorMessage("");
+        setActiveTab("places");
 
         const tagIds =
             place.place_tags
@@ -605,12 +609,17 @@ export default function AdminPage() {
                         </p>
 
                         <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
-                            {isEditMode ? "Update Data Tempat" : "Input Data Tempat"}
+                            {activeTab === "places"
+                                ? isEditMode
+                                    ? "Update Data Tempat"
+                                    : "Input Data Tempat"
+                                : "Analytics"}
                         </h1>
 
                         <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-400 sm:mt-4 sm:text-base">
-                            Tambahkan, update, atau hapus coffee shop dan data tempat dari
-                            database Saranwak.
+                            {activeTab === "places"
+                                ? "Tambahkan, update, atau hapus coffee shop dan data tempat dari database Saranwak."
+                                : "Pantau performa website, tempat paling banyak dilihat, dan klik penting untuk kebutuhan marketing."}
                         </p>
                     </div>
 
@@ -632,11 +641,35 @@ export default function AdminPage() {
                     </div>
                 </div>
 
+                <div className="mb-6 flex w-full flex-col gap-2 rounded-[24px] border border-white/10 bg-white/[0.03] p-2 sm:w-fit sm:flex-row">
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab("places")}
+                        className={`rounded-2xl px-5 py-3 text-sm font-black transition ${activeTab === "places"
+                            ? "bg-white text-black"
+                            : "text-neutral-400 hover:bg-white/10 hover:text-white"
+                            }`}
+                    >
+                        Kelola Tempat
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab("analytics")}
+                        className={`rounded-2xl px-5 py-3 text-sm font-black transition ${activeTab === "analytics"
+                            ? "bg-white text-black"
+                            : "text-neutral-400 hover:bg-white/10 hover:text-white"
+                            }`}
+                    >
+                        Analytics
+                    </button>
+                </div>
+
                 {loadingMeta ? (
                     <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-6 text-sm text-neutral-300 sm:rounded-[28px] sm:p-8">
                         Loading CMS...
                     </div>
-                ) : (
+                ) : activeTab === "places" ? (
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
                         <div className="min-w-0 space-y-5 sm:space-y-6">
                             <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
@@ -1063,8 +1096,8 @@ export default function AdminPage() {
                                                                         type="button"
                                                                         onClick={() => toggleTag(tag.id)}
                                                                         className={`rounded-full border px-3 py-2 text-xs font-bold transition ${active
-                                                                                ? "border-white bg-white text-black"
-                                                                                : "border-white/10 bg-white/[0.03] text-neutral-300 hover:bg-white/10"
+                                                                            ? "border-white bg-white text-black"
+                                                                            : "border-white/10 bg-white/[0.03] text-neutral-300 hover:bg-white/10"
                                                                             }`}
                                                                     >
                                                                         {tag.name}
@@ -1146,8 +1179,8 @@ export default function AdminPage() {
                                             <div
                                                 key={place.id}
                                                 className={`rounded-2xl border p-4 transition ${form.id === place.id
-                                                        ? "border-white bg-white text-black"
-                                                        : "border-white/10 bg-white/[0.03]"
+                                                    ? "border-white bg-white text-black"
+                                                    : "border-white/10 bg-white/[0.03]"
                                                     }`}
                                             >
                                                 <div className="flex items-start justify-between gap-3">
@@ -1158,8 +1191,8 @@ export default function AdminPage() {
 
                                                         <p
                                                             className={`mt-1 line-clamp-2 text-xs ${form.id === place.id
-                                                                    ? "text-black/60"
-                                                                    : "text-neutral-500"
+                                                                ? "text-black/60"
+                                                                : "text-neutral-500"
                                                                 }`}
                                                         >
                                                             {getCategoryName(place.categories)} ·{" "}
@@ -1169,12 +1202,12 @@ export default function AdminPage() {
 
                                                     <div
                                                         className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black uppercase ${place.is_published
-                                                                ? form.id === place.id
-                                                                    ? "bg-black text-white"
-                                                                    : "bg-emerald-400/10 text-emerald-300"
-                                                                : form.id === place.id
-                                                                    ? "bg-black/10 text-black"
-                                                                    : "bg-neutral-700 text-neutral-300"
+                                                            ? form.id === place.id
+                                                                ? "bg-black text-white"
+                                                                : "bg-emerald-400/10 text-emerald-300"
+                                                            : form.id === place.id
+                                                                ? "bg-black/10 text-black"
+                                                                : "bg-neutral-700 text-neutral-300"
                                                             }`}
                                                     >
                                                         {place.is_published ? "Live" : "Draft"}
@@ -1186,8 +1219,8 @@ export default function AdminPage() {
                                                         type="button"
                                                         onClick={() => handleEdit(place)}
                                                         className={`rounded-xl px-3 py-2 text-xs font-black transition ${form.id === place.id
-                                                                ? "bg-black text-white"
-                                                                : "bg-white text-black hover:bg-neutral-200"
+                                                            ? "bg-black text-white"
+                                                            : "bg-white text-black hover:bg-neutral-200"
                                                             }`}
                                                     >
                                                         Edit
@@ -1209,6 +1242,8 @@ export default function AdminPage() {
                             </div>
                         </aside>
                     </div>
+                ) : (
+                    <AnalyticsPanel />
                 )}
             </section>
 
@@ -1243,6 +1278,621 @@ export default function AdminPage() {
         }
       `}</style>
         </main>
+    );
+}
+
+type AnalyticsPeriod = {
+    period: string;
+    start: string;
+    end: string;
+    label: string;
+};
+
+type AnalyticsSummary = {
+    total_events: number;
+    detail_views: number;
+    maps_clicks: number;
+    instagram_clicks: number;
+    whatsapp_clicks: number;
+    card_clicks: number;
+};
+
+type TopPlaceAnalytics = {
+    place_id: string | null;
+    place_name: string;
+    place_slug: string;
+    detail_views: number;
+    maps_clicks: number;
+    instagram_clicks: number;
+    whatsapp_clicks: number;
+    card_clicks: number;
+    total_events: number;
+    last_event_at: string | null;
+};
+
+type RecentAnalyticsEvent = {
+    id: string;
+    event_name: string;
+    place_id: string | null;
+    place_name: string | null;
+    place_slug: string | null;
+    source: string | null;
+    page_path: string | null;
+    referrer: string | null;
+    metadata: Record<string, unknown> | null;
+    session_id: string | null;
+    created_at: string;
+};
+
+type AnalyticsResponse = {
+    period: AnalyticsPeriod;
+    summary: AnalyticsSummary;
+    top_places: TopPlaceAnalytics[];
+    recent_events: RecentAnalyticsEvent[];
+};
+
+type PeriodType = "daily" | "weekly" | "monthly" | "yearly" | "custom";
+
+const monthOptions = [
+    { value: "1", label: "Januari" },
+    { value: "2", label: "Februari" },
+    { value: "3", label: "Maret" },
+    { value: "4", label: "April" },
+    { value: "5", label: "Mei" },
+    { value: "6", label: "Juni" },
+    { value: "7", label: "Juli" },
+    { value: "8", label: "Agustus" },
+    { value: "9", label: "September" },
+    { value: "10", label: "Oktober" },
+    { value: "11", label: "November" },
+    { value: "12", label: "Desember" },
+];
+
+function formatNumber(value?: number | null) {
+    return Number(value ?? 0).toLocaleString("id-ID");
+}
+
+function formatEventTime(value?: string | null) {
+    if (!value) return "-";
+
+    return new Intl.DateTimeFormat("id-ID", {
+        dateStyle: "medium",
+        timeStyle: "short",
+    }).format(new Date(value));
+}
+
+function formatEventName(value: string) {
+    return value
+        .split("_")
+        .map((item) => item.charAt(0).toUpperCase() + item.slice(1))
+        .join(" ");
+}
+
+function getTodayInputValue() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function buildAnalyticsParams(options: {
+    periodType: PeriodType;
+    selectedMonth: string;
+    selectedYear: string;
+    selectedDate: string;
+    selectedWeekStart: string;
+    customStart: string;
+    customEnd: string;
+}) {
+    const params = new URLSearchParams();
+
+    params.set("period", options.periodType);
+
+    if (options.periodType === "daily") {
+        params.set("date", options.selectedDate);
+    }
+
+    if (options.periodType === "weekly") {
+        params.set("start", options.selectedWeekStart);
+    }
+
+    if (options.periodType === "monthly") {
+        params.set("month", options.selectedMonth);
+        params.set("year", options.selectedYear);
+    }
+
+    if (options.periodType === "yearly") {
+        params.set("year", options.selectedYear);
+    }
+
+    if (options.periodType === "custom") {
+        params.set("start", options.customStart);
+        params.set("end", options.customEnd);
+    }
+
+    return params;
+}
+
+function AnalyticsPanel() {
+    const today = getTodayInputValue();
+    const currentDate = new Date();
+
+    const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
+    const [loadingAnalytics, setLoadingAnalytics] = useState(true);
+    const [analyticsError, setAnalyticsError] = useState("");
+
+    const [periodType, setPeriodType] = useState<PeriodType>("monthly");
+    const [selectedMonth, setSelectedMonth] = useState(
+        String(currentDate.getMonth() + 1)
+    );
+    const [selectedYear, setSelectedYear] = useState(
+        String(currentDate.getFullYear())
+    );
+    const [selectedDate, setSelectedDate] = useState(today);
+    const [selectedWeekStart, setSelectedWeekStart] = useState(today);
+    const [customStart, setCustomStart] = useState(today);
+    const [customEnd, setCustomEnd] = useState(today);
+
+    const analyticsParams = buildAnalyticsParams({
+        periodType,
+        selectedMonth,
+        selectedYear,
+        selectedDate,
+        selectedWeekStart,
+        customStart,
+        customEnd,
+    });
+
+    async function loadAnalytics() {
+        try {
+            setLoadingAnalytics(true);
+            setAnalyticsError("");
+
+            const response = await fetch(
+                `/api/admin/analytics?${analyticsParams.toString()}`,
+                {
+                    cache: "no-store",
+                }
+            );
+
+            const contentType = response.headers.get("content-type") || "";
+
+            if (!contentType.includes("application/json")) {
+                const text = await response.text();
+
+                console.error("Analytics API returned non-JSON:", text.slice(0, 300));
+
+                throw new Error(
+                    "API analytics tidak mengembalikan JSON. Cek route /api/admin/analytics atau middleware."
+                );
+            }
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "Gagal mengambil analytics.");
+            }
+
+            setAnalytics(result);
+        } catch (error) {
+            setAnalyticsError(
+                error instanceof Error ? error.message : "Gagal mengambil analytics."
+            );
+        } finally {
+            setLoadingAnalytics(false);
+        }
+    }
+
+    function handleExportCsv() {
+        window.open(
+            `/api/admin/analytics/export?${analyticsParams.toString()}`,
+            "_blank"
+        );
+    }
+
+    useEffect(() => {
+        loadAnalytics();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const summaryCards = [
+        {
+            label: "Total Events",
+            value: analytics?.summary.total_events ?? 0,
+            description: "Semua event yang masuk ke tracker.",
+        },
+        {
+            label: "Detail Views",
+            value: analytics?.summary.detail_views ?? 0,
+            description: "Total halaman detail tempat dibuka.",
+        },
+        {
+            label: "Maps Click",
+            value: analytics?.summary.maps_clicks ?? 0,
+            description: "User klik tombol Google Maps.",
+        },
+        {
+            label: "Instagram Click",
+            value: analytics?.summary.instagram_clicks ?? 0,
+            description: "User klik tombol Instagram.",
+        },
+        {
+            label: "WhatsApp Lead",
+            value: analytics?.summary.whatsapp_clicks ?? 0,
+            description: "User klik Contact Us atau kerja sama.",
+        },
+        {
+            label: "Card Click",
+            value: analytics?.summary.card_clicks ?? 0,
+            description: "User klik card tempat dari list/homepage.",
+        },
+    ];
+
+    return (
+        <div className="space-y-6">
+            <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-5 md:p-7">
+                <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                    <div>
+                        <p className="text-xs font-black uppercase tracking-[0.3em] text-neutral-500">
+                            Saranwak Analytics
+                        </p>
+
+                        <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">
+                            Performa Website
+                        </h2>
+
+                        <p className="mt-3 max-w-2xl text-sm leading-7 text-neutral-400">
+                            Data ini live dari Supabase dan bisa difilter berdasarkan harian,
+                            mingguan, bulanan, tahunan, atau custom date range.
+                        </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            onClick={loadAnalytics}
+                            disabled={loadingAnalytics}
+                            className="w-fit rounded-full bg-white px-5 py-3 text-sm font-black text-black transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {loadingAnalytics ? "Loading..." : "Refresh Data"}
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={handleExportCsv}
+                            className="w-fit rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white transition hover:bg-white hover:text-black"
+                        >
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div className="mt-6 rounded-[24px] border border-white/10 bg-white/[0.03] p-4">
+                    <div className="grid gap-4 lg:grid-cols-[1fr_2fr] lg:items-start">
+                        <div>
+                            <p className="text-sm font-black text-white">Periode Laporan</p>
+                            <p className="mt-1 text-xs font-bold leading-5 text-neutral-500">
+                                Pilih periode untuk melihat rekap dan export data analytics.
+                            </p>
+                        </div>
+
+                        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                            <div>
+                                <p className="mb-2 text-xs font-bold text-neutral-400">
+                                    Tipe Periode
+                                </p>
+                                <select
+                                    value={periodType}
+                                    onChange={(event) =>
+                                        setPeriodType(event.target.value as PeriodType)
+                                    }
+                                    className="input-cms"
+                                >
+                                    <option value="daily" className="bg-neutral-900">
+                                        Harian
+                                    </option>
+                                    <option value="weekly" className="bg-neutral-900">
+                                        Mingguan
+                                    </option>
+                                    <option value="monthly" className="bg-neutral-900">
+                                        Bulanan
+                                    </option>
+                                    <option value="yearly" className="bg-neutral-900">
+                                        Tahunan
+                                    </option>
+                                    <option value="custom" className="bg-neutral-900">
+                                        Custom
+                                    </option>
+                                </select>
+                            </div>
+
+                            {periodType === "daily" ? (
+                                <div>
+                                    <p className="mb-2 text-xs font-bold text-neutral-400">
+                                        Tanggal
+                                    </p>
+                                    <input
+                                        type="date"
+                                        value={selectedDate}
+                                        onChange={(event) => setSelectedDate(event.target.value)}
+                                        className="input-cms"
+                                    />
+                                </div>
+                            ) : null}
+
+                            {periodType === "weekly" ? (
+                                <div>
+                                    <p className="mb-2 text-xs font-bold text-neutral-400">
+                                        Mulai Minggu
+                                    </p>
+                                    <input
+                                        type="date"
+                                        value={selectedWeekStart}
+                                        onChange={(event) =>
+                                            setSelectedWeekStart(event.target.value)
+                                        }
+                                        className="input-cms"
+                                    />
+                                </div>
+                            ) : null}
+
+                            {periodType === "monthly" ? (
+                                <>
+                                    <div>
+                                        <p className="mb-2 text-xs font-bold text-neutral-400">
+                                            Bulan
+                                        </p>
+                                        <select
+                                            value={selectedMonth}
+                                            onChange={(event) => setSelectedMonth(event.target.value)}
+                                            className="input-cms"
+                                        >
+                                            {monthOptions.map((month) => (
+                                                <option
+                                                    key={month.value}
+                                                    value={month.value}
+                                                    className="bg-neutral-900"
+                                                >
+                                                    {month.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <p className="mb-2 text-xs font-bold text-neutral-400">
+                                            Tahun
+                                        </p>
+                                        <input
+                                            type="number"
+                                            value={selectedYear}
+                                            onChange={(event) => setSelectedYear(event.target.value)}
+                                            min="2025"
+                                            max="2100"
+                                            className="input-cms"
+                                        />
+                                    </div>
+                                </>
+                            ) : null}
+
+                            {periodType === "yearly" ? (
+                                <div>
+                                    <p className="mb-2 text-xs font-bold text-neutral-400">
+                                        Tahun
+                                    </p>
+                                    <input
+                                        type="number"
+                                        value={selectedYear}
+                                        onChange={(event) => setSelectedYear(event.target.value)}
+                                        min="2025"
+                                        max="2100"
+                                        className="input-cms"
+                                    />
+                                </div>
+                            ) : null}
+
+                            {periodType === "custom" ? (
+                                <>
+                                    <div>
+                                        <p className="mb-2 text-xs font-bold text-neutral-400">
+                                            Start Date
+                                        </p>
+                                        <input
+                                            type="date"
+                                            value={customStart}
+                                            onChange={(event) => setCustomStart(event.target.value)}
+                                            className="input-cms"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <p className="mb-2 text-xs font-bold text-neutral-400">
+                                            End Date
+                                        </p>
+                                        <input
+                                            type="date"
+                                            value={customEnd}
+                                            onChange={(event) => setCustomEnd(event.target.value)}
+                                            className="input-cms"
+                                        />
+                                    </div>
+                                </>
+                            ) : null}
+                        </div>
+                    </div>
+
+                    <div className="mt-4 rounded-2xl bg-white/[0.04] p-4">
+                        <p className="text-xs font-bold text-neutral-400">
+                            Periode aktif:{" "}
+                            <span className="text-white">
+                                {analytics?.period.label || "Belum dimuat"}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                {analyticsError ? (
+                    <div className="mt-5 rounded-2xl border border-red-400/20 bg-red-400/10 p-4 text-sm font-bold text-red-300">
+                        {analyticsError}
+                    </div>
+                ) : null}
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {summaryCards.map((item) => (
+                    <div
+                        key={item.label}
+                        className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5"
+                    >
+                        <p className="text-sm font-bold text-neutral-500">{item.label}</p>
+
+                        <p className="mt-3 text-4xl font-black text-white">
+                            {loadingAnalytics ? "..." : formatNumber(item.value)}
+                        </p>
+
+                        <p className="mt-3 text-xs leading-5 text-neutral-500">
+                            {item.description}
+                        </p>
+                    </div>
+                ))}
+            </div>
+
+            <div className="grid gap-6 xl:grid-cols-[1fr_440px]">
+                <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-5 md:p-7">
+                    <h3 className="text-2xl font-black">Top Coffee Shop</h3>
+                    <p className="mt-1 text-sm text-neutral-500">
+                        Tempat dengan performa tertinggi berdasarkan periode aktif.
+                    </p>
+
+                    {loadingAnalytics ? (
+                        <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-sm font-bold text-neutral-500">
+                            Mengambil data top coffee shop...
+                        </div>
+                    ) : analytics?.top_places.length ? (
+                        <div className="mt-5 space-y-3">
+                            {analytics.top_places.map((place, index) => (
+                                <div
+                                    key={`${place.place_id}-${index}`}
+                                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-4"
+                                >
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="min-w-0">
+                                            <p className="text-xs font-black text-neutral-500">
+                                                #{index + 1}
+                                            </p>
+
+                                            <h4 className="mt-1 truncate font-black text-white">
+                                                {place.place_name || "-"}
+                                            </h4>
+
+                                            <p className="mt-1 text-xs font-bold text-neutral-500">
+                                                /places/{place.place_slug}
+                                            </p>
+                                        </div>
+
+                                        <div className="shrink-0 rounded-full bg-white px-3 py-1 text-xs font-black text-black">
+                                            {formatNumber(place.total_events)} events
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold text-neutral-400 sm:grid-cols-5">
+                                        <AnalyticsMiniStat
+                                            label="Views"
+                                            value={place.detail_views}
+                                        />
+                                        <AnalyticsMiniStat
+                                            label="Maps"
+                                            value={place.maps_clicks}
+                                        />
+                                        <AnalyticsMiniStat
+                                            label="IG"
+                                            value={place.instagram_clicks}
+                                        />
+                                        <AnalyticsMiniStat
+                                            label="WA"
+                                            value={place.whatsapp_clicks}
+                                        />
+                                        <AnalyticsMiniStat
+                                            label="Cards"
+                                            value={place.card_clicks}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="mt-5 rounded-2xl border border-dashed border-white/10 bg-white/[0.03] p-6 text-sm font-bold text-neutral-500">
+                            Belum ada data pada periode ini.
+                        </div>
+                    )}
+                </div>
+
+                <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-5 md:p-7">
+                    <h3 className="text-2xl font-black">Aktivitas Terbaru</h3>
+
+                    <p className="mt-1 text-sm text-neutral-500">
+                        Event tracking terbaru berdasarkan periode aktif.
+                    </p>
+
+                    {loadingAnalytics ? (
+                        <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-sm font-bold text-neutral-500">
+                            Mengambil event terbaru...
+                        </div>
+                    ) : analytics?.recent_events.length ? (
+                        <div className="mt-5 space-y-3">
+                            {analytics.recent_events.map((event) => (
+                                <div
+                                    key={event.id}
+                                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-4"
+                                >
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="min-w-0">
+                                            <p className="font-black text-white">
+                                                {formatEventName(event.event_name)}
+                                            </p>
+
+                                            <p className="mt-1 truncate text-xs text-neutral-500">
+                                                {event.place_name || "Tanpa tempat spesifik"}
+                                            </p>
+                                        </div>
+
+                                        <span className="shrink-0 rounded-full bg-white/[0.08] px-3 py-1 text-[11px] font-black text-neutral-300">
+                                            {event.source || "-"}
+                                        </span>
+                                    </div>
+
+                                    <p className="mt-3 truncate text-xs font-bold text-neutral-500">
+                                        {event.page_path || "-"}
+                                    </p>
+
+                                    <p className="mt-2 text-xs font-bold text-neutral-600">
+                                        {formatEventTime(event.created_at)}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="mt-5 rounded-2xl border border-dashed border-white/10 bg-white/[0.03] p-6 text-sm font-bold text-neutral-500">
+                            Belum ada event tracking pada periode ini.
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function AnalyticsMiniStat({
+    label,
+    value,
+}: {
+    label: string;
+    value: number;
+}) {
+    return (
+        <div className="rounded-xl bg-white/[0.04] p-3">
+            {label}
+            <p className="mt-1 text-lg font-black text-white">
+                {formatNumber(value)}
+            </p>
+        </div>
     );
 }
 

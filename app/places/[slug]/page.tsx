@@ -4,6 +4,8 @@ import { supabase } from "@/lib/supabase";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import { GallerySlider } from "@/components/GallerySlider";
 import { PlaceCard } from "@/components/PlaceCard";
+import { PlaceDetailTracker } from "@/components/PlaceDetailTracker";
+import { TrackedExternalLink } from "@/components/TrackedExternalLink";
 import type { Place } from "@/types/database";
 
 export const dynamic = "force-dynamic";
@@ -252,6 +254,14 @@ export default async function PlaceDetailPage({
 
     return (
         <main className="min-h-screen bg-neutral-950 px-4 py-10 text-white sm:px-5 sm:py-12">
+            <PlaceDetailTracker
+                placeId={place.id}
+                placeName={place.name}
+                placeSlug={place.slug}
+                area={place.area}
+                city={place.city}
+            />
+
             <section className="mx-auto max-w-6xl">
                 <Link
                     href="/places?category=coffee-shop"
@@ -353,25 +363,41 @@ export default async function PlaceDetailPage({
 
                             <div className="mt-6 space-y-3">
                                 {place.google_maps_url ? (
-                                    <a
+                                    <TrackedExternalLink
                                         href={place.google_maps_url}
-                                        target="_blank"
-                                        rel="noreferrer"
+                                        eventName="google_maps_clicked"
+                                        placeId={place.id}
+                                        placeName={place.name}
+                                        placeSlug={place.slug}
+                                        source="detail_page"
+                                        metadata={{
+                                            area: place.area,
+                                            city: place.city,
+                                            category: category?.slug ?? null,
+                                        }}
                                         className="block rounded-2xl bg-white px-5 py-4 text-center text-sm font-black text-black transition hover:bg-neutral-200"
                                     >
                                         Buka Google Maps
-                                    </a>
+                                    </TrackedExternalLink>
                                 ) : null}
 
                                 {place.instagram_url ? (
-                                    <a
+                                    <TrackedExternalLink
                                         href={place.instagram_url}
-                                        target="_blank"
-                                        rel="noreferrer"
+                                        eventName="instagram_clicked"
+                                        placeId={place.id}
+                                        placeName={place.name}
+                                        placeSlug={place.slug}
+                                        source="detail_page"
+                                        metadata={{
+                                            area: place.area,
+                                            city: place.city,
+                                            category: category?.slug ?? null,
+                                        }}
                                         className="block rounded-2xl border border-white/10 px-5 py-4 text-center text-sm font-black text-white transition hover:bg-white/10"
                                     >
                                         Lihat Instagram
-                                    </a>
+                                    </TrackedExternalLink>
                                 ) : null}
                             </div>
                         </aside>

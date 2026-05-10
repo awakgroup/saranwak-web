@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+
+const siteUrl = "https://saranwak.vercel.app";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://saranwak.vercel.app"),
+  metadataBase: new URL(siteUrl),
 
   title: "Saranwak - Rekomendasi Tempat di Padang",
   description:
@@ -12,17 +15,18 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.png",
     shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 
   openGraph: {
     title: "Saranwak - Rekomendasi Tempat di Padang",
     description:
       "Cari coffee shop, tempat nugas, tempat nongkrong, dan destinasi lokal terbaik di Padang.",
-    url: "https://saranwak.vercel.app",
+    url: siteUrl,
     siteName: "Saranwak",
     images: [
       {
-        url: "/og-saranwak-banner.png",
+        url: `${siteUrl}/og-saranwak-banner.png`,
         width: 1200,
         height: 630,
         alt: "Saranwak - Rekomendasi Tempat di Padang",
@@ -37,7 +41,7 @@ export const metadata: Metadata = {
     title: "Saranwak - Rekomendasi Tempat di Padang",
     description:
       "Cari coffee shop, tempat nugas, tempat nongkrong, dan destinasi lokal terbaik di Padang.",
-    images: ["/og-saranwak-banner.png"],
+    images: [`${siteUrl}/og-saranwak-banner.png`],
   },
 };
 
