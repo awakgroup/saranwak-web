@@ -14,8 +14,16 @@ export const placeFilterGroups = [
             { label: "WiFi", tag: "wifi" },
             { label: "Colokan", tag: "colokan" },
             { label: "AC", tag: "ac" },
+            { label: "Musholla", tag: "musholla" },
+            { label: "Toilet", tag: "toilet" },
             { label: "Outdoor", tag: "outdoor" },
             { label: "Indoor", tag: "indoor" },
+        ],
+    },
+    {
+        title: "Operasional",
+        options: [
+            { label: "24 Jam", tag: "24-jam" },
         ],
     },
     {
