@@ -76,7 +76,7 @@ type FormState = {
     open_time: string;
     close_time: string;
     is_24_hours: boolean;
-    photo_urls_text: string;
+    photo_urls: string[];
     is_featured: boolean;
     is_published: boolean;
     tag_ids: string[];
@@ -101,7 +101,7 @@ const initialForm: FormState = {
     open_time: "",
     close_time: "",
     is_24_hours: false,
-    photo_urls_text: "",
+    photo_urls: [""],
     is_featured: true,
     is_published: true,
     tag_ids: [],
@@ -347,6 +347,39 @@ export default function AdminPage() {
         });
     }
 
+    function updatePhotoUrl(index: number, value: string) {
+        setForm((prev) => ({
+            ...prev,
+            photo_urls: prev.photo_urls.map((url, urlIndex) =>
+                urlIndex === index ? value : url
+            ),
+        }));
+    }
+
+    function addPhotoUrlField() {
+        setForm((prev) => {
+            if (prev.photo_urls.length >= 5) return prev;
+
+            return {
+                ...prev,
+                photo_urls: [...prev.photo_urls, ""],
+            };
+        });
+    }
+
+    function removePhotoUrlField(index: number) {
+        setForm((prev) => {
+            const nextPhotoUrls = prev.photo_urls.filter(
+                (_, urlIndex) => urlIndex !== index
+            );
+
+            return {
+                ...prev,
+                photo_urls: nextPhotoUrls.length > 0 ? nextPhotoUrls : [""],
+            };
+        });
+    }
+
     function handleEdit(place: AdminPlace) {
         setMessage("");
         setErrorMessage("");
@@ -359,12 +392,15 @@ export default function AdminPage() {
         const parsedPrice = parsePriceRange(place.price_range);
         const parsedHours = parseOpeningHours(place.opening_hours);
 
-        const photoUrlsText =
+        const photoUrls =
             place.place_photos
                 ?.slice()
                 .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
                 .map((photo) => photo.image_url)
-                .join("\n") ?? "";
+                .filter(Boolean) ?? [];
+
+        const normalizedPhotoUrls =
+            photoUrls.length > 0 ? photoUrls.slice(0, 5) : [""];
 
         setForm({
             id: place.id,
@@ -385,7 +421,7 @@ export default function AdminPage() {
             open_time: parsedHours.open,
             close_time: parsedHours.close,
             is_24_hours: parsedHours.is24Hours,
-            photo_urls_text: photoUrlsText,
+            photo_urls: normalizedPhotoUrls,
             is_featured: Boolean(place.is_featured),
             is_published: Boolean(place.is_published),
             tag_ids: tagIds,
@@ -443,10 +479,10 @@ export default function AdminPage() {
             form.is_24_hours
         );
 
-        const photoUrls = form.photo_urls_text
-            .split("\n")
+        const photoUrls = form.photo_urls
             .map((url) => url.trim())
-            .filter(Boolean);
+            .filter(Boolean)
+            .slice(0, 5);
 
         try {
             setLoadingSubmit(true);
@@ -793,26 +829,63 @@ export default function AdminPage() {
                                         />
                                     </Field>
 
-                                    <Field label="Gallery Photo URLs">
-                                        <textarea
-                                            value={form.photo_urls_text}
-                                            onChange={(event) =>
-                                                updateField("photo_urls_text", event.target.value)
-                                            }
-                                            placeholder={`Masukkan satu URL foto per baris:
-https://drive.google.com/file/d/xxx/view
-https://images.unsplash.com/...
-https://lh3.googleusercontent.com/...`}
-                                            rows={6}
-                                            className="input-cms resize-none"
-                                        />
+                                    <div>
+                                        <div className="mb-3 flex items-center justify-between gap-4">
+                                            <div>
+                                                <p className="text-sm font-bold text-neutral-300">
+                                                    Gallery Photo URLs
+                                                </p>
 
-                                        <p className="mt-2 text-xs font-bold text-neutral-500">
-                                            Satu baris untuk satu foto. Bisa pakai Google Drive
-                                            public link, direct image URL, Unsplash, Cloudinary, atau
-                                            ImageKit.
-                                        </p>
-                                    </Field>
+                                                <p className="mt-1 text-xs font-bold text-neutral-500">
+                                                    Default 1 foto, bisa tambah sampai maksimal 5 foto.
+                                                    Bisa pakai Google Drive public link, direct image URL,
+                                                    Unsplash, Cloudinary, atau ImageKit.
+                                                </p>
+                                            </div>
+
+                                            <span className="shrink-0 rounded-full border border-white/10 px-3 py-1 text-xs font-black text-neutral-400">
+                                                {form.photo_urls.length}/5
+                                            </span>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            {form.photo_urls.map((url, index) => (
+                                                <div key={index} className="flex gap-3">
+                                                    <input
+                                                        value={url}
+                                                        onChange={(event) =>
+                                                            updatePhotoUrl(index, event.target.value)
+                                                        }
+                                                        placeholder={
+                                                            index === 0
+                                                                ? "https://drive.google.com/file/d/xxx/view"
+                                                                : "https://images.unsplash.com/..."
+                                                        }
+                                                        className="input-cms"
+                                                    />
+
+                                                    {form.photo_urls.length > 1 ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removePhotoUrlField(index)}
+                                                            className="shrink-0 rounded-2xl border border-red-400/20 px-4 text-sm font-black text-red-300 transition hover:bg-red-400/10"
+                                                        >
+                                                            Hapus
+                                                        </button>
+                                                    ) : null}
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            onClick={addPhotoUrlField}
+                                            disabled={form.photo_urls.length >= 5}
+                                            className="mt-4 rounded-2xl border border-white/10 px-5 py-3 text-sm font-black text-white transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
+                                        >
+                                            + Tambah Foto
+                                        </button>
+                                    </div>
 
                                     <Field label="Google Maps URL">
                                         <input

@@ -139,7 +139,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="px-5 py-8">
+      {/* <section className="px-5 py-8">
         <div className="mx-auto max-w-6xl rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 md:p-8">
           <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-center">
             <div>
@@ -170,9 +170,9 @@ export default async function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      <section className="mx-auto max-w-6xl px-5 py-16">
+      <section className="mx-auto max-w-6xl px-5 pb-5">
         <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.2em] text-[#C8784A]">
@@ -214,8 +214,67 @@ export default async function Home() {
           </div>
         )}
       </section>
+      <section className="px-5 pb-16 pt-5">
+        <div className="mx-auto max-w-6xl overflow-hidden rounded-[36px] border border-[#E7D8C8] bg-[#181818] p-8 text-white shadow-[0_28px_90px_rgba(24,24,24,0.18)] md:p-12">
+          <div className="grid gap-8 md:grid-cols-[1fr_360px] md:items-center">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.25em] text-[#F2C38B]">
+                Website Service
+              </p>
 
-      <section className="px-5 pb-20">
+              <h2 className="mt-4 max-w-3xl text-4xl font-black leading-tight tracking-tight md:text-5xl">
+                Punya coffee shop atau bisnis? Bikin website-nya biar makin kelihatan serius.
+              </h2>
+
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-white/70">
+                Kami bisa bantu buat website untuk coffee shop, resto, local brand,
+                company profile, katalog produk, sampai landing page promosi. Biar
+                bisnis kamu nggak cuma rame di offline, tapi juga gampang ditemukan online.
+              </p>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <span className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-bold text-white/80">
+                  Landing Page
+                </span>
+                <span className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-bold text-white/80">
+                  Company Profile
+                </span>
+                <span className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-bold text-white/80">
+                  Website Katalog
+                </span>
+                <span className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-bold text-white/80">
+                  CMS Admin
+                </span>
+              </div>
+            </div>
+
+            <div className="rounded-[28px] border border-white/10 bg-white/[0.06] p-5">
+              <p className="text-sm font-bold text-white/60">
+                Cocok untuk
+              </p>
+
+              <ul className="mt-4 space-y-3 text-sm font-bold text-white">
+                <li>✓ Coffee shop & resto</li>
+                <li>✓ UMKM & local brand</li>
+                <li>✓ Portfolio bisnis</li>
+                <li>✓ Event & promo campaign</li>
+              </ul>
+
+              <a
+                href={`https://wa.me/6281932097214?text=${encodeURIComponent(
+                  "Hi SaranWak, saya ingin membuat website untuk bisnis saya"
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-6 flex w-full items-center justify-center rounded-2xl bg-[#F2C38B] px-5 py-4 text-sm font-black text-[#181818] transition hover:-translate-y-0.5 hover:bg-white"
+              >
+                Buat Website Sekarang →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* <section className="px-5 pb-20">
         <div className="mx-auto max-w-6xl rounded-[36px] bg-[#1F5A4A] p-8 text-white md:p-12">
           <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-end">
             <div>
@@ -235,7 +294,7 @@ export default async function Home() {
             </p>
           </div>
         </div>
-      </section>
+      </section> */}
     </main>
   );
 }

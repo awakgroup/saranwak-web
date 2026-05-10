@@ -2,11 +2,7 @@ import Link from "next/link";
 
 const navItems = [
     {
-        label: "Tempat",
-        href: "/places",
-    },
-    {
-        label: "Coffee Shop",
+        label: "Semua",
         href: "/places?category=coffee-shop",
     },
     {
@@ -18,6 +14,14 @@ const navItems = [
         href: "/about",
     },
 ];
+
+const WHATSAPP_NUMBER = "6281932097214";
+
+const whatsappMessage = encodeURIComponent(
+    "Saya ingin bekerjasama dengan saranwak.com"
+);
+
+const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`;
 
 export function Navbar() {
     return (
@@ -50,12 +54,14 @@ export function Navbar() {
                     ))}
                 </nav>
 
-                <Link
-                    href="/places"
+                <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noreferrer"
                     className="rounded-full bg-[#181818] px-4 py-2 text-sm font-black text-[#FFFDF8] transition duration-300 hover:-translate-y-0.5 hover:bg-[#2A2A2A] hover:shadow-lg md:px-5"
                 >
-                    Cari Tempat
-                </Link>
+                    Contact Us
+                </a>
             </div>
         </header>
     );

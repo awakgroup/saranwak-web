@@ -7,6 +7,7 @@ type PlacesPageProps = {
     searchParams?: Promise<{
         q?: string;
         tag?: string;
+        tags?: string;
         area?: string;
         category?: string;
     }>;
@@ -24,6 +25,53 @@ type PlaceTagItem = {
     tags?: TagItem | TagItem[] | null;
 };
 
+const filterOptions = [
+    {
+        label: "Nugas",
+        tag: "nugas",
+    },
+    {
+        label: "Healing",
+        tag: "healing",
+    },
+    {
+        label: "First Date",
+        tag: "first-date",
+    },
+    {
+        label: "Budget Mahasiswa",
+        tag: "budget-mahasiswa",
+    },
+    {
+        label: "Outdoor",
+        tag: "outdoor",
+    },
+    {
+        label: "WiFi",
+        tag: "wifi",
+    },
+    {
+        label: "Nongkrong",
+        tag: "nongkrong",
+    },
+    {
+        label: "Colokan",
+        tag: "colokan",
+    },
+    {
+        label: "Indoor",
+        tag: "indoor",
+    },
+    {
+        label: "Buka Pagi",
+        tag: "buka-pagi",
+    },
+    {
+        label: "Buka Malam",
+        tag: "buka-malam",
+    },
+];
+
 function normalizeText(value?: string | null) {
     return value?.toLowerCase().trim() || "";
 }
@@ -34,6 +82,32 @@ function getSingleTag(item: PlaceTagItem) {
     }
 
     return item.tags ?? null;
+}
+
+function getSelectedTags(params: { tag?: string; tags?: string }) {
+    if (params.tags) {
+        return params.tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean);
+    }
+
+    if (params.tag) {
+        return [params.tag];
+    }
+
+    return [];
+}
+
+function getPlaceTagSlugs(place: Place) {
+    return (
+        place.place_tags
+            ?.map((item) => {
+                const tag = getSingleTag(item as PlaceTagItem);
+                return tag?.slug;
+            })
+            .filter((slug): slug is string => Boolean(slug)) ?? []
+    );
 }
 
 function matchKeyword(place: Place, keyword?: string) {
@@ -60,18 +134,22 @@ function matchArea(place: Place, selectedArea?: string) {
     return normalizeText(place.area) === normalizeText(selectedArea);
 }
 
-function matchTag(place: Place, selectedTag?: string) {
-    if (!selectedTag) return true;
+function matchAllSelectedTags(place: Place, selectedTags: string[]) {
+    if (selectedTags.length === 0) return true;
 
-    return (
-        place.place_tags?.some((item) => {
-            const tag = getSingleTag(item as PlaceTagItem);
-            return tag?.slug === selectedTag;
-        }) ?? false
+    const placeTagSlugs = getPlaceTagSlugs(place);
+
+    return selectedTags.every((selectedTag) =>
+        placeTagSlugs.includes(selectedTag)
     );
 }
 
-function getTitle(params: { q?: string; tag?: string; area?: string }) {
+function makeTitle(params: {
+    q?: string;
+    tag?: string;
+    tags?: string;
+    area?: string;
+}) {
     if (params.q) {
         return `Hasil pencarian "${params.q}"`;
     }
@@ -80,21 +158,55 @@ function getTitle(params: { q?: string; tag?: string; area?: string }) {
         return `Coffee shop di ${params.area}`;
     }
 
-    if (params.tag) {
-        const label = params.tag
-            .split("-")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ");
+    const selectedTags = getSelectedTags(params);
 
-        return `Coffee shop untuk ${label}`;
+    if (selectedTags.length > 0) {
+        return `Coffee shop sesuai ${selectedTags.length} filter`;
     }
 
     return "Coffee Shop di Padang";
 }
 
+function makeFilterHref(
+    params: {
+        q?: string;
+        tag?: string;
+        tags?: string;
+        area?: string;
+        category?: string;
+    },
+    targetTag: string
+) {
+    const selectedTags = getSelectedTags(params);
+    const isActive = selectedTags.includes(targetTag);
+
+    const nextTags = isActive
+        ? selectedTags.filter((tag) => tag !== targetTag)
+        : [...selectedTags, targetTag];
+
+    const urlParams = new URLSearchParams();
+
+    urlParams.set("category", "coffee-shop");
+
+    if (params.q) {
+        urlParams.set("q", params.q);
+    }
+
+    if (params.area) {
+        urlParams.set("area", params.area);
+    }
+
+    if (nextTags.length > 0) {
+        urlParams.set("tags", nextTags.join(","));
+    }
+
+    return `/places?${urlParams.toString()}`;
+}
+
 async function getPlaces(params: {
     q?: string;
     tag?: string;
+    tags?: string;
     area?: string;
     category?: string;
 }) {
@@ -144,7 +256,10 @@ async function getPlaces(params: {
         console.error("GET places error:", error);
         return [];
     }
+
     let places = data as unknown as Place[];
+
+    const selectedTags = getSelectedTags(params);
 
     if (params.q) {
         places = places.filter((place) => matchKeyword(place, params.q));
@@ -154,8 +269,10 @@ async function getPlaces(params: {
         places = places.filter((place) => matchArea(place, params.area));
     }
 
-    if (params.tag) {
-        places = places.filter((place) => matchTag(place, params.tag));
+    if (selectedTags.length > 0) {
+        places = places.filter((place) =>
+            matchAllSelectedTags(place, selectedTags)
+        );
     }
 
     return places;
@@ -165,7 +282,8 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
     const params = searchParams ? await searchParams : {};
     const places = await getPlaces(params);
 
-    const hasFilter = Boolean(params.q || params.tag || params.area);
+    const selectedTags = getSelectedTags(params);
+    const hasFilter = Boolean(params.q || params.tag || params.tags || params.area);
 
     return (
         <main className="min-h-screen bg-neutral-950 px-5 py-16 text-white">
@@ -177,7 +295,7 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                         </p>
 
                         <h1 className="mt-4 max-w-5xl text-5xl font-black tracking-tight md:text-7xl">
-                            {getTitle(params)}
+                            {makeTitle(params)}
                         </h1>
 
                         <p className="mt-5 max-w-2xl text-lg leading-8 text-neutral-400">
@@ -205,28 +323,62 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                     </div>
                 </div>
 
-                <div className="mb-8 flex flex-wrap gap-2">
-                    <FilterLink label="Semua" href="/places?category=coffee-shop" />
-                    <FilterLink
-                        label="Nugas"
-                        href="/places?category=coffee-shop&tag=nugas"
-                    />
-                    <FilterLink
-                        label="Healing"
-                        href="/places?category=coffee-shop&tag=healing"
-                    />
-                    <FilterLink
-                        label="First Date"
-                        href="/places?category=coffee-shop&tag=first-date"
-                    />
-                    <FilterLink
-                        label="Budget Mahasiswa"
-                        href="/places?category=coffee-shop&tag=budget-mahasiswa"
-                    />
-                    <FilterLink
-                        label="Outdoor"
-                        href="/places?category=coffee-shop&tag=outdoor"
-                    />
+                <div className="mb-8 rounded-[28px] border border-white/10 bg-white/[0.03] p-4">
+                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <p className="text-sm font-black text-white">Multi Filter</p>
+                            <p className="mt-1 text-xs font-semibold text-neutral-500">
+                                Klik beberapa filter. Cafe hanya muncul kalau punya semua tag
+                                yang kamu pilih.
+                            </p>
+                        </div>
+
+                        <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-black">
+                            {selectedTags.length} dipilih
+                        </span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                        <Link
+                            href="/places?category=coffee-shop"
+                            className={`rounded-full border px-4 py-2 text-sm font-black transition ${selectedTags.length === 0
+                                    ? "border-white bg-white text-black"
+                                    : "border-white/10 bg-white/[0.03] text-neutral-300 hover:bg-white hover:text-black"
+                                }`}
+                        >
+                            Semua
+                        </Link>
+
+                        {filterOptions.map((filter) => {
+                            const active = selectedTags.includes(filter.tag);
+
+                            return (
+                                <Link
+                                    key={filter.tag}
+                                    href={makeFilterHref(params, filter.tag)}
+                                    className={`rounded-full border px-4 py-2 text-sm font-black transition ${active
+                                            ? "border-white bg-white text-black"
+                                            : "border-white/10 bg-white/[0.03] text-neutral-300 hover:bg-white hover:text-black"
+                                        }`}
+                                >
+                                    <span className="mr-2">{active ? "✓" : "+"}</span>
+                                    {filter.label}
+                                </Link>
+                            );
+                        })}
+                    </div>
+
+                    {selectedTags.length > 0 ? (
+                        <p className="mt-4 text-sm font-bold text-neutral-400">
+                            Filter aktif:{" "}
+                            <span className="text-white">
+                                {filterOptions
+                                    .filter((option) => selectedTags.includes(option.tag))
+                                    .map((option) => option.label)
+                                    .join(", ")}
+                            </span>
+                        </p>
+                    ) : null}
                 </div>
 
                 {places.length === 0 ? (
@@ -234,8 +386,9 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                         <h2 className="text-2xl font-black">Belum ada tempat cocok.</h2>
 
                         <p className="mt-3 max-w-2xl text-neutral-400">
-                            Coba filter lain atau cek slug tag di Supabase. Bisa jadi data
-                            coffee shop belum punya tag tersebut.
+                            Coba kurangi filter, pakai keyword lain, atau cek slug tag di
+                            Supabase. Bisa jadi data coffee shop belum punya kombinasi tag
+                            tersebut.
                         </p>
 
                         <Link
@@ -254,16 +407,5 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                 )}
             </section>
         </main>
-    );
-}
-
-function FilterLink({ label, href }: { label: string; href: string }) {
-    return (
-        <Link
-            href={href}
-            className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-black text-neutral-300 transition hover:bg-white hover:text-black"
-        >
-            {label}
-        </Link>
     );
 }

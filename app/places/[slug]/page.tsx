@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
+import { GallerySlider } from "@/components/GallerySlider";
 
 type Category = {
     id: string;
@@ -226,49 +227,7 @@ export default async function PlaceDetailPage({
                     </div>
 
                     {galleryPhotos.length > 0 ? (
-                        <div className="border-b border-white/10 bg-black/30 p-4 md:p-6">
-                            <div className="mb-4 flex items-end justify-between gap-4">
-                                <div>
-                                    <p className="text-xs font-black uppercase tracking-[0.3em] text-neutral-500">
-                                        Gallery
-                                    </p>
-
-                                    <h2 className="mt-2 text-2xl font-black">Suasana Tempat</h2>
-                                </div>
-
-                                <p className="hidden text-sm font-bold text-neutral-500 md:block">
-                                    {galleryPhotos.length} foto
-                                </p>
-                            </div>
-
-                            <div className="grid gap-3 md:grid-cols-4">
-                                {galleryPhotos.slice(0, 5).map((photo, index) => (
-                                    <div
-                                        key={photo.id}
-                                        className={`group relative overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.03] ${index === 0 ? "md:col-span-2 md:row-span-2" : ""
-                                            }`}
-                                    >
-                                        <img
-                                            src={getSafePlaceImageUrl(photo.image_url)}
-                                            alt={photo.caption || `${place.name} photo ${index + 1}`}
-                                            className={`w-full object-cover transition duration-700 group-hover:scale-110 ${index === 0 ? "h-[360px]" : "h-[175px]"
-                                                }`}
-                                            referrerPolicy="no-referrer"
-                                        />
-
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-70" />
-
-                                        {photo.caption ? (
-                                            <div className="absolute bottom-3 left-3 right-3">
-                                                <p className="rounded-full bg-black/60 px-3 py-2 text-xs font-bold text-white backdrop-blur">
-                                                    {photo.caption}
-                                                </p>
-                                            </div>
-                                        ) : null}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        <GallerySlider photos={galleryPhotos} placeName={place.name} />
                     ) : null}
 
                     <div className="grid gap-8 p-6 md:grid-cols-[1fr_360px] md:p-10">
