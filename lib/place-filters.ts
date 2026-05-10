@@ -13,17 +13,21 @@ export const placeFilterGroups = [
         options: [
             { label: "WiFi", tag: "wifi" },
             { label: "Colokan", tag: "colokan" },
+            { label: "AC", tag: "ac" },
             { label: "Outdoor", tag: "outdoor" },
             { label: "Indoor", tag: "indoor" },
         ],
     },
     {
-        title: "Budget & Waktu",
+        title: "Vibe",
         options: [
-            { label: "Budget Mahasiswa", tag: "budget-mahasiswa" },
-            { label: "Buka Pagi", tag: "buka-pagi" },
-            { label: "Buka Malam", tag: "buka-malam" },
-            { label: "24 Jam", tag: "24-jam" },
+            { label: "Aesthetic", tag: "aesthetic" },
+            { label: "Cozy", tag: "cozy" },
+            { label: "Tenang", tag: "tenang" },
+            { label: "Rame", tag: "rame" },
+            { label: "Minimalis", tag: "minimalis" },
+            { label: "Industrial", tag: "industrial" },
+            { label: "View Bagus", tag: "view-bagus" },
         ],
     },
 ];
