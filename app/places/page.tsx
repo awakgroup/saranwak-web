@@ -3,6 +3,9 @@ import { supabase } from "@/lib/supabase";
 import { PlaceCard } from "@/components/PlaceCard";
 import type { Place } from "@/types/database";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 type PlacesPageProps = {
     searchParams?: Promise<{
         q?: string;
@@ -26,50 +29,18 @@ type PlaceTagItem = {
 };
 
 const filterOptions = [
-    {
-        label: "Nugas",
-        tag: "nugas",
-    },
-    {
-        label: "Healing",
-        tag: "healing",
-    },
-    {
-        label: "First Date",
-        tag: "first-date",
-    },
-    {
-        label: "Budget Mahasiswa",
-        tag: "budget-mahasiswa",
-    },
-    {
-        label: "Outdoor",
-        tag: "outdoor",
-    },
-    {
-        label: "WiFi",
-        tag: "wifi",
-    },
-    {
-        label: "Nongkrong",
-        tag: "nongkrong",
-    },
-    {
-        label: "Colokan",
-        tag: "colokan",
-    },
-    {
-        label: "Indoor",
-        tag: "indoor",
-    },
-    {
-        label: "Buka Pagi",
-        tag: "buka-pagi",
-    },
-    {
-        label: "Buka Malam",
-        tag: "buka-malam",
-    },
+    { label: "Nugas", tag: "nugas" },
+    { label: "Healing", tag: "healing" },
+    { label: "First Date", tag: "first-date" },
+    { label: "Budget Mahasiswa", tag: "budget-mahasiswa" },
+    { label: "Outdoor", tag: "outdoor" },
+    { label: "WiFi", tag: "wifi" },
+    { label: "Nongkrong", tag: "nongkrong" },
+    { label: "Colokan", tag: "colokan" },
+    { label: "Indoor", tag: "indoor" },
+    { label: "Buka Pagi", tag: "buka-pagi" },
+    { label: "Buka Malam", tag: "buka-malam" },
+    { label: "24 Jam", tag: "24-jam" },
 ];
 
 function normalizeText(value?: string | null) {
@@ -286,19 +257,19 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
     const hasFilter = Boolean(params.q || params.tag || params.tags || params.area);
 
     return (
-        <main className="min-h-screen bg-neutral-950 px-5 py-16 text-white">
+        <main className="min-h-screen bg-neutral-950 px-4 py-10 text-white sm:px-5 sm:py-14 md:py-16">
             <section className="mx-auto max-w-7xl">
-                <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+                <div className="mb-8 flex flex-col gap-5 md:mb-10 md:flex-row md:items-end md:justify-between">
                     <div>
                         <p className="text-xs font-black uppercase tracking-[0.35em] text-neutral-500">
                             Saranwak Places
                         </p>
 
-                        <h1 className="mt-4 max-w-5xl text-5xl font-black tracking-tight md:text-7xl">
+                        <h1 className="mt-4 max-w-5xl text-4xl font-black tracking-tight sm:text-5xl md:text-7xl">
                             {makeTitle(params)}
                         </h1>
 
-                        <p className="mt-5 max-w-2xl text-lg leading-8 text-neutral-400">
+                        <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-400 sm:text-lg sm:leading-8">
                             Untuk sementara, tempat yang ditampilkan hanya coffee shop di
                             Padang.
                         </p>
@@ -323,11 +294,11 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                     </div>
                 </div>
 
-                <div className="mb-8 rounded-[28px] border border-white/10 bg-white/[0.03] p-4">
+                <div className="mb-8 rounded-[24px] border border-white/10 bg-white/[0.03] p-4 sm:rounded-[28px]">
                     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <p className="text-sm font-black text-white">Multi Filter</p>
-                            <p className="mt-1 text-xs font-semibold text-neutral-500">
+                            <p className="mt-1 text-xs font-semibold leading-5 text-neutral-500">
                                 Klik beberapa filter. Cafe hanya muncul kalau punya semua tag
                                 yang kamu pilih.
                             </p>
@@ -382,7 +353,7 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                 </div>
 
                 {places.length === 0 ? (
-                    <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-10">
+                    <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-8 sm:rounded-[32px] sm:p-10">
                         <h2 className="text-2xl font-black">Belum ada tempat cocok.</h2>
 
                         <p className="mt-3 max-w-2xl text-neutral-400">

@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
@@ -263,7 +264,8 @@ export async function POST(request: Request) {
                 { status: 207 }
             );
         }
-
+        revalidatePath("/");
+        revalidatePath("/places");
         return NextResponse.json({
             message: "Tempat berhasil ditambahkan.",
             place,
@@ -430,6 +432,9 @@ export async function PATCH(request: Request) {
                 { status: 207 }
             );
         }
+        revalidatePath("/");
+        revalidatePath("/places");
+        revalidatePath(`/places/${place.slug}`);
 
         return NextResponse.json({
             message: "Tempat berhasil diupdate.",
@@ -487,7 +492,8 @@ export async function DELETE(request: Request) {
                 { status: 500 }
             );
         }
-
+        revalidatePath("/");
+        revalidatePath("/places");
         return NextResponse.json({
             message: "Tempat berhasil dihapus.",
         });
