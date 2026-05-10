@@ -1,9 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
+import { trackEvent } from "@/lib/track-event";
 
 type PlaceCardProps = {
     place: Place;
+    source?: "homepage_featured" | "places_list" | "related_places" | "place_card";
+    position?: number;
 };
 
 function formatPrice(place: Place) {
@@ -49,22 +54,62 @@ function getMainTags(place: Place) {
     );
 }
 
-export function PlaceCard({ place }: PlaceCardProps) {
+function getPlaceArea(place: Place) {
+    return place.area || place.city || "Padang";
+}
+
+function getImageAlt(place: Place) {
+    const area = getPlaceArea(place);
+    const category = getCategoryLabel(place);
+
+    if (category.toLowerCase().includes("coffee")) {
+        return `${place.name} coffee shop di ${area}`;
+    }
+
+    return `${place.name} tempat rekomendasi di ${area}`;
+}
+
+export function PlaceCard({
+    place,
+    source = "place_card",
+    position,
+}: PlaceCardProps) {
     const tags = getMainTags(place);
+    const area = getPlaceArea(place);
 
     const imageUrl = getSafePlaceImageUrl(
         place.image_url || place.main_image_url
     );
 
+    function handleCardClick() {
+        trackEvent({
+            event_name: "place_card_clicked",
+            place_id: place.id,
+            place_name: place.name,
+            place_slug: place.slug,
+            source,
+            metadata: {
+                area: place.area,
+                city: place.city,
+                category: getCategoryLabel(place),
+                is_featured: place.is_featured,
+                is_verified: place.is_verified,
+                position,
+                tags: tags.map((tag) => tag?.slug).filter(Boolean),
+            },
+        });
+    }
+
     return (
         <Link
             href={`/places/${place.slug}`}
+            onClick={handleCardClick}
             className="group relative overflow-hidden rounded-[32px] border border-[#E3DED4] bg-[#FFFDF8] shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-[#181818]/20 hover:shadow-[0_28px_80px_rgba(20,20,20,0.14)]"
         >
             <div className="relative h-56 overflow-hidden bg-[#E3DED4]">
                 <img
                     src={imageUrl}
-                    alt={place.name}
+                    alt={getImageAlt(place)}
                     className="h-full w-full object-cover grayscale-[20%] transition duration-700 group-hover:scale-110 group-hover:grayscale-0"
                     loading="lazy"
                     referrerPolicy="no-referrer"
@@ -88,7 +133,7 @@ export function PlaceCard({ place }: PlaceCardProps) {
 
                 <div className="absolute bottom-4 left-4 right-4">
                     <p className="text-xs font-black uppercase tracking-[0.2em] text-white/70">
-                        {place.area || place.city || "Padang"}
+                        {area}
                     </p>
 
                     <h3 className="mt-1 text-2xl font-black leading-tight text-white">
@@ -101,7 +146,7 @@ export function PlaceCard({ place }: PlaceCardProps) {
                 <p className="line-clamp-2 min-h-12 text-sm leading-6 text-[#6F6A61]">
                     {place.short_description ||
                         place.description ||
-                        "Tempat pilihan yang bisa kamu cek sesuai kebutuhan hari ini."}
+                        `Rekomendasi coffee shop di ${area} yang bisa kamu cek sesuai kebutuhan hari ini.`}
                 </p>
 
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -121,7 +166,10 @@ export function PlaceCard({ place }: PlaceCardProps) {
 
                 <div className="mt-5 flex items-center justify-between border-t border-[#E3DED4] pt-4">
                     <div>
-                        <p className="text-xs font-bold text-[#6F6A61]">Mulai dari</p>
+                        <p className="text-xs font-bold text-[#6F6A61]">
+                            Range harga
+                        </p>
+
                         <p className="font-black text-[#181818]">
                             {formatPrice(place)}
                         </p>

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -10,6 +11,8 @@ import type { Place } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+const siteUrl = "https://saranwak.vercel.app";
 
 type Category = {
     id: string;
@@ -95,7 +98,7 @@ function getTagGroupLabel(type: string) {
     const labels: Record<string, string> = {
         mood: "Cocok Untuk",
         facility: "Fasilitas",
-        time: "Waktu Terbaik",
+        time: "Operasional",
         budget: "Budget",
         vibe: "Vibes",
         ambience: "Suasana",
@@ -109,7 +112,7 @@ function getTagGroupDescription(type: string) {
     const descriptions: Record<string, string> = {
         mood: "Kebutuhan atau aktivitas yang paling pas di tempat ini.",
         facility: "Fasilitas yang bisa kamu manfaatkan.",
-        time: "Waktu yang cocok untuk datang.",
+        time: "Informasi operasional yang penting untuk kamu cek.",
         budget: "Gambaran budget atau segmentasi harga.",
         vibe: "Nuansa dan karakter tempat.",
         ambience: "Suasana utama yang ditawarkan.",
@@ -117,6 +120,25 @@ function getTagGroupDescription(type: string) {
     };
 
     return descriptions[type] || "Informasi tambahan dari tempat ini.";
+}
+
+function cleanDescription(value?: string | null) {
+    if (!value) return "";
+
+    return value.replace(/\s+/g, " ").trim();
+}
+
+function makeSeoDescription(place: PlaceDetail) {
+    const description = cleanDescription(place.description);
+
+    if (description) {
+        return description.length > 155
+            ? `${description.slice(0, 152)}...`
+            : description;
+    }
+
+    return `Lihat info ${place.name}, coffee shop di ${place.area || "Padang"
+        }, lengkap dengan alamat, jam buka, range harga, foto, Google Maps, dan Instagram.`;
 }
 
 async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> {
@@ -223,6 +245,60 @@ async function getRelatedPlaces(currentPlaceId: string): Promise<Place[]> {
     return data as unknown as Place[];
 }
 
+export async function generateMetadata({
+    params,
+}: PlaceDetailPageProps): Promise<Metadata> {
+    const { slug } = await params;
+    const place = await getPlaceBySlug(slug);
+
+    if (!place) {
+        return {
+            title: "Tempat tidak ditemukan",
+            description: "Tempat yang kamu cari tidak ditemukan di Saranwak.",
+            robots: {
+                index: false,
+                follow: false,
+            },
+        };
+    }
+
+    const title = `${place.name} - Coffee Shop di ${place.area || "Padang"}`;
+    const description = makeSeoDescription(place);
+    const imageUrl = getSafePlaceImageUrl(place.image_url);
+    const pageUrl = `${siteUrl}/places/${place.slug}`;
+
+    return {
+        title,
+        description,
+        alternates: {
+            canonical: pageUrl,
+        },
+        openGraph: {
+            title,
+            description,
+            url: pageUrl,
+            siteName: "Saranwak",
+            images: [
+                {
+                    url: imageUrl,
+                    width: 1200,
+                    height: 630,
+                    alt: `${place.name} coffee shop di ${place.area || "Padang"
+                        }`,
+                },
+            ],
+            locale: "id_ID",
+            type: "website",
+        },
+        twitter: {
+            card: "summary_large_image",
+            title,
+            description,
+            images: [imageUrl],
+        },
+    };
+}
+
 export default async function PlaceDetailPage({
     params,
 }: PlaceDetailPageProps) {
@@ -251,9 +327,37 @@ export default async function PlaceDetailPage({
             .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)) ?? [];
 
     const heroImageUrl = getSafePlaceImageUrl(place.image_url);
+    const pageUrl = `${siteUrl}/places/${place.slug}`;
+
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "CafeOrCoffeeShop",
+        name: place.name,
+        description: cleanDescription(place.description) || makeSeoDescription(place),
+        image: heroImageUrl,
+        url: pageUrl,
+        address: {
+            "@type": "PostalAddress",
+            streetAddress: place.address || undefined,
+            addressLocality: place.city || "Padang",
+            addressRegion: "Sumatera Barat",
+            addressCountry: "ID",
+        },
+        areaServed: place.area || "Padang",
+        priceRange: place.price_range || undefined,
+        openingHours: place.opening_hours || undefined,
+        sameAs: place.instagram_url ? [place.instagram_url] : undefined,
+    };
 
     return (
         <main className="min-h-screen bg-neutral-950 px-4 py-10 text-white sm:px-5 sm:py-12">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(jsonLd),
+                }}
+            />
+
             <PlaceDetailTracker
                 placeId={place.id}
                 placeName={place.name}
@@ -274,7 +378,8 @@ export default async function PlaceDetailPage({
                     <div className="relative h-[320px] bg-neutral-900 md:h-[460px]">
                         <img
                             src={heroImageUrl}
-                            alt={place.name}
+                            alt={`${place.name} coffee shop di ${place.area || "Padang"
+                                }`}
                             className="h-full w-full object-cover"
                             referrerPolicy="no-referrer"
                         />
@@ -291,7 +396,8 @@ export default async function PlaceDetailPage({
                             </h1>
 
                             <p className="mt-4 text-sm text-neutral-300 sm:text-base">
-                                {place.area || "Padang"} {place.city ? `· ${place.city}` : ""}
+                                {place.area || "Padang"}{" "}
+                                {place.city ? `· ${place.city}` : ""}
                             </p>
                         </div>
                     </div>
@@ -313,8 +419,8 @@ export default async function PlaceDetailPage({
                                     <h2 className="text-2xl font-black">Highlight Tempat</h2>
 
                                     <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-400">
-                                        Tag dipisahkan berdasarkan fungsi biar informasinya lebih
-                                        nyambung dan gampang dibaca.
+                                        Tag dipisahkan berdasarkan fungsi biar informasinya
+                                        lebih nyambung dan gampang dibaca.
                                     </p>
 
                                     <div className="mt-5 grid gap-4 md:grid-cols-2">

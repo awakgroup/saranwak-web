@@ -8,9 +8,34 @@ const siteUrl = "https://saranwak.vercel.app";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 
-  title: "Saranwak - Rekomendasi Tempat di Padang",
+  title: {
+    default: "Saranwak - Rekomendasi Coffee Shop di Padang",
+    template: "%s | Saranwak",
+  },
+
   description:
-    "Cari coffee shop, tempat nugas, tempat nongkrong, dan destinasi lokal terbaik di Padang.",
+    "Cari coffee shop di Padang berdasarkan mood, kebutuhan, fasilitas, dan area. Temukan tempat nugas, nongkrong, first date, dan ngopi santai.",
+
+  keywords: [
+    "Saranwak",
+    "coffee shop Padang",
+    "rekomendasi coffee shop Padang",
+    "tempat nongkrong Padang",
+    "tempat nugas Padang",
+    "cafe Padang",
+    "rekomendasi cafe Padang",
+    "coffee shop untuk nugas",
+    "coffee shop aesthetic Padang",
+  ],
+
+  authors: [
+    {
+      name: "Saranwak",
+    },
+  ],
+
+  creator: "Saranwak",
+  publisher: "Saranwak",
 
   icons: {
     icon: "/favicon.png",
@@ -19,9 +44,9 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "Saranwak - Rekomendasi Tempat di Padang",
+    title: "Saranwak - Rekomendasi Coffee Shop di Padang",
     description:
-      "Cari coffee shop, tempat nugas, tempat nongkrong, dan destinasi lokal terbaik di Padang.",
+      "Cari coffee shop di Padang berdasarkan mood, kebutuhan, fasilitas, dan area. Temukan tempat nugas, nongkrong, first date, dan ngopi santai.",
     url: siteUrl,
     siteName: "Saranwak",
     images: [
@@ -29,7 +54,7 @@ export const metadata: Metadata = {
         url: `${siteUrl}/og-saranwak-banner.png`,
         width: 1200,
         height: 630,
-        alt: "Saranwak - Rekomendasi Tempat di Padang",
+        alt: "Saranwak - Rekomendasi Coffee Shop di Padang",
       },
     ],
     locale: "id_ID",
@@ -38,10 +63,22 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Saranwak - Rekomendasi Tempat di Padang",
+    title: "Saranwak - Rekomendasi Coffee Shop di Padang",
     description:
-      "Cari coffee shop, tempat nugas, tempat nongkrong, dan destinasi lokal terbaik di Padang.",
+      "Cari coffee shop di Padang berdasarkan mood, kebutuhan, fasilitas, dan area.",
     images: [`${siteUrl}/og-saranwak-banner.png`],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 

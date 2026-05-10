@@ -15,6 +15,28 @@ type GallerySliderProps = {
     placeName: string;
 };
 
+function getGalleryAltText({
+    placeName,
+    caption,
+    index,
+    type = "photo",
+}: {
+    placeName: string;
+    caption?: string | null;
+    index: number;
+    type?: "photo" | "thumbnail";
+}) {
+    if (caption?.trim()) {
+        return `${caption.trim()} - ${placeName} coffee shop di Padang`;
+    }
+
+    if (type === "thumbnail") {
+        return `Thumbnail foto ${index + 1} ${placeName} coffee shop di Padang`;
+    }
+
+    return `Foto ${index + 1} ${placeName} coffee shop di Padang`;
+}
+
 export function GallerySlider({ photos, placeName }: GallerySliderProps) {
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -25,6 +47,7 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
     if (sortedPhotos.length === 0) return null;
 
     const activePhoto = sortedPhotos[activeIndex];
+    const activeImageUrl = getSafePlaceImageUrl(activePhoto.image_url);
 
     function goPrev() {
         setActiveIndex((prev) =>
@@ -46,7 +69,9 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
                         Gallery
                     </p>
 
-                    <h2 className="mt-2 text-2xl font-black">Suasana Tempat</h2>
+                    <h2 className="mt-2 text-2xl font-black">
+                        Suasana {placeName}
+                    </h2>
                 </div>
 
                 <p className="hidden text-sm font-bold text-neutral-500 md:block">
@@ -56,8 +81,12 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
 
             <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03]">
                 <img
-                    src={getSafePlaceImageUrl(activePhoto.image_url)}
-                    alt={activePhoto.caption || `${placeName} photo ${activeIndex + 1}`}
+                    src={activeImageUrl}
+                    alt={getGalleryAltText({
+                        placeName,
+                        caption: activePhoto.caption,
+                        index: activeIndex,
+                    })}
                     className="h-[280px] w-full object-cover transition duration-500 md:h-[520px]"
                     referrerPolicy="no-referrer"
                 />
@@ -78,7 +107,7 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
                             type="button"
                             onClick={goPrev}
                             className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-xl font-black text-white backdrop-blur transition hover:bg-white hover:text-black"
-                            aria-label="Previous photo"
+                            aria-label={`Lihat foto sebelumnya dari ${placeName}`}
                         >
                             ←
                         </button>
@@ -87,7 +116,7 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
                             type="button"
                             onClick={goNext}
                             className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-xl font-black text-white backdrop-blur transition hover:bg-white hover:text-black"
-                            aria-label="Next photo"
+                            aria-label={`Lihat foto berikutnya dari ${placeName}`}
                         >
                             →
                         </button>
@@ -109,12 +138,19 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
                                         ? "border-white opacity-100"
                                         : "border-white/10 opacity-60 hover:opacity-100"
                                     }`}
+                                aria-label={`Pilih foto ${index + 1} dari ${placeName}`}
                             >
                                 <img
                                     src={getSafePlaceImageUrl(photo.image_url)}
-                                    alt={`${placeName} thumbnail ${index + 1}`}
+                                    alt={getGalleryAltText({
+                                        placeName,
+                                        caption: photo.caption,
+                                        index,
+                                        type: "thumbnail",
+                                    })}
                                     className="h-full w-full object-cover"
                                     referrerPolicy="no-referrer"
+                                    loading="lazy"
                                 />
 
                                 {active ? (

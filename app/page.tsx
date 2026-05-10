@@ -4,6 +4,7 @@ import { PlaceCard } from "@/components/PlaceCard";
 import { HeroSearch } from "@/components/HeroSearch";
 import type { Place } from "@/types/database";
 import { WhySaranwak } from "@/components/WhySaranwak";
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -46,9 +47,9 @@ async function getFeaturedPlaces() {
 
 const categories = [
   {
-    label: "Coffee Shop",
+    label: "Coffee Shop Padang",
     emoji: "☕",
-    desc: "Nugas, nongkrong, meeting, atau sekadar ngopi santai.",
+    desc: "Cari cafe Padang untuk nugas, nongkrong, meeting, atau ngopi santai.",
     href: "/places?category=coffee-shop",
   },
 ];
@@ -69,20 +70,21 @@ export default async function Home() {
           <div className="min-w-0">
             <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-3 py-2 text-xs font-bold text-[#1F5A4A] shadow-sm sm:px-4 sm:text-sm">
               <span className="h-2 w-2 shrink-0 rounded-full bg-[#C8784A]" />
-              <span className="truncate">Local spot guide dari Padang</span>
+              <span className="truncate">Local coffee shop guide dari Padang</span>
             </div>
 
             <h1 className="max-w-3xl text-[44px] font-black leading-[0.96] tracking-tight sm:text-6xl md:text-7xl">
-              Cari tempat yang
+              Cari Coffee Shop di Padang
               <span className="block text-[#1F5A4A]">
-                pas sama mood kamu.
+                sesuai mood kamu.
               </span>
             </h1>
 
             <p className="mt-5 max-w-2xl text-base leading-7 text-[#756A60] sm:text-lg sm:leading-8">
               Saranwak bantu kamu menemukan coffee shop di Padang berdasarkan
-              mood, kebutuhan, area, dan fasilitas. Fokus awal kita coffee shop
-              dulu, biar datanya rapi dan rekomendasinya nggak asal comot.
+              mood, kebutuhan, area, dan fasilitas. Cocok buat cari cafe Padang
+              untuk nugas, tempat nongkrong di Padang, first date, coffee shop
+              WiFi, sampai tempat ngopi santai.
             </p>
 
             <HeroSearch />
@@ -132,7 +134,7 @@ export default async function Home() {
                       </p>
 
                       <h3 className="mt-1 text-xl font-black text-[#201813] sm:text-2xl">
-                        Mau cari apa?
+                        Mau cari cafe yang gimana?
                       </h3>
                     </div>
 
@@ -175,7 +177,7 @@ export default async function Home() {
                         </p>
 
                         <p className="mt-1 text-sm font-black leading-5 text-[#201813]">
-                          Tempat dipilih biar nggak asal scroll.
+                          Rekomendasi coffee shop Padang biar nggak asal scroll.
                         </p>
                       </div>
 
@@ -191,15 +193,15 @@ export default async function Home() {
 
                   <div className="mt-4 flex flex-wrap gap-2">
                     <span className="rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-3 py-2 text-xs font-black text-[#1F5A4A]">
-                      WiFi kencang ✦
+                      Coffee shop WiFi ✦
                     </span>
 
                     <span className="rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-3 py-2 text-xs font-black text-[#C8784A]">
-                      Nugas friendly
+                      Tempat nugas di Padang
                     </span>
 
                     <span className="rounded-full border border-[#E7D8C8] bg-[#181818] px-3 py-2 text-xs font-black text-[#FFFDF8]">
-                      Low budget mode
+                      Cafe aesthetic Padang
                     </span>
                   </div>
                 </div>
@@ -212,8 +214,10 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
       <WhySaranwak />
-      <section className="mx-auto max-w-6xl pt-10 pb-10 sm:px-5">
+
+      <section className="mx-auto max-w-6xl px-4 pb-10 pt-10 sm:px-5">
         <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.2em] text-[#C8784A] sm:text-sm">
@@ -221,12 +225,13 @@ export default async function Home() {
             </p>
 
             <h2 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
-              Rekomendasi pilihan
+              Coffee Shop Pilihan di Padang
             </h2>
 
             <p className="mt-3 max-w-2xl text-sm leading-7 text-[#756A60] sm:text-base">
-              Coffee shop yang bisa kamu cek dulu sebelum berangkat. Biar pilih
-              tempatnya bukan modal nebak dan doa.
+              Pilihan cafe dan coffee shop Padang yang bisa kamu cek sebelum
+              berangkat. Cocok untuk nugas, nongkrong, meeting santai, first
+              date, atau cari suasana baru di kota.
             </p>
           </div>
 
@@ -268,8 +273,7 @@ export default async function Home() {
               </p>
 
               <h2 className="mt-4 max-w-3xl text-3xl font-black leading-tight tracking-tight sm:text-4xl md:text-5xl">
-                Punya coffee shop atau bisnis? Bikin website-nya biar makin
-                kelihatan serius.
+                Jasa Website untuk Coffee Shop dan Bisnis Lokal
               </h2>
 
               <p className="mt-5 max-w-2xl text-base leading-8 text-white/70 sm:text-lg">
