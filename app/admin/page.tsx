@@ -1358,6 +1358,10 @@ type TopPlaceAnalytics = {
     instagram_clicks: number;
     whatsapp_clicks: number;
     card_clicks: number;
+    action_clicks?: number;
+    action_click_rate?: number;
+    maps_click_rate?: number;
+    instagram_click_rate?: number;
     total_events: number;
     last_event_at: string | null;
 };
@@ -1402,6 +1406,16 @@ const monthOptions = [
 
 function formatNumber(value?: number | null) {
     return Number(value ?? 0).toLocaleString("id-ID");
+}
+
+function formatPercent(value?: number | null) {
+    return `${Number(value ?? 0).toFixed(1)}%`;
+}
+
+function getRate(part: number, total: number) {
+    if (!total) return 0;
+
+    return (part / total) * 100;
 }
 
 function formatEventTime(value?: string | null) {
@@ -1574,6 +1588,41 @@ function AnalyticsPanel() {
             label: "Card Click",
             value: analytics?.summary.card_clicks ?? 0,
             description: "User klik card tempat dari list/homepage.",
+        },
+    ];
+
+    const detailViews = analytics?.summary.detail_views ?? 0;
+    const mapsClicks = analytics?.summary.maps_clicks ?? 0;
+    const instagramClicks = analytics?.summary.instagram_clicks ?? 0;
+    const whatsappClicks = analytics?.summary.whatsapp_clicks ?? 0;
+    const cardClicks = analytics?.summary.card_clicks ?? 0;
+
+    const actionClicks = mapsClicks + instagramClicks + whatsappClicks;
+
+    const funnelCards = [
+        {
+            label: "Action Click Rate",
+            value: getRate(actionClicks, detailViews),
+            description:
+                "Persentase user yang lanjut klik Maps, Instagram, atau WhatsApp setelah melihat detail.",
+        },
+        {
+            label: "Maps Click Rate",
+            value: getRate(mapsClicks, detailViews),
+            description:
+                "Persentase user yang klik Google Maps dari total detail views.",
+        },
+        {
+            label: "Instagram Click Rate",
+            value: getRate(instagramClicks, detailViews),
+            description:
+                "Persentase user yang klik Instagram dari total detail views.",
+        },
+        {
+            label: "Card to Detail",
+            value: getRate(detailViews, cardClicks),
+            description:
+                "Rasio detail views dibanding card clicks. Bisa tinggi kalau user masuk dari link langsung atau refresh halaman detail.",
         },
     ];
 
@@ -1806,6 +1855,56 @@ function AnalyticsPanel() {
                 ))}
             </div>
 
+            <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-5 md:p-7">
+                <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                    <div>
+                        <p className="text-xs font-black uppercase tracking-[0.3em] text-neutral-500">
+                            Conversion Funnel
+                        </p>
+
+                        <h3 className="mt-3 text-2xl font-black md:text-3xl">
+                            Dari lihat detail sampai action
+                        </h3>
+
+                        <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-500">
+                            Bagian ini bantu kamu membaca performa tempat: bukan cuma dilihat,
+                            tapi apakah user lanjut klik Maps, Instagram, atau WhatsApp.
+                        </p>
+                    </div>
+
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3">
+                        <p className="text-xs font-bold text-neutral-500">
+                            Action Clicks
+                        </p>
+
+                        <p className="mt-1 text-2xl font-black text-white">
+                            {loadingAnalytics ? "..." : formatNumber(actionClicks)}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                    {funnelCards.map((item) => (
+                        <div
+                            key={item.label}
+                            className="rounded-[22px] border border-white/10 bg-white/[0.035] p-5"
+                        >
+                            <p className="text-sm font-bold text-neutral-500">
+                                {item.label}
+                            </p>
+
+                            <p className="mt-3 text-4xl font-black text-white">
+                                {loadingAnalytics ? "..." : formatPercent(item.value)}
+                            </p>
+
+                            <p className="mt-3 text-xs leading-5 text-neutral-500">
+                                {item.description}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             <div className="grid gap-6 xl:grid-cols-[1fr_440px]">
                 <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-5 md:p-7">
                     <h3 className="text-2xl font-black">Top Coffee Shop</h3>
@@ -1839,15 +1938,25 @@ function AnalyticsPanel() {
                                             </p>
                                         </div>
 
-                                        <div className="shrink-0 rounded-full bg-white px-3 py-1 text-xs font-black text-black">
-                                            {formatNumber(place.total_events)} events
+                                        <div className="shrink-0 space-y-2 text-right">
+                                            <div className="rounded-full bg-white px-3 py-1 text-xs font-black text-black">
+                                                {formatNumber(place.total_events)} events
+                                            </div>
+
+                                            <div className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs font-black text-neutral-300">
+                                                {formatPercent(place.action_click_rate ?? 0)} action rate
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold text-neutral-400 sm:grid-cols-5">
+                                    <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold text-neutral-400 sm:grid-cols-3 xl:grid-cols-6">
                                         <AnalyticsMiniStat
                                             label="Views"
                                             value={place.detail_views}
+                                        />
+                                        <AnalyticsMiniStat
+                                            label="Actions"
+                                            value={place.action_clicks ?? 0}
                                         />
                                         <AnalyticsMiniStat
                                             label="Maps"
@@ -1865,7 +1974,23 @@ function AnalyticsPanel() {
                                             label="Cards"
                                             value={place.card_clicks}
                                         />
+
                                     </div>
+                                    <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                                        <AnalyticsRatePill
+                                            label="Action Rate"
+                                            value={place.action_click_rate ?? 0}
+                                        />
+                                        <AnalyticsRatePill
+                                            label="Maps Rate"
+                                            value={place.maps_click_rate ?? 0}
+                                        />
+                                        <AnalyticsRatePill
+                                            label="IG Rate"
+                                            value={place.instagram_click_rate ?? 0}
+                                        />
+                                    </div>
+
                                 </div>
                             ))}
                         </div>
@@ -1943,6 +2068,23 @@ function AnalyticsMiniStat({
             {label}
             <p className="mt-1 text-lg font-black text-white">
                 {formatNumber(value)}
+            </p>
+        </div>
+    );
+}
+function AnalyticsRatePill({
+    label,
+    value,
+}: {
+    label: string;
+    value: number;
+}) {
+    return (
+        <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">
+            <p className="text-[11px] font-bold text-neutral-500">{label}</p>
+
+            <p className="mt-1 text-sm font-black text-white">
+                {formatPercent(value)}
             </p>
         </div>
     );

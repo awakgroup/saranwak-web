@@ -11,12 +11,15 @@ type TrackEventName =
     | "filter_applied"
     | "empty_result_viewed";
 
-type TrackEventPayload = {
+export type TrackEventPayload = {
     event_name: TrackEventName;
     place_id?: string | null;
     place_name?: string | null;
     place_slug?: string | null;
     source?: string | null;
+    page_path?: string | null;
+    referrer?: string | null;
+    session_id?: string | null;
     metadata?: Record<string, unknown> | null;
 };
 
@@ -41,6 +44,9 @@ function getSessionId() {
 export async function trackEvent(payload: TrackEventPayload) {
     if (typeof window === "undefined") return;
 
+    const currentPath = window.location.pathname + window.location.search;
+    const currentReferrer = document.referrer || null;
+
     try {
         await fetch("/api/track", {
             method: "POST",
@@ -50,9 +56,9 @@ export async function trackEvent(payload: TrackEventPayload) {
             keepalive: true,
             body: JSON.stringify({
                 ...payload,
-                page_path: window.location.pathname + window.location.search,
-                referrer: document.referrer || null,
-                session_id: getSessionId(),
+                page_path: payload.page_path ?? currentPath,
+                referrer: payload.referrer ?? currentReferrer,
+                session_id: payload.session_id ?? getSessionId(),
             }),
         });
     } catch {

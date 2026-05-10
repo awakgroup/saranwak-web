@@ -1,10 +1,11 @@
 "use client";
 
+import type { MouseEvent, ReactNode } from "react";
 import { trackEvent } from "@/lib/track-event";
 
 type TrackedExternalLinkProps = {
     href: string;
-    children: React.ReactNode;
+    children: ReactNode;
     className?: string;
     eventName:
     | "google_maps_clicked"
@@ -29,14 +30,30 @@ export function TrackedExternalLink({
     source,
     metadata,
 }: TrackedExternalLinkProps) {
-    function handleClick() {
-        trackEvent({
+    function handleClick(event: MouseEvent<HTMLAnchorElement>) {
+        const currentPath =
+            typeof window !== "undefined"
+                ? `${window.location.pathname}${window.location.search}`
+                : undefined;
+
+        const referrer =
+            typeof document !== "undefined" ? document.referrer || null : null;
+
+        void trackEvent({
             event_name: eventName,
             place_id: placeId,
             place_name: placeName,
             place_slug: placeSlug,
-            source,
-            metadata,
+            source: source || "external_link",
+            page_path: currentPath,
+            referrer,
+            metadata: {
+                ...metadata,
+                href,
+                opened_with: event.metaKey || event.ctrlKey ? "new_tab_shortcut" : "click",
+            },
+        }).catch((error) => {
+            console.error("Failed to track external link:", error);
         });
     }
 

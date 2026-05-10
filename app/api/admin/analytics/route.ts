@@ -17,6 +17,36 @@ type AnalyticsEvent = {
     created_at: string;
 };
 
+type TopPlaceAnalytics = {
+    place_id: string | null;
+    place_name: string;
+    place_slug: string;
+    detail_views: number;
+    maps_clicks: number;
+    instagram_clicks: number;
+    whatsapp_clicks: number;
+    card_clicks: number;
+    action_clicks: number;
+    action_click_rate: number;
+    maps_click_rate: number;
+    instagram_click_rate: number;
+    total_events: number;
+    last_event_at: string | null;
+};
+
+const EVENT_NAMES = {
+    detailView: ["place_detail_view"],
+    mapsClick: ["google_maps_clicked", "maps_clicked", "google_maps_click"],
+    instagramClick: ["instagram_clicked", "instagram_click"],
+    whatsappClick: [
+        "whatsapp_contact_clicked",
+        "whatsapp_clicked",
+        "whatsapp_click",
+        "contact_whatsapp_clicked",
+    ],
+    cardClick: ["place_card_clicked", "card_clicked", "place_card_click"],
+};
+
 function parseDateInput(value: string | null) {
     if (!value) return null;
 
@@ -39,9 +69,11 @@ function getDateRange(searchParams: URLSearchParams) {
 
     if (period === "daily") {
         const date = parseDateInput(searchParams.get("date")) ?? now;
+
         const start = new Date(
             Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
         );
+
         const end = addDays(start, 1);
 
         return {
@@ -54,6 +86,7 @@ function getDateRange(searchParams: URLSearchParams) {
 
     if (period === "weekly") {
         const startDate = parseDateInput(searchParams.get("start")) ?? now;
+
         const start = new Date(
             Date.UTC(
                 startDate.getUTCFullYear(),
@@ -61,6 +94,7 @@ function getDateRange(searchParams: URLSearchParams) {
                 startDate.getUTCDate()
             )
         );
+
         const end = addDays(start, 7);
 
         return {
@@ -142,26 +176,47 @@ function getDateRange(searchParams: URLSearchParams) {
     };
 }
 
-function countEvent(events: AnalyticsEvent[], eventName: string) {
-    return events.filter((event) => event.event_name === eventName).length;
+function isEventName(event: AnalyticsEvent, eventNames: string[]) {
+    return eventNames.includes(event.event_name);
 }
 
-function buildTopPlaces(events: AnalyticsEvent[]) {
-    const map = new Map<
-        string,
-        {
-            place_id: string | null;
-            place_name: string;
-            place_slug: string;
-            detail_views: number;
-            maps_clicks: number;
-            instagram_clicks: number;
-            whatsapp_clicks: number;
-            card_clicks: number;
-            total_events: number;
-            last_event_at: string | null;
-        }
-    >();
+function countEvents(events: AnalyticsEvent[], eventNames: string[]) {
+    return events.filter((event) => isEventName(event, eventNames)).length;
+}
+
+function getRate(part: number, total: number) {
+    if (!total) return 0;
+
+    return Number(((part / total) * 100).toFixed(1));
+}
+
+function buildSummary(events: AnalyticsEvent[]) {
+    const detailViews = countEvents(events, EVENT_NAMES.detailView);
+    const mapsClicks = countEvents(events, EVENT_NAMES.mapsClick);
+    const instagramClicks = countEvents(events, EVENT_NAMES.instagramClick);
+    const whatsappClicks = countEvents(events, EVENT_NAMES.whatsappClick);
+    const cardClicks = countEvents(events, EVENT_NAMES.cardClick);
+
+    const actionClicks = mapsClicks + instagramClicks + whatsappClicks;
+
+    return {
+        total_events: events.length,
+        detail_views: detailViews,
+        maps_clicks: mapsClicks,
+        instagram_clicks: instagramClicks,
+        whatsapp_clicks: whatsappClicks,
+        card_clicks: cardClicks,
+        action_clicks: actionClicks,
+        action_click_rate: getRate(actionClicks, detailViews),
+        maps_click_rate: getRate(mapsClicks, detailViews),
+        instagram_click_rate: getRate(instagramClicks, detailViews),
+        whatsapp_click_rate: getRate(whatsappClicks, detailViews),
+        card_to_detail_rate: getRate(detailViews, cardClicks),
+    };
+}
+
+function buildTopPlaces(events: AnalyticsEvent[]): TopPlaceAnalytics[] {
+    const map = new Map<string, TopPlaceAnalytics>();
 
     for (const event of events) {
         if (!event.place_id) continue;
@@ -178,6 +233,10 @@ function buildTopPlaces(events: AnalyticsEvent[]) {
                 instagram_clicks: 0,
                 whatsapp_clicks: 0,
                 card_clicks: 0,
+                action_clicks: 0,
+                action_click_rate: 0,
+                maps_click_rate: 0,
+                instagram_click_rate: 0,
                 total_events: 0,
                 last_event_at: event.created_at,
             });
@@ -188,17 +247,53 @@ function buildTopPlaces(events: AnalyticsEvent[]) {
         current.total_events += 1;
         current.last_event_at = event.created_at;
 
-        if (event.event_name === "place_detail_view") current.detail_views += 1;
-        if (event.event_name === "google_maps_clicked") current.maps_clicks += 1;
-        if (event.event_name === "instagram_clicked") current.instagram_clicks += 1;
-        if (event.event_name === "whatsapp_contact_clicked") {
+        if (isEventName(event, EVENT_NAMES.detailView)) {
+            current.detail_views += 1;
+        }
+
+        if (isEventName(event, EVENT_NAMES.mapsClick)) {
+            current.maps_clicks += 1;
+        }
+
+        if (isEventName(event, EVENT_NAMES.instagramClick)) {
+            current.instagram_clicks += 1;
+        }
+
+        if (isEventName(event, EVENT_NAMES.whatsappClick)) {
             current.whatsapp_clicks += 1;
         }
-        if (event.event_name === "place_card_clicked") current.card_clicks += 1;
+
+        if (isEventName(event, EVENT_NAMES.cardClick)) {
+            current.card_clicks += 1;
+        }
+
+        current.action_clicks =
+            current.maps_clicks + current.instagram_clicks + current.whatsapp_clicks;
+
+        current.action_click_rate = getRate(
+            current.action_clicks,
+            current.detail_views
+        );
+
+        current.maps_click_rate = getRate(
+            current.maps_clicks,
+            current.detail_views
+        );
+
+        current.instagram_click_rate = getRate(
+            current.instagram_clicks,
+            current.detail_views
+        );
     }
 
     return [...map.values()]
-        .sort((a, b) => b.total_events - a.total_events)
+        .sort((a, b) => {
+            if (b.action_clicks !== a.action_clicks) {
+                return b.action_clicks - a.action_clicks;
+            }
+
+            return b.total_events - a.total_events;
+        })
         .slice(0, 10);
 }
 
@@ -211,18 +306,18 @@ export async function GET(request: NextRequest) {
             .from("analytics_events")
             .select(
                 `
-        id,
-        event_name,
-        place_id,
-        place_name,
-        place_slug,
-        source,
-        page_path,
-        referrer,
-        metadata,
-        session_id,
-        created_at
-      `
+                id,
+                event_name,
+                place_id,
+                place_name,
+                place_slug,
+                source,
+                page_path,
+                referrer,
+                metadata,
+                session_id,
+                created_at
+            `
             )
             .gte("created_at", range.start)
             .lt("created_at", range.end)
@@ -237,14 +332,7 @@ export async function GET(request: NextRequest) {
 
         return NextResponse.json({
             period: range,
-            summary: {
-                total_events: events.length,
-                detail_views: countEvent(events, "place_detail_view"),
-                maps_clicks: countEvent(events, "google_maps_clicked"),
-                instagram_clicks: countEvent(events, "instagram_clicked"),
-                whatsapp_clicks: countEvent(events, "whatsapp_contact_clicked"),
-                card_clicks: countEvent(events, "place_card_clicked"),
-            },
+            summary: buildSummary(events),
             top_places: buildTopPlaces(events),
             recent_events: events.slice(0, 20),
         });

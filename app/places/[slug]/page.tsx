@@ -128,17 +128,108 @@ function cleanDescription(value?: string | null) {
     return value.replace(/\s+/g, " ").trim();
 }
 
-function makeSeoDescription(place: PlaceDetail) {
+function makeSeoDescription(place: PlaceDetail, tags: Tag[] = []) {
     const description = cleanDescription(place.description);
 
-    if (description) {
-        return description.length > 155
-            ? `${description.slice(0, 152)}...`
-            : description;
+    const tagNames = tags
+        .map((tag) => tag.name)
+        .filter(Boolean)
+        .slice(0, 4)
+        .join(", ");
+
+    const locationText = [place.area, place.city || "Padang"]
+        .filter(Boolean)
+        .join(", ");
+
+    const generatedDescription = `${place.name} adalah coffee shop di ${locationText || "Padang"
+        }${place.price_range ? ` dengan range harga ${place.price_range}` : ""
+        }. Cek alamat, jam buka, foto, Google Maps, Instagram${tagNames ? `, dan cocok untuk ${tagNames}` : ""
+        } di Saranwak.`;
+
+    const finalDescription = description || generatedDescription;
+
+    return finalDescription.length > 155
+        ? `${finalDescription.slice(0, 152)}...`
+        : finalDescription;
+}
+
+function getTagsByType(tags: Tag[], type: string) {
+    return tags.filter((tag) => tag.type === type);
+}
+
+function getTagNamesByType(tags: Tag[], type: string) {
+    return getTagsByType(tags, type).map((tag) => tag.name);
+}
+
+function makeQuickSummary(place: PlaceDetail, tags: Tag[]) {
+    const moodTags = getTagNamesByType(tags, "mood");
+    const facilityTags = getTagNamesByType(tags, "facility");
+    const vibeTags = [
+        ...getTagNamesByType(tags, "vibe"),
+        ...getTagNamesByType(tags, "ambience"),
+    ];
+
+    const locationText = [place.area, place.city || "Padang"]
+        .filter(Boolean)
+        .join(", ");
+
+    const priceText = place.price_range
+        ? `dengan range harga ${place.price_range}`
+        : "dengan info harga yang bisa kamu cek sebelum datang";
+
+    const openingText = place.opening_hours
+        ? `Jam bukanya ${place.opening_hours}`
+        : "Jam bukanya belum tersedia";
+
+    const moodText =
+        moodTags.length > 0
+            ? `Cocok buat ${moodTags.slice(0, 3).join(", ").toLowerCase()}`
+            : "Cocok buat kamu yang lagi cari coffee shop di Padang";
+
+    const facilityText =
+        facilityTags.length > 0
+            ? `Fasilitas yang bisa jadi nilai plus: ${facilityTags
+                .slice(0, 4)
+                .join(", ")}.`
+            : "";
+
+    const vibeText =
+        vibeTags.length > 0
+            ? `Vibe tempat ini cenderung ${vibeTags
+                .slice(0, 3)
+                .join(", ")
+                .toLowerCase()}.`
+            : "";
+
+    return `${place.name} adalah coffee shop di ${locationText || "Padang"
+        } ${priceText}. ${openingText}. ${moodText}. ${facilityText} ${vibeText}`
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function getPrimaryReasons(place: PlaceDetail, tags: Tag[]) {
+    const reasons: string[] = [];
+
+    if (place.price_range) {
+        reasons.push(`Harga ${place.price_range}`);
     }
 
-    return `Lihat info ${place.name}, coffee shop di ${place.area || "Padang"
-        }, lengkap dengan alamat, jam buka, range harga, foto, Google Maps, dan Instagram.`;
+    if (place.opening_hours) {
+        reasons.push(place.opening_hours);
+    }
+
+    const moodTags = getTagNamesByType(tags, "mood");
+    const facilityTags = getTagNamesByType(tags, "facility");
+    const vibeTags = [
+        ...getTagNamesByType(tags, "vibe"),
+        ...getTagNamesByType(tags, "ambience"),
+    ];
+
+    reasons.push(...moodTags.slice(0, 2));
+    reasons.push(...facilityTags.slice(0, 2));
+    reasons.push(...vibeTags.slice(0, 2));
+
+    return Array.from(new Set(reasons)).slice(0, 6);
 }
 
 async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> {
@@ -146,40 +237,40 @@ async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> {
         .from("places")
         .select(
             `
-      id,
-      name,
-      slug,
-      description,
-      address,
-      area,
-      city,
-      image_url,
-      google_maps_url,
-      instagram_url,
-      price_range,
-      opening_hours,
-      is_published,
-      categories (
-        id,
-        name,
-        slug
-      ),
-      place_tags (
-        tag_id,
-        tags (
-          id,
-          name,
-          slug,
-          type
-        )
-      ),
-      place_photos (
-        id,
-        image_url,
-        caption,
-        sort_order
-      )
-    `
+            id,
+            name,
+            slug,
+            description,
+            address,
+            area,
+            city,
+            image_url,
+            google_maps_url,
+            instagram_url,
+            price_range,
+            opening_hours,
+            is_published,
+            categories (
+                id,
+                name,
+                slug
+            ),
+            place_tags (
+                tag_id,
+                tags (
+                    id,
+                    name,
+                    slug,
+                    type
+                )
+            ),
+            place_photos (
+                id,
+                image_url,
+                caption,
+                sort_order
+            )
+        `
         )
         .eq("slug", slug)
         .eq("is_published", true)
@@ -197,39 +288,39 @@ async function getRelatedPlaces(currentPlaceId: string): Promise<Place[]> {
         .from("places")
         .select(
             `
-      id,
-      category_id,
-      name,
-      slug,
-      description,
-      short_description,
-      address,
-      area,
-      city,
-      image_url,
-      main_image_url,
-      price_min,
-      price_max,
-      price_range,
-      opening_hours,
-      is_featured,
-      is_verified,
-      is_published,
-      categories!inner (
-        id,
-        name,
-        slug
-      ),
-      place_tags (
-        tag_id,
-        tags (
-          id,
-          name,
-          slug,
-          type
-        )
-      )
-    `
+            id,
+            category_id,
+            name,
+            slug,
+            description,
+            short_description,
+            address,
+            area,
+            city,
+            image_url,
+            main_image_url,
+            price_min,
+            price_max,
+            price_range,
+            opening_hours,
+            is_featured,
+            is_verified,
+            is_published,
+            categories!inner (
+                id,
+                name,
+                slug
+            ),
+            place_tags (
+                tag_id,
+                tags (
+                    id,
+                    name,
+                    slug,
+                    type
+                )
+            )
+        `
         )
         .eq("is_published", true)
         .eq("categories.slug", "coffee-shop")
@@ -253,7 +344,7 @@ export async function generateMetadata({
 
     if (!place) {
         return {
-            title: "Tempat tidak ditemukan",
+            title: "Tempat tidak ditemukan | Saranwak",
             description: "Tempat yang kamu cari tidak ditemukan di Saranwak.",
             robots: {
                 index: false,
@@ -262,8 +353,17 @@ export async function generateMetadata({
         };
     }
 
-    const title = `${place.name} - Coffee Shop di ${place.area || "Padang"}`;
-    const description = makeSeoDescription(place);
+    const tags =
+        place.place_tags
+            ?.map((item) => getSingleTag(item.tags))
+            .filter((tag): tag is Tag => Boolean(tag)) ?? [];
+
+    const locationTitle = place.area
+        ? `${place.area}, ${place.city || "Padang"}`
+        : place.city || "Padang";
+
+    const title = `${place.name} - Coffee Shop di ${locationTitle} | Saranwak`;
+    const description = makeSeoDescription(place, tags);
     const imageUrl = getSafePlaceImageUrl(place.image_url);
     const pageUrl = `${siteUrl}/places/${place.slug}`;
 
@@ -283,8 +383,7 @@ export async function generateMetadata({
                     url: imageUrl,
                     width: 1200,
                     height: 630,
-                    alt: `${place.name} coffee shop di ${place.area || "Padang"
-                        }`,
+                    alt: `${place.name} coffee shop di ${locationTitle}`,
                 },
             ],
             locale: "id_ID",
@@ -295,6 +394,10 @@ export async function generateMetadata({
             title,
             description,
             images: [imageUrl],
+        },
+        robots: {
+            index: true,
+            follow: true,
         },
     };
 }
@@ -311,7 +414,6 @@ export default async function PlaceDetailPage({
     }
 
     const relatedPlaces = await getRelatedPlaces(place.id);
-
     const category = getSingleCategory(place.categories);
 
     const tags =
@@ -328,12 +430,22 @@ export default async function PlaceDetailPage({
 
     const heroImageUrl = getSafePlaceImageUrl(place.image_url);
     const pageUrl = `${siteUrl}/places/${place.slug}`;
+    const quickSummary = makeQuickSummary(place, tags);
+    const primaryReasons = getPrimaryReasons(place, tags);
+    const shareText = `Cek ${place.name} di Saranwak: ${pageUrl}`;
+    const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(
+        shareText
+    )}`;
+
+    const locationTitle = place.area
+        ? `${place.area}, ${place.city || "Padang"}`
+        : place.city || "Padang";
 
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "CafeOrCoffeeShop",
         name: place.name,
-        description: cleanDescription(place.description) || makeSeoDescription(place),
+        description: makeSeoDescription(place, tags),
         image: heroImageUrl,
         url: pageUrl,
         address: {
@@ -343,7 +455,7 @@ export default async function PlaceDetailPage({
             addressRegion: "Sumatera Barat",
             addressCountry: "ID",
         },
-        areaServed: place.area || "Padang",
+        areaServed: locationTitle,
         priceRange: place.price_range || undefined,
         openingHours: place.opening_hours || undefined,
         sameAs: place.instagram_url ? [place.instagram_url] : undefined,
@@ -371,11 +483,11 @@ export default async function PlaceDetailPage({
                     href="/places?category=coffee-shop"
                     className="inline-flex rounded-full border border-white/10 px-4 py-2 text-sm font-bold text-neutral-300 transition hover:bg-white hover:text-black"
                 >
-                    ← Kembali ke Tempat
+                    ← Kembali ke Explore
                 </Link>
 
-                <div className="mt-8 overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03] sm:rounded-[36px]">
-                    <div className="relative h-[320px] bg-neutral-900 md:h-[460px]">
+                <div className="mt-8 overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03] shadow-[0_30px_120px_rgba(0,0,0,0.28)] sm:rounded-[36px]">
+                    <div className="relative h-[360px] bg-neutral-900 md:h-[520px]">
                         <img
                             src={heroImageUrl}
                             alt={`${place.name} coffee shop di ${place.area || "Padang"
@@ -384,21 +496,83 @@ export default async function PlaceDetailPage({
                             referrerPolicy="no-referrer"
                         />
 
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/10" />
 
                         <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 md:p-10">
-                            <p className="text-xs font-black uppercase tracking-[0.3em] text-neutral-300 sm:text-sm">
-                                {category?.name ?? "Tempat"}
-                            </p>
+                            <div className="flex flex-wrap gap-2">
+                                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-black uppercase tracking-[0.22em] text-white backdrop-blur">
+                                    {category?.name ?? "Tempat"}
+                                </span>
 
-                            <h1 className="mt-3 max-w-4xl text-4xl font-black tracking-tight sm:text-5xl md:text-7xl">
+                                {place.area ? (
+                                    <span className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-black text-white backdrop-blur">
+                                        {place.area}
+                                    </span>
+                                ) : null}
+
+                                {place.price_range ? (
+                                    <span className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-black text-white backdrop-blur">
+                                        {place.price_range}
+                                    </span>
+                                ) : null}
+                            </div>
+
+                            <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-tight sm:text-5xl md:text-7xl">
                                 {place.name}
                             </h1>
 
-                            <p className="mt-4 text-sm text-neutral-300 sm:text-base">
-                                {place.area || "Padang"}{" "}
-                                {place.city ? `· ${place.city}` : ""}
+                            <p className="mt-4 max-w-3xl text-sm leading-7 text-neutral-300 sm:text-base">
+                                {quickSummary}
                             </p>
+
+                            <div className="mt-6 flex flex-wrap gap-3">
+                                {place.google_maps_url ? (
+                                    <TrackedExternalLink
+                                        href={place.google_maps_url}
+                                        eventName="google_maps_clicked"
+                                        placeId={place.id}
+                                        placeName={place.name}
+                                        placeSlug={place.slug}
+                                        source="detail_page_hero"
+                                        metadata={{
+                                            area: place.area,
+                                            city: place.city,
+                                            category: category?.slug ?? null,
+                                        }}
+                                        className="rounded-2xl bg-white px-5 py-3 text-sm font-black text-black transition hover:-translate-y-0.5 hover:bg-neutral-200"
+                                    >
+                                        Buka Maps
+                                    </TrackedExternalLink>
+                                ) : null}
+
+                                {place.instagram_url ? (
+                                    <TrackedExternalLink
+                                        href={place.instagram_url}
+                                        eventName="instagram_clicked"
+                                        placeId={place.id}
+                                        placeName={place.name}
+                                        placeSlug={place.slug}
+                                        source="detail_page_hero"
+                                        metadata={{
+                                            area: place.area,
+                                            city: place.city,
+                                            category: category?.slug ?? null,
+                                        }}
+                                        className="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white hover:text-black"
+                                    >
+                                        Instagram
+                                    </TrackedExternalLink>
+                                ) : null}
+
+                                <a
+                                    href={whatsappShareUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white hover:text-black"
+                                >
+                                    Share
+                                </a>
+                            </div>
                         </div>
                     </div>
 
@@ -406,65 +580,118 @@ export default async function PlaceDetailPage({
                         <GallerySlider photos={galleryPhotos} placeName={place.name} />
                     ) : null}
 
-                    <div className="grid gap-8 p-5 sm:p-6 md:grid-cols-[1fr_360px] md:p-10">
+                    <div className="grid gap-8 p-5 sm:p-6 md:grid-cols-[1fr_380px] md:p-10">
                         <div>
-                            <h2 className="text-2xl font-black">Tentang Tempat</h2>
+                            <section className="rounded-[28px] border border-white/10 bg-white/[0.035] p-5 sm:p-6">
+                                <p className="text-xs font-black uppercase tracking-[0.3em] text-neutral-500">
+                                    Quick Summary
+                                </p>
 
-                            <p className="mt-4 max-w-3xl text-base leading-8 text-neutral-300 sm:text-lg">
-                                {place.description || "Belum ada deskripsi untuk tempat ini."}
-                            </p>
+                                <h2 className="mt-3 text-2xl font-black">
+                                    Kenapa tempat ini layak dicek?
+                                </h2>
+
+                                <p className="mt-4 max-w-3xl text-base leading-8 text-neutral-300">
+                                    {quickSummary}
+                                </p>
+
+                                {primaryReasons.length > 0 ? (
+                                    <div className="mt-5 flex flex-wrap gap-2">
+                                        {primaryReasons.map((reason) => (
+                                            <span
+                                                key={reason}
+                                                className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-bold text-neutral-200"
+                                            >
+                                                {reason}
+                                            </span>
+                                        ))}
+                                    </div>
+                                ) : null}
+                            </section>
+
+                            <section className="mt-8">
+                                <h2 className="text-2xl font-black">Tentang Tempat</h2>
+
+                                <p className="mt-4 max-w-3xl text-base leading-8 text-neutral-300 sm:text-lg">
+                                    {place.description ||
+                                        "Belum ada deskripsi untuk tempat ini."}
+                                </p>
+                            </section>
 
                             {tags.length > 0 ? (
-                                <div className="mt-8">
-                                    <h2 className="text-2xl font-black">Highlight Tempat</h2>
+                                <section className="mt-8">
+                                    <h2 className="text-2xl font-black">
+                                        Highlight Tempat
+                                    </h2>
 
                                     <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-400">
-                                        Tag dipisahkan berdasarkan fungsi biar informasinya
-                                        lebih nyambung dan gampang dibaca.
+                                        Informasi ini membantu kamu menilai apakah
+                                        tempat ini cocok untuk kebutuhanmu.
                                     </p>
 
                                     <div className="mt-5 grid gap-4 md:grid-cols-2">
-                                        {Object.entries(groupedTags).map(([type, tagList]) => (
-                                            <div
-                                                key={type}
-                                                className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5"
-                                            >
-                                                <div className="mb-4">
-                                                    <h3 className="text-lg font-black">
-                                                        {getTagGroupLabel(type)}
-                                                    </h3>
+                                        {Object.entries(groupedTags).map(
+                                            ([type, tagList]) => (
+                                                <div
+                                                    key={type}
+                                                    className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5"
+                                                >
+                                                    <div className="mb-4">
+                                                        <h3 className="text-lg font-black">
+                                                            {getTagGroupLabel(type)}
+                                                        </h3>
 
-                                                    <p className="mt-1 text-sm leading-6 text-neutral-500">
-                                                        {getTagGroupDescription(type)}
-                                                    </p>
-                                                </div>
+                                                        <p className="mt-1 text-sm leading-6 text-neutral-500">
+                                                            {getTagGroupDescription(type)}
+                                                        </p>
+                                                    </div>
 
-                                                <div className="flex flex-wrap gap-2">
-                                                    {tagList.map((tag) => (
-                                                        <span
-                                                            key={tag.id}
-                                                            className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-bold text-neutral-200"
-                                                        >
-                                                            {tag.name}
-                                                        </span>
-                                                    ))}
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {tagList.map((tag) => (
+                                                            <span
+                                                                key={tag.id}
+                                                                className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-bold text-neutral-200"
+                                                            >
+                                                                {tag.name}
+                                                            </span>
+                                                        ))}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            )
+                                        )}
                                     </div>
-                                </div>
+                                </section>
                             ) : null}
                         </div>
 
-                        <aside className="h-fit rounded-[28px] border border-white/10 bg-black/30 p-5">
+                        <aside className="h-fit rounded-[28px] border border-white/10 bg-black/30 p-5 md:sticky md:top-6">
                             <h2 className="text-2xl font-black">Info Detail</h2>
 
-                            <div className="mt-5 space-y-4 text-sm">
-                                <InfoItem label="Alamat" value={place.address} />
-                                <InfoItem label="Area" value={place.area} />
-                                <InfoItem label="Kota" value={place.city} />
-                                <InfoItem label="Range Harga" value={place.price_range} />
-                                <InfoItem label="Jam Buka" value={place.opening_hours} />
+                            <div className="mt-5 grid gap-3">
+                                <InfoItem
+                                    icon="📍"
+                                    label="Alamat"
+                                    value={place.address}
+                                />
+                                <InfoItem
+                                    icon="🧭"
+                                    label="Area"
+                                    value={
+                                        [place.area, place.city]
+                                            .filter(Boolean)
+                                            .join(", ") || null
+                                    }
+                                />
+                                <InfoItem
+                                    icon="💸"
+                                    label="Range Harga"
+                                    value={place.price_range}
+                                />
+                                <InfoItem
+                                    icon="🕒"
+                                    label="Jam Buka"
+                                    value={place.opening_hours}
+                                />
                             </div>
 
                             <div className="mt-6 space-y-3">
@@ -475,7 +702,7 @@ export default async function PlaceDetailPage({
                                         placeId={place.id}
                                         placeName={place.name}
                                         placeSlug={place.slug}
-                                        source="detail_page"
+                                        source="detail_page_sidebar"
                                         metadata={{
                                             area: place.area,
                                             city: place.city,
@@ -494,7 +721,7 @@ export default async function PlaceDetailPage({
                                         placeId={place.id}
                                         placeName={place.name}
                                         placeSlug={place.slug}
-                                        source="detail_page"
+                                        source="detail_page_sidebar"
                                         metadata={{
                                             area: place.area,
                                             city: place.city,
@@ -505,7 +732,22 @@ export default async function PlaceDetailPage({
                                         Lihat Instagram
                                     </TrackedExternalLink>
                                 ) : null}
+
+                                <a
+                                    href={whatsappShareUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="block rounded-2xl border border-white/10 px-5 py-4 text-center text-sm font-black text-white transition hover:bg-white/10"
+                                >
+                                    Share ke WhatsApp
+                                </a>
                             </div>
+
+                            <p className="mt-5 text-xs leading-5 text-neutral-500">
+                                Data tempat bisa berubah. Cek Google Maps atau
+                                Instagram sebelum datang biar nggak kena prank jam
+                                operasional.
+                            </p>
                         </aside>
                     </div>
                 </div>
@@ -523,8 +765,8 @@ export default async function PlaceDetailPage({
                                 </h2>
 
                                 <p className="mt-3 max-w-2xl text-sm leading-7 text-neutral-400">
-                                    Kalau tempat ini belum pas, coba cek beberapa pilihan lain.
-                                    Siapa tahu mood kamu pindah arah, wajar, manusiawi.
+                                    Alternatif lain di Padang kalau tempat ini belum
+                                    pas dengan mood, budget, atau lokasi kamu.
                                 </p>
                             </div>
 
@@ -538,7 +780,10 @@ export default async function PlaceDetailPage({
 
                         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                             {relatedPlaces.map((relatedPlace) => (
-                                <PlaceCard key={relatedPlace.id} place={relatedPlace} />
+                                <PlaceCard
+                                    key={relatedPlace.id}
+                                    place={relatedPlace}
+                                />
                             ))}
                         </div>
                     </section>
@@ -549,19 +794,31 @@ export default async function PlaceDetailPage({
 }
 
 function InfoItem({
+    icon,
     label,
     value,
 }: {
+    icon: string;
     label: string;
     value?: string | null;
 }) {
     return (
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-neutral-500">
-                {label}
-            </p>
+            <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/[0.06] text-lg">
+                    {icon}
+                </div>
 
-            <p className="mt-2 font-bold text-neutral-100">{value || "-"}</p>
+                <div className="min-w-0">
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-neutral-500">
+                        {label}
+                    </p>
+
+                    <p className="mt-2 break-words font-bold leading-6 text-neutral-100">
+                        {value || "-"}
+                    </p>
+                </div>
+            </div>
         </div>
     );
 }

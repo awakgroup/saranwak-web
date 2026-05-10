@@ -3,6 +3,12 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export const dynamic = "force-dynamic";
 
+const ACTION_EVENTS = new Set([
+    "google_maps_clicked",
+    "instagram_clicked",
+    "whatsapp_contact_clicked",
+]);
+
 function parseDateInput(value: string | null) {
     if (!value) return null;
 
@@ -25,9 +31,11 @@ function getDateRange(searchParams: URLSearchParams) {
 
     if (period === "daily") {
         const date = parseDateInput(searchParams.get("date")) ?? now;
+
         const start = new Date(
             Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
         );
+
         const end = addDays(start, 1);
 
         return {
@@ -39,6 +47,7 @@ function getDateRange(searchParams: URLSearchParams) {
 
     if (period === "weekly") {
         const startDate = parseDateInput(searchParams.get("start")) ?? now;
+
         const start = new Date(
             Date.UTC(
                 startDate.getUTCFullYear(),
@@ -46,6 +55,7 @@ function getDateRange(searchParams: URLSearchParams) {
                 startDate.getUTCDate()
             )
         );
+
         const end = addDays(start, 7);
 
         return {
@@ -130,6 +140,14 @@ function csvEscape(value: unknown) {
     return `"${stringValue.replace(/"/g, '""')}"`;
 }
 
+function getActionType(eventName: string) {
+    if (eventName === "google_maps_clicked") return "maps";
+    if (eventName === "instagram_clicked") return "instagram";
+    if (eventName === "whatsapp_contact_clicked") return "whatsapp";
+
+    return "";
+}
+
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
@@ -139,18 +157,18 @@ export async function GET(request: NextRequest) {
             .from("analytics_events")
             .select(
                 `
-        event_name,
-        place_id,
-        place_name,
-        place_slug,
-        source,
-        page_path,
-        referrer,
-        metadata,
-        session_id,
-        user_agent,
-        created_at
-      `
+                event_name,
+                place_id,
+                place_name,
+                place_slug,
+                source,
+                page_path,
+                referrer,
+                metadata,
+                session_id,
+                user_agent,
+                created_at
+            `
             )
             .gte("created_at", start)
             .lt("created_at", end)
@@ -163,6 +181,9 @@ export async function GET(request: NextRequest) {
         const headers = [
             "created_at",
             "event_name",
+            "is_action_click",
+            "action_type",
+            "place_id",
             "place_name",
             "place_slug",
             "source",
@@ -173,10 +194,16 @@ export async function GET(request: NextRequest) {
             "user_agent",
         ];
 
-        const rows = (data ?? []).map((item) =>
-            [
+        const rows = (data ?? []).map((item) => {
+            const isActionClick = ACTION_EVENTS.has(item.event_name);
+            const actionType = getActionType(item.event_name);
+
+            return [
                 item.created_at,
                 item.event_name,
+                isActionClick ? "yes" : "no",
+                actionType,
+                item.place_id,
                 item.place_name,
                 item.place_slug,
                 item.source,
@@ -187,8 +214,8 @@ export async function GET(request: NextRequest) {
                 item.user_agent,
             ]
                 .map(csvEscape)
-                .join(",")
-        );
+                .join(",");
+        });
 
         const csv = [headers.join(","), ...rows].join("\n");
 
@@ -197,6 +224,7 @@ export async function GET(request: NextRequest) {
             headers: {
                 "Content-Type": "text/csv; charset=utf-8",
                 "Content-Disposition": `attachment; filename="saranwak-analytics-${label}.csv"`,
+                "Cache-Control": "no-store",
             },
         });
     } catch (error) {

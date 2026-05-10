@@ -76,33 +76,39 @@ export function PlaceCard({
 }: PlaceCardProps) {
     const tags = getMainTags(place);
     const area = getPlaceArea(place);
+    const detailHref = `/places/${place.slug}`;
 
     const imageUrl = getSafePlaceImageUrl(
         place.image_url || place.main_image_url
     );
 
     function handleCardClick() {
-        trackEvent({
+        void trackEvent({
             event_name: "place_card_clicked",
             place_id: place.id,
             place_name: place.name,
             place_slug: place.slug,
             source,
             metadata: {
+                href: detailHref,
                 area: place.area,
                 city: place.city,
                 category: getCategoryLabel(place),
+                price_range: place.price_range,
+                opening_hours: place.opening_hours,
                 is_featured: place.is_featured,
                 is_verified: place.is_verified,
                 position,
                 tags: tags.map((tag) => tag?.slug).filter(Boolean),
             },
+        }).catch((error) => {
+            console.error("Failed to track place card click:", error);
         });
     }
 
     return (
         <Link
-            href={`/places/${place.slug}`}
+            href={detailHref}
             onClick={handleCardClick}
             className="group relative overflow-hidden rounded-[32px] border border-[#E3DED4] bg-[#FFFDF8] shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-[#181818]/20 hover:shadow-[0_28px_80px_rgba(20,20,20,0.14)]"
         >
