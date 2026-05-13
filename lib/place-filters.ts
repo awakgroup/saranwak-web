@@ -3,47 +3,53 @@ export type PlaceTagFilter = {
     tag: string;
 };
 
+export type PlaceFilterGroupType =
+    | "activity"
+    | "facility"
+    | "vibe";
+
 export type PlaceFilterGroup = {
     title: string;
+    type: PlaceFilterGroupType;
     options: PlaceTagFilter[];
 };
 
 export const placeFilterGroups: PlaceFilterGroup[] = [
     {
         title: "Aktivitas",
+        type: "activity",
         options: [
             { label: "Nugas", tag: "nugas" },
+            { label: "Nge-date", tag: "nge-date" },
             { label: "Nongkrong", tag: "nongkrong" },
-            { label: "Me Time", tag: "me-time" },
-            { label: "First Date", tag: "first-date" },
+            { label: "Me-time", tag: "me-time" },
+            { label: "Meeting", tag: "meeting" },
+            { label: "WFC", tag: "wfc" },
+            { label: "Live Musik", tag: "live-musik" },
         ],
     },
     {
         title: "Fasilitas",
+        type: "facility",
         options: [
-            { label: "WiFi", tag: "wifi" },
-            { label: "Colokan", tag: "colokan" },
             { label: "AC", tag: "ac" },
             { label: "Musholla", tag: "musholla" },
             { label: "Toilet", tag: "toilet" },
+            { label: "WiFi", tag: "wifi" },
+            { label: "Colokan", tag: "colokan" },
             { label: "Outdoor", tag: "outdoor" },
             { label: "Indoor", tag: "indoor" },
+            { label: "Indoor Smoking", tag: "indoor-smoking" },
+            { label: "Photobox", tag: "photobox" },
+            { label: "Board Game", tag: "board-game" },
         ],
     },
     {
-        title: "Operasional",
-        options: [{ label: "24 Jam", tag: "24-jam" }],
-    },
-    {
-        title: "Vibe",
+        title: "Vibes",
+        type: "vibe",
         options: [
-            { label: "Aesthetic", tag: "aesthetic" },
-            { label: "Cozy", tag: "cozy" },
-            { label: "Tenang", tag: "tenang" },
             { label: "Rame", tag: "rame" },
-            { label: "Minimalis", tag: "minimalis" },
-            { label: "Industrial", tag: "industrial" },
-            { label: "View Bagus", tag: "view-bagus" },
+            { label: "Tenang", tag: "tenang" },
         ],
     },
 ];

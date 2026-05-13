@@ -2,6 +2,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { PlaceCard } from "@/components/PlaceCard";
 import {
+    placeFilterGroups,
     placeFilterOptions,
     priceFilterOptions,
     type PriceFilterValue,
@@ -105,6 +106,14 @@ function matchKeyword(place: Place, keyword?: string) {
 
     if (!q) return true;
 
+    const tagText =
+        place.place_tags
+            ?.map((item) => {
+                const tag = getSingleTag(item as PlaceTagItem);
+                return [tag?.name, tag?.slug].filter(Boolean).join(" ");
+            })
+            .join(" ") ?? "";
+
     const searchableText = [
         place.name,
         place.description,
@@ -112,6 +121,7 @@ function matchKeyword(place: Place, keyword?: string) {
         place.address,
         place.area,
         place.city,
+        tagText,
     ]
         .map(normalizeText)
         .join(" ");
@@ -278,7 +288,7 @@ function makeDescription(params: PageParams) {
     }
 
     if (selectedTags.length > 0 || selectedPrice !== "all") {
-        return "Cafe hanya muncul kalau cocok dengan filter yang kamu pilih. Jadi hasilnya lebih strict dan relevan.";
+        return "Cafe hanya muncul kalau cocok dengan aktivitas, fasilitas, vibes, atau budget yang kamu pilih.";
     }
 
     if (params.area) {
@@ -635,8 +645,8 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                             <p className="text-sm font-black text-white">Multi Filter</p>
 
                             <p className="mt-1 text-xs font-semibold leading-5 text-neutral-500">
-                                Klik beberapa filter. Cafe hanya muncul kalau cocok dengan
-                                filter yang kamu pilih.
+                                Klik beberapa filter. Cafe akan muncul kalau cocok dengan
+                                aktivitas, fasilitas, vibes, dan budget yang kamu pilih.
                             </p>
                         </div>
 
@@ -659,8 +669,8 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                                         key={filter.value}
                                         href={makePriceHref(params, filter.value)}
                                         className={`rounded-full border px-4 py-2 text-sm font-black transition ${active
-                                                ? "border-white bg-white text-black"
-                                                : "border-white/10 bg-white/[0.03] text-neutral-300 hover:bg-white hover:text-black"
+                                            ? "border-white bg-white text-black"
+                                            : "border-white/10 bg-white/[0.03] text-neutral-300 hover:bg-white hover:text-black"
                                             }`}
                                     >
                                         <span className="mr-2">{active ? "✓" : "+"}</span>
@@ -671,15 +681,15 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                         </div>
                     </div>
 
-                    <div>
-                        <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-neutral-500">
-                            Kebutuhan
-                        </p>
+                    <div className="space-y-5">
+                        <div>
+                            <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-neutral-500">
+                                Semua Filter
+                            </p>
 
-                        <div className="flex flex-wrap gap-2">
                             <Link
                                 href="/places?category=coffee-shop"
-                                className={`rounded-full border px-4 py-2 text-sm font-black transition ${selectedTags.length === 0 &&
+                                className={`inline-flex rounded-full border px-4 py-2 text-sm font-black transition ${selectedTags.length === 0 &&
                                         !params.q &&
                                         !params.area &&
                                         selectedPrice === "all"
@@ -687,27 +697,37 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                                         : "border-white/10 bg-white/[0.03] text-neutral-300 hover:bg-white hover:text-black"
                                     }`}
                             >
-                                Semua
+                                Semua Coffee Shop
                             </Link>
-
-                            {placeFilterOptions.map((filter) => {
-                                const active = selectedTags.includes(filter.tag);
-
-                                return (
-                                    <Link
-                                        key={filter.tag}
-                                        href={makeFilterHref(params, filter.tag)}
-                                        className={`rounded-full border px-4 py-2 text-sm font-black transition ${active
-                                                ? "border-white bg-white text-black"
-                                                : "border-white/10 bg-white/[0.03] text-neutral-300 hover:bg-white hover:text-black"
-                                            }`}
-                                    >
-                                        <span className="mr-2">{active ? "✓" : "+"}</span>
-                                        {filter.label}
-                                    </Link>
-                                );
-                            })}
                         </div>
+
+                        {placeFilterGroups.map((group) => (
+                            <div key={group.title}>
+                                <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-neutral-500">
+                                    {group.title}
+                                </p>
+
+                                <div className="flex flex-wrap gap-2">
+                                    {group.options.map((filter) => {
+                                        const active = selectedTags.includes(filter.tag);
+
+                                        return (
+                                            <Link
+                                                key={filter.tag}
+                                                href={makeFilterHref(params, filter.tag)}
+                                                className={`rounded-full border px-4 py-2 text-sm font-black transition ${active
+                                                        ? "border-white bg-white text-black"
+                                                        : "border-white/10 bg-white/[0.03] text-neutral-300 hover:bg-white hover:text-black"
+                                                    }`}
+                                            >
+                                                <span className="mr-2">{active ? "✓" : "+"}</span>
+                                                {filter.label}
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ))}
                     </div>
 
                     {activeFilterCount > 0 ? (
@@ -754,7 +774,7 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                 ) : (
                     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                         {places.map((place) => (
-                            <PlaceCard key={place.id} place={place} />
+                            <PlaceCard key={place.id} place={place} source="places_list" />
                         ))}
                     </div>
                 )}

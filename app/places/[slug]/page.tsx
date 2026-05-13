@@ -96,12 +96,13 @@ function groupTagsByType(tags: Tag[]) {
 
 function getTagGroupLabel(type: string) {
     const labels: Record<string, string> = {
-        mood: "Cocok Untuk",
+        activity: "Aktivitas",
+        mood: "Aktivitas",
         facility: "Fasilitas",
+        vibe: "Vibes",
+        ambience: "Vibes",
         time: "Operasional",
         budget: "Budget",
-        vibe: "Vibes",
-        ambience: "Suasana",
         other: "Info Lainnya",
     };
 
@@ -110,12 +111,13 @@ function getTagGroupLabel(type: string) {
 
 function getTagGroupDescription(type: string) {
     const descriptions: Record<string, string> = {
-        mood: "Kebutuhan atau aktivitas yang paling pas di tempat ini.",
-        facility: "Fasilitas yang bisa kamu manfaatkan.",
+        activity: "Aktivitas yang paling cocok dilakukan di tempat ini.",
+        mood: "Aktivitas yang paling cocok dilakukan di tempat ini.",
+        facility: "Fasilitas yang bisa kamu manfaatkan saat datang ke tempat ini.",
+        vibe: "Suasana utama yang ditawarkan tempat ini.",
+        ambience: "Suasana utama yang ditawarkan tempat ini.",
         time: "Informasi operasional yang penting untuk kamu cek.",
         budget: "Gambaran budget atau segmentasi harga.",
-        vibe: "Nuansa dan karakter tempat.",
-        ambience: "Suasana utama yang ditawarkan.",
         other: "Informasi tambahan dari tempat ini.",
     };
 
@@ -161,13 +163,42 @@ function getTagNamesByType(tags: Tag[], type: string) {
     return getTagsByType(tags, type).map((tag) => tag.name);
 }
 
-function makeQuickSummary(place: PlaceDetail, tags: Tag[]) {
-    const moodTags = getTagNamesByType(tags, "mood");
-    const facilityTags = getTagNamesByType(tags, "facility");
-    const vibeTags = [
+function getActivityTagNames(tags: Tag[]) {
+    return [
+        ...getTagNamesByType(tags, "activity"),
+        ...getTagNamesByType(tags, "mood"),
+    ];
+}
+
+function getVibeTagNames(tags: Tag[]) {
+    return [
         ...getTagNamesByType(tags, "vibe"),
         ...getTagNamesByType(tags, "ambience"),
     ];
+}
+
+const tagGroupOrder = ["activity", "mood", "facility", "vibe", "ambience", "time", "budget", "other"];
+
+function sortTagGroups(entries: [string, Tag[]][]) {
+    return entries.sort(([typeA], [typeB]) => {
+        const indexA = tagGroupOrder.indexOf(typeA);
+        const indexB = tagGroupOrder.indexOf(typeB);
+
+        const normalizedA = indexA === -1 ? tagGroupOrder.length : indexA;
+        const normalizedB = indexB === -1 ? tagGroupOrder.length : indexB;
+
+        if (normalizedA !== normalizedB) {
+            return normalizedA - normalizedB;
+        }
+
+        return typeA.localeCompare(typeB);
+    });
+}
+
+function makeQuickSummary(place: PlaceDetail, tags: Tag[]) {
+    const activityTags = getActivityTagNames(tags);
+    const facilityTags = getTagNamesByType(tags, "facility");
+    const vibeTags = getVibeTagNames(tags);
 
     const locationText = [place.area, place.city || "Padang"]
         .filter(Boolean)
@@ -181,9 +212,9 @@ function makeQuickSummary(place: PlaceDetail, tags: Tag[]) {
         ? `Jam bukanya ${place.opening_hours}`
         : "Jam bukanya belum tersedia";
 
-    const moodText =
-        moodTags.length > 0
-            ? `Cocok buat ${moodTags.slice(0, 3).join(", ").toLowerCase()}`
+    const activityText =
+        activityTags.length > 0
+            ? `Cocok buat ${activityTags.slice(0, 3).join(", ").toLowerCase()}`
             : "Cocok buat kamu yang lagi cari coffee shop di Padang";
 
     const facilityText =
@@ -202,7 +233,7 @@ function makeQuickSummary(place: PlaceDetail, tags: Tag[]) {
             : "";
 
     return `${place.name} adalah coffee shop di ${locationText || "Padang"
-        } ${priceText}. ${openingText}. ${moodText}. ${facilityText} ${vibeText}`
+        } ${priceText}. ${openingText}. ${activityText}. ${facilityText} ${vibeText}`
         .replace(/\s+/g, " ")
         .trim();
 }
@@ -218,14 +249,11 @@ function getPrimaryReasons(place: PlaceDetail, tags: Tag[]) {
         reasons.push(place.opening_hours);
     }
 
-    const moodTags = getTagNamesByType(tags, "mood");
+    const activityTags = getActivityTagNames(tags);
     const facilityTags = getTagNamesByType(tags, "facility");
-    const vibeTags = [
-        ...getTagNamesByType(tags, "vibe"),
-        ...getTagNamesByType(tags, "ambience"),
-    ];
+    const vibeTags = getVibeTagNames(tags);
 
-    reasons.push(...moodTags.slice(0, 2));
+    reasons.push(...activityTags.slice(0, 2));
     reasons.push(...facilityTags.slice(0, 2));
     reasons.push(...vibeTags.slice(0, 2));
 
@@ -625,12 +653,12 @@ export default async function PlaceDetailPage({
                                     </h2>
 
                                     <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-400">
-                                        Informasi ini membantu kamu menilai apakah
-                                        tempat ini cocok untuk kebutuhanmu.
+                                        Tag dipisahkan menjadi aktivitas, fasilitas,
+                                        dan vibes agar lebih gampang dibaca.
                                     </p>
 
                                     <div className="mt-5 grid gap-4 md:grid-cols-2">
-                                        {Object.entries(groupedTags).map(
+                                        {sortTagGroups(Object.entries(groupedTags)).map(
                                             ([type, tagList]) => (
                                                 <div
                                                     key={type}

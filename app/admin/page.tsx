@@ -271,6 +271,37 @@ function getPreviewUrls(photoUrls: string[]) {
         .slice(0, 5);
 }
 
+function getTagTypeLabel(type: string) {
+    const labels: Record<string, string> = {
+        activity: "Aktivitas",
+        mood: "Aktivitas",
+        facility: "Fasilitas",
+        vibe: "Vibes",
+        time: "Operasional",
+        general: "Lainnya",
+    };
+
+    return labels[type] || type;
+}
+
+const tagTypeOrder = ["activity", "mood", "facility", "vibe", "time", "general"];
+
+function sortTagGroups(entries: [string, Tag[]][]) {
+    return entries.sort(([typeA], [typeB]) => {
+        const indexA = tagTypeOrder.indexOf(typeA);
+        const indexB = tagTypeOrder.indexOf(typeB);
+
+        const normalizedA = indexA === -1 ? tagTypeOrder.length : indexA;
+        const normalizedB = indexB === -1 ? tagTypeOrder.length : indexB;
+
+        if (normalizedA !== normalizedB) {
+            return normalizedA - normalizedB;
+        }
+
+        return typeA.localeCompare(typeB);
+    });
+}
+
 export default function AdminPage() {
     const router = useRouter();
 
@@ -1123,10 +1154,10 @@ export default function AdminPage() {
                                             </p>
                                         ) : (
                                             <div className="space-y-5">
-                                                {Object.entries(groupedTags).map(([type, tagList]) => (
+                                                {sortTagGroups(Object.entries(groupedTags)).map(([type, tagList]) => (
                                                     <div key={type}>
                                                         <p className="mb-3 text-xs font-black uppercase tracking-[0.25em] text-neutral-500">
-                                                            {type}
+                                                            {getTagTypeLabel(type)}
                                                         </p>
 
                                                         <div className="flex flex-wrap gap-2">
