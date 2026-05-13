@@ -17,12 +17,18 @@ type Tag = {
     type: string;
 };
 
+type Characteristic = {
+    title: string;
+    description: string;
+};
+
 type AdminPlace = {
     id: string;
     category_id: string | null;
     name: string;
     slug: string;
     description: string | null;
+    characteristics: (string | Characteristic)[] | null;
     address: string | null;
     area: string | null;
     city: string | null;
@@ -66,6 +72,7 @@ type FormState = {
     slug: string;
     category_id: string;
     description: string;
+    characteristics: Characteristic[];
     address: string;
     area: string;
     city: string;
@@ -93,6 +100,12 @@ const initialForm: FormState = {
     slug: "",
     category_id: "",
     description: "",
+    characteristics: [
+        {
+            title: "",
+            description: "",
+        },
+    ],
     address: "",
     area: "",
     city: "Padang",
@@ -271,6 +284,67 @@ function getPreviewUrls(photoUrls: string[]) {
         .slice(0, 5);
 }
 
+function normalizeCharacteristics(value?: (string | Characteristic)[] | null) {
+    if (!Array.isArray(value)) {
+        return [
+            {
+                title: "",
+                description: "",
+            },
+        ];
+    }
+
+    const normalized = value
+        .map((item) => {
+            if (typeof item === "string") {
+                const cleanTitle = item.trim();
+
+                if (!cleanTitle) return null;
+
+                return {
+                    title: cleanTitle,
+                    description: "",
+                };
+            }
+
+            if (!item || typeof item !== "object") {
+                return null;
+            }
+
+            const title = String(item.title ?? "").trim();
+            const description = String(item.description ?? "").trim();
+
+            if (!title && !description) {
+                return null;
+            }
+
+            return {
+                title,
+                description,
+            };
+        })
+        .filter((item): item is Characteristic => Boolean(item));
+
+    return normalized.length > 0
+        ? normalized
+        : [
+            {
+                title: "",
+                description: "",
+            },
+        ];
+}
+
+function getCleanCharacteristics(characteristics: Characteristic[]) {
+    return characteristics
+        .map((item) => ({
+            title: item.title.trim(),
+            description: item.description.trim(),
+        }))
+        .filter((item) => item.title || item.description)
+        .slice(0, 20);
+}
+
 function getTagTypeLabel(type: string) {
     const labels: Record<string, string> = {
         activity: "Aktivitas",
@@ -434,6 +508,64 @@ export default function AdminPage() {
         });
     }
 
+    function updateCharacteristic(
+        index: number,
+        key: keyof Characteristic,
+        value: string
+    ) {
+        setForm((prev) => ({
+            ...prev,
+            characteristics: prev.characteristics.map((item, itemIndex) =>
+                itemIndex === index
+                    ? {
+                        ...item,
+                        [key]: value,
+                    }
+                    : item
+            ),
+        }));
+    }
+
+    function addCharacteristicField() {
+        setForm((prev) => {
+            if (prev.characteristics.length >= 20) return prev;
+
+            return {
+                ...prev,
+                characteristics: [
+                    ...prev.characteristics,
+                    {
+                        title: "",
+                        description: "",
+                    },
+                ],
+            };
+        });
+    }
+
+    function removeCharacteristicField(index: number) {
+        setForm((prev) => {
+            const nextCharacteristics = prev.characteristics.filter(
+                (_, itemIndex) => itemIndex !== index
+            );
+
+            return {
+                ...prev,
+                characteristics:
+                    nextCharacteristics.length > 0
+                        ? nextCharacteristics
+                        : [
+                            {
+                                title: "",
+                                description: "",
+                            },
+                        ],
+            };
+        });
+    }
+
+    const cleanCharacteristics = getCleanCharacteristics(form.characteristics);
+
     function handleEdit(place: AdminPlace) {
         setMessage("");
         setErrorMessage("");
@@ -475,6 +607,7 @@ export default function AdminPage() {
             slug: place.slug ?? "",
             category_id: place.category_id ?? categories[0]?.id ?? "",
             description: place.description ?? "",
+            characteristics: normalizeCharacteristics(place.characteristics),
             address: place.address ?? "",
             area: place.area ?? "",
             city: place.city ?? "Padang",
@@ -588,6 +721,7 @@ export default function AdminPage() {
                     slug: form.slug,
                     category_id: form.category_id,
                     description: form.description,
+                    characteristics: cleanCharacteristics,
                     address: form.address,
                     area: form.area,
                     city: form.city,
@@ -805,6 +939,124 @@ export default function AdminPage() {
                                             className="input-cms resize-none"
                                         />
                                     </Field>
+
+                                    <div>
+                                        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                            <div>
+                                                <p className="text-sm font-bold text-neutral-300">
+                                                    Karakteristik & Keunggulan
+                                                </p>
+
+                                                <p className="mt-1 text-xs font-bold leading-5 text-neutral-500">
+                                                    Setiap item punya judul dan subjudul. Judul akan
+                                                    tampil bold di halaman detail, subjudul tampil normal.
+                                                    Kalau kosong, section ini tidak akan tampil.
+                                                </p>
+                                            </div>
+
+                                            <span className="w-fit shrink-0 rounded-full border border-white/10 px-3 py-1 text-xs font-black text-neutral-400">
+                                                {cleanCharacteristics.length} item
+                                            </span>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            {form.characteristics.map((item, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="rounded-[22px] border border-white/10 bg-white/[0.03] p-4"
+                                                >
+                                                    <div className="mb-3 flex items-center justify-between gap-3">
+                                                        <p className="text-xs font-black uppercase tracking-[0.2em] text-neutral-500">
+                                                            Item {index + 1}
+                                                        </p>
+
+                                                        {form.characteristics.length > 1 ? (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeCharacteristicField(index)}
+                                                                className="rounded-full border border-red-400/20 px-3 py-1 text-xs font-black text-red-300 transition hover:bg-red-400/10"
+                                                            >
+                                                                Hapus
+                                                            </button>
+                                                        ) : null}
+                                                    </div>
+
+                                                    <div className="grid gap-3">
+                                                        <input
+                                                            value={item.title}
+                                                            onChange={(event) =>
+                                                                updateCharacteristic(
+                                                                    index,
+                                                                    "title",
+                                                                    event.target.value
+                                                                )
+                                                            }
+                                                            placeholder="Judul. Contoh: Pengalaman Slow Bar yang Intim"
+                                                            className="input-cms"
+                                                        />
+
+                                                        <textarea
+                                                            value={item.description}
+                                                            onChange={(event) =>
+                                                                updateCharacteristic(
+                                                                    index,
+                                                                    "description",
+                                                                    event.target.value
+                                                                )
+                                                            }
+                                                            placeholder="Subjudul/deskripsi. Contoh: Fokus utama di sini adalah interaksi dekat antara barista dan penikmat kopi."
+                                                            rows={3}
+                                                            className="input-cms resize-none"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            onClick={addCharacteristicField}
+                                            disabled={form.characteristics.length >= 20}
+                                            className="mt-4 w-full rounded-2xl border border-white/10 px-5 py-3 text-sm font-black text-white transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-40 sm:w-fit"
+                                        >
+                                            + Tambah Karakteristik
+                                        </button>
+
+                                        {cleanCharacteristics.length > 0 ? (
+                                            <div className="mt-5 rounded-[22px] border border-white/10 bg-white/[0.03] p-4">
+                                                <p className="text-sm font-black text-white">
+                                                    Preview Karakteristik
+                                                </p>
+
+                                                <div className="mt-3 space-y-2">
+                                                    {cleanCharacteristics.map((characteristic, index) => (
+                                                        <div
+                                                            key={`${characteristic.title}-${index}`}
+                                                            className="flex gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3"
+                                                        >
+                                                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-xs font-black text-black">
+                                                                {index + 1}
+                                                            </span>
+
+                                                            <div>
+                                                                {characteristic.title ? (
+                                                                    <p className="text-sm font-black leading-6 text-neutral-100">
+                                                                        {characteristic.title}
+                                                                    </p>
+                                                                ) : null}
+
+                                                                {characteristic.description ? (
+                                                                    <p className="mt-1 text-sm font-medium leading-6 text-neutral-400">
+                                                                        {characteristic.description}
+                                                                    </p>
+                                                                ) : null}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ) : null}
+                                    </div>
                                 </Panel>
 
                                 <Panel title="Lokasi & Detail">

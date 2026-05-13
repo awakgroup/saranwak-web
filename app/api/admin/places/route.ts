@@ -123,6 +123,58 @@ function getPhotoUrls(body: any) {
     return photoUrls;
 }
 
+function getCharacteristics(body: any) {
+    const rawCharacteristics: unknown[] = Array.isArray(body.characteristics)
+        ? body.characteristics
+        : [];
+
+    return rawCharacteristics
+        .map((item: unknown) => {
+            // Support data lama: characteristics masih berupa string[]
+            if (typeof item === "string") {
+                const cleanTitle = item.trim();
+
+                if (!cleanTitle) return null;
+
+                return {
+                    title: cleanTitle,
+                    description: "",
+                };
+            }
+
+            // Support data baru: characteristics berupa object[]
+            if (!item || typeof item !== "object") {
+                return null;
+            }
+
+            const value = item as {
+                title?: unknown;
+                description?: unknown;
+            };
+
+            const title = String(value.title ?? "").trim();
+            const description = String(value.description ?? "").trim();
+
+            if (!title && !description) {
+                return null;
+            }
+
+            return {
+                title,
+                description,
+            };
+        })
+        .filter(
+            (
+                item
+            ): item is {
+                title: string;
+                description: string;
+            } => item !== null
+        )
+        .slice(0, 20);
+}
+
 async function insertPlacePhotos(placeId: string, photoUrls: string[]) {
     if (photoUrls.length === 0) return null;
 
@@ -148,8 +200,9 @@ export async function GET() {
 
             supabaseAdmin
                 .from("tags")
-                .select("id, name, slug, type")
+                .select("id, name, slug, type, sort_order")
                 .eq("is_active", true)
+                .order("type", { ascending: true })
                 .order("sort_order", { ascending: true }),
 
             supabaseAdmin
@@ -161,6 +214,7 @@ export async function GET() {
           name,
           slug,
           description,
+          characteristics,
           address,
           area,
           city,
@@ -273,6 +327,7 @@ export async function POST(request: Request) {
                 name,
                 slug,
                 description: body.description || null,
+                characteristics: getCharacteristics(body),
                 address: body.address || null,
                 area: body.area || null,
                 city: body.city || "Padang",
@@ -349,6 +404,7 @@ export async function POST(request: Request) {
 
         revalidatePath("/");
         revalidatePath("/places");
+        revalidatePath(`/places/${place.slug}`);
 
         return NextResponse.json({
             message: "Tempat berhasil ditambahkan.",
@@ -410,6 +466,7 @@ export async function PATCH(request: Request) {
                 name,
                 slug,
                 description: body.description || null,
+                characteristics: getCharacteristics(body),
                 address: body.address || null,
                 area: body.area || null,
                 city: body.city || "Padang",

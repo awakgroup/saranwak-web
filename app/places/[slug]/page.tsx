@@ -27,6 +27,11 @@ type Tag = {
     type: string | null;
 };
 
+type Characteristic = {
+    title: string;
+    description: string;
+};
+
 type PlaceTagRelation = {
     tag_id: string;
     tags: Tag | Tag[] | null;
@@ -44,6 +49,7 @@ type PlaceDetail = {
     name: string;
     slug: string;
     description: string | null;
+    characteristics: (string | Characteristic)[] | null;
     address: string | null;
     area: string | null;
     city: string | null;
@@ -128,6 +134,45 @@ function cleanDescription(value?: string | null) {
     if (!value) return "";
 
     return value.replace(/\s+/g, " ").trim();
+}
+
+function getPlaceCharacteristics(value?: (string | Characteristic)[] | null) {
+    if (!Array.isArray(value)) {
+        return [];
+    }
+
+    return value
+        .map((item) => {
+            // Support data lama: characteristics masih berupa string[]
+            if (typeof item === "string") {
+                const cleanTitle = item.trim();
+
+                if (!cleanTitle) return null;
+
+                return {
+                    title: cleanTitle,
+                    description: "",
+                };
+            }
+
+            // Support data baru: characteristics berupa object[]
+            if (!item || typeof item !== "object") {
+                return null;
+            }
+
+            const title = String(item.title ?? "").trim();
+            const description = String(item.description ?? "").trim();
+
+            if (!title && !description) {
+                return null;
+            }
+
+            return {
+                title,
+                description,
+            };
+        })
+        .filter((item): item is Characteristic => Boolean(item));
 }
 
 function makeSeoDescription(place: PlaceDetail, tags: Tag[] = []) {
@@ -269,6 +314,7 @@ async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> {
             name,
             slug,
             description,
+            characteristics,
             address,
             area,
             city,
@@ -450,6 +496,7 @@ export default async function PlaceDetailPage({
             .filter((tag): tag is Tag => Boolean(tag)) ?? [];
 
     const groupedTags = groupTagsByType(tags);
+    const characteristics = getPlaceCharacteristics(place.characteristics);
 
     const galleryPhotos =
         place.place_photos
@@ -645,6 +692,50 @@ export default async function PlaceDetailPage({
                                         "Belum ada deskripsi untuk tempat ini."}
                                 </p>
                             </section>
+
+                            {characteristics.length > 0 ? (
+                                <section className="mt-8">
+                                    <div className="mb-5">
+
+                                        <h2 className="mt-3 text-2xl font-black">
+                                            Karakteristik & Keunggulan
+                                        </h2>
+
+                                        <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-400">
+                                            Poin utama yang bikin tempat ini layak kamu pertimbangkan.
+                                        </p>
+                                    </div>
+
+                                    <div className="grid gap-3">
+                                        {characteristics.map((item, index) => (
+                                            <div
+                                                key={`${item.title}-${index}`}
+                                                className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5"
+                                            >
+                                                <div className="flex gap-4">
+                                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white text-sm font-black text-black">
+                                                        {String(index + 1).padStart(2, "0")}
+                                                    </div>
+
+                                                    <div className="pt-1">
+                                                        {item.title ? (
+                                                            <h3 className="text-base font-black leading-7 text-neutral-100">
+                                                                {item.title}
+                                                            </h3>
+                                                        ) : null}
+
+                                                        {item.description ? (
+                                                            <p className="mt-1 text-sm font-medium leading-7 text-neutral-400 sm:text-base">
+                                                                {item.description}
+                                                            </p>
+                                                        ) : null}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+                            ) : null}
 
                             {tags.length > 0 ? (
                                 <section className="mt-8">

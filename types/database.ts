@@ -22,6 +22,11 @@ export type Tag = {
     updated_at?: string | null;
 };
 
+export type PlaceCharacteristic = {
+    title: string;
+    description: string;
+};
+
 export type PlaceTag = {
     id?: string;
     place_id?: string;
@@ -39,6 +44,7 @@ export type Place = {
 
     short_description?: string | null;
     description?: string | null;
+    characteristics?: (string | PlaceCharacteristic)[] | null;
 
     address?: string | null;
     area?: string | null;

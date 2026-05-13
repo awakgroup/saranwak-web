@@ -35,7 +35,6 @@ function sanitizeMetadata(value: unknown) {
     try {
         const jsonString = JSON.stringify(value);
 
-        // Biar metadata nggak terlalu besar dan bikin insert berat.
         if (jsonString.length > 5000) {
             return {
                 truncated: true,
@@ -47,21 +46,6 @@ function sanitizeMetadata(value: unknown) {
     } catch {
         return null;
     }
-}
-
-function getClientIp(request: NextRequest) {
-    const forwardedFor = request.headers.get("x-forwarded-for");
-    const realIp = request.headers.get("x-real-ip");
-
-    if (forwardedFor) {
-        return forwardedFor.split(",")[0]?.trim().slice(0, 100) || null;
-    }
-
-    if (realIp) {
-        return realIp.slice(0, 100);
-    }
-
-    return null;
 }
 
 export async function POST(request: NextRequest) {
@@ -88,8 +72,6 @@ export async function POST(request: NextRequest) {
         const userAgent =
             request.headers.get("user-agent")?.slice(0, 500) ?? null;
 
-        const clientIp = getClientIp(request);
-
         const metadata = sanitizeMetadata(body.metadata);
 
         const { error } = await supabaseAdmin.from("analytics_events").insert({
@@ -103,7 +85,6 @@ export async function POST(request: NextRequest) {
             metadata,
             session_id: sessionId,
             user_agent: userAgent,
-            ip_address: clientIp,
         });
 
         if (error) {
