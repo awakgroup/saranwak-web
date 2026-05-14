@@ -76,7 +76,7 @@ export function HeroSearch() {
 
     return (
         <div className="mt-8">
-            <form
+            {/* <form
                 onSubmit={handleKeywordSearch}
                 className="max-w-2xl rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-3 shadow-[0_20px_70px_rgba(32,24,19,0.08)]"
             >
@@ -95,7 +95,7 @@ export function HeroSearch() {
                         Mulai Cari
                     </button>
                 </div>
-            </form>
+            </form> */}
 
             <div className="mt-5 max-w-2xl rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8]/75 p-4 shadow-sm">
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -130,8 +130,8 @@ export function HeroSearch() {
                                         type="button"
                                         onClick={() => setSelectedPrice(option.value)}
                                         className={`rounded-full border px-4 py-2 text-sm font-black transition ${active
-                                                ? "border-[#1F5A4A] bg-[#1F5A4A] text-white shadow-sm"
-                                                : "border-[#E7D8C8] bg-[#FFFDF8] text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
+                                            ? "border-[#1F5A4A] bg-[#1F5A4A] text-white shadow-sm"
+                                            : "border-[#E7D8C8] bg-[#FFFDF8] text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
                                             }`}
                                     >
                                         <span className="mr-2">{active ? "✓" : "+"}</span>
@@ -158,8 +158,8 @@ export function HeroSearch() {
                                             type="button"
                                             onClick={() => toggleTag(option.tag)}
                                             className={`rounded-full border px-4 py-2 text-sm font-black transition ${active
-                                                    ? "border-[#1F5A4A] bg-[#1F5A4A] text-white shadow-sm"
-                                                    : "border-[#E7D8C8] bg-[#FFFDF8] text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
+                                                ? "border-[#1F5A4A] bg-[#1F5A4A] text-white shadow-sm"
+                                                : "border-[#E7D8C8] bg-[#FFFDF8] text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
                                                 }`}
                                         >
                                             <span className="mr-2">{active ? "✓" : "+"}</span>
