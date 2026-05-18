@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -37,8 +38,15 @@ export function Navbar() {
                     onClick={() => setOpen(false)}
                     className="group flex min-w-0 items-center gap-3"
                 >
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#181818] text-lg font-black text-[#FFFDF8] shadow-sm transition duration-300 group-hover:-rotate-6 group-hover:scale-105 sm:h-12 sm:w-12 sm:text-xl">
-                        S
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#181818] shadow-sm transition duration-300 group-hover:-rotate-6 group-hover:scale-105 sm:h-12 sm:w-12">
+                        <Image
+                            src="/favicon.png"
+                            alt="Saranwak"
+                            width={48}
+                            height={48}
+                            priority
+                            className="h-full w-full object-cover"
+                        />
                     </div>
 
                     <div className="min-w-0">
