@@ -185,7 +185,7 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
                                     })}
                                     className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-105"
                                     referrerPolicy="no-referrer"
-                                    loading="lazy"
+                                    loading="eager"
                                 />
 
                                 <div
