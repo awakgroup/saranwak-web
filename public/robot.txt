@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://saranwak.vercel.app/sitemap.xml

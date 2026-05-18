@@ -12,7 +12,7 @@ import type { Place } from "@/types/database";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const siteUrl = "https://saranwak.vercel.app";
+const siteUrl = "https://saranwak.com";
 
 type Category = {
     id: string;
@@ -425,8 +425,11 @@ export async function generateMetadata({
 
     if (!place) {
         return {
-            title: "Tempat tidak ditemukan | Saranwak",
+            title: "Tempat tidak ditemukan",
             description: "Tempat yang kamu cari tidak ditemukan di Saranwak.",
+            alternates: {
+                canonical: `${siteUrl}/places?category=coffee-shop`,
+            },
             robots: {
                 index: false,
                 follow: false,
@@ -443,14 +446,31 @@ export async function generateMetadata({
         ? `${place.area}, ${place.city || "Padang"}`
         : place.city || "Padang";
 
-    const title = `${place.name} - Coffee Shop di ${locationTitle} | Saranwak`;
+    const title = `${place.name} - Coffee Shop di ${locationTitle}`;
     const description = makeSeoDescription(place, tags);
     const imageUrl = getSafePlaceImageUrl(place.image_url);
     const pageUrl = `${siteUrl}/places/${place.slug}`;
 
+    const tagKeywords = tags
+        .map((tag) => tag.name)
+        .filter(Boolean)
+        .slice(0, 8);
+
     return {
         title,
         description,
+        keywords: [
+            place.name,
+            `${place.name} Padang`,
+            `${place.name} ${locationTitle}`,
+            `coffee shop ${locationTitle}`,
+            `cafe ${locationTitle}`,
+            "coffee shop Padang",
+            "cafe Padang",
+            "tempat nongkrong Padang",
+            "tempat nugas Padang",
+            ...tagKeywords,
+        ],
         alternates: {
             canonical: pageUrl,
         },
@@ -468,7 +488,7 @@ export async function generateMetadata({
                 },
             ],
             locale: "id_ID",
-            type: "website",
+            type: "article",
         },
         twitter: {
             card: "summary_large_image",
@@ -479,6 +499,13 @@ export async function generateMetadata({
         robots: {
             index: true,
             follow: true,
+            googleBot: {
+                index: true,
+                follow: true,
+                "max-image-preview": "large",
+                "max-snippet": -1,
+                "max-video-preview": -1,
+            },
         },
     };
 }
@@ -525,22 +552,75 @@ export default async function PlaceDetailPage({
 
     const jsonLd = {
         "@context": "https://schema.org",
-        "@type": "CafeOrCoffeeShop",
-        name: place.name,
-        description: makeSeoDescription(place, tags),
-        image: heroImageUrl,
-        url: pageUrl,
-        address: {
-            "@type": "PostalAddress",
-            streetAddress: place.address || undefined,
-            addressLocality: place.city || "Padang",
-            addressRegion: "Sumatera Barat",
-            addressCountry: "ID",
-        },
-        areaServed: locationTitle,
-        priceRange: place.price_range || undefined,
-        openingHours: place.opening_hours || undefined,
-        sameAs: place.instagram_url ? [place.instagram_url] : undefined,
+        "@graph": [
+            {
+                "@type": "CafeOrCoffeeShop",
+                "@id": `${pageUrl}#place`,
+                name: place.name,
+                description: makeSeoDescription(place, tags),
+                image: heroImageUrl,
+                url: pageUrl,
+                address: {
+                    "@type": "PostalAddress",
+                    streetAddress: place.address || undefined,
+                    addressLocality: place.city || "Padang",
+                    addressRegion: "Sumatera Barat",
+                    addressCountry: "ID",
+                },
+                areaServed: locationTitle,
+                priceRange: place.price_range || undefined,
+                openingHours: place.opening_hours || undefined,
+                sameAs: place.instagram_url ? [place.instagram_url] : undefined,
+                servesCuisine: "Coffee",
+                publicAccess: true,
+                isAccessibleForFree: true,
+                mainEntityOfPage: {
+                    "@type": "WebPage",
+                    "@id": pageUrl,
+                },
+            },
+            {
+                "@type": "WebPage",
+                "@id": pageUrl,
+                url: pageUrl,
+                name: `${place.name} - Coffee Shop di ${locationTitle}`,
+                description: makeSeoDescription(place, tags),
+                isPartOf: {
+                    "@type": "WebSite",
+                    "@id": `${siteUrl}#website`,
+                    name: "Saranwak",
+                    url: siteUrl,
+                },
+                primaryImageOfPage: {
+                    "@type": "ImageObject",
+                    url: heroImageUrl,
+                },
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${pageUrl}#breadcrumb`,
+                itemListElement: [
+                    {
+                        "@type": "ListItem",
+                        position: 1,
+                        name: "Home",
+                        item: siteUrl,
+                    },
+                    {
+                        "@type": "ListItem",
+                        position: 2,
+                        name: "Coffee Shop Padang",
+                        item: `${siteUrl}/places?category=coffee-shop`,
+                    },
+                    {
+                        "@type": "ListItem",
+                        position: 3,
+                        name: place.name,
+                        item: pageUrl,
+                    },
+                ],
+            },
+        ],
     };
 
     return (
@@ -579,7 +659,7 @@ export default async function PlaceDetailPage({
 
                 <div className="overflow-hidden rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] shadow-[0_24px_80px_rgba(47,35,25,0.10)] sm:rounded-[38px]">
                     <div className="relative">
-                        <div className="relative h-[260px] bg-[#181818] sm:h-[340px] md:h-[520px]">
+                        <div className="relative h-[260px] bg-[#181818] sm:h-[320px] lg:h-[520px]">
                             <img
                                 src={heroImageUrl}
                                 alt={`${place.name} coffee shop di ${place.area || "Padang"}`}
@@ -589,7 +669,7 @@ export default async function PlaceDetailPage({
 
                             <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-black/28 to-black/5" />
 
-                            <div className="absolute bottom-0 left-0 right-0 hidden p-7 md:block lg:p-9">
+                            <div className="absolute bottom-0 left-0 right-0 hidden p-7 lg:block lg:p-9">
                                 <div className="flex flex-wrap gap-2">
                                     <span className="rounded-full border border-white/15 bg-white/15 px-3 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-white backdrop-blur">
                                         {category?.name ?? "Tempat"}
@@ -667,7 +747,7 @@ export default async function PlaceDetailPage({
                             </div>
                         </div>
 
-                        <div className="block bg-[#FFFDF8] p-5 md:hidden">
+                        <div className="block bg-[#FFFDF8] p-5 lg:hidden">
                             <div className="flex flex-wrap gap-2">
                                 <span className="rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-[#C8784A]">
                                     {category?.name ?? "Tempat"}
@@ -686,7 +766,7 @@ export default async function PlaceDetailPage({
                                 ) : null}
                             </div>
 
-                            <h1 className="mt-4 break-words text-[34px] font-black leading-[0.98] tracking-[-0.055em] text-[#201813] sm:text-5xl">
+                            <h1 className="mt-4 break-words text-[30px] font-black leading-[1] tracking-[-0.05em] text-[#201813] sm:text-4xl">
                                 {place.name}
                             </h1>
 
@@ -694,7 +774,7 @@ export default async function PlaceDetailPage({
                                 {quickSummary}
                             </p>
 
-                            <div className="mt-5 grid grid-cols-2 gap-3">
+                            <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 {place.google_maps_url ? (
                                     <TrackedExternalLink
                                         href={place.google_maps_url}
@@ -737,7 +817,7 @@ export default async function PlaceDetailPage({
                                     href={whatsappShareUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="col-span-2 inline-flex min-h-12 items-center justify-center rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8] px-4 py-3 text-center text-sm font-black text-[#201813] transition hover:bg-[#1F5A4A] hover:text-white"
+                                    className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8] px-4 py-3 text-center text-sm font-black text-[#201813] transition hover:bg-[#1F5A4A] hover:text-white sm:col-span-2"
                                 >
                                     Share ke WhatsApp
                                 </a>
