@@ -46,67 +46,102 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
 
     if (sortedPhotos.length === 0) return null;
 
-    const activePhoto = sortedPhotos[activeIndex];
-    const activeImageUrl = getSafePlaceImageUrl(activePhoto.image_url);
+    const safeActiveIndex =
+        activeIndex >= sortedPhotos.length ? 0 : Math.max(activeIndex, 0);
 
-    function goPrev() {
-        setActiveIndex((prev) =>
-            prev === 0 ? sortedPhotos.length - 1 : prev - 1
-        );
+    const activePhoto = sortedPhotos[safeActiveIndex];
+    const activeImageUrl = getSafePlaceImageUrl(activePhoto.image_url);
+    const hasMultiplePhotos = sortedPhotos.length > 1;
+
+    function goPrev(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        setActiveIndex((prev) => {
+            if (sortedPhotos.length <= 1) return 0;
+            return prev === 0 ? sortedPhotos.length - 1 : prev - 1;
+        });
     }
 
-    function goNext() {
-        setActiveIndex((prev) =>
-            prev === sortedPhotos.length - 1 ? 0 : prev + 1
-        );
+    function goNext(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        setActiveIndex((prev) => {
+            if (sortedPhotos.length <= 1) return 0;
+            return prev === sortedPhotos.length - 1 ? 0 : prev + 1;
+        });
+    }
+
+    function selectPhoto(
+        event: React.MouseEvent<HTMLButtonElement>,
+        index: number
+    ) {
+        event.preventDefault();
+        event.stopPropagation();
+        setActiveIndex(index);
     }
 
     return (
-        <div className="border-b border-white/10 bg-black/30 p-4 md:p-6">
-            <div className="mb-4 flex items-end justify-between gap-4">
+        <section className="border-b border-[#E7D8C8] bg-[#FFFDF8] p-4 sm:p-5 md:p-7">
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p className="text-xs font-black uppercase tracking-[0.3em] text-neutral-500">
+                    <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#C8784A]">
                         Gallery
                     </p>
 
-                    <h2 className="mt-2 text-2xl font-black">
+                    <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-[#201813] sm:text-3xl">
                         Suasana {placeName}
                     </h2>
+
+                    <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-[#756A60]">
+                        Lihat gambaran tempat sebelum datang, biar ekspektasi nggak
+                        berantem sama realita.
+                    </p>
                 </div>
 
-                <p className="hidden text-sm font-bold text-neutral-500 md:block">
-                    {activeIndex + 1} / {sortedPhotos.length} foto
-                </p>
+                <div className="flex w-fit items-center gap-2 rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-2 text-xs font-black text-[#4B4038]">
+                    <span className="text-[#1F5A4A]">{safeActiveIndex + 1}</span>
+                    <span className="text-[#9B8B7E]">/</span>
+                    <span>{sortedPhotos.length} foto</span>
+                </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03]">
-                <img
-                    src={activeImageUrl}
-                    alt={getGalleryAltText({
-                        placeName,
-                        caption: activePhoto.caption,
-                        index: activeIndex,
-                    })}
-                    className="h-[280px] w-full object-cover transition duration-500 md:h-[520px]"
-                    referrerPolicy="no-referrer"
-                />
+            <div className="relative overflow-hidden rounded-[26px] border border-[#E7D8C8] bg-[#181818] shadow-[0_18px_55px_rgba(47,35,25,0.08)] sm:rounded-[32px]">
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#181818] sm:aspect-[16/10] md:aspect-[16/9]">
+                    <img
+                        src={activeImageUrl}
+                        alt={getGalleryAltText({
+                            placeName,
+                            caption: activePhoto.caption,
+                            index: safeActiveIndex,
+                        })}
+                        className="h-full w-full object-cover object-center transition duration-500"
+                        referrerPolicy="no-referrer"
+                    />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10" />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/58 via-black/10 to-transparent" />
+                </div>
+
+                <div className="pointer-events-none absolute left-4 top-4 z-20 flex items-center gap-2 rounded-full border border-white/15 bg-black/35 px-3 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-white backdrop-blur">
+                    <span className="h-2 w-2 rounded-full bg-[#F2C38B]" />
+                    Foto {safeActiveIndex + 1}
+                </div>
 
                 {activePhoto.caption ? (
-                    <div className="absolute bottom-5 left-5 right-5">
-                        <p className="w-fit rounded-full bg-black/60 px-4 py-2 text-sm font-bold text-white backdrop-blur">
+                    <div className="pointer-events-none absolute bottom-4 left-4 right-4 z-20 sm:bottom-5 sm:left-5 sm:right-5">
+                        <p className="w-fit max-w-full rounded-2xl border border-white/15 bg-black/45 px-4 py-3 text-sm font-bold leading-6 text-white shadow-lg backdrop-blur">
                             {activePhoto.caption}
                         </p>
                     </div>
                 ) : null}
 
-                {sortedPhotos.length > 1 ? (
+                {hasMultiplePhotos ? (
                     <>
                         <button
                             type="button"
                             onClick={goPrev}
-                            className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-xl font-black text-white backdrop-blur transition hover:bg-white hover:text-black"
+                            className="absolute left-3 top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/55 text-xl font-black text-white shadow-lg backdrop-blur transition hover:bg-white hover:text-[#181818] sm:left-5"
                             aria-label={`Lihat foto sebelumnya dari ${placeName}`}
                         >
                             ←
@@ -115,7 +150,7 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
                         <button
                             type="button"
                             onClick={goNext}
-                            className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-xl font-black text-white backdrop-blur transition hover:bg-white hover:text-black"
+                            className="absolute right-3 top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/55 text-xl font-black text-white shadow-lg backdrop-blur transition hover:bg-white hover:text-[#181818] sm:right-5"
                             aria-label={`Lihat foto berikutnya dari ${placeName}`}
                         >
                             →
@@ -124,19 +159,19 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
                 ) : null}
             </div>
 
-            {sortedPhotos.length > 1 ? (
-                <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
+            {hasMultiplePhotos ? (
+                <div className="mt-4 flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {sortedPhotos.map((photo, index) => {
-                        const active = index === activeIndex;
+                        const active = index === safeActiveIndex;
 
                         return (
                             <button
                                 key={photo.id}
                                 type="button"
-                                onClick={() => setActiveIndex(index)}
-                                className={`relative h-20 w-28 shrink-0 overflow-hidden rounded-2xl border transition md:h-24 md:w-36 ${active
-                                        ? "border-white opacity-100"
-                                        : "border-white/10 opacity-60 hover:opacity-100"
+                                onClick={(event) => selectPhoto(event, index)}
+                                className={`group relative h-20 w-28 shrink-0 overflow-hidden rounded-2xl border bg-[#F8F1E8] transition duration-300 sm:h-24 sm:w-36 ${active
+                                    ? "border-[#1F5A4A] opacity-100 shadow-[0_12px_30px_rgba(31,90,74,0.16)]"
+                                    : "border-[#E7D8C8] opacity-70 hover:-translate-y-0.5 hover:border-[#1F5A4A]/50 hover:opacity-100"
                                     }`}
                                 aria-label={`Pilih foto ${index + 1} dari ${placeName}`}
                             >
@@ -148,19 +183,28 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
                                         index,
                                         type: "thumbnail",
                                     })}
-                                    className="h-full w-full object-cover"
+                                    className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-105"
                                     referrerPolicy="no-referrer"
                                     loading="lazy"
                                 />
 
+                                <div
+                                    className={`pointer-events-none absolute inset-0 transition ${active ? "bg-[#1F5A4A]/10" : "bg-black/10"
+                                        }`}
+                                />
+
+                                <div className="pointer-events-none absolute left-2 top-2 grid h-6 min-w-6 place-items-center rounded-full bg-white/90 px-2 text-[10px] font-black text-[#201813] shadow-sm">
+                                    {index + 1}
+                                </div>
+
                                 {active ? (
-                                    <div className="absolute inset-0 ring-2 ring-inset ring-white" />
+                                    <div className="pointer-events-none absolute inset-0 ring-2 ring-inset ring-[#1F5A4A]" />
                                 ) : null}
                             </button>
                         );
                     })}
                 </div>
             ) : null}
-        </div>
+        </section>
     );
 }

@@ -39,7 +39,7 @@ function getCategoryLabel(place: Place) {
     return place.categories?.name || "Tempat";
 }
 
-function getMainTags(place: Place) {
+function getPlaceTags(place: Place) {
     return (
         place.place_tags
             ?.map((item) => {
@@ -49,9 +49,12 @@ function getMainTags(place: Place) {
 
                 return item.tags;
             })
-            .filter(Boolean)
-            .slice(0, 2) || []
+            .filter(Boolean) || []
     );
+}
+
+function getMainTags(place: Place, limit = 4) {
+    return getPlaceTags(place).slice(0, limit);
 }
 
 function getPlaceArea(place: Place) {
@@ -69,18 +72,47 @@ function getImageAlt(place: Place) {
     return `${place.name} tempat rekomendasi di ${area}`;
 }
 
+function getBestForLabels(place: Place) {
+    const tags = getPlaceTags(place);
+
+    const priorityKeywords = [
+        "nugas",
+        "wfc",
+        "nongkrong",
+        "me-time",
+        "me time",
+        "first-date",
+        "first date",
+        "meeting",
+        "live-music",
+        "live music",
+    ];
+
+    const priorityTags = tags.filter((tag) => {
+        const slug = tag?.slug?.toLowerCase() || "";
+        const name = tag?.name?.toLowerCase() || "";
+
+        return priorityKeywords.some(
+            (keyword) => slug.includes(keyword) || name.includes(keyword)
+        );
+    });
+
+    const selected = priorityTags.length > 0 ? priorityTags : tags;
+
+    return selected.slice(0, 3);
+}
+
 export function PlaceCard({
     place,
     source = "place_card",
     position,
 }: PlaceCardProps) {
-    const tags = getMainTags(place);
+    const tags = getMainTags(place, 4);
+    const bestForTags = getBestForLabels(place);
     const area = getPlaceArea(place);
+    const category = getCategoryLabel(place);
     const detailHref = `/places/${place.slug}`;
-
-    const imageUrl = getSafePlaceImageUrl(
-        place.image_url || place.main_image_url
-    );
+    const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
 
     function handleCardClick() {
         void trackEvent({
@@ -93,7 +125,7 @@ export function PlaceCard({
                 href: detailHref,
                 area: place.area,
                 city: place.city,
-                category: getCategoryLabel(place),
+                category,
                 price_range: place.price_range,
                 opening_hours: place.opening_hours,
                 is_featured: place.is_featured,
@@ -110,80 +142,109 @@ export function PlaceCard({
         <Link
             href={detailHref}
             onClick={handleCardClick}
-            className="group relative overflow-hidden rounded-[32px] border border-[#E3DED4] bg-[#FFFDF8] shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-[#181818]/20 hover:shadow-[0_28px_80px_rgba(20,20,20,0.14)]"
+            className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-[#EADCCB] bg-[#FFFDF8] shadow-[0_14px_40px_rgba(47,35,25,0.07)] transition-all duration-500 hover:-translate-y-1.5 hover:border-[#1F5A4A]/35 hover:shadow-[0_28px_80px_rgba(47,35,25,0.15)]"
         >
-            <div className="relative h-56 overflow-hidden bg-[#E3DED4]">
+            <div className="relative h-52 overflow-hidden bg-[#E3DED4] sm:h-56">
                 <img
                     src={imageUrl}
                     alt={getImageAlt(place)}
-                    className="h-full w-full object-cover grayscale-[20%] transition duration-700 group-hover:scale-110 group-hover:grayscale-0"
+                    className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
                     loading="lazy"
                     referrerPolicy="no-referrer"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/22 to-black/5" />
 
-                <div className="absolute left-4 top-4 flex gap-2">
-                    {place.is_featured && (
-                        <div className="rounded-full bg-[#FFFDF8] px-3 py-1 text-xs font-black text-[#181818] shadow-sm">
+                <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                    {place.is_featured ? (
+                        <span className="rounded-full bg-[#F3C48E] px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] text-[#201813] shadow-sm">
                             Featured
-                        </div>
-                    )}
+                        </span>
+                    ) : null}
 
-                    {place.is_verified && (
-                        <div className="rounded-full bg-black/70 px-3 py-1 text-xs font-black text-white backdrop-blur">
+                    {place.is_verified ? (
+                        <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] text-[#1F5A4A] shadow-sm backdrop-blur">
                             Verified
-                        </div>
-                    )}
+                        </span>
+                    ) : null}
                 </div>
 
                 <div className="absolute bottom-4 left-4 right-4">
-                    <p className="text-xs font-black uppercase tracking-[0.2em] text-white/70">
-                        {area}
-                    </p>
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
+                        <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white/85 backdrop-blur">
+                            {area}
+                        </span>
 
-                    <h3 className="mt-1 text-2xl font-black leading-tight text-white">
+                        <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white/85 backdrop-blur">
+                            {category}
+                        </span>
+                    </div>
+
+                    <h3 className="line-clamp-2 text-[22px] font-black leading-[1.05] tracking-[-0.04em] text-white drop-shadow-sm">
                         {place.name}
                     </h3>
                 </div>
             </div>
 
-            <div className="p-5">
-                <p className="line-clamp-2 min-h-12 text-sm leading-6 text-[#6F6A61]">
-                    {place.short_description ||
-                        place.description ||
-                        `Rekomendasi coffee shop di ${area} yang bisa kamu cek sesuai kebutuhan hari ini.`}
-                </p>
+            <div className="flex flex-1 flex-col p-5">
+                <div className="rounded-[22px] border border-[#EADCCB] bg-[#F8F1E8]/80 p-4">
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#C8784A]">
+                        Cocok untuk
+                    </p>
 
-                <div className="mt-4 flex flex-wrap gap-2">
-                    <span className="rounded-full bg-[#F4F1EA] px-3 py-1 text-xs font-black text-[#181818] ring-1 ring-[#E3DED4]">
-                        {getCategoryLabel(place)}
-                    </span>
-
-                    {tags.map((tag) => (
-                        <span
-                            key={tag?.id}
-                            className="rounded-full bg-[#F4F1EA] px-3 py-1 text-xs font-bold text-[#6F6A61] ring-1 ring-[#E3DED4]"
-                        >
-                            {tag?.name}
-                        </span>
-                    ))}
+                    {bestForTags.length > 0 ? (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                            {bestForTags.map((tag) => (
+                                <span
+                                    key={tag?.id}
+                                    className="rounded-full bg-white px-3 py-1.5 text-xs font-black text-[#201813] ring-1 ring-[#EADCCB]"
+                                >
+                                    {tag?.name}
+                                </span>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="mt-2 text-sm font-semibold leading-6 text-[#756A60]">
+                            Tempat santai yang bisa kamu cek sesuai kebutuhan hari ini.
+                        </p>
+                    )}
                 </div>
 
-                <div className="mt-5 flex items-center justify-between border-t border-[#E3DED4] pt-4">
-                    <div>
-                        <p className="text-xs font-bold text-[#6F6A61]">
-                            Range harga
-                        </p>
+                <p className="mt-4 line-clamp-2 min-h-[48px] text-sm font-medium leading-6 text-[#756A60]">
+                    {place.short_description ||
+                        place.description ||
+                        `Rekomendasi tempat di ${area} yang bisa kamu cek berdasarkan budget, fasilitas, dan vibes.`}
+                </p>
 
-                        <p className="font-black text-[#181818]">
-                            {formatPrice(place)}
-                        </p>
+                {tags.length > 0 ? (
+                    <div className="mt-4 flex flex-wrap gap-2">
+                        {tags.map((tag) => (
+                            <span
+                                key={tag?.id}
+                                className="rounded-full bg-white px-3 py-1.5 text-xs font-bold text-[#6F6A61] ring-1 ring-[#EADCCB]"
+                            >
+                                {tag?.name}
+                            </span>
+                        ))}
                     </div>
+                ) : null}
 
-                    <span className="rounded-full bg-[#181818] px-4 py-2 text-xs font-black text-[#FFFDF8] transition duration-300 group-hover:bg-[#2A2A2A]">
-                        Detail →
-                    </span>
+                <div className="mt-auto pt-5">
+                    <div className="flex items-end justify-between gap-4 border-t border-[#EADCCB] pt-4">
+                        <div className="min-w-0">
+                            <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#9B8B7E]">
+                                Range harga
+                            </p>
+
+                            <p className="mt-1 line-clamp-1 text-base font-black text-[#201813]">
+                                {formatPrice(place)}
+                            </p>
+                        </div>
+
+                        <span className="shrink-0 rounded-full bg-[#181818] px-4 py-2.5 text-xs font-black text-[#FFFDF8] transition duration-300 group-hover:bg-[#1F5A4A]">
+                            Detail →
+                        </span>
+                    </div>
                 </div>
             </div>
         </Link>

@@ -143,7 +143,6 @@ function getPlaceCharacteristics(value?: (string | Characteristic)[] | null) {
 
     return value
         .map((item) => {
-            // Support data lama: characteristics masih berupa string[]
             if (typeof item === "string") {
                 const cleanTitle = item.trim();
 
@@ -155,7 +154,6 @@ function getPlaceCharacteristics(value?: (string | Characteristic)[] | null) {
                 };
             }
 
-            // Support data baru: characteristics berupa object[]
             if (!item || typeof item !== "object") {
                 return null;
             }
@@ -222,7 +220,16 @@ function getVibeTagNames(tags: Tag[]) {
     ];
 }
 
-const tagGroupOrder = ["activity", "mood", "facility", "vibe", "ambience", "time", "budget", "other"];
+const tagGroupOrder = [
+    "activity",
+    "mood",
+    "facility",
+    "vibe",
+    "ambience",
+    "time",
+    "budget",
+    "other",
+];
 
 function sortTagGroups(entries: [string, Tag[]][]) {
     return entries.sort(([typeA], [typeB]) => {
@@ -255,7 +262,7 @@ function makeQuickSummary(place: PlaceDetail, tags: Tag[]) {
 
     const openingText = place.opening_hours
         ? `Jam bukanya ${place.opening_hours}`
-        : "Jam bukanya belum tersedia";
+        : "Jam buka belum tersedia, jadi sebaiknya cek Google Maps atau Instagram sebelum datang";
 
     const activityText =
         activityTags.length > 0
@@ -310,41 +317,41 @@ async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> {
         .from("places")
         .select(
             `
-            id,
-            name,
-            slug,
-            description,
-            characteristics,
-            address,
-            area,
-            city,
-            image_url,
-            google_maps_url,
-            instagram_url,
-            price_range,
-            opening_hours,
-            is_published,
-            categories (
-                id,
-                name,
-                slug
-            ),
-            place_tags (
-                tag_id,
-                tags (
-                    id,
-                    name,
-                    slug,
-                    type
-                )
-            ),
-            place_photos (
-                id,
-                image_url,
-                caption,
-                sort_order
-            )
-        `
+      id,
+      name,
+      slug,
+      description,
+      characteristics,
+      address,
+      area,
+      city,
+      image_url,
+      google_maps_url,
+      instagram_url,
+      price_range,
+      opening_hours,
+      is_published,
+      categories (
+        id,
+        name,
+        slug
+      ),
+      place_tags (
+        tag_id,
+        tags (
+          id,
+          name,
+          slug,
+          type
+        )
+      ),
+      place_photos (
+        id,
+        image_url,
+        caption,
+        sort_order
+      )
+    `
         )
         .eq("slug", slug)
         .eq("is_published", true)
@@ -362,39 +369,39 @@ async function getRelatedPlaces(currentPlaceId: string): Promise<Place[]> {
         .from("places")
         .select(
             `
-            id,
-            category_id,
-            name,
-            slug,
-            description,
-            short_description,
-            address,
-            area,
-            city,
-            image_url,
-            main_image_url,
-            price_min,
-            price_max,
-            price_range,
-            opening_hours,
-            is_featured,
-            is_verified,
-            is_published,
-            categories!inner (
-                id,
-                name,
-                slug
-            ),
-            place_tags (
-                tag_id,
-                tags (
-                    id,
-                    name,
-                    slug,
-                    type
-                )
-            )
-        `
+      id,
+      category_id,
+      name,
+      slug,
+      description,
+      short_description,
+      address,
+      area,
+      city,
+      image_url,
+      main_image_url,
+      price_min,
+      price_max,
+      price_range,
+      opening_hours,
+      is_featured,
+      is_verified,
+      is_published,
+      categories!inner (
+        id,
+        name,
+        slug
+      ),
+      place_tags (
+        tag_id,
+        tags (
+          id,
+          name,
+          slug,
+          type
+        )
+      )
+    `
         )
         .eq("is_published", true)
         .eq("categories.slug", "coffee-shop")
@@ -537,7 +544,7 @@ export default async function PlaceDetailPage({
     };
 
     return (
-        <main className="min-h-screen bg-neutral-950 px-4 py-10 text-white sm:px-5 sm:py-12">
+        <main className="min-h-screen bg-[#F4F1EA] px-4 pb-12 pt-5 text-[#201813] sm:px-5 sm:pb-16 sm:pt-8">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
@@ -554,53 +561,140 @@ export default async function PlaceDetailPage({
             />
 
             <section className="mx-auto max-w-6xl">
-                <Link
-                    href="/places?category=coffee-shop"
-                    className="inline-flex rounded-full border border-white/10 px-4 py-2 text-sm font-bold text-neutral-300 transition hover:bg-white hover:text-black"
-                >
-                    ← Kembali ke Explore
-                </Link>
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                    <Link
+                        href="/places?category=coffee-shop"
+                        className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-4 py-2 text-sm font-black text-[#201813] shadow-sm transition hover:-translate-y-0.5 hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
+                    >
+                        ← Kembali ke Explore
+                    </Link>
 
-                <div className="mt-8 overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03] shadow-[0_30px_120px_rgba(0,0,0,0.28)] sm:rounded-[36px]">
-                    <div className="relative h-[360px] bg-neutral-900 md:h-[520px]">
-                        <img
-                            src={heroImageUrl}
-                            alt={`${place.name} coffee shop di ${place.area || "Padang"
-                                }`}
-                            className="h-full w-full object-cover"
-                            referrerPolicy="no-referrer"
-                        />
+                    <Link
+                        href="/"
+                        className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#181818] px-4 py-2 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#1F5A4A]"
+                    >
+                        Home
+                    </Link>
+                </div>
 
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/10" />
+                <div className="overflow-hidden rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] shadow-[0_24px_80px_rgba(47,35,25,0.10)] sm:rounded-[38px]">
+                    <div className="relative">
+                        <div className="relative h-[260px] bg-[#181818] sm:h-[340px] md:h-[520px]">
+                            <img
+                                src={heroImageUrl}
+                                alt={`${place.name} coffee shop di ${place.area || "Padang"}`}
+                                className="h-full w-full object-cover object-center"
+                                referrerPolicy="no-referrer"
+                            />
 
-                        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 md:p-10">
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-black/28 to-black/5" />
+
+                            <div className="absolute bottom-0 left-0 right-0 hidden p-7 md:block lg:p-9">
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="rounded-full border border-white/15 bg-white/15 px-3 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-white backdrop-blur">
+                                        {category?.name ?? "Tempat"}
+                                    </span>
+
+                                    {place.area ? (
+                                        <span className="rounded-full border border-white/15 bg-white/15 px-3 py-2 text-[11px] font-black text-white backdrop-blur">
+                                            {place.area}
+                                        </span>
+                                    ) : null}
+
+                                    {place.price_range ? (
+                                        <span className="rounded-full border border-white/15 bg-white/15 px-3 py-2 text-[11px] font-black text-white backdrop-blur">
+                                            {place.price_range}
+                                        </span>
+                                    ) : null}
+                                </div>
+
+                                <h1 className="mt-4 max-w-4xl text-5xl font-black leading-[0.98] tracking-[-0.055em] text-white lg:text-7xl">
+                                    {place.name}
+                                </h1>
+
+                                <p className="mt-4 max-w-3xl text-base font-semibold leading-8 text-white/76">
+                                    {quickSummary}
+                                </p>
+
+                                <div className="mt-6 flex flex-wrap gap-3">
+                                    {place.google_maps_url ? (
+                                        <TrackedExternalLink
+                                            href={place.google_maps_url}
+                                            eventName="google_maps_clicked"
+                                            placeId={place.id}
+                                            placeName={place.name}
+                                            placeSlug={place.slug}
+                                            source="detail_page_hero"
+                                            metadata={{
+                                                area: place.area,
+                                                city: place.city,
+                                                category: category?.slug ?? null,
+                                            }}
+                                            className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-[#F2C38B] px-5 py-3 text-sm font-black text-[#181818] transition hover:-translate-y-0.5 hover:bg-white"
+                                        >
+                                            Buka Maps
+                                        </TrackedExternalLink>
+                                    ) : null}
+
+                                    {place.instagram_url ? (
+                                        <TrackedExternalLink
+                                            href={place.instagram_url}
+                                            eventName="instagram_clicked"
+                                            placeId={place.id}
+                                            placeName={place.name}
+                                            placeSlug={place.slug}
+                                            source="detail_page_hero"
+                                            metadata={{
+                                                area: place.area,
+                                                city: place.city,
+                                                category: category?.slug ?? null,
+                                            }}
+                                            className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white hover:text-[#181818]"
+                                        >
+                                            Instagram
+                                        </TrackedExternalLink>
+                                    ) : null}
+
+                                    <a
+                                        href={whatsappShareUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white hover:text-[#181818]"
+                                    >
+                                        Share
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="block bg-[#FFFDF8] p-5 md:hidden">
                             <div className="flex flex-wrap gap-2">
-                                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-black uppercase tracking-[0.22em] text-white backdrop-blur">
+                                <span className="rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-[#C8784A]">
                                     {category?.name ?? "Tempat"}
                                 </span>
 
                                 {place.area ? (
-                                    <span className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-black text-white backdrop-blur">
+                                    <span className="rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-2 text-[10px] font-black text-[#4B4038]">
                                         {place.area}
                                     </span>
                                 ) : null}
 
                                 {place.price_range ? (
-                                    <span className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-black text-white backdrop-blur">
+                                    <span className="rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-2 text-[10px] font-black text-[#4B4038]">
                                         {place.price_range}
                                     </span>
                                 ) : null}
                             </div>
 
-                            <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-tight sm:text-5xl md:text-7xl">
+                            <h1 className="mt-4 break-words text-[34px] font-black leading-[0.98] tracking-[-0.055em] text-[#201813] sm:text-5xl">
                                 {place.name}
                             </h1>
 
-                            <p className="mt-4 max-w-3xl text-sm leading-7 text-neutral-300 sm:text-base">
+                            <p className="mt-4 text-sm font-semibold leading-7 text-[#756A60]">
                                 {quickSummary}
                             </p>
 
-                            <div className="mt-6 flex flex-wrap gap-3">
+                            <div className="mt-5 grid grid-cols-2 gap-3">
                                 {place.google_maps_url ? (
                                     <TrackedExternalLink
                                         href={place.google_maps_url}
@@ -608,15 +702,15 @@ export default async function PlaceDetailPage({
                                         placeId={place.id}
                                         placeName={place.name}
                                         placeSlug={place.slug}
-                                        source="detail_page_hero"
+                                        source="detail_page_mobile_hero"
                                         metadata={{
                                             area: place.area,
                                             city: place.city,
                                             category: category?.slug ?? null,
                                         }}
-                                        className="rounded-2xl bg-white px-5 py-3 text-sm font-black text-black transition hover:-translate-y-0.5 hover:bg-neutral-200"
+                                        className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-[#181818] px-4 py-3 text-center text-sm font-black text-white transition hover:bg-[#1F5A4A]"
                                     >
-                                        Buka Maps
+                                        Maps
                                     </TrackedExternalLink>
                                 ) : null}
 
@@ -627,13 +721,13 @@ export default async function PlaceDetailPage({
                                         placeId={place.id}
                                         placeName={place.name}
                                         placeSlug={place.slug}
-                                        source="detail_page_hero"
+                                        source="detail_page_mobile_hero"
                                         metadata={{
                                             area: place.area,
                                             city: place.city,
                                             category: category?.slug ?? null,
                                         }}
-                                        className="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white hover:text-black"
+                                        className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-[#E7D8C8] bg-white px-4 py-3 text-center text-sm font-black text-[#201813] transition hover:bg-[#181818] hover:text-white"
                                     >
                                         Instagram
                                     </TrackedExternalLink>
@@ -643,9 +737,9 @@ export default async function PlaceDetailPage({
                                     href={whatsappShareUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white hover:text-black"
+                                    className="col-span-2 inline-flex min-h-12 items-center justify-center rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8] px-4 py-3 text-center text-sm font-black text-[#201813] transition hover:bg-[#1F5A4A] hover:text-white"
                                 >
-                                    Share
+                                    Share ke WhatsApp
                                 </a>
                             </div>
                         </div>
@@ -655,18 +749,18 @@ export default async function PlaceDetailPage({
                         <GallerySlider photos={galleryPhotos} placeName={place.name} />
                     ) : null}
 
-                    <div className="grid gap-8 p-5 sm:p-6 md:grid-cols-[1fr_380px] md:p-10">
-                        <div>
-                            <section className="rounded-[28px] border border-white/10 bg-white/[0.035] p-5 sm:p-6">
-                                <p className="text-xs font-black uppercase tracking-[0.3em] text-neutral-500">
+                    <div className="grid gap-6 p-5 sm:p-6 md:grid-cols-[1fr_360px] md:p-8 lg:p-10">
+                        <div className="min-w-0">
+                            <section className="rounded-[26px] border border-[#E7D8C8] bg-[#F8F1E8]/80 p-5 sm:p-6">
+                                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#C8784A]">
                                     Quick Summary
                                 </p>
 
-                                <h2 className="mt-3 text-2xl font-black">
+                                <h2 className="mt-3 text-2xl font-black tracking-[-0.035em] text-[#201813]">
                                     Kenapa tempat ini layak dicek?
                                 </h2>
 
-                                <p className="mt-4 max-w-3xl text-base leading-8 text-neutral-300">
+                                <p className="mt-4 max-w-3xl text-sm font-semibold leading-7 text-[#756A60] sm:text-base sm:leading-8">
                                     {quickSummary}
                                 </p>
 
@@ -675,7 +769,7 @@ export default async function PlaceDetailPage({
                                         {primaryReasons.map((reason) => (
                                             <span
                                                 key={reason}
-                                                className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-bold text-neutral-200"
+                                                className="rounded-full border border-[#E7D8C8] bg-white px-3.5 py-2 text-xs font-black text-[#201813] sm:text-sm"
                                             >
                                                 {reason}
                                             </span>
@@ -684,25 +778,37 @@ export default async function PlaceDetailPage({
                                 ) : null}
                             </section>
 
-                            <section className="mt-8">
-                                <h2 className="text-2xl font-black">Tentang Tempat</h2>
-
-                                <p className="mt-4 max-w-3xl text-base leading-8 text-neutral-300 sm:text-lg">
-                                    {place.description ||
-                                        "Belum ada deskripsi untuk tempat ini."}
+                            <section className="mt-7">
+                                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#C8784A]">
+                                    Tentang Tempat
                                 </p>
+
+                                <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-[#201813]">
+                                    Cerita singkat
+                                </h2>
+
+                                <div className="mt-4 rounded-[26px] border border-[#E7D8C8] bg-white p-5 sm:p-6">
+                                    <p className="max-w-3xl text-sm font-semibold leading-7 text-[#756A60] sm:text-base sm:leading-8">
+                                        {place.description ||
+                                            "Belum ada deskripsi khusus untuk tempat ini. Untuk sekarang, kamu bisa cek ringkasan, tag, Google Maps, dan Instagram supaya tetap dapat gambaran sebelum datang."}
+                                    </p>
+                                </div>
                             </section>
 
                             {characteristics.length > 0 ? (
-                                <section className="mt-8">
-                                    <div className="mb-5">
+                                <section className="mt-7">
+                                    <div className="mb-4">
+                                        <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#C8784A]">
+                                            Keunggulan
+                                        </p>
 
-                                        <h2 className="mt-3 text-2xl font-black">
+                                        <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-[#201813]">
                                             Karakteristik & Keunggulan
                                         </h2>
 
-                                        <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-400">
-                                            Poin utama yang bikin tempat ini layak kamu pertimbangkan.
+                                        <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-[#756A60]">
+                                            Poin utama yang bikin tempat ini layak kamu
+                                            pertimbangkan.
                                         </p>
                                     </div>
 
@@ -710,22 +816,22 @@ export default async function PlaceDetailPage({
                                         {characteristics.map((item, index) => (
                                             <div
                                                 key={`${item.title}-${index}`}
-                                                className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5"
+                                                className="rounded-[24px] border border-[#E7D8C8] bg-white p-5 shadow-sm"
                                             >
                                                 <div className="flex gap-4">
-                                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white text-sm font-black text-black">
+                                                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-[#181818] text-sm font-black text-white">
                                                         {String(index + 1).padStart(2, "0")}
                                                     </div>
 
-                                                    <div className="pt-1">
+                                                    <div className="pt-0.5">
                                                         {item.title ? (
-                                                            <h3 className="text-base font-black leading-7 text-neutral-100">
+                                                            <h3 className="text-base font-black leading-7 text-[#201813]">
                                                                 {item.title}
                                                             </h3>
                                                         ) : null}
 
                                                         {item.description ? (
-                                                            <p className="mt-1 text-sm font-medium leading-7 text-neutral-400 sm:text-base">
+                                                            <p className="mt-1 text-sm font-semibold leading-7 text-[#756A60] sm:text-base">
                                                                 {item.description}
                                                             </p>
                                                         ) : null}
@@ -738,14 +844,18 @@ export default async function PlaceDetailPage({
                             ) : null}
 
                             {tags.length > 0 ? (
-                                <section className="mt-8">
-                                    <h2 className="text-2xl font-black">
+                                <section className="mt-7">
+                                    <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#C8784A]">
+                                        Highlight
+                                    </p>
+
+                                    <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-[#201813]">
                                         Highlight Tempat
                                     </h2>
 
-                                    <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-400">
-                                        Tag dipisahkan menjadi aktivitas, fasilitas,
-                                        dan vibes agar lebih gampang dibaca.
+                                    <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-[#756A60]">
+                                        Tag dipisahkan menjadi aktivitas, fasilitas, dan vibes biar
+                                        lebih gampang dibaca.
                                     </p>
 
                                     <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -753,14 +863,14 @@ export default async function PlaceDetailPage({
                                             ([type, tagList]) => (
                                                 <div
                                                     key={type}
-                                                    className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5"
+                                                    className="rounded-[24px] border border-[#E7D8C8] bg-white p-5 shadow-sm"
                                                 >
                                                     <div className="mb-4">
-                                                        <h3 className="text-lg font-black">
+                                                        <h3 className="text-lg font-black tracking-[-0.02em] text-[#201813]">
                                                             {getTagGroupLabel(type)}
                                                         </h3>
 
-                                                        <p className="mt-1 text-sm leading-6 text-neutral-500">
+                                                        <p className="mt-1 text-sm font-semibold leading-6 text-[#756A60]">
                                                             {getTagGroupDescription(type)}
                                                         </p>
                                                     </div>
@@ -769,7 +879,7 @@ export default async function PlaceDetailPage({
                                                         {tagList.map((tag) => (
                                                             <span
                                                                 key={tag.id}
-                                                                className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-bold text-neutral-200"
+                                                                className="rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3.5 py-2 text-xs font-black text-[#4B4038] sm:text-sm"
                                                             >
                                                                 {tag.name}
                                                             </span>
@@ -783,23 +893,21 @@ export default async function PlaceDetailPage({
                             ) : null}
                         </div>
 
-                        <aside className="h-fit rounded-[28px] border border-white/10 bg-black/30 p-5 md:sticky md:top-6">
-                            <h2 className="text-2xl font-black">Info Detail</h2>
+                        <aside className="h-fit rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-[0_18px_55px_rgba(47,35,25,0.08)] md:sticky md:top-6">
+                            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#C8784A]">
+                                Info Detail
+                            </p>
+
+                            <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-[#201813]">
+                                Sebelum berangkat
+                            </h2>
 
                             <div className="mt-5 grid gap-3">
-                                <InfoItem
-                                    icon="📍"
-                                    label="Alamat"
-                                    value={place.address}
-                                />
+                                <InfoItem icon="📍" label="Alamat" value={place.address} />
                                 <InfoItem
                                     icon="🧭"
                                     label="Area"
-                                    value={
-                                        [place.area, place.city]
-                                            .filter(Boolean)
-                                            .join(", ") || null
-                                    }
+                                    value={[place.area, place.city].filter(Boolean).join(", ")}
                                 />
                                 <InfoItem
                                     icon="💸"
@@ -810,6 +918,7 @@ export default async function PlaceDetailPage({
                                     icon="🕒"
                                     label="Jam Buka"
                                     value={place.opening_hours}
+                                    fallback="Belum tersedia, cek Maps/Instagram dulu."
                                 />
                             </div>
 
@@ -827,7 +936,7 @@ export default async function PlaceDetailPage({
                                             city: place.city,
                                             category: category?.slug ?? null,
                                         }}
-                                        className="block rounded-2xl bg-white px-5 py-4 text-center text-sm font-black text-black transition hover:bg-neutral-200"
+                                        className="block rounded-2xl bg-[#181818] px-5 py-4 text-center text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#1F5A4A]"
                                     >
                                         Buka Google Maps
                                     </TrackedExternalLink>
@@ -846,7 +955,7 @@ export default async function PlaceDetailPage({
                                             city: place.city,
                                             category: category?.slug ?? null,
                                         }}
-                                        className="block rounded-2xl border border-white/10 px-5 py-4 text-center text-sm font-black text-white transition hover:bg-white/10"
+                                        className="block rounded-2xl border border-[#E7D8C8] bg-white px-5 py-4 text-center text-sm font-black text-[#201813] transition hover:-translate-y-0.5 hover:border-[#181818] hover:bg-[#181818] hover:text-white"
                                     >
                                         Lihat Instagram
                                     </TrackedExternalLink>
@@ -856,17 +965,18 @@ export default async function PlaceDetailPage({
                                     href={whatsappShareUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="block rounded-2xl border border-white/10 px-5 py-4 text-center text-sm font-black text-white transition hover:bg-white/10"
+                                    className="block rounded-2xl border border-[#E7D8C8] bg-white px-5 py-4 text-center text-sm font-black text-[#201813] transition hover:-translate-y-0.5 hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
                                 >
                                     Share ke WhatsApp
                                 </a>
                             </div>
 
-                            <p className="mt-5 text-xs leading-5 text-neutral-500">
-                                Data tempat bisa berubah. Cek Google Maps atau
-                                Instagram sebelum datang biar nggak kena prank jam
-                                operasional.
-                            </p>
+                            <div className="mt-5 rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8] p-4">
+                                <p className="text-xs font-bold leading-5 text-[#756A60]">
+                                    Data tempat bisa berubah. Cek Google Maps atau Instagram
+                                    sebelum datang biar nggak kena prank jam operasional.
+                                </p>
+                            </div>
                         </aside>
                     </div>
                 </div>
@@ -875,33 +985,35 @@ export default async function PlaceDetailPage({
                     <section className="mt-10">
                         <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                             <div>
-                                <p className="text-xs font-black uppercase tracking-[0.35em] text-neutral-500">
+                                <p className="text-xs font-black uppercase tracking-[0.24em] text-[#C8784A]">
                                     Tempat Serupa
                                 </p>
 
-                                <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">
+                                <h2 className="mt-2 text-3xl font-black tracking-[-0.04em] text-[#201813] md:text-4xl">
                                     Coffee shop lain yang bisa kamu cek
                                 </h2>
 
-                                <p className="mt-3 max-w-2xl text-sm leading-7 text-neutral-400">
-                                    Alternatif lain di Padang kalau tempat ini belum
-                                    pas dengan mood, budget, atau lokasi kamu.
+                                <p className="mt-3 max-w-2xl text-sm font-semibold leading-7 text-[#756A60]">
+                                    Alternatif lain di Padang kalau tempat ini belum pas dengan
+                                    mood, budget, atau lokasi kamu.
                                 </p>
                             </div>
 
                             <Link
                                 href="/places?category=coffee-shop"
-                                className="w-fit rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white transition hover:bg-white hover:text-black"
+                                className="inline-flex min-h-11 w-fit items-center justify-center rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-5 py-3 text-sm font-black text-[#1F5A4A] shadow-sm transition hover:-translate-y-0.5 hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
                             >
                                 Lihat Semua
                             </Link>
                         </div>
 
                         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                            {relatedPlaces.map((relatedPlace) => (
+                            {relatedPlaces.map((relatedPlace, index) => (
                                 <PlaceCard
                                     key={relatedPlace.id}
                                     place={relatedPlace}
+                                    source="related_places"
+                                    position={index + 1}
                                 />
                             ))}
                         </div>
@@ -916,25 +1028,29 @@ function InfoItem({
     icon,
     label,
     value,
+    fallback = "Belum tersedia",
 }: {
     icon: string;
     label: string;
     value?: string | null;
+    fallback?: string;
 }) {
+    const displayValue = value && value.trim().length > 0 ? value : fallback;
+
     return (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+        <div className="rounded-2xl border border-[#E7D8C8] bg-white p-4">
             <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/[0.06] text-lg">
+                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-[#F8F1E8] text-lg ring-1 ring-[#E7D8C8]">
                     {icon}
                 </div>
 
                 <div className="min-w-0">
-                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-neutral-500">
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#9B8B7E]">
                         {label}
                     </p>
 
-                    <p className="mt-2 break-words font-bold leading-6 text-neutral-100">
-                        {value || "-"}
+                    <p className="mt-2 break-words text-sm font-black leading-6 text-[#201813]">
+                        {displayValue}
                     </p>
                 </div>
             </div>

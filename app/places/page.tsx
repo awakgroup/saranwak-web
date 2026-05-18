@@ -143,15 +143,6 @@ function matchAllSelectedTags(place: Place, selectedTags: string[]) {
     return selectedTags.every((selectedTag) => placeTagSlugs.includes(selectedTag));
 }
 
-/**
- * Bisa membaca:
- * - 15000
- * - "15000"
- * - "15k"
- * - "15rb"
- * - "15 ribu"
- * - "Rp15.000"
- */
 function parsePriceToNumber(value?: number | string | null) {
     if (typeof value === "number") {
         return value;
@@ -177,13 +168,6 @@ function parsePriceToNumber(value?: number | string | null) {
     return Number.isNaN(result) ? null : result;
 }
 
-/**
- * Bisa membaca:
- * - "15k - 25k"
- * - "Rp30k - Rp70k"
- * - "Rp50k - Rp100k"
- * - "15000 - 25000"
- */
 function parsePriceRange(priceRange?: string | null) {
     if (!priceRange) {
         return {
@@ -220,14 +204,6 @@ function parsePriceRange(priceRange?: string | null) {
     };
 }
 
-/**
- * Logic filter pakai range overlap.
- *
- * Contoh:
- * - Cafe 15k - 25k masuk ke under-20k dan 20k-40k
- * - Cafe 30k - 70k masuk ke 20k-40k dan above-40k
- * - Cafe 50k - 100k masuk ke above-40k saja
- */
 function matchPrice(place: Place, price?: string) {
     const selectedPrice = getSelectedPrice(price);
 
@@ -284,18 +260,18 @@ function makeDescription(params: PageParams) {
     const selectedPrice = getSelectedPrice(params.price);
 
     if (params.q) {
-        return "Hasil pencarian berdasarkan nama tempat, area, alamat, atau deskripsi coffee shop.";
+        return "Hasil berdasarkan nama tempat, area, alamat, deskripsi, dan tag coffee shop.";
     }
 
     if (selectedTags.length > 0 || selectedPrice !== "all") {
-        return "Cafe hanya muncul kalau cocok dengan aktivitas, fasilitas, vibes, atau budget yang kamu pilih.";
+        return "Tempat yang muncul sudah mengikuti aktivitas, fasilitas, vibes, dan budget yang kamu pilih.";
     }
 
     if (params.area) {
         return "Tempat yang muncul difilter berdasarkan area yang kamu pilih.";
     }
 
-    return "Untuk sementara, tempat yang ditampilkan hanya coffee shop di Padang.";
+    return "Temukan coffee shop di Padang berdasarkan budget, aktivitas, fasilitas, dan vibes.";
 }
 
 function makeFilterHref(params: PageParams, targetTag: string) {
@@ -542,121 +518,92 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
         selectedTags.length + (selectedPrice !== "all" ? 1 : 0);
 
     return (
-        <main className="min-h-screen bg-neutral-950 px-4 py-10 text-white sm:px-5 sm:py-14 md:py-16">
-            <section className="mx-auto max-w-7xl">
-                <div className="mb-8 flex flex-col gap-5 md:mb-10 md:flex-row md:items-end md:justify-between">
-                    <div>
-                        <p className="text-xs font-black uppercase tracking-[0.35em] text-neutral-500">
-                            Saranwak Places
-                        </p>
+        <main className="min-h-screen bg-[#F4F1EA] px-4 pb-12 pt-8 text-[#201813] sm:px-5 sm:pb-16 sm:pt-10">
+            <section className="mx-auto max-w-6xl">
+                <div className="mb-6 rounded-[30px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-[0_18px_60px_rgba(47,35,25,0.08)] sm:p-6 md:p-8">
+                    <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                        <div className="max-w-3xl">
+                            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-[#C8784A]">
+                                <span className="h-2 w-2 rounded-full bg-[#1F5A4A]" />
+                                Saranwak Places
+                            </div>
 
-                        <h1 className="mt-4 max-w-5xl text-4xl font-black tracking-tight sm:text-5xl md:text-7xl">
-                            {makeTitle(params)}
-                        </h1>
+                            <h1 className="text-4xl font-black leading-[0.98] tracking-[-0.055em] text-[#201813] sm:text-5xl md:text-6xl">
+                                {makeTitle(params)}
+                            </h1>
 
-                        <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-400 sm:text-lg sm:leading-8">
-                            {makeDescription(params)}
-                        </p>
-                    </div>
-
-                    <div className="flex flex-wrap gap-3">
-                        {hasFilter ? (
-                            <Link
-                                href="/places?category=coffee-shop"
-                                className="rounded-full border border-white/10 bg-white px-5 py-3 text-sm font-black text-black transition hover:bg-neutral-200"
-                            >
-                                Reset Semua
-                            </Link>
-                        ) : null}
-
-                        <Link
-                            href="/rekomendasi"
-                            className="rounded-full bg-white px-5 py-3 text-sm font-black text-black transition hover:bg-neutral-200"
-                        >
-                            Cari Rekomendasi
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="mb-6 rounded-[24px] border border-white/10 bg-white/[0.04] p-4 sm:rounded-[28px] sm:p-5">
-                    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                        <div>
-                            <p className="text-sm font-black uppercase tracking-[0.22em] text-neutral-500">
-                                Hasil
-                            </p>
-
-                            <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
-                                {places.length} coffee shop ditemukan
-                            </h2>
-
-                            <p className="mt-2 text-sm leading-6 text-neutral-400">
-                                {hasFilter
-                                    ? "Hasil ini sudah mengikuti filter aktif yang kamu pilih."
-                                    : "Menampilkan semua coffee shop yang sudah published."}
+                            <p className="mt-4 max-w-2xl text-sm font-semibold leading-7 text-[#756A60] sm:text-base">
+                                {makeDescription(params)}
                             </p>
                         </div>
 
-                        {hasFilter ? (
-                            <div className="flex flex-wrap gap-2">
-                                {params.q ? (
-                                    <Link
-                                        href={makeRemoveKeywordHref(params)}
-                                        className="rounded-full border border-white/10 bg-white px-3 py-2 text-xs font-black text-black transition hover:bg-neutral-200"
-                                    >
-                                        Search: {params.q} ×
-                                    </Link>
-                                ) : null}
+                        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap lg:justify-end">
+                            {hasFilter ? (
+                                <Link
+                                    href="/places?category=coffee-shop"
+                                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition duration-300 hover:-translate-y-0.5 hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
+                                >
+                                    Reset Semua
+                                </Link>
+                            ) : null}
 
-                                {selectedTags.map((tag) => (
-                                    <Link
-                                        key={tag}
-                                        href={makeRemoveTagHref(params, tag)}
-                                        className="rounded-full border border-white/10 bg-white px-3 py-2 text-xs font-black text-black transition hover:bg-neutral-200"
-                                    >
-                                        {getFilterLabel(tag)} ×
-                                    </Link>
-                                ))}
+                            <Link
+                                href="/"
+                                className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#181818] px-5 py-3 text-sm font-black text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#1F5A4A]"
+                            >
+                                Kembali ke Home
+                            </Link>
+                        </div>
+                    </div>
 
-                                {selectedPrice !== "all" ? (
-                                    <Link
-                                        href={makeRemovePriceHref(params)}
-                                        className="rounded-full border border-white/10 bg-white px-3 py-2 text-xs font-black text-black transition hover:bg-neutral-200"
-                                    >
-                                        Harga: {getPriceLabel(params.price)} ×
-                                    </Link>
-                                ) : null}
+                    <div className="mt-6 grid gap-3 border-t border-[#E7D8C8] pt-5 sm:grid-cols-3">
+                        <div className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/80 p-4">
+                            <p className="text-2xl font-black text-[#1F5A4A]">
+                                {places.length}
+                            </p>
+                            <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-[#756A60]">
+                                Ditemukan
+                            </p>
+                        </div>
 
-                                {params.area ? (
-                                    <Link
-                                        href={makeRemoveAreaHref(params)}
-                                        className="rounded-full border border-white/10 bg-white px-3 py-2 text-xs font-black text-black transition hover:bg-neutral-200"
-                                    >
-                                        Area: {params.area} ×
-                                    </Link>
-                                ) : null}
-                            </div>
-                        ) : null}
+                        <div className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/80 p-4">
+                            <p className="text-2xl font-black text-[#1F5A4A]">
+                                {activeFilterCount}
+                            </p>
+                            <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-[#756A60]">
+                                Filter aktif
+                            </p>
+                        </div>
+
+                        <div className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/80 p-4">
+                            <p className="text-2xl font-black text-[#1F5A4A]">Padang</p>
+                            <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-[#756A60]">
+                                Area awal
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="mb-8 rounded-[24px] border border-white/10 bg-white/[0.03] p-4 sm:rounded-[28px] sm:p-5">
-                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="mb-6 rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_14px_45px_rgba(47,35,25,0.06)] sm:p-5">
+                    <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div>
-                            <p className="text-sm font-black text-white">Multi Filter</p>
+                            <p className="text-sm font-black text-[#201813]">
+                                Filter Coffee Shop
+                            </p>
 
-                            <p className="mt-1 text-xs font-semibold leading-5 text-neutral-500">
-                                Klik beberapa filter. Cafe akan muncul kalau cocok dengan
+                            <p className="mt-1 max-w-2xl text-xs font-semibold leading-5 text-[#756A60]">
+                                Klik beberapa filter. Tempat akan muncul kalau cocok dengan
                                 aktivitas, fasilitas, vibes, dan budget yang kamu pilih.
                             </p>
                         </div>
 
-                        <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-black">
+                        <span className="w-fit rounded-full bg-[#181818] px-3 py-2 text-xs font-black text-white">
                             {activeFilterCount} dipilih
                         </span>
                     </div>
 
                     <div className="mb-5">
-                        <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-neutral-500">
+                        <p className="mb-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
                             Harga
                         </p>
 
@@ -668,9 +615,9 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                                     <Link
                                         key={filter.value}
                                         href={makePriceHref(params, filter.value)}
-                                        className={`rounded-full border px-4 py-2 text-sm font-black transition ${active
-                                            ? "border-white bg-white text-black"
-                                            : "border-white/10 bg-white/[0.03] text-neutral-300 hover:bg-white hover:text-black"
+                                        className={`inline-flex items-center rounded-full border px-3.5 py-2 text-xs font-black transition duration-200 sm:text-sm ${active
+                                                ? "border-[#1F5A4A] bg-[#1F5A4A] text-white shadow-[0_8px_20px_rgba(31,90,74,0.18)]"
+                                                : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
                                             }`}
                                     >
                                         <span className="mr-2">{active ? "✓" : "+"}</span>
@@ -681,20 +628,20 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                         </div>
                     </div>
 
-                    <div className="space-y-5">
+                    <div className="space-y-4">
                         <div>
-                            <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-neutral-500">
+                            <p className="mb-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
                                 Semua Filter
                             </p>
 
                             <Link
                                 href="/places?category=coffee-shop"
-                                className={`inline-flex rounded-full border px-4 py-2 text-sm font-black transition ${selectedTags.length === 0 &&
+                                className={`inline-flex rounded-full border px-3.5 py-2 text-xs font-black transition duration-200 sm:text-sm ${selectedTags.length === 0 &&
                                         !params.q &&
                                         !params.area &&
                                         selectedPrice === "all"
-                                        ? "border-white bg-white text-black"
-                                        : "border-white/10 bg-white/[0.03] text-neutral-300 hover:bg-white hover:text-black"
+                                        ? "border-[#1F5A4A] bg-[#1F5A4A] text-white"
+                                        : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
                                     }`}
                             >
                                 Semua Coffee Shop
@@ -703,9 +650,12 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
 
                         {placeFilterGroups.map((group) => (
                             <div key={group.title}>
-                                <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-neutral-500">
-                                    {group.title}
-                                </p>
+                                <div className="mb-2 flex items-center gap-3">
+                                    <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
+                                        {group.title}
+                                    </p>
+                                    <div className="hidden h-px flex-1 bg-[#E7D8C8] sm:block" />
+                                </div>
 
                                 <div className="flex flex-wrap gap-2">
                                     {group.options.map((filter) => {
@@ -715,9 +665,9 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                                             <Link
                                                 key={filter.tag}
                                                 href={makeFilterHref(params, filter.tag)}
-                                                className={`rounded-full border px-4 py-2 text-sm font-black transition ${active
-                                                        ? "border-white bg-white text-black"
-                                                        : "border-white/10 bg-white/[0.03] text-neutral-300 hover:bg-white hover:text-black"
+                                                className={`inline-flex items-center rounded-full border px-3.5 py-2 text-xs font-black transition duration-200 sm:text-sm ${active
+                                                        ? "border-[#1F5A4A] bg-[#1F5A4A] text-white shadow-[0_8px_20px_rgba(31,90,74,0.18)]"
+                                                        : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
                                                     }`}
                                             >
                                                 <span className="mr-2">{active ? "✓" : "+"}</span>
@@ -730,42 +680,89 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                         ))}
                     </div>
 
-                    {activeFilterCount > 0 ? (
-                        <p className="mt-4 text-sm font-bold text-neutral-400">
-                            Filter aktif:{" "}
-                            <span className="text-white">
-                                {[
-                                    ...selectedTags.map((tag) => getFilterLabel(tag)),
-                                    selectedPrice !== "all" ? getPriceLabel(params.price) : null,
-                                ]
-                                    .filter(Boolean)
-                                    .join(", ")}
-                            </span>
-                        </p>
+                    {hasFilter ? (
+                        <div className="mt-4 flex flex-wrap gap-2 rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/80 p-3">
+                            {params.q ? (
+                                <Link
+                                    href={makeRemoveKeywordHref(params)}
+                                    className="rounded-full bg-white px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#181818] hover:text-white"
+                                >
+                                    Search: {params.q} ×
+                                </Link>
+                            ) : null}
+
+                            {selectedTags.map((tag) => (
+                                <Link
+                                    key={tag}
+                                    href={makeRemoveTagHref(params, tag)}
+                                    className="rounded-full bg-white px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#181818] hover:text-white"
+                                >
+                                    {getFilterLabel(tag)} ×
+                                </Link>
+                            ))}
+
+                            {selectedPrice !== "all" ? (
+                                <Link
+                                    href={makeRemovePriceHref(params)}
+                                    className="rounded-full bg-white px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#181818] hover:text-white"
+                                >
+                                    Harga: {getPriceLabel(params.price)} ×
+                                </Link>
+                            ) : null}
+
+                            {params.area ? (
+                                <Link
+                                    href={makeRemoveAreaHref(params)}
+                                    className="rounded-full bg-white px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#181818] hover:text-white"
+                                >
+                                    Area: {params.area} ×
+                                </Link>
+                            ) : null}
+                        </div>
                     ) : null}
                 </div>
 
-                {places.length === 0 ? (
-                    <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-8 sm:rounded-[32px] sm:p-10">
-                        <h2 className="text-2xl font-black">Belum ada tempat cocok.</h2>
-
-                        <p className="mt-3 max-w-2xl text-neutral-400">
-                            Coba hapus beberapa filter aktif, pakai keyword lain, atau lihat
-                            semua coffee shop dulu. Kadang tempat yang pas nggak selalu punya
-                            semua tag yang kita pilih.
+                <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p className="text-xs font-black uppercase tracking-[0.22em] text-[#C8784A]">
+                            Hasil tempat
                         </p>
 
-                        <div className="mt-6 flex flex-wrap gap-3">
+                        <h2 className="mt-1 text-2xl font-black tracking-[-0.035em] text-[#201813] sm:text-3xl">
+                            {places.length} coffee shop ditemukan
+                        </h2>
+                    </div>
+
+                    <p className="max-w-md text-sm font-semibold leading-6 text-[#756A60]">
+                        {hasFilter
+                            ? "Hasil ini sudah mengikuti filter aktif yang kamu pilih."
+                            : "Menampilkan semua coffee shop yang sudah published."}
+                    </p>
+                </div>
+
+                {places.length === 0 ? (
+                    <div className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-8 shadow-[0_18px_60px_rgba(47,35,25,0.06)] sm:rounded-[32px] sm:p-10">
+                        <h2 className="text-2xl font-black text-[#201813]">
+                            Belum ada tempat cocok.
+                        </h2>
+
+                        <p className="mt-3 max-w-2xl text-sm font-semibold leading-7 text-[#756A60] sm:text-base">
+                            Coba hapus beberapa filter aktif atau lihat semua coffee shop
+                            dulu. Kadang tempat yang pas nggak selalu punya semua tag yang
+                            kita pilih. Namanya juga hidup, kadang cocoknya nggak full spec.
+                        </p>
+
+                        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                             <Link
                                 href="/places?category=coffee-shop"
-                                className="inline-flex rounded-full bg-white px-5 py-3 text-sm font-black text-black transition hover:bg-neutral-200"
+                                className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#181818] px-5 py-3 text-sm font-black text-white transition hover:bg-[#1F5A4A]"
                             >
                                 Lihat Semua Coffee Shop
                             </Link>
 
                             <Link
                                 href="/"
-                                className="inline-flex rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white transition hover:bg-white hover:text-black"
+                                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition hover:bg-[#181818] hover:text-white"
                             >
                                 Kembali ke Home
                             </Link>
@@ -773,8 +770,13 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                     </div>
                 ) : (
                     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                        {places.map((place) => (
-                            <PlaceCard key={place.id} place={place} source="places_list" />
+                        {places.map((place, index) => (
+                            <PlaceCard
+                                key={place.id}
+                                place={place}
+                                source="places_list"
+                                position={index + 1}
+                            />
                         ))}
                     </div>
                 )}
