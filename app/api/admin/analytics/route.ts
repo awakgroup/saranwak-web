@@ -15,6 +15,16 @@ type AnalyticsEvent = {
     metadata: Record<string, unknown> | null;
     session_id: string | null;
     created_at: string;
+
+    country: string | null;
+    region: string | null;
+    city: string | null;
+    timezone: string | null;
+    device_type: string | null;
+    os: string | null;
+    browser: string | null;
+    screen_width: number | null;
+    screen_height: number | null;
 };
 
 type TopPlaceAnalytics = {
@@ -32,6 +42,20 @@ type TopPlaceAnalytics = {
     instagram_click_rate: number;
     total_events: number;
     last_event_at: string | null;
+};
+
+type SimpleStat = {
+    label: string;
+    total: number;
+    percentage: number;
+};
+
+type CityStat = {
+    city: string;
+    region: string;
+    country: string;
+    total: number;
+    percentage: number;
 };
 
 const EVENT_NAMES = {
@@ -297,6 +321,62 @@ function buildTopPlaces(events: AnalyticsEvent[]): TopPlaceAnalytics[] {
         .slice(0, 10);
 }
 
+function buildSimpleStats(
+    events: AnalyticsEvent[],
+    getter: (event: AnalyticsEvent) => string | null | undefined,
+    fallback = "Unknown"
+): SimpleStat[] {
+    const map = new Map<string, number>();
+
+    for (const event of events) {
+        const rawLabel = getter(event);
+        const label = rawLabel && rawLabel.trim() ? rawLabel.trim() : fallback;
+
+        map.set(label, (map.get(label) ?? 0) + 1);
+    }
+
+    return [...map.entries()]
+        .map(([label, total]) => ({
+            label,
+            total,
+            percentage: getRate(total, events.length),
+        }))
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 10);
+}
+
+function buildCityStats(events: AnalyticsEvent[]): CityStat[] {
+    const map = new Map<string, CityStat>();
+
+    for (const event of events) {
+        const city = event.city?.trim() || "Unknown";
+        const region = event.region?.trim() || "-";
+        const country = event.country?.trim() || "-";
+        const key = `${city}|${region}|${country}`;
+
+        if (!map.has(key)) {
+            map.set(key, {
+                city,
+                region,
+                country,
+                total: 0,
+                percentage: 0,
+            });
+        }
+
+        const current = map.get(key)!;
+        current.total += 1;
+    }
+
+    return [...map.values()]
+        .map((item) => ({
+            ...item,
+            percentage: getRate(item.total, events.length),
+        }))
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 10);
+}
+
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
@@ -306,18 +386,27 @@ export async function GET(request: NextRequest) {
             .from("analytics_events")
             .select(
                 `
-                id,
-                event_name,
-                place_id,
-                place_name,
-                place_slug,
-                source,
-                page_path,
-                referrer,
-                metadata,
-                session_id,
-                created_at
-            `
+        id,
+        event_name,
+        place_id,
+        place_name,
+        place_slug,
+        source,
+        page_path,
+        referrer,
+        metadata,
+        session_id,
+        created_at,
+        country,
+        region,
+        city,
+        timezone,
+        device_type,
+        os,
+        browser,
+        screen_width,
+        screen_height
+      `
             )
             .gte("created_at", range.start)
             .lt("created_at", range.end)
@@ -335,6 +424,11 @@ export async function GET(request: NextRequest) {
             summary: buildSummary(events),
             top_places: buildTopPlaces(events),
             recent_events: events.slice(0, 20),
+
+            device_stats: buildSimpleStats(events, (event) => event.device_type),
+            city_stats: buildCityStats(events),
+            browser_stats: buildSimpleStats(events, (event) => event.browser),
+            os_stats: buildSimpleStats(events, (event) => event.os),
         });
     } catch (error) {
         console.error("ADMIN ANALYTICS ERROR:", error);

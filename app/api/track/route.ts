@@ -27,6 +27,14 @@ function sanitizeText(value: unknown, maxLength = 300) {
     return clean.slice(0, maxLength);
 }
 
+function sanitizeNumber(value: unknown) {
+    if (typeof value !== "number") return null;
+
+    if (!Number.isFinite(value)) return null;
+
+    return Math.round(value);
+}
+
 function sanitizeMetadata(value: unknown) {
     if (!value || typeof value !== "object" || Array.isArray(value)) {
         return null;
@@ -46,6 +54,58 @@ function sanitizeMetadata(value: unknown) {
     } catch {
         return null;
     }
+}
+
+function decodeHeaderValue(value: string | null) {
+    if (!value) return null;
+
+    try {
+        return decodeURIComponent(value);
+    } catch {
+        return value;
+    }
+}
+
+function getDeviceType(userAgent: string) {
+    const ua = userAgent.toLowerCase();
+
+    if (/ipad|tablet/.test(ua)) return "tablet";
+
+    if (
+        /mobile|iphone|ipod|android|blackberry|iemobile|opera mini/.test(ua)
+    ) {
+        return "mobile";
+    }
+
+    return "desktop";
+}
+
+function getBrowser(userAgent: string) {
+    const ua = userAgent.toLowerCase();
+
+    if (ua.includes("edg/")) return "Edge";
+    if (ua.includes("opr/") || ua.includes("opera")) return "Opera";
+    if (ua.includes("firefox")) return "Firefox";
+    if (ua.includes("samsungbrowser")) return "Samsung Internet";
+    if (ua.includes("chrome") && !ua.includes("chromium")) return "Chrome";
+    if (ua.includes("safari") && !ua.includes("chrome")) return "Safari";
+
+    return "Unknown";
+}
+
+function getOS(userAgent: string) {
+    const ua = userAgent.toLowerCase();
+
+    if (ua.includes("iphone") || ua.includes("ipad") || ua.includes("ipod")) {
+        return "iOS";
+    }
+
+    if (ua.includes("android")) return "Android";
+    if (ua.includes("mac os")) return "macOS";
+    if (ua.includes("windows")) return "Windows";
+    if (ua.includes("linux")) return "Linux";
+
+    return "Unknown";
 }
 
 export async function POST(request: NextRequest) {
@@ -68,11 +128,39 @@ export async function POST(request: NextRequest) {
         const pagePath = sanitizeText(body.page_path, 300);
         const referrer = sanitizeText(body.referrer, 500);
         const sessionId = sanitizeText(body.session_id, 120);
-
-        const userAgent =
-            request.headers.get("user-agent")?.slice(0, 500) ?? null;
-
         const metadata = sanitizeMetadata(body.metadata);
+
+        const userAgent = request.headers.get("user-agent")?.slice(0, 500) ?? null;
+        const safeUserAgent = userAgent || "";
+
+        /**
+         * Lokasi ini berbasis IP dari Vercel headers.
+         * Ini bukan GPS, jadi tidak butuh permission user.
+         */
+        const country = sanitizeText(request.headers.get("x-vercel-ip-country"), 20);
+        const region = sanitizeText(
+            request.headers.get("x-vercel-ip-country-region"),
+            80
+        );
+        const city = sanitizeText(
+            decodeHeaderValue(request.headers.get("x-vercel-ip-city")),
+            120
+        );
+        const timezone = sanitizeText(
+            request.headers.get("x-vercel-ip-timezone"),
+            120
+        );
+        const latitude = sanitizeText(
+            request.headers.get("x-vercel-ip-latitude"),
+            60
+        );
+        const longitude = sanitizeText(
+            request.headers.get("x-vercel-ip-longitude"),
+            60
+        );
+
+        const screenWidth = sanitizeNumber(body.screen_width);
+        const screenHeight = sanitizeNumber(body.screen_height);
 
         const { error } = await supabaseAdmin.from("analytics_events").insert({
             event_name: eventName,
@@ -84,6 +172,19 @@ export async function POST(request: NextRequest) {
             referrer,
             metadata,
             session_id: sessionId,
+
+            country,
+            region,
+            city,
+            timezone,
+            latitude,
+            longitude,
+
+            device_type: getDeviceType(safeUserAgent),
+            os: getOS(safeUserAgent),
+            browser: getBrowser(safeUserAgent),
+            screen_width: screenWidth,
+            screen_height: screenHeight,
             user_agent: userAgent,
         });
 

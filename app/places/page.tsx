@@ -44,6 +44,15 @@ type PlaceTagItem = {
     tags?: TagItem | TagItem[] | null;
 };
 
+type PlacePopularity = {
+    place_id: string;
+    detail_views: number | null;
+    detail_views_30d: number | null;
+    action_clicks: number | null;
+    action_clicks_30d: number | null;
+    last_event_at: string | null;
+};
+
 function normalizeText(value?: string | null) {
     return value?.toLowerCase().trim() || "";
 }
@@ -431,6 +440,75 @@ function getFilterLabel(tag: string) {
     return placeFilterOptions.find((option) => option.tag === tag)?.label || tag;
 }
 
+async function getPlacePopularity(placeIds: string[]) {
+    if (placeIds.length === 0) {
+        return new Map<string, PlacePopularity>();
+    }
+
+    const { data, error } = await supabase
+        .from("place_popularity_summary")
+        .select(
+            `
+            place_id,
+            detail_views,
+            detail_views_30d,
+            action_clicks,
+            action_clicks_30d,
+            last_event_at
+            `
+        )
+        .in("place_id", placeIds);
+
+    if (error || !data) {
+        console.error("GET place popularity error:", error);
+        return new Map<string, PlacePopularity>();
+    }
+
+    return new Map(
+        (data as PlacePopularity[]).map((item) => [item.place_id, item])
+    );
+}
+
+function getPopularityScore(popularity?: PlacePopularity) {
+    if (!popularity) return 0;
+
+    const detailViews30d = Number(popularity.detail_views_30d ?? 0);
+    const detailViewsAllTime = Number(popularity.detail_views ?? 0);
+    const actionClicks30d = Number(popularity.action_clicks_30d ?? 0);
+
+    /*
+     * Ranking utama: paling banyak dilihat.
+     * - detail_views_30d dibuat paling kuat supaya ranking lebih fresh.
+     * - action_clicks_30d jadi booster karena klik Maps/IG/WA lebih bernilai.
+     * - detail_views all time jadi fallback agar tempat lama tetap punya bobot.
+     */
+    return detailViews30d * 10 + detailViewsAllTime + actionClicks30d * 3;
+}
+
+async function sortPlacesByPopularity(places: Place[]) {
+    const placeIds = places.map((place) => place.id);
+    const popularityMap = await getPlacePopularity(placeIds);
+
+    return places
+        .map((place, index) => ({
+            place,
+            index,
+            score: getPopularityScore(popularityMap.get(place.id)),
+        }))
+        .sort((a, b) => {
+            if (b.score !== a.score) {
+                return b.score - a.score;
+            }
+
+            /*
+             * Kalau score sama, pertahankan urutan awal dari Supabase.
+             * Urutan awal sekarang adalah created_at desc.
+             */
+            return a.index - b.index;
+        })
+        .map((item) => item.place);
+}
+
 async function getPlaces(params: PageParams) {
     const { data, error } = await supabase
         .from("places")
@@ -499,6 +577,13 @@ async function getPlaces(params: PageParams) {
     if (selectedPrice !== "all") {
         places = places.filter((place) => matchPrice(place, params.price));
     }
+
+    /*
+     * Sorting dilakukan setelah filter.
+     * Jadi user tetap dapat hasil sesuai filter,
+     * lalu coffee shop paling populer muncul di atas.
+     */
+    places = await sortPlacesByPopularity(places);
 
     return places;
 }
@@ -576,9 +661,9 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
                         </div>
 
                         <div className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/80 p-4">
-                            <p className="text-2xl font-black text-[#1F5A4A]">Padang</p>
+                            <p className="text-2xl font-black text-[#1F5A4A]">Populer</p>
                             <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-[#756A60]">
-                                Area awal
+                                Urutan hasil
                             </p>
                         </div>
                     </div>
@@ -735,8 +820,8 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
 
                     <p className="max-w-md text-sm font-semibold leading-6 text-[#756A60]">
                         {hasFilter
-                            ? "Hasil ini sudah mengikuti filter aktif yang kamu pilih."
-                            : "Menampilkan semua coffee shop yang sudah published."}
+                            ? "Hasil ini sudah mengikuti filter aktif dan diurutkan berdasarkan tempat yang paling banyak dilihat."
+                            : "Menampilkan semua coffee shop published, diurutkan berdasarkan yang paling populer."}
                     </p>
                 </div>
 
