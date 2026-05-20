@@ -22,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 1,
         },
         {
-            url: `${siteUrl}/places?category=coffee-shop`,
+            url: `${siteUrl}/places`,
             lastModified: now,
             changeFrequency: "daily",
             priority: 0.9,
@@ -53,12 +53,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     const placePages: MetadataRoute.Sitemap =
-        (data as SitemapPlace[] | null)?.map((place) => ({
-            url: `${siteUrl}/places/${place.slug}`,
-            lastModified: place.updated_at || place.created_at || now,
-            changeFrequency: "weekly",
-            priority: 0.8,
-        })) ?? [];
+        (data as SitemapPlace[] | null)
+            ?.filter((place) => Boolean(place.slug))
+            .map((place) => ({
+                url: `${siteUrl}/places/${place.slug}`,
+                lastModified: place.updated_at || place.created_at || now,
+                changeFrequency: "weekly",
+                priority: 0.8,
+            })) ?? [];
 
     return [...staticPages, ...placePages];
 }

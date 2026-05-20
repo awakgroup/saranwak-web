@@ -11,7 +11,7 @@ const siteTitle =
 const siteDescription =
   "Temukan coffee shop di Padang berdasarkan budget, aktivitas, fasilitas, dan vibes. Cocok untuk nugas, nongkrong, first date, meeting, dan me time.";
 
-const ogImage = "/og-saranwak-banner.png";
+const ogImage = `${siteUrl}/og-saranwak-banner.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   category: "Local Guide",
 
   alternates: {
-    canonical: "/",
+    canonical: siteUrl,
   },
 
   icons: {
@@ -106,8 +106,12 @@ export const metadata: Metadata = {
     },
   },
 
-  verification: {
-    google: "",
+  formatDetection: {
+    telephone: false,
+    date: false,
+    address: false,
+    email: false,
+    url: false,
   },
 };
 
