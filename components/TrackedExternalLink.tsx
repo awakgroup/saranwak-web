@@ -39,7 +39,7 @@ export function TrackedExternalLink({
         const referrer =
             typeof document !== "undefined" ? document.referrer || null : null;
 
-        void trackEvent({
+        trackEvent({
             event_name: eventName,
             place_id: placeId,
             place_name: placeName,
@@ -48,12 +48,10 @@ export function TrackedExternalLink({
             page_path: currentPath,
             referrer,
             metadata: {
-                ...metadata,
+                ...(metadata ?? {}),
                 href,
                 opened_with: event.metaKey || event.ctrlKey ? "new_tab_shortcut" : "click",
             },
-        }).catch((error) => {
-            console.error("Failed to track external link:", error);
         });
     }
 
