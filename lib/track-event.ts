@@ -38,6 +38,33 @@ type IdleWindow = Window &
         ) => number;
     };
 
+const recentEventMap = new Map<string, number>();
+
+function shouldSkipDuplicateEvent(key: string, delay = 1500) {
+    const now = Date.now();
+    const lastTime = recentEventMap.get(key) ?? 0;
+
+    if (now - lastTime < delay) {
+        return true;
+    }
+
+    recentEventMap.set(key, now);
+
+    /**
+     * Biar map tidak membesar terus kalau session panjang.
+     */
+    if (recentEventMap.size > 80) {
+        const entries = Array.from(recentEventMap.entries());
+        const oldEntries = entries.slice(0, 30);
+
+        oldEntries.forEach(([oldKey]) => {
+            recentEventMap.delete(oldKey);
+        });
+    }
+
+    return false;
+}
+
 function getSessionId() {
     if (typeof window === "undefined") return null;
 
@@ -78,8 +105,10 @@ function sendTracking(body: TrackEventBody) {
     const jsonBody = JSON.stringify(body);
 
     /**
-     * sendBeacon cocok untuk analytics karena tidak blocking UI
-     * dan lebih aman saat user pindah halaman.
+     * sendBeacon cocok untuk analytics:
+     * - tidak blocking UI
+     * - lebih aman saat user pindah halaman
+     * - tidak perlu await
      */
     if (typeof navigator !== "undefined" && navigator.sendBeacon) {
         const blob = new Blob([jsonBody], {
@@ -92,7 +121,7 @@ function sendTracking(body: TrackEventBody) {
     }
 
     /**
-     * Fallback kalau sendBeacon tidak tersedia/gagal.
+     * Fallback kalau sendBeacon gagal/tidak tersedia.
      */
     void fetch("/api/track", {
         method: "POST",
@@ -134,6 +163,21 @@ export function trackEvent(payload: TrackEventPayload) {
         session_id: payload.session_id ?? getSessionId(),
         ...getScreenData(),
     };
+
+    /**
+     * Dedupe event yang sama dalam waktu dekat.
+     * Ini mencegah double tracking karena double click, re-render,
+     * atau component mount ulang terlalu cepat.
+     */
+    const dedupeKey = [
+        body.event_name,
+        body.place_id ?? "",
+        body.place_slug ?? "",
+        body.source ?? "",
+        body.page_path ?? "",
+    ].join("|");
+
+    if (shouldSkipDuplicateEvent(dedupeKey)) return;
 
     runWhenBrowserIdle(() => {
         sendTracking(body);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 
 type GalleryPhoto = {
@@ -37,40 +37,82 @@ function getGalleryAltText({
     return `Foto ${index + 1} ${placeName} coffee shop di Padang`;
 }
 
+function getSafeIndex(index: number, length: number) {
+    if (length <= 0) return 0;
+
+    if (index < 0) return length - 1;
+    if (index >= length) return 0;
+
+    return index;
+}
+
 export function GallerySlider({ photos, placeName }: GallerySliderProps) {
     const [activeIndex, setActiveIndex] = useState(0);
+    const [imageLoaded, setImageLoaded] = useState(false);
 
-    const sortedPhotos = photos
-        .slice()
-        .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    const sortedPhotos = useMemo(() => {
+        return photos
+            .slice()
+            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    }, [photos]);
 
-    if (sortedPhotos.length === 0) return null;
+    const totalPhotos = sortedPhotos.length;
 
-    const safeActiveIndex =
-        activeIndex >= sortedPhotos.length ? 0 : Math.max(activeIndex, 0);
-
+    const safeActiveIndex = getSafeIndex(activeIndex, totalPhotos);
     const activePhoto = sortedPhotos[safeActiveIndex];
-    const activeImageUrl = getSafePlaceImageUrl(activePhoto.image_url);
-    const hasMultiplePhotos = sortedPhotos.length > 1;
+
+    const activeImageUrl = activePhoto
+        ? getSafePlaceImageUrl(activePhoto.image_url)
+        : "";
+
+    const hasMultiplePhotos = totalPhotos > 1;
+
+    const prevIndex = hasMultiplePhotos
+        ? getSafeIndex(safeActiveIndex - 1, totalPhotos)
+        : safeActiveIndex;
+
+    const nextIndex = hasMultiplePhotos
+        ? getSafeIndex(safeActiveIndex + 1, totalPhotos)
+        : safeActiveIndex;
+
+    useEffect(() => {
+        setImageLoaded(false);
+    }, [activeImageUrl]);
+
+    useEffect(() => {
+        if (!hasMultiplePhotos) return;
+
+        const nextPhoto = sortedPhotos[nextIndex];
+        const prevPhoto = sortedPhotos[prevIndex];
+
+        const preloadUrls = [nextPhoto?.image_url, prevPhoto?.image_url]
+            .filter(Boolean)
+            .map((url) => getSafePlaceImageUrl(url as string));
+
+        preloadUrls.forEach((url) => {
+            const image = new Image();
+            image.src = url;
+        });
+    }, [hasMultiplePhotos, nextIndex, prevIndex, sortedPhotos]);
+
+    if (totalPhotos === 0 || !activePhoto) return null;
 
     function goPrev(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
         event.stopPropagation();
 
-        setActiveIndex((prev) => {
-            if (sortedPhotos.length <= 1) return 0;
-            return prev === 0 ? sortedPhotos.length - 1 : prev - 1;
-        });
+        if (!hasMultiplePhotos) return;
+
+        setActiveIndex((prev) => getSafeIndex(prev - 1, totalPhotos));
     }
 
     function goNext(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
         event.stopPropagation();
 
-        setActiveIndex((prev) => {
-            if (sortedPhotos.length <= 1) return 0;
-            return prev === sortedPhotos.length - 1 ? 0 : prev + 1;
-        });
+        if (!hasMultiplePhotos) return;
+
+        setActiveIndex((prev) => getSafeIndex(prev + 1, totalPhotos));
     }
 
     function selectPhoto(
@@ -79,6 +121,9 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
     ) {
         event.preventDefault();
         event.stopPropagation();
+
+        if (index === safeActiveIndex) return;
+
         setActiveIndex(index);
     }
 
@@ -103,24 +148,34 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
                 <div className="flex w-fit items-center gap-2 rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-2 text-xs font-black text-[#4B4038]">
                     <span className="text-[#1F5A4A]">{safeActiveIndex + 1}</span>
                     <span className="text-[#9B8B7E]">/</span>
-                    <span>{sortedPhotos.length} foto</span>
+                    <span>{totalPhotos} foto</span>
                 </div>
             </div>
 
             <div className="relative overflow-hidden rounded-[26px] border border-[#E7D8C8] bg-[#181818] shadow-[0_18px_55px_rgba(47,35,25,0.08)] sm:rounded-[32px]">
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#181818] sm:aspect-[16/10] md:aspect-[16/9]">
+                    {!imageLoaded ? (
+                        <div className="absolute inset-0 z-[1] animate-pulse bg-gradient-to-br from-[#2A2A2A] via-[#3A3028] to-[#181818]" />
+                    ) : null}
+
                     <img
+                        key={activeImageUrl}
                         src={activeImageUrl}
                         alt={getGalleryAltText({
                             placeName,
                             caption: activePhoto.caption,
                             index: safeActiveIndex,
                         })}
-                        className="h-full w-full object-cover object-center transition duration-500"
+                        className={`relative z-[2] h-full w-full object-cover object-center transition duration-500 ${imageLoaded ? "opacity-100 blur-0" : "opacity-0 blur-sm"
+                            }`}
                         referrerPolicy="no-referrer"
+                        loading={safeActiveIndex === 0 ? "eager" : "lazy"}
+                        decoding="async"
+                        onLoad={() => setImageLoaded(true)}
+                        onError={() => setImageLoaded(true)}
                     />
 
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/58 via-black/10 to-transparent" />
+                    <div className="pointer-events-none absolute inset-0 z-[3] bg-gradient-to-t from-black/58 via-black/10 to-transparent" />
                 </div>
 
                 <div className="pointer-events-none absolute left-4 top-4 z-20 flex items-center gap-2 rounded-full border border-white/15 bg-black/35 px-3 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-white backdrop-blur">
@@ -141,7 +196,7 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
                         <button
                             type="button"
                             onClick={goPrev}
-                            className="absolute left-3 top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/55 text-xl font-black text-white shadow-lg backdrop-blur transition hover:bg-white hover:text-[#181818] sm:left-5"
+                            className="absolute left-3 top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/55 text-xl font-black text-white shadow-lg backdrop-blur transition hover:bg-white hover:text-[#181818] active:scale-95 sm:left-5"
                             aria-label={`Lihat foto sebelumnya dari ${placeName}`}
                         >
                             ←
@@ -150,7 +205,7 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
                         <button
                             type="button"
                             onClick={goNext}
-                            className="absolute right-3 top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/55 text-xl font-black text-white shadow-lg backdrop-blur transition hover:bg-white hover:text-[#181818] sm:right-5"
+                            className="absolute right-3 top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/55 text-xl font-black text-white shadow-lg backdrop-blur transition hover:bg-white hover:text-[#181818] active:scale-95 sm:right-5"
                             aria-label={`Lihat foto berikutnya dari ${placeName}`}
                         >
                             →
@@ -163,42 +218,47 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
                 <div className="mt-4 flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {sortedPhotos.map((photo, index) => {
                         const active = index === safeActiveIndex;
+                        const thumbnailUrl = getSafePlaceImageUrl(photo.image_url);
 
                         return (
                             <button
                                 key={photo.id}
                                 type="button"
                                 onClick={(event) => selectPhoto(event, index)}
-                                className={`group relative h-20 w-28 shrink-0 overflow-hidden rounded-2xl border bg-[#F8F1E8] transition duration-300 sm:h-24 sm:w-36 ${active
-                                    ? "border-[#1F5A4A] opacity-100 shadow-[0_12px_30px_rgba(31,90,74,0.16)]"
-                                    : "border-[#E7D8C8] opacity-70 hover:-translate-y-0.5 hover:border-[#1F5A4A]/50 hover:opacity-100"
+                                className={`group relative h-20 w-28 shrink-0 overflow-hidden rounded-2xl border bg-[#F8F1E8] transition duration-300 active:scale-95 sm:h-24 sm:w-36 ${active
+                                        ? "border-[#1F5A4A] opacity-100 shadow-[0_12px_30px_rgba(31,90,74,0.16)]"
+                                        : "border-[#E7D8C8] opacity-70 hover:-translate-y-0.5 hover:border-[#1F5A4A]/50 hover:opacity-100"
                                     }`}
                                 aria-label={`Pilih foto ${index + 1} dari ${placeName}`}
+                                aria-current={active ? "true" : undefined}
                             >
+                                <div className="absolute inset-0 animate-pulse bg-[#E7D8C8]" />
+
                                 <img
-                                    src={getSafePlaceImageUrl(photo.image_url)}
+                                    src={thumbnailUrl}
                                     alt={getGalleryAltText({
                                         placeName,
                                         caption: photo.caption,
                                         index,
                                         type: "thumbnail",
                                     })}
-                                    className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-105"
+                                    className="relative z-[1] h-full w-full object-cover object-center transition duration-500 group-hover:scale-105"
                                     referrerPolicy="no-referrer"
-                                    loading="eager"
+                                    loading={index <= 2 ? "eager" : "lazy"}
+                                    decoding="async"
                                 />
 
                                 <div
-                                    className={`pointer-events-none absolute inset-0 transition ${active ? "bg-[#1F5A4A]/10" : "bg-black/10"
+                                    className={`pointer-events-none absolute inset-0 z-[2] transition ${active ? "bg-[#1F5A4A]/10" : "bg-black/10"
                                         }`}
                                 />
 
-                                <div className="pointer-events-none absolute left-2 top-2 grid h-6 min-w-6 place-items-center rounded-full bg-white/90 px-2 text-[10px] font-black text-[#201813] shadow-sm">
+                                <div className="pointer-events-none absolute left-2 top-2 z-[3] grid h-6 min-w-6 place-items-center rounded-full bg-white/90 px-2 text-[10px] font-black text-[#201813] shadow-sm">
                                     {index + 1}
                                 </div>
 
                                 {active ? (
-                                    <div className="pointer-events-none absolute inset-0 ring-2 ring-inset ring-[#1F5A4A]" />
+                                    <div className="pointer-events-none absolute inset-0 z-[4] ring-2 ring-inset ring-[#1F5A4A]" />
                                 ) : null}
                             </button>
                         );

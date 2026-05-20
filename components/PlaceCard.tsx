@@ -17,7 +17,9 @@ function formatPrice(place: Place) {
     }
 
     if (place.price_min && place.price_max) {
-        return `Rp${place.price_min.toLocaleString("id-ID")} - Rp${place.price_max.toLocaleString("id-ID")}`;
+        return `Rp${place.price_min.toLocaleString(
+            "id-ID"
+        )} - Rp${place.price_max.toLocaleString("id-ID")}`;
     }
 
     if (place.price_min) {
@@ -115,7 +117,7 @@ export function PlaceCard({
     const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
 
     function handleCardClick() {
-        void trackEvent({
+        trackEvent({
             event_name: "place_card_clicked",
             place_id: place.id,
             place_name: place.name,
@@ -133,29 +135,31 @@ export function PlaceCard({
                 position,
                 tags: tags.map((tag) => tag?.slug).filter(Boolean),
             },
-        }).catch((error) => {
-            console.error("Failed to track place card click:", error);
         });
     }
 
     return (
         <Link
             href={detailHref}
+            prefetch
             onClick={handleCardClick}
-            className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-[#EADCCB] bg-[#FFFDF8] shadow-[0_14px_40px_rgba(47,35,25,0.07)] transition-all duration-500 hover:-translate-y-1.5 hover:border-[#1F5A4A]/35 hover:shadow-[0_28px_80px_rgba(47,35,25,0.15)]"
+            className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-[#EADCCB] bg-[#FFFDF8] shadow-[0_14px_40px_rgba(47,35,25,0.07)] outline-none transition-all duration-500 hover:-translate-y-1.5 hover:border-[#1F5A4A]/35 hover:shadow-[0_28px_80px_rgba(47,35,25,0.15)] active:scale-[0.985] focus-visible:ring-4 focus-visible:ring-[#1F5A4A]/20"
         >
-            <div className="relative h-52 overflow-hidden bg-[#E3DED4] sm:h-56">
+            <div className="relative aspect-[4/3] overflow-hidden bg-[#E3DED4]">
+                <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-[#E7D8C8] via-[#F8F1E8] to-[#E3DED4]" />
+
                 <img
                     src={imageUrl}
                     alt={getImageAlt(place)}
-                    className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
-                    loading="eager"
+                    className="relative z-[1] h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
                     referrerPolicy="no-referrer"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/22 to-black/5" />
+                <div className="absolute inset-0 z-[2] bg-gradient-to-t from-black/80 via-black/22 to-black/5" />
 
-                <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                <div className="absolute left-4 top-4 z-[3] flex flex-wrap gap-2">
                     {place.is_featured ? (
                         <span className="rounded-full bg-[#F3C48E] px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] text-[#201813] shadow-sm">
                             Featured
@@ -169,7 +173,7 @@ export function PlaceCard({
                     ) : null}
                 </div>
 
-                <div className="absolute bottom-4 left-4 right-4">
+                <div className="absolute bottom-4 left-4 right-4 z-[3]">
                     <div className="mb-2 flex flex-wrap items-center gap-2">
                         <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white/85 backdrop-blur">
                             {area}
