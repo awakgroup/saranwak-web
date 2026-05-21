@@ -3,7 +3,6 @@ import { supabase } from "@/lib/supabase";
 import { PlaceCard } from "@/components/PlaceCard";
 import {
     placeFilterGroups,
-    placeFilterOptions,
     priceFilterOptions,
     type PriceFilterValue,
 } from "@/lib/place-filters";
@@ -44,14 +43,402 @@ type PlaceTagItem = {
     tags?: TagItem | TagItem[] | null;
 };
 
-type PlacePopularity = {
-    place_id: string;
-    detail_views: number | null;
-    detail_views_30d: number | null;
-    action_clicks: number | null;
-    action_clicks_30d: number | null;
-    last_event_at: string | null;
-};
+export default async function PlacesPage({ searchParams }: PlacesPageProps) {
+    const params = ((await searchParams) ?? {}) as PageParams;
+
+    const selectedTags = getSelectedTags(params);
+    const selectedPrice = getSelectedPrice(params.price);
+
+    const placesData = await getPlaces();
+
+    const places = placesData
+        .filter((place) => matchKeyword(place, params.q))
+        .filter((place) => matchArea(place, params.area))
+        .filter((place) => matchAllSelectedTags(place, selectedTags))
+        .filter((place) => matchPrice(place, params.price))
+        .sort((a, b) => {
+            return (
+                new Date(b.created_at ?? 0).getTime() -
+                new Date(a.created_at ?? 0).getTime()
+            );
+        });
+
+    const hasFilter = Boolean(
+        params.q ||
+        params.area ||
+        selectedTags.length > 0 ||
+        selectedPrice !== "all"
+    );
+
+    const activeFilterCount =
+        Number(Boolean(params.q)) +
+        Number(Boolean(params.area)) +
+        selectedTags.length +
+        Number(selectedPrice !== "all");
+
+    return (
+        <main className="min-h-screen bg-[#F4F1EA] px-4 pb-12 pt-6 text-[#201813] sm:px-6 lg:px-8 lg:pb-16 lg:pt-8">
+            <section className="mx-auto max-w-7xl">
+                <div className="mb-5 overflow-hidden rounded-[30px] border border-[#E7D8C8] bg-[#201813] p-5 text-white shadow-[0_22px_70px_rgba(32,24,19,0.13)] sm:p-6 lg:p-7">
+                    <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
+                        <div className="max-w-4xl">
+                            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.07] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-[#F2C38B] sm:text-xs">
+                                <span className="h-2 w-2 rounded-full bg-[#F2C38B]" />
+                                Saranwak Places
+                            </div>
+
+                            <h1 className="mt-4 max-w-4xl text-[36px] font-black leading-[0.96] tracking-[-0.06em] text-white sm:text-5xl lg:text-[64px]">
+                                {makeTitle(params)}
+                            </h1>
+
+                            <p className="mt-3 max-w-2xl text-sm font-semibold leading-7 text-white/68 sm:text-base">
+                                {makeDescription(params)}
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2 lg:min-w-[360px]">
+                            <MiniStat value={places.length} label="Ditemukan" />
+                            <MiniStat value={activeFilterCount} label="Filter" />
+                            <MiniStat value="Terbaru" label="Urutan" />
+                        </div>
+                    </div>
+
+                    <div className="mt-5 flex flex-col gap-2 border-t border-white/10 pt-4 sm:flex-row sm:flex-wrap">
+                        {hasFilter ? (
+                            <Link
+                                href="/places?category=coffee-shop"
+                                className="inline-flex min-h-10 items-center justify-center rounded-full bg-white px-4 py-2.5 text-xs font-black text-[#201813] transition hover:bg-[#F2C38B]"
+                            >
+                                Reset Semua
+                            </Link>
+                        ) : null}
+
+                        <Link
+                            href="/"
+                            className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] px-4 py-2.5 text-xs font-black text-white transition hover:bg-white hover:text-[#201813]"
+                        >
+                            Kembali ke Home
+                        </Link>
+                    </div>
+                </div>
+
+                <div className="grid gap-5 lg:grid-cols-[320px_1fr] lg:items-start">
+                    <aside className="lg:sticky lg:top-24">
+                        <details className="group rounded-[26px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_14px_45px_rgba(47,35,25,0.06)] lg:hidden">
+                            <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
+                                <div>
+                                    <p className="text-sm font-black text-[#201813]">
+                                        Filter Coffee Shop
+                                    </p>
+                                    <p className="mt-1 text-xs font-semibold text-[#756A60]">
+                                        {activeFilterCount} filter dipilih
+                                    </p>
+                                </div>
+
+                                <span className="rounded-full bg-[#201813] px-3 py-2 text-xs font-black text-white">
+                                    Buka
+                                </span>
+                            </summary>
+
+                            <div className="mt-4 border-t border-[#E7D8C8] pt-4">
+                                <FilterContent
+                                    params={params}
+                                    selectedTags={selectedTags}
+                                    selectedPrice={selectedPrice}
+                                    hasFilter={hasFilter}
+                                />
+                            </div>
+                        </details>
+
+                        <div className="hidden rounded-[26px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_14px_45px_rgba(47,35,25,0.06)] lg:block">
+                            <div className="mb-4">
+                                <p className="text-sm font-black text-[#201813]">
+                                    Filter Coffee Shop
+                                </p>
+
+                                <p className="mt-1 text-xs font-semibold leading-5 text-[#756A60]">
+                                    Pilih aktivitas, fasilitas, vibes, dan budget.
+                                </p>
+                            </div>
+
+                            <FilterContent
+                                params={params}
+                                selectedTags={selectedTags}
+                                selectedPrice={selectedPrice}
+                                hasFilter={hasFilter}
+                            />
+                        </div>
+                    </aside>
+
+                    <section>
+                        {hasFilter ? (
+                            <ActiveFilters
+                                params={params}
+                                selectedTags={selectedTags}
+                                selectedPrice={selectedPrice}
+                            />
+                        ) : null}
+
+                        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                            <div>
+                                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
+                                    Hasil tempat
+                                </p>
+
+                                <h2 className="mt-1 text-2xl font-black tracking-[-0.04em] text-[#201813] sm:text-3xl">
+                                    {places.length} coffee shop ditemukan
+                                </h2>
+                            </div>
+
+                            <p className="max-w-md text-sm font-semibold leading-6 text-[#756A60]">
+                                {hasFilter
+                                    ? "Hasil sudah mengikuti filter aktif dan diurutkan dari data terbaru."
+                                    : "Menampilkan semua coffee shop published, diurutkan dari data terbaru."}
+                            </p>
+                        </div>
+
+                        {places.length === 0 ? (
+                            <EmptyPlacesState />
+                        ) : (
+                            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                                {places.map((place, index) => (
+                                    <PlaceCard
+                                        key={place.id}
+                                        place={place}
+                                        source="places_list"
+                                        position={index + 1}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </section>
+                </div>
+            </section>
+        </main>
+    );
+}
+
+async function getPlaces() {
+    const { data, error } = await supabase
+        .from("places")
+        .select(
+            `
+      *,
+      categories (
+        id,
+        name,
+        slug,
+        icon
+      ),
+      place_tags (
+        id,
+        tag_id,
+        tags (
+          id,
+          name,
+          slug,
+          type
+        )
+      )
+    `
+        )
+        .eq("is_published", true)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error("Places query error:", error.message);
+        return [];
+    }
+
+    return (data ?? []) as unknown as Place[];
+}
+
+function MiniStat({
+    value,
+    label,
+}: {
+    value: number | string;
+    label: string;
+}) {
+    return (
+        <div className="rounded-2xl border border-white/10 bg-white/[0.07] p-3 text-center backdrop-blur">
+            <p className="text-lg font-black text-[#F2C38B] sm:text-xl">{value}</p>
+            <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/45">
+                {label}
+            </p>
+        </div>
+    );
+}
+
+function FilterContent({
+    params,
+    selectedTags,
+    selectedPrice,
+    hasFilter,
+}: {
+    params: PageParams;
+    selectedTags: string[];
+    selectedPrice: PriceFilterValue;
+    hasFilter: boolean;
+}) {
+    return (
+        <div>
+            <div>
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
+                    Harga
+                </p>
+
+                <div className="flex flex-wrap gap-2">
+                    {priceFilterOptions.map((filter) => {
+                        const active = selectedPrice === filter.value;
+
+                        return (
+                            <Link
+                                key={filter.value}
+                                href={makePriceHref(params, filter.value)}
+                                className={`inline-flex items-center rounded-full border px-3 py-2 text-xs font-black transition ${active
+                                        ? "border-[#1F5A4A] bg-[#1F5A4A] text-white"
+                                        : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
+                                    }`}
+                            >
+                                <span className="mr-1.5">{active ? "✓" : "+"}</span>
+                                {filter.label}
+                            </Link>
+                        );
+                    })}
+                </div>
+            </div>
+
+            <div className="mt-4">
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
+                    Semua
+                </p>
+
+                <Link
+                    href="/places?category=coffee-shop"
+                    className={`inline-flex rounded-full border px-3 py-2 text-xs font-black transition ${!hasFilter
+                            ? "border-[#1F5A4A] bg-[#1F5A4A] text-white"
+                            : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
+                        }`}
+                >
+                    Semua Coffee Shop
+                </Link>
+            </div>
+
+            <div className="mt-4 space-y-4">
+                {placeFilterGroups.map((group) => (
+                    <div key={group.title}>
+                        <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
+                            {group.title}
+                        </p>
+
+                        <div className="flex flex-wrap gap-2">
+                            {group.options.map((filter) => {
+                                const active = selectedTags.includes(filter.tag);
+
+                                return (
+                                    <Link
+                                        key={filter.tag}
+                                        href={makeFilterHref(params, filter.tag)}
+                                        className={`inline-flex items-center rounded-full border px-3 py-2 text-xs font-black transition ${active
+                                                ? "border-[#1F5A4A] bg-[#1F5A4A] text-white"
+                                                : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
+                                            }`}
+                                    >
+                                        <span className="mr-1.5">{active ? "✓" : "+"}</span>
+                                        {filter.label}
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function ActiveFilters({
+    params,
+    selectedTags,
+    selectedPrice,
+}: {
+    params: PageParams;
+    selectedTags: string[];
+    selectedPrice: PriceFilterValue;
+}) {
+    return (
+        <div className="mb-4 flex flex-wrap gap-2 rounded-[22px] border border-[#E7D8C8] bg-[#FFFDF8] p-3 shadow-sm">
+            {params.q ? (
+                <Link
+                    href={makeRemoveKeywordHref(params)}
+                    className="rounded-full bg-[#F8F1E8] px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#201813] hover:text-white"
+                >
+                    Search: {params.q} ×
+                </Link>
+            ) : null}
+
+            {selectedTags.map((tag) => (
+                <Link
+                    key={tag}
+                    href={makeRemoveTagHref(params, tag)}
+                    className="rounded-full bg-[#F8F1E8] px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#201813] hover:text-white"
+                >
+                    {getFilterLabel(tag)} ×
+                </Link>
+            ))}
+
+            {selectedPrice !== "all" ? (
+                <Link
+                    href={makeRemovePriceHref(params)}
+                    className="rounded-full bg-[#F8F1E8] px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#201813] hover:text-white"
+                >
+                    Harga: {getPriceLabel(params.price)} ×
+                </Link>
+            ) : null}
+
+            {params.area ? (
+                <Link
+                    href={makeRemoveAreaHref(params)}
+                    className="rounded-full bg-[#F8F1E8] px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#201813] hover:text-white"
+                >
+                    Area: {params.area} ×
+                </Link>
+            ) : null}
+        </div>
+    );
+}
+
+function EmptyPlacesState() {
+    return (
+        <div className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-7 shadow-[0_18px_60px_rgba(47,35,25,0.06)] sm:p-9">
+            <h2 className="text-2xl font-black text-[#201813]">
+                Belum ada tempat cocok.
+            </h2>
+
+            <p className="mt-3 max-w-2xl text-sm font-semibold leading-7 text-[#756A60] sm:text-base">
+                Coba hapus beberapa filter aktif atau lihat semua coffee shop dulu.
+                Kadang tempat yang pas nggak selalu full spec.
+            </p>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Link
+                    href="/places?category=coffee-shop"
+                    className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#201813] px-5 py-3 text-sm font-black text-white transition hover:bg-[#1F5A4A]"
+                >
+                    Lihat Semua Coffee Shop
+                </Link>
+
+                <Link
+                    href="/"
+                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition hover:bg-[#201813] hover:text-white"
+                >
+                    Kembali ke Home
+                </Link>
+            </div>
+        </div>
+    );
+}
 
 function normalizeText(value?: string | null) {
     return value?.toLowerCase().trim() || "";
@@ -99,6 +486,18 @@ function getPriceLabel(price?: string) {
     );
 }
 
+function getFilterLabel(tag: string) {
+    for (const group of placeFilterGroups) {
+        const option = group.options.find((item) => item.tag === tag);
+
+        if (option) {
+            return option.label;
+        }
+    }
+
+    return tag;
+}
+
 function getPlaceTagSlugs(place: Place) {
     return (
         place.place_tags
@@ -132,7 +531,7 @@ function matchKeyword(place: Place, keyword?: string) {
         place.city,
         tagText,
     ]
-        .map(normalizeText)
+        .map((item) => normalizeText(item))
         .join(" ");
 
     return searchableText.includes(q);
@@ -254,618 +653,98 @@ function makeTitle(params: PageParams) {
         return `Coffee shop di ${params.area}`;
     }
 
-    const selectedTags = getSelectedTags(params);
-    const selectedPrice = getSelectedPrice(params.price);
-
-    if (selectedTags.length > 0 || selectedPrice !== "all") {
-        return "Coffee shop sesuai filter";
+    if (params.price && getSelectedPrice(params.price) !== "all") {
+        return `Coffee shop ${getPriceLabel(params.price)}`;
     }
 
-    return "Coffee Shop di Padang";
+    const selectedTags = getSelectedTags(params);
+
+    if (selectedTags.length > 0) {
+        return `Coffee shop untuk ${getFilterLabel(selectedTags[0])}`;
+    }
+
+    return "Explore coffee shop di Padang";
 }
 
 function makeDescription(params: PageParams) {
     const selectedTags = getSelectedTags(params);
-    const selectedPrice = getSelectedPrice(params.price);
 
     if (params.q) {
-        return "Hasil berdasarkan nama tempat, area, alamat, deskripsi, dan tag coffee shop.";
+        return "Temukan coffee shop yang sesuai dengan kata kunci pencarian kamu.";
     }
 
-    if (selectedTags.length > 0 || selectedPrice !== "all") {
-        return "Tempat yang muncul sudah mengikuti aktivitas, fasilitas, vibes, dan budget yang kamu pilih.";
+    if (selectedTags.length > 0 || params.price || params.area) {
+        return "Hasil sudah disesuaikan berdasarkan filter yang kamu pilih.";
     }
 
-    if (params.area) {
-        return "Tempat yang muncul difilter berdasarkan area yang kamu pilih.";
-    }
-
-    return "Temukan coffee shop di Padang berdasarkan budget, aktivitas, fasilitas, dan vibes.";
+    return "Cari coffee shop berdasarkan mood, fasilitas, area, budget, dan vibes.";
 }
 
-function makeFilterHref(params: PageParams, targetTag: string) {
-    const selectedTags = getSelectedTags(params);
-    const isActive = selectedTags.includes(targetTag);
+function createPlacesHref(params: PageParams, overrides: Partial<PageParams>) {
+    const nextParams: PageParams = {
+        category: params.category || "coffee-shop",
+        q: params.q,
+        tags: params.tags,
+        area: params.area,
+        price: params.price,
+        ...overrides,
+    };
 
-    const nextTags = isActive
-        ? selectedTags.filter((tag) => tag !== targetTag)
-        : [...selectedTags, targetTag];
+    delete nextParams.tag;
 
     const urlParams = new URLSearchParams();
 
-    urlParams.set("category", "coffee-shop");
+    Object.entries(nextParams).forEach(([key, value]) => {
+        if (value && value !== "all") {
+            urlParams.set(key, value);
+        }
+    });
 
-    if (params.q) {
-        urlParams.set("q", params.q);
-    }
+    const queryString = urlParams.toString();
 
-    if (params.area) {
-        urlParams.set("area", params.area);
-    }
-
-    if (nextTags.length > 0) {
-        urlParams.set("tags", nextTags.join(","));
-    }
-
-    const selectedPrice = getSelectedPrice(params.price);
-
-    if (selectedPrice !== "all") {
-        urlParams.set("price", selectedPrice);
-    }
-
-    return `/places?${urlParams.toString()}`;
+    return queryString ? `/places?${queryString}` : "/places?category=coffee-shop";
 }
 
-function makePriceHref(params: PageParams, targetPrice: PriceFilterValue) {
-    const urlParams = new URLSearchParams();
-
-    urlParams.set("category", "coffee-shop");
-
-    if (params.q) {
-        urlParams.set("q", params.q);
-    }
-
-    if (params.area) {
-        urlParams.set("area", params.area);
-    }
-
+function makeFilterHref(params: PageParams, tag: string) {
     const selectedTags = getSelectedTags(params);
+    const nextTags = selectedTags.includes(tag)
+        ? selectedTags.filter((item) => item !== tag)
+        : [...selectedTags, tag];
 
-    if (selectedTags.length > 0) {
-        urlParams.set("tags", selectedTags.join(","));
-    }
-
-    if (targetPrice !== "all") {
-        urlParams.set("price", targetPrice);
-    }
-
-    return `/places?${urlParams.toString()}`;
+    return createPlacesHref(params, {
+        tags: nextTags.join(",") || undefined,
+    });
 }
 
-function makeRemoveTagHref(params: PageParams, targetTag: string) {
-    const selectedTags = getSelectedTags(params);
-    const nextTags = selectedTags.filter((tag) => tag !== targetTag);
-
-    const urlParams = new URLSearchParams();
-
-    urlParams.set("category", "coffee-shop");
-
-    if (params.q) {
-        urlParams.set("q", params.q);
-    }
-
-    if (params.area) {
-        urlParams.set("area", params.area);
-    }
-
-    if (nextTags.length > 0) {
-        urlParams.set("tags", nextTags.join(","));
-    }
-
-    const selectedPrice = getSelectedPrice(params.price);
-
-    if (selectedPrice !== "all") {
-        urlParams.set("price", selectedPrice);
-    }
-
-    return `/places?${urlParams.toString()}`;
+function makePriceHref(params: PageParams, price: PriceFilterValue) {
+    return createPlacesHref(params, {
+        price: price === "all" ? undefined : price,
+    });
 }
 
 function makeRemoveKeywordHref(params: PageParams) {
-    const selectedTags = getSelectedTags(params);
-    const selectedPrice = getSelectedPrice(params.price);
-    const urlParams = new URLSearchParams();
-
-    urlParams.set("category", "coffee-shop");
-
-    if (params.area) {
-        urlParams.set("area", params.area);
-    }
-
-    if (selectedTags.length > 0) {
-        urlParams.set("tags", selectedTags.join(","));
-    }
-
-    if (selectedPrice !== "all") {
-        urlParams.set("price", selectedPrice);
-    }
-
-    return `/places?${urlParams.toString()}`;
+    return createPlacesHref(params, {
+        q: undefined,
+    });
 }
 
-function makeRemoveAreaHref(params: PageParams) {
+function makeRemoveTagHref(params: PageParams, tag: string) {
     const selectedTags = getSelectedTags(params);
-    const selectedPrice = getSelectedPrice(params.price);
-    const urlParams = new URLSearchParams();
+    const nextTags = selectedTags.filter((item) => item !== tag);
 
-    urlParams.set("category", "coffee-shop");
-
-    if (params.q) {
-        urlParams.set("q", params.q);
-    }
-
-    if (selectedTags.length > 0) {
-        urlParams.set("tags", selectedTags.join(","));
-    }
-
-    if (selectedPrice !== "all") {
-        urlParams.set("price", selectedPrice);
-    }
-
-    return `/places?${urlParams.toString()}`;
+    return createPlacesHref(params, {
+        tags: nextTags.join(",") || undefined,
+    });
 }
 
 function makeRemovePriceHref(params: PageParams) {
-    const selectedTags = getSelectedTags(params);
-    const urlParams = new URLSearchParams();
-
-    urlParams.set("category", "coffee-shop");
-
-    if (params.q) {
-        urlParams.set("q", params.q);
-    }
-
-    if (params.area) {
-        urlParams.set("area", params.area);
-    }
-
-    if (selectedTags.length > 0) {
-        urlParams.set("tags", selectedTags.join(","));
-    }
-
-    return `/places?${urlParams.toString()}`;
+    return createPlacesHref(params, {
+        price: undefined,
+    });
 }
 
-function getFilterLabel(tag: string) {
-    return placeFilterOptions.find((option) => option.tag === tag)?.label || tag;
-}
-
-async function getPlacePopularity(placeIds: string[]) {
-    if (placeIds.length === 0) {
-        return new Map<string, PlacePopularity>();
-    }
-
-    const { data, error } = await supabase
-        .from("place_popularity_summary")
-        .select(
-            `
-            place_id,
-            detail_views,
-            detail_views_30d,
-            action_clicks,
-            action_clicks_30d,
-            last_event_at
-            `
-        )
-        .in("place_id", placeIds);
-
-    if (error || !data) {
-        console.error("GET place popularity error:", error);
-        return new Map<string, PlacePopularity>();
-    }
-
-    return new Map(
-        (data as PlacePopularity[]).map((item) => [item.place_id, item])
-    );
-}
-
-function getPopularityScore(popularity?: PlacePopularity) {
-    if (!popularity) return 0;
-
-    const detailViews30d = Number(popularity.detail_views_30d ?? 0);
-    const detailViewsAllTime = Number(popularity.detail_views ?? 0);
-    const actionClicks30d = Number(popularity.action_clicks_30d ?? 0);
-
-    /*
-     * Ranking utama: paling banyak dilihat.
-     * - detail_views_30d dibuat paling kuat supaya ranking lebih fresh.
-     * - action_clicks_30d jadi booster karena klik Maps/IG/WA lebih bernilai.
-     * - detail_views all time jadi fallback agar tempat lama tetap punya bobot.
-     */
-    return detailViews30d * 10 + detailViewsAllTime + actionClicks30d * 3;
-}
-
-async function sortPlacesByPopularity(places: Place[]) {
-    const placeIds = places.map((place) => place.id);
-    const popularityMap = await getPlacePopularity(placeIds);
-
-    return places
-        .map((place, index) => ({
-            place,
-            index,
-            score: getPopularityScore(popularityMap.get(place.id)),
-        }))
-        .sort((a, b) => {
-            if (b.score !== a.score) {
-                return b.score - a.score;
-            }
-
-            /*
-             * Kalau score sama, pertahankan urutan awal dari Supabase.
-             * Urutan awal sekarang adalah created_at desc.
-             */
-            return a.index - b.index;
-        })
-        .map((item) => item.place);
-}
-
-async function getPlaces(params: PageParams) {
-    const { data, error } = await supabase
-        .from("places")
-        .select(
-            `
-      id,
-      category_id,
-      name,
-      slug,
-      description,
-      short_description,
-      address,
-      area,
-      city,
-      image_url,
-      main_image_url,
-      price_min,
-      price_max,
-      price_range,
-      opening_hours,
-      is_featured,
-      is_verified,
-      is_published,
-      categories!inner (
-        id,
-        name,
-        slug
-      ),
-      place_tags (
-        tag_id,
-        tags (
-          id,
-          name,
-          slug,
-          type
-        )
-      )
-    `
-        )
-        .eq("is_published", true)
-        .eq("categories.slug", "coffee-shop")
-        .order("created_at", { ascending: false });
-
-    if (error || !data) {
-        console.error("GET places error:", error);
-        return [];
-    }
-
-    let places = data as unknown as Place[];
-
-    const selectedTags = getSelectedTags(params);
-    const selectedPrice = getSelectedPrice(params.price);
-
-    if (params.q) {
-        places = places.filter((place) => matchKeyword(place, params.q));
-    }
-
-    if (params.area) {
-        places = places.filter((place) => matchArea(place, params.area));
-    }
-
-    if (selectedTags.length > 0) {
-        places = places.filter((place) => matchAllSelectedTags(place, selectedTags));
-    }
-
-    if (selectedPrice !== "all") {
-        places = places.filter((place) => matchPrice(place, params.price));
-    }
-
-    /*
-     * Sorting dilakukan setelah filter.
-     * Jadi user tetap dapat hasil sesuai filter,
-     * lalu coffee shop paling populer muncul di atas.
-     */
-    places = await sortPlacesByPopularity(places);
-
-    return places;
-}
-
-export default async function PlacesPage({ searchParams }: PlacesPageProps) {
-    const params = searchParams ? await searchParams : {};
-    const places = await getPlaces(params);
-
-    const selectedTags = getSelectedTags(params);
-    const selectedPrice = getSelectedPrice(params.price);
-
-    const hasFilter = Boolean(
-        params.q || params.tag || params.tags || params.area || selectedPrice !== "all"
-    );
-
-    const activeFilterCount =
-        selectedTags.length + (selectedPrice !== "all" ? 1 : 0);
-
-    return (
-        <main className="min-h-screen bg-[#F4F1EA] px-4 pb-12 pt-8 text-[#201813] sm:px-5 sm:pb-16 sm:pt-10">
-            <section className="mx-auto max-w-6xl">
-                <div className="mb-6 rounded-[30px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-[0_18px_60px_rgba(47,35,25,0.08)] sm:p-6 md:p-8">
-                    <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-                        <div className="max-w-3xl">
-                            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-[#C8784A]">
-                                <span className="h-2 w-2 rounded-full bg-[#1F5A4A]" />
-                                Saranwak Places
-                            </div>
-
-                            <h1 className="text-4xl font-black leading-[0.98] tracking-[-0.055em] text-[#201813] sm:text-5xl md:text-6xl">
-                                {makeTitle(params)}
-                            </h1>
-
-                            <p className="mt-4 max-w-2xl text-sm font-semibold leading-7 text-[#756A60] sm:text-base">
-                                {makeDescription(params)}
-                            </p>
-                        </div>
-
-                        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap lg:justify-end">
-                            {hasFilter ? (
-                                <Link
-                                    href="/places?category=coffee-shop"
-                                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition duration-300 hover:-translate-y-0.5 hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
-                                >
-                                    Reset Semua
-                                </Link>
-                            ) : null}
-
-                            <Link
-                                href="/"
-                                className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#181818] px-5 py-3 text-sm font-black text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#1F5A4A]"
-                            >
-                                Kembali ke Home
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div className="mt-6 grid gap-3 border-t border-[#E7D8C8] pt-5 sm:grid-cols-3">
-                        <div className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/80 p-4">
-                            <p className="text-2xl font-black text-[#1F5A4A]">
-                                {places.length}
-                            </p>
-                            <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-[#756A60]">
-                                Ditemukan
-                            </p>
-                        </div>
-
-                        <div className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/80 p-4">
-                            <p className="text-2xl font-black text-[#1F5A4A]">
-                                {activeFilterCount}
-                            </p>
-                            <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-[#756A60]">
-                                Filter aktif
-                            </p>
-                        </div>
-
-                        <div className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/80 p-4">
-                            <p className="text-2xl font-black text-[#1F5A4A]">Populer</p>
-                            <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-[#756A60]">
-                                Urutan hasil
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mb-6 rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_14px_45px_rgba(47,35,25,0.06)] sm:p-5">
-                    <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                            <p className="text-sm font-black text-[#201813]">
-                                Filter Coffee Shop
-                            </p>
-
-                            <p className="mt-1 max-w-2xl text-xs font-semibold leading-5 text-[#756A60]">
-                                Klik beberapa filter. Tempat akan muncul kalau cocok dengan
-                                aktivitas, fasilitas, vibes, dan budget yang kamu pilih.
-                            </p>
-                        </div>
-
-                        <span className="w-fit rounded-full bg-[#181818] px-3 py-2 text-xs font-black text-white">
-                            {activeFilterCount} dipilih
-                        </span>
-                    </div>
-
-                    <div className="mb-5">
-                        <p className="mb-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                            Harga
-                        </p>
-
-                        <div className="flex flex-wrap gap-2">
-                            {priceFilterOptions.map((filter) => {
-                                const active = selectedPrice === filter.value;
-
-                                return (
-                                    <Link
-                                        key={filter.value}
-                                        href={makePriceHref(params, filter.value)}
-                                        className={`inline-flex items-center rounded-full border px-3.5 py-2 text-xs font-black transition duration-200 sm:text-sm ${active
-                                                ? "border-[#1F5A4A] bg-[#1F5A4A] text-white shadow-[0_8px_20px_rgba(31,90,74,0.18)]"
-                                                : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
-                                            }`}
-                                    >
-                                        <span className="mr-2">{active ? "✓" : "+"}</span>
-                                        {filter.label}
-                                    </Link>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    <div className="space-y-4">
-                        <div>
-                            <p className="mb-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                                Semua Filter
-                            </p>
-
-                            <Link
-                                href="/places?category=coffee-shop"
-                                className={`inline-flex rounded-full border px-3.5 py-2 text-xs font-black transition duration-200 sm:text-sm ${selectedTags.length === 0 &&
-                                        !params.q &&
-                                        !params.area &&
-                                        selectedPrice === "all"
-                                        ? "border-[#1F5A4A] bg-[#1F5A4A] text-white"
-                                        : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
-                                    }`}
-                            >
-                                Semua Coffee Shop
-                            </Link>
-                        </div>
-
-                        {placeFilterGroups.map((group) => (
-                            <div key={group.title}>
-                                <div className="mb-2 flex items-center gap-3">
-                                    <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                                        {group.title}
-                                    </p>
-                                    <div className="hidden h-px flex-1 bg-[#E7D8C8] sm:block" />
-                                </div>
-
-                                <div className="flex flex-wrap gap-2">
-                                    {group.options.map((filter) => {
-                                        const active = selectedTags.includes(filter.tag);
-
-                                        return (
-                                            <Link
-                                                key={filter.tag}
-                                                href={makeFilterHref(params, filter.tag)}
-                                                className={`inline-flex items-center rounded-full border px-3.5 py-2 text-xs font-black transition duration-200 sm:text-sm ${active
-                                                        ? "border-[#1F5A4A] bg-[#1F5A4A] text-white shadow-[0_8px_20px_rgba(31,90,74,0.18)]"
-                                                        : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
-                                                    }`}
-                                            >
-                                                <span className="mr-2">{active ? "✓" : "+"}</span>
-                                                {filter.label}
-                                            </Link>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {hasFilter ? (
-                        <div className="mt-4 flex flex-wrap gap-2 rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/80 p-3">
-                            {params.q ? (
-                                <Link
-                                    href={makeRemoveKeywordHref(params)}
-                                    className="rounded-full bg-white px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#181818] hover:text-white"
-                                >
-                                    Search: {params.q} ×
-                                </Link>
-                            ) : null}
-
-                            {selectedTags.map((tag) => (
-                                <Link
-                                    key={tag}
-                                    href={makeRemoveTagHref(params, tag)}
-                                    className="rounded-full bg-white px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#181818] hover:text-white"
-                                >
-                                    {getFilterLabel(tag)} ×
-                                </Link>
-                            ))}
-
-                            {selectedPrice !== "all" ? (
-                                <Link
-                                    href={makeRemovePriceHref(params)}
-                                    className="rounded-full bg-white px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#181818] hover:text-white"
-                                >
-                                    Harga: {getPriceLabel(params.price)} ×
-                                </Link>
-                            ) : null}
-
-                            {params.area ? (
-                                <Link
-                                    href={makeRemoveAreaHref(params)}
-                                    className="rounded-full bg-white px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#181818] hover:text-white"
-                                >
-                                    Area: {params.area} ×
-                                </Link>
-                            ) : null}
-                        </div>
-                    ) : null}
-                </div>
-
-                <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                        <p className="text-xs font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                            Hasil tempat
-                        </p>
-
-                        <h2 className="mt-1 text-2xl font-black tracking-[-0.035em] text-[#201813] sm:text-3xl">
-                            {places.length} coffee shop ditemukan
-                        </h2>
-                    </div>
-
-                    <p className="max-w-md text-sm font-semibold leading-6 text-[#756A60]">
-                        {hasFilter
-                            ? "Hasil ini sudah mengikuti filter aktif dan diurutkan berdasarkan tempat yang paling banyak dilihat."
-                            : "Menampilkan semua coffee shop published, diurutkan berdasarkan yang paling populer."}
-                    </p>
-                </div>
-
-                {places.length === 0 ? (
-                    <div className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-8 shadow-[0_18px_60px_rgba(47,35,25,0.06)] sm:rounded-[32px] sm:p-10">
-                        <h2 className="text-2xl font-black text-[#201813]">
-                            Belum ada tempat cocok.
-                        </h2>
-
-                        <p className="mt-3 max-w-2xl text-sm font-semibold leading-7 text-[#756A60] sm:text-base">
-                            Coba hapus beberapa filter aktif atau lihat semua coffee shop
-                            dulu. Kadang tempat yang pas nggak selalu punya semua tag yang
-                            kita pilih. Namanya juga hidup, kadang cocoknya nggak full spec.
-                        </p>
-
-                        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                            <Link
-                                href="/places?category=coffee-shop"
-                                className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#181818] px-5 py-3 text-sm font-black text-white transition hover:bg-[#1F5A4A]"
-                            >
-                                Lihat Semua Coffee Shop
-                            </Link>
-
-                            <Link
-                                href="/"
-                                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition hover:bg-[#181818] hover:text-white"
-                            >
-                                Kembali ke Home
-                            </Link>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                        {places.map((place, index) => (
-                            <PlaceCard
-                                key={place.id}
-                                place={place}
-                                source="places_list"
-                                position={index + 1}
-                            />
-                        ))}
-                    </div>
-                )}
-            </section>
-        </main>
-    );
+function makeRemoveAreaHref(params: PageParams) {
+    return createPlacesHref(params, {
+        area: undefined,
+    });
 }

@@ -7,16 +7,14 @@ type PlaceDetailTrackerProps = {
     placeId: string;
     placeName: string;
     placeSlug: string;
-    area?: string | null;
-    city?: string | null;
+    metadata?: Record<string, unknown>;
 };
 
 export function PlaceDetailTracker({
     placeId,
     placeName,
     placeSlug,
-    area,
-    city,
+    metadata,
 }: PlaceDetailTrackerProps) {
     const hasTracked = useRef(false);
 
@@ -31,12 +29,9 @@ export function PlaceDetailTracker({
             place_name: placeName,
             place_slug: placeSlug,
             source: "place_detail_page",
-            metadata: {
-                area,
-                city,
-            },
+            metadata,
         });
-    }, [placeId, placeName, placeSlug, area, city]);
+    }, [placeId, placeName, placeSlug, metadata]);
 
     return null;
 }
