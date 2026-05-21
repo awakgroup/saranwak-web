@@ -154,7 +154,7 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
     const jsonLd = makePlaceJsonLd(place, tags, category, galleryImages);
 
     return (
-        <main className="min-h-screen bg-[#F4F1EA] px-4 pb-24 pt-5 text-[#201813] sm:px-5 sm:pb-16 sm:pt-8 md:pb-16 lg:px-8">
+        <main className="min-h-screen bg-[#F4F1EA] px-4 pb-28 pt-5 text-[#201813] sm:px-5 sm:pb-16 sm:pt-8 md:pb-16 lg:px-8">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
@@ -252,69 +252,74 @@ function HeroSection({
 }) {
     const activityTags = getActivityTagNames(tags).slice(0, 3);
     const vibeTags = getVibeTagNames(tags).slice(0, 2);
+    const heroTags = [...activityTags, ...vibeTags].slice(0, 5);
 
     return (
-        <section className="overflow-hidden rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] shadow-[0_22px_70px_rgba(47,35,25,0.08)]">
-            <div className="relative h-[240px] bg-[#181818] sm:h-[300px] lg:h-[440px]">
+        <section className="overflow-hidden rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] shadow-[0_18px_55px_rgba(47,35,25,0.08)] sm:rounded-[36px] sm:shadow-[0_22px_70px_rgba(47,35,25,0.08)]">
+            <div className="relative min-h-[360px] overflow-hidden bg-[#181818] sm:min-h-[430px] lg:min-h-[520px]">
                 <img
                     src={mainImageUrl}
                     alt={place.name}
-                    className="h-full w-full object-cover"
+                    className="absolute inset-0 h-full w-full object-cover"
+                    referrerPolicy="no-referrer"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-[#201813]/90 via-[#201813]/25 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/30 to-black/88" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent" />
 
-                <div className="absolute left-4 right-4 top-4 flex flex-wrap items-center gap-2">
-                    {category ? (
-                        <Link
-                            href={`/places?category=${category.slug}`}
-                            className="rounded-full border border-white/15 bg-white/90 px-3 py-1.5 text-xs font-black text-[#201813] backdrop-blur"
-                        >
-                            {category.name}
-                        </Link>
-                    ) : null}
+                <div className="relative z-10 flex min-h-[360px] flex-col justify-between p-5 sm:min-h-[430px] sm:p-7 lg:min-h-[520px] lg:p-9">
+                    <div className="flex flex-wrap items-center gap-2">
+                        {category ? (
+                            <Link
+                                href={`/places?category=${category.slug}`}
+                                className="rounded-full border border-white/20 bg-white/90 px-3 py-1.5 text-[11px] font-black text-[#201813] shadow-sm backdrop-blur transition hover:bg-white"
+                            >
+                                {category.name}
+                            </Link>
+                        ) : null}
 
-                    {place.price_range ? (
-                        <span className="rounded-full border border-white/15 bg-[#F2C38B] px-3 py-1.5 text-xs font-black text-[#201813]">
-                            {place.price_range}
-                        </span>
-                    ) : null}
+                        {place.price_range ? (
+                            <span className="rounded-full border border-white/20 bg-[#F2C38B] px-3 py-1.5 text-[11px] font-black text-[#201813] shadow-sm">
+                                {place.price_range}
+                            </span>
+                        ) : null}
 
-                    {place.area ? (
-                        <span className="rounded-full border border-white/15 bg-white/12 px-3 py-1.5 text-xs font-black text-white backdrop-blur">
-                            {place.area}
-                        </span>
-                    ) : null}
-                </div>
+                        {place.area ? (
+                            <span className="rounded-full border border-white/20 bg-white/15 px-3 py-1.5 text-[11px] font-black text-white shadow-sm backdrop-blur">
+                                {place.area}
+                            </span>
+                        ) : null}
+                    </div>
 
-                <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7 lg:p-8">
                     <div className="max-w-4xl">
                         <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#F2C38B] sm:text-xs">
                             Detail tempat
                         </p>
 
-                        <h1 className="mt-2 max-w-4xl text-[38px] font-black leading-[0.95] tracking-[-0.065em] text-white sm:text-6xl lg:text-[76px]">
+                        <h1 className="mt-2 max-w-[340px] break-words text-[30px] font-black leading-[0.98] tracking-[-0.06em] text-white drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)] sm:max-w-2xl sm:text-5xl sm:leading-[0.95] md:text-6xl lg:max-w-4xl lg:text-[72px]">
                             {place.name}
                         </h1>
 
-                        <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-white/75 sm:text-base sm:leading-7">
+                        <p className="mt-3 max-w-[330px] text-sm font-semibold leading-6 text-white/82 sm:max-w-2xl sm:text-base sm:leading-7">
                             {[place.area, place.city || "Padang"].filter(Boolean).join(", ")}
                             {place.address ? ` · ${place.address}` : ""}
                         </p>
 
-                        <div className="mt-4 flex flex-wrap gap-2">
-                            {[...activityTags, ...vibeTags].slice(0, 5).map((tag) => (
-                                <Link
-                                    key={`${tag}-hero`}
-                                    href={`/places?category=coffee-shop&tags=${encodeURIComponent(
-                                        tagToSlug(tag)
-                                    )}`}
-                                    className="rounded-full border border-white/15 bg-white/12 px-3 py-1.5 text-xs font-black text-white backdrop-blur transition hover:bg-white hover:text-[#201813]"
-                                >
-                                    {tag}
-                                </Link>
-                            ))}
-                        </div>
+                        {heroTags.length > 0 ? (
+                            <div className="mt-4 flex max-w-[340px] flex-wrap gap-2 sm:max-w-2xl">
+                                {heroTags.map((tag) => (
+                                    <Link
+                                        key={`${tag}-hero`}
+                                        href={`/places?category=coffee-shop&tags=${encodeURIComponent(
+                                            tagToSlug(tag)
+                                        )}`}
+                                        className="rounded-full border border-white/20 bg-white/16 px-3 py-2 text-xs font-black text-white shadow-sm backdrop-blur transition hover:bg-white hover:text-[#201813] sm:px-4"
+                                    >
+                                        {tag}
+                                    </Link>
+                                ))}
+                            </div>
+                        ) : null}
                     </div>
                 </div>
             </div>
@@ -341,7 +346,7 @@ function HeroSection({
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition hover:bg-[#201813] hover:text-white"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition hover:bg-[#201813] hover:text-white"
                 >
                     Share ke WhatsApp
                 </a>
@@ -367,7 +372,7 @@ function HeroAction({
 }) {
     if (!href) {
         return (
-            <span className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-5 py-3 text-sm font-black text-[#9B8C7C]">
+            <span className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-5 py-3 text-sm font-black text-[#9B8C7C]">
                 {disabledLabel}
             </span>
         );
@@ -387,8 +392,8 @@ function HeroAction({
             }}
             className={
                 primary
-                    ? "inline-flex min-h-11 items-center justify-center rounded-full bg-[#201813] px-5 py-3 text-sm font-black text-white transition hover:bg-[#1F5A4A]"
-                    : "inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition hover:bg-[#201813] hover:text-white"
+                    ? "inline-flex min-h-12 items-center justify-center rounded-full bg-[#201813] px-5 py-3 text-sm font-black text-white transition hover:bg-[#1F5A4A]"
+                    : "inline-flex min-h-12 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition hover:bg-[#201813] hover:text-white"
             }
         >
             {label}
@@ -506,6 +511,7 @@ function GallerySection({
                             src={getSafePlaceImageUrl(photo.image_url)}
                             alt={photo.caption || `${placeName} ${index + 1}`}
                             className="h-56 w-full object-cover transition duration-500 hover:scale-105"
+                            referrerPolicy="no-referrer"
                         />
 
                         {photo.caption ? (
@@ -726,7 +732,7 @@ function MobileStickyActions({
     categorySlug?: string | null;
 }) {
     return (
-        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[#E7D8C8] bg-[#FFFDF8]/95 px-4 py-3 shadow-[0_-16px_40px_rgba(32,24,19,0.12)] backdrop-blur md:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[#E7D8C8] bg-[#FFFDF8]/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-16px_40px_rgba(32,24,19,0.12)] backdrop-blur md:hidden">
             <div className="mx-auto grid max-w-md grid-cols-3 gap-2">
                 {mapsUrl ? (
                     <TrackedExternalLink
@@ -1158,7 +1164,8 @@ function makePlaceJsonLd(
 
     return {
         "@context": "https://schema.org",
-        "@type": category?.slug === "coffee-shop" ? "CafeOrCoffeeShop" : "LocalBusiness",
+        "@type":
+            category?.slug === "coffee-shop" ? "CafeOrCoffeeShop" : "LocalBusiness",
         name: place.name,
         description: makeSeoDescription(place, tags),
         image: imageUrls,
