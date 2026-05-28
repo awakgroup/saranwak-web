@@ -1,0 +1,26 @@
+id,name,slug,type
+48b8f0d3-830a-4011-8f40-2bf22a1cb91b,Nugas,nugas,activity
+0fa44681-f5da-4dcb-9656-31b714bd20f4,Tenang,tenang,vibe
+b0cae3e1-888b-4d2d-9197-e99ada42ff44,Rame,rame,vibe
+580dfac1-efe1-4339-84af-bbc86dbc63c9,Photobox,photobox,facility
+1318851f-58c0-413a-bbef-c9fc99ab56b2,Indoor,indoor,facility
+33870e90-b97b-439a-ba92-f42a44ef695d,Meeting,meeting,activity
+d32ddb31-b92b-4968-8f57-94834f873f41,Nongkrong,nongkrong,activity
+b50b3f65-221b-4414-a95b-3f861176d5f9,WiFi,wifi,facility
+0ea4a96b-179f-4632-9afc-ef98cdd9cb1b,Colokan,colokan,facility
+5b4daff9-8fcd-4799-b23e-cf80a41f3376,Nge-date,nge-date,activity
+ed331b75-08e4-46d0-a9a1-7d583c300560,Me-time,me-time,activity
+2777944a-8de2-4013-8db2-06ff2366cc91,Musholla,musholla,facility
+6ba823b6-24f3-4385-8d59-67e019ba002b,AC,ac,facility
+0dee3434-90df-45e7-855f-b896c866762c,WFC,wfc,activity
+770dd8a2-9cc8-4fde-abdb-b4bf3307a45d,Outdoor,outdoor,facility
+4a0d8823-4185-4758-bc36-b36082e33077,Indoor Smoking,indoor-smoking,facility
+b92499b7-880d-4c02-8aac-a4073c213a4c,Toilet,toilet,facility
+d30f0c87-4384-474d-ae52-976300282f7a,Cozy,cozy,vibe
+d0765037-ba39-4f2b-90cd-a536a9cd46c9,Aesthetic,aesthetic,vibe
+aaf7132f-7daa-4461-8c91-355409f07f17,Minimalis,minimalis,vibe
+d4d6cb33-3692-4482-9450-bcebd328fd96,Smoking Area,smoking-area,facility
+338d18a9-d869-46be-9e99-f7bffcc9820f,Live Musik,live-musik,activity
+6a8e1d9e-88fb-48aa-a9c1-5a68935dc297,Industrial,industrial,vibe
+aa841cb3-c76c-4602-b15e-2085f145e2bb,Board Game,board-game,facility
+f8fd5878-9b02-4fdd-9217-32857f396acb,Healing,healing,mood
