@@ -1,46 +1,38 @@
+import { promises as fs } from "fs";
+import path from "path";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
 import { PlaceCard } from "@/components/PlaceCard";
 import type { Place } from "@/types/database";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 async function getRecommendedPlaces() {
-    const { data, error } = await supabase
-        .from("places")
-        .select(
-            `
-      *,
-      categories (
-        id,
-        name,
-        slug,
-        icon
-      ),
-      place_tags (
-        id,
-        tag_id,
-        tags (
-          id,
-          name,
-          slug,
-          type
-        )
-      )
-    `
-        )
-        .eq("is_published", true)
-        .eq("is_featured", true)
-        .order("created_at", { ascending: false })
-        .limit(6);
+    try {
+        const filePath = path.join(
+            process.cwd(),
+            "public",
+            "data",
+            "places.json"
+        );
 
-    if (error) {
-        console.error("Recommended places error:", error.message);
+        const fileContent = await fs.readFile(filePath, "utf8");
+        const places = JSON.parse(fileContent) as Place[];
+
+        if (!Array.isArray(places)) {
+            return [];
+        }
+
+        return places
+            .filter((place) => place.is_published && place.is_featured)
+            .sort((a, b) => {
+                const dateA = new Date(a.created_at ?? 0).getTime();
+                const dateB = new Date(b.created_at ?? 0).getTime();
+
+                return dateB - dateA;
+            })
+            .slice(0, 6);
+    } catch (error) {
+        console.error("Recommended static places JSON read error:", error);
         return [];
     }
-
-    return data as unknown as Place[];
 }
 
 const quickFilters = [
@@ -48,75 +40,75 @@ const quickFilters = [
         emoji: "💻",
         label: "Buat Nugas",
         description: "Fokus, laptopan, dan kerja tugas.",
-        href: "/places?category=coffee-shop&tags=nugas,wifi,colokan",
+        href: "/places/?category=coffee-shop&tags=nugas,wifi,colokan",
     },
     {
         emoji: "💬",
         label: "Nongkrong",
         description: "Ngobrol lama bareng teman.",
-        href: "/places?category=coffee-shop&tags=nongkrong,rame",
+        href: "/places/?category=coffee-shop&tags=nongkrong,rame",
     },
     {
         emoji: "🌿",
         label: "Me-time",
         description: "Tenang buat recharge sendiri.",
-        href: "/places?category=coffee-shop&tags=me-time,tenang",
+        href: "/places/?category=coffee-shop&tags=me-time,tenang",
     },
     {
         emoji: "💕",
         label: "First Date",
         description: "Nyaman buat ngobrol santai.",
-        href: "/places?category=coffee-shop&tags=nge-date,tenang",
+        href: "/places/?category=coffee-shop&tags=nge-date,tenang",
     },
     {
         emoji: "⚡",
         label: "WFC",
         description: "WiFi, colokan, dan suasana nyaman.",
-        href: "/places?category=coffee-shop&tags=wfc,wifi,colokan",
+        href: "/places/?category=coffee-shop&tags=wfc,wifi,colokan",
     },
     {
         emoji: "🎵",
         label: "Live Musik",
         description: "Vibe rame dan hiburan musik.",
-        href: "/places?category=coffee-shop&tags=live-musik,rame",
+        href: "/places/?category=coffee-shop&tags=live-musik,rame",
     },
 ];
 
 const facilityFilters = [
     {
         label: "WiFi + Colokan",
-        href: "/places?category=coffee-shop&tags=wifi,colokan",
+        href: "/places/?category=coffee-shop&tags=wifi,colokan",
     },
     {
         label: "Outdoor",
-        href: "/places?category=coffee-shop&tags=outdoor",
+        href: "/places/?category=coffee-shop&tags=outdoor",
     },
     {
         label: "Indoor Smoking",
-        href: "/places?category=coffee-shop&tags=indoor-smoking",
+        href: "/places/?category=coffee-shop&tags=indoor-smoking",
     },
     {
         label: "Photobox",
-        href: "/places?category=coffee-shop&tags=photobox",
+        href: "/places/?category=coffee-shop&tags=photobox",
     },
     {
         label: "Board Game",
-        href: "/places?category=coffee-shop&tags=board-game",
+        href: "/places/?category=coffee-shop&tags=board-game",
     },
 ];
 
 const budgetFilters = [
     {
         label: "Di bawah 20k",
-        href: "/places?category=coffee-shop&price=under-20k",
+        href: "/places/?category=coffee-shop&price=under-20k",
     },
     {
         label: "20k - 40k",
-        href: "/places?category=coffee-shop&price=20k-40k",
+        href: "/places/?category=coffee-shop&price=20k-40k",
     },
     {
         label: "Di atas 40k",
-        href: "/places?category=coffee-shop&price=above-40k",
+        href: "/places/?category=coffee-shop&price=above-40k",
     },
 ];
 
@@ -161,13 +153,23 @@ function HeroSection() {
                 </div>
 
                 <Link
-                    href="/places?category=coffee-shop"
+                    href="/places/?category=coffee-shop"
                     className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#F2C38B] px-6 py-3 text-sm font-black text-[#201813] transition hover:-translate-y-0.5 hover:bg-white"
                 >
                     Explore semua →
                 </Link>
             </div>
         </section>
+    );
+}
+
+function HeroDecor() {
+    return (
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+            <div className="absolute right-[-90px] top-[-90px] h-72 w-72 rounded-full bg-[#F2C38B]/20 blur-3xl" />
+            <div className="absolute bottom-[-120px] left-[-120px] h-80 w-80 rounded-full bg-[#1F5A4A]/35 blur-3xl" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_38%)]" />
+        </div>
     );
 }
 
@@ -239,16 +241,16 @@ function QuickPickSection() {
             </p>
 
             <div className="mt-5">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#9B8C7C]">
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-[#9B8C7C]">
                     Fasilitas
                 </p>
 
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2">
                     {facilityFilters.map((item) => (
                         <Link
                             key={item.href}
                             href={item.href}
-                            className="rounded-full border border-[#E3DED4] bg-[#F8F1E8] px-3.5 py-2 text-xs font-black text-[#4B4038] transition hover:bg-[#1F5A4A] hover:text-white"
+                            className="rounded-full border border-[#E3DED4] bg-[#F8F1E8] px-3 py-2 text-xs font-black text-[#4B4038] transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
                         >
                             {item.label}
                         </Link>
@@ -256,41 +258,22 @@ function QuickPickSection() {
                 </div>
             </div>
 
-            <div className="mt-5">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#9B8C7C]">
+            <div className="mt-6">
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-[#9B8C7C]">
                     Budget
                 </p>
 
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="grid gap-2">
                     {budgetFilters.map((item) => (
                         <Link
                             key={item.href}
                             href={item.href}
-                            className="rounded-full border border-[#E3DED4] bg-[#F8F1E8] px-3.5 py-2 text-xs font-black text-[#4B4038] transition hover:bg-[#1F5A4A] hover:text-white"
+                            className="rounded-2xl border border-[#E3DED4] bg-[#F8F1E8] px-4 py-3 text-sm font-black text-[#201813] transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
                         >
                             {item.label}
                         </Link>
                     ))}
                 </div>
-            </div>
-
-            <div className="mt-6 rounded-[22px] bg-[#201813] p-4 text-white">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F2C38B]">
-                    Explore manual
-                </p>
-
-                <h3 className="mt-2 text-lg font-black">Mau pilih sendiri?</h3>
-
-                <p className="mt-2 text-xs font-semibold leading-5 text-white/60">
-                    Buka semua coffee shop dan pakai filter lengkap.
-                </p>
-
-                <Link
-                    href="/places?category=coffee-shop"
-                    className="mt-4 inline-flex w-full min-h-10 items-center justify-center rounded-full bg-[#F2C38B] px-4 py-2 text-xs font-black text-[#201813] transition hover:bg-white"
-                >
-                    Lihat semua
-                </Link>
             </div>
         </aside>
     );
@@ -298,7 +281,7 @@ function QuickPickSection() {
 
 function FeaturedSection({ places }: { places: Place[] }) {
     return (
-        <section className="mt-6">
+        <section className="mt-6 rounded-[30px] border border-[#E3DED4] bg-[#FFFDF8]/85 p-5 shadow-[0_18px_55px_rgba(47,35,25,0.05)] sm:p-6">
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
@@ -306,61 +289,46 @@ function FeaturedSection({ places }: { places: Place[] }) {
                     </p>
 
                     <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#201813] sm:text-3xl">
-                        Pilihan dari Saranwak
+                        Rekomendasi pilihan
                     </h2>
 
                     <p className="mt-2 max-w-xl text-sm font-semibold leading-6 text-[#756A60]">
-                        Tempat yang sedang di-highlight buat kamu yang mau langsung cek.
+                        Tempat pilihan dari data Saranwak yang sudah disiapkan untuk mode
+                        static.
                     </p>
                 </div>
 
                 <Link
-                    href="/places?category=coffee-shop"
-                    className="hidden rounded-full border border-[#E3DED4] bg-[#FFFDF8] px-5 py-3 text-sm font-black text-[#1F5A4A] transition hover:bg-[#1F5A4A] hover:text-white sm:inline-flex"
+                    href="/places/?category=coffee-shop"
+                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E3DED4] bg-[#201813] px-5 py-3 text-sm font-black text-white transition hover:bg-[#1F5A4A]"
                 >
                     Lihat semua
                 </Link>
             </div>
 
             {places.length === 0 ? (
-                <div className="rounded-[28px] border border-[#E3DED4] bg-[#FFFDF8] p-7 text-center shadow-[0_16px_50px_rgba(47,35,25,0.04)]">
-                    <p className="text-lg font-black">Belum ada rekomendasi.</p>
+                <div className="rounded-[24px] border border-dashed border-[#D7C5B2] bg-[#F8F1E8] p-6 text-center">
+                    <p className="text-sm font-black text-[#201813]">
+                        Belum ada rekomendasi featured.
+                    </p>
 
-                    <p className="mt-2 text-sm font-semibold text-[#756A60]">
-                        Pastikan ada data tempat dengan status published dan featured.
+                    <p className="mt-2 text-sm font-semibold leading-6 text-[#756A60]">
+                        Pastikan ada data dengan `is_featured: true` di
+                        `public/data/places.json`.
                     </p>
                 </div>
             ) : (
-                <>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {places.map((place, index) => (
-                            <PlaceCard
-                                key={place.id}
-                                place={place}
-                                source="place_card"
-                                position={index + 1}
-                            />
-                        ))}
-                    </div>
-
-                    <Link
-                        href="/places?category=coffee-shop"
-                        className="mt-5 inline-flex w-full min-h-12 items-center justify-center rounded-full bg-[#201813] px-5 py-3 text-sm font-black text-white sm:hidden"
-                    >
-                        Lihat semua coffee shop →
-                    </Link>
-                </>
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {places.map((place, index) => (
+                        <PlaceCard
+                            key={place.id}
+                            place={place}
+                            source="places_list"
+                            position={index + 1}
+                        />
+                    ))}
+                </div>
             )}
         </section>
-    );
-}
-
-function HeroDecor() {
-    return (
-        <>
-            <div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#F2C38B]/18 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-28 -right-24 h-72 w-72 rounded-full bg-[#1F5A4A]/38 blur-3xl" />
-            <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:linear-gradient(rgba(255,255,255,0.14)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.14)_1px,transparent_1px)] [background-size:44px_44px]" />
-        </>
     );
 }

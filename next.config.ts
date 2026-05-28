@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "export",
+  trailingSlash: true,
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -29,7 +31,6 @@ const nextConfig: NextConfig = {
         hostname: "**.googleusercontent.com",
       },
     ],
-    formats: ["image/avif", "image/webp"],
   },
 };
 

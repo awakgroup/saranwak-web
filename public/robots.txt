@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api
+Disallow: /api/
+Disallow: /login
+
+Sitemap: https://saranwak.com/sitemap.xml
