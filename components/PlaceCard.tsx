@@ -3,7 +3,6 @@
 import Link from "next/link";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
-import { trackEvent } from "@/lib/track-event";
 
 type PlaceCardProps = {
     place: Place;
@@ -106,8 +105,8 @@ function getBestForLabels(place: Place) {
 
 export function PlaceCard({
     place,
-    source = "place_card",
-    position,
+    source: _source = "place_card",
+    position: _position,
 }: PlaceCardProps) {
     const tags = getMainTags(place, 4);
     const bestForTags = getBestForLabels(place);
@@ -116,33 +115,10 @@ export function PlaceCard({
     const detailHref = `/places/${place.slug}`;
     const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
 
-    function handleCardClick() {
-        trackEvent({
-            event_name: "place_card_clicked",
-            place_id: place.id,
-            place_name: place.name,
-            place_slug: place.slug,
-            source,
-            metadata: {
-                href: detailHref,
-                area: place.area,
-                city: place.city,
-                category,
-                price_range: place.price_range,
-                opening_hours: place.opening_hours,
-                is_featured: place.is_featured,
-                is_verified: place.is_verified,
-                position,
-                tags: tags.map((tag) => tag?.slug).filter(Boolean),
-            },
-        });
-    }
-
     return (
         <Link
             href={detailHref}
-            prefetch
-            onClick={handleCardClick}
+            prefetch={false}
             className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-[#EADCCB] bg-[#FFFDF8] shadow-[0_14px_40px_rgba(47,35,25,0.07)] outline-none transition-all duration-500 hover:-translate-y-1.5 hover:border-[#1F5A4A]/35 hover:shadow-[0_28px_80px_rgba(47,35,25,0.15)] active:scale-[0.985] focus-visible:ring-4 focus-visible:ring-[#1F5A4A]/20"
         >
             <div className="relative aspect-[4/3] overflow-hidden bg-[#E3DED4]">
@@ -220,33 +196,36 @@ export function PlaceCard({
                         `Rekomendasi tempat di ${area} yang bisa kamu cek berdasarkan budget, fasilitas, dan vibes.`}
                 </p>
 
-                {tags.length > 0 ? (
-                    <div className="mt-4 flex flex-wrap gap-2">
-                        {tags.map((tag) => (
+                <div className="mt-5 flex flex-wrap gap-2">
+                    {tags.length > 0 ? (
+                        tags.map((tag) => (
                             <span
                                 key={tag?.id}
-                                className="rounded-full bg-white px-3 py-1.5 text-xs font-bold text-[#6F6A61] ring-1 ring-[#EADCCB]"
+                                className="rounded-full border border-[#EADCCB] bg-white px-3 py-1.5 text-xs font-bold text-[#756A60]"
                             >
                                 {tag?.name}
                             </span>
-                        ))}
-                    </div>
-                ) : null}
+                        ))
+                    ) : (
+                        <span className="rounded-full border border-[#EADCCB] bg-white px-3 py-1.5 text-xs font-bold text-[#756A60]">
+                            Explore
+                        </span>
+                    )}
+                </div>
 
                 <div className="mt-auto pt-5">
-                    <div className="flex items-end justify-between gap-4 border-t border-[#EADCCB] pt-4">
-                        <div className="min-w-0">
-                            <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#9B8B7E]">
-                                Range harga
+                    <div className="flex items-center justify-between gap-4 rounded-[22px] bg-[#201813] px-4 py-3 text-white">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/50">
+                                Budget
                             </p>
-
-                            <p className="mt-1 line-clamp-1 text-base font-black text-[#201813]">
+                            <p className="mt-1 text-sm font-black">
                                 {formatPrice(place)}
                             </p>
                         </div>
 
-                        <span className="shrink-0 rounded-full bg-[#181818] px-4 py-2.5 text-xs font-black text-[#FFFDF8] transition duration-300 group-hover:bg-[#1F5A4A]">
-                            Detail →
+                        <span className="shrink-0 rounded-full bg-white px-4 py-2 text-xs font-black text-[#201813] transition group-hover:bg-[#F3C48E]">
+                            Lihat
                         </span>
                     </div>
                 </div>

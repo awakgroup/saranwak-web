@@ -39,7 +39,6 @@ function getGalleryAltText({
 
 function getSafeIndex(index: number, length: number) {
     if (length <= 0) return 0;
-
     if (index < 0) return length - 1;
     if (index >= length) return 0;
 
@@ -57,7 +56,6 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
     }, [photos]);
 
     const totalPhotos = sortedPhotos.length;
-
     const safeActiveIndex = getSafeIndex(activeIndex, totalPhotos);
     const activePhoto = sortedPhotos[safeActiveIndex];
 

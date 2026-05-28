@@ -1,61 +1,57 @@
-const FALLBACK_PLACE_IMAGE =
-    "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=1200&auto=format&fit=crop";
+const PLACEHOLDER_IMAGE = "/images/place-placeholder.svg";
 
-function getGoogleDriveFileId(url: string) {
-    const fileMatch = url.match(/\/file\/d\/([^/]+)/);
-    if (fileMatch?.[1]) return fileMatch[1];
+function extractGoogleDriveFileId(url: string) {
+    const patterns = [
+        /drive\.google\.com\/file\/d\/([^/]+)/,
+        /drive\.google\.com\/open\?id=([^&]+)/,
+        /drive\.google\.com\/uc\?id=([^&]+)/,
+        /drive\.google\.com\/thumbnail\?id=([^&]+)/,
+        /id=([^&]+)/,
+    ];
 
-    const idMatch = url.match(/[?&]id=([^&]+)/);
-    if (idMatch?.[1]) return idMatch[1];
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+
+        if (match?.[1]) {
+            return match[1];
+        }
+    }
 
     return null;
 }
 
-export function getSafePlaceImageUrl(url?: string | null) {
-    if (!url) return FALLBACK_PLACE_IMAGE;
+function isGoogleDriveUrl(url: string) {
+    return url.includes("drive.google.com");
+}
 
-    const cleanUrl = url.trim();
+function isDirectGoogleImageUrl(url: string) {
+    return url.includes("lh3.googleusercontent.com");
+}
 
-    if (!cleanUrl) return FALLBACK_PLACE_IMAGE;
+export function getSafePlaceImageUrl(imageUrl?: string | null) {
+    if (!imageUrl) {
+        return PLACEHOLDER_IMAGE;
+    }
 
-    if (cleanUrl.includes("drive.google.com")) {
-        const fileId = getGoogleDriveFileId(cleanUrl);
+    const trimmedUrl = imageUrl.trim();
+
+    if (!trimmedUrl) {
+        return PLACEHOLDER_IMAGE;
+    }
+
+    if (isDirectGoogleImageUrl(trimmedUrl)) {
+        return trimmedUrl;
+    }
+
+    if (isGoogleDriveUrl(trimmedUrl)) {
+        const fileId = extractGoogleDriveFileId(trimmedUrl);
 
         if (fileId) {
-            return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
+            return `https://lh3.googleusercontent.com/d/${fileId}`;
         }
 
-        return FALLBACK_PLACE_IMAGE;
+        return PLACEHOLDER_IMAGE;
     }
 
-    const isDirectImage =
-        /\.(jpg|jpeg|png|webp|gif|avif)(\?.*)?$/i.test(cleanUrl);
-
-    if (isDirectImage) {
-        return cleanUrl;
-    }
-
-    const imageLikeHosts = [
-        "images.unsplash.com",
-        "plus.unsplash.com",
-        "images.pexels.com",
-        "cdn.pixabay.com",
-        "lh3.googleusercontent.com",
-        "static.wixstatic.com",
-        "images.squarespace-cdn.com",
-        "res.cloudinary.com",
-        "ik.imagekit.io",
-    ];
-
-    try {
-        const parsedUrl = new URL(cleanUrl);
-
-        if (imageLikeHosts.includes(parsedUrl.hostname)) {
-            return cleanUrl;
-        }
-
-        return FALLBACK_PLACE_IMAGE;
-    } catch {
-        return FALLBACK_PLACE_IMAGE;
-    }
+    return trimmedUrl;
 }

@@ -1,0 +1,9 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#F4F1EA"></rect>
+  <rect x="80" y="80" width="1040" height="640" rx="56" fill="#FFFDF8" stroke="#E7D8C8" stroke-width="6"></rect>
+  <circle cx="600" cy="330" r="92" fill="#F2C38B"></circle>
+  <path d="M535 335C535 295 565 265 605 265H660C705 265 735 295 735 335C735 375 705 405 660 405H605C565 405 535 375 535 335Z" fill="#201813"></path>
+  <path d="M705 305H760C792 305 815 328 815 360C815 392 792 415 760 415H705V380H756C768 380 777 372 777 360C777 348 768 340 756 340H705V305Z" fill="#201813"></path>
+  <text x="600" y="535" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="800" fill="#201813">Saranwak</text>
+  <text x="600" y="590" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="600" fill="#756A60">Foto tempat belum tersedia</text>
+</svg>

@@ -1,12 +1,15 @@
+import { promises as fs } from "fs";
+import path from "path";
 import type { MetadataRoute } from "next";
-import { supabase } from "@/lib/supabase";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
+export const revalidate = 3600;
 
 const siteUrl = "https://saranwak.com";
 
 type SitemapPlace = {
     slug: string;
+    is_published?: boolean | null;
     created_at?: string | null;
     updated_at?: string | null;
 };
@@ -41,26 +44,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
     ];
 
-    const { data, error } = await supabase
-        .from("places")
-        .select("slug, updated_at, created_at")
-        .eq("is_published", true)
-        .order("created_at", { ascending: false });
+    const places = await getPlacesFromJson();
 
-    if (error) {
-        console.error("Sitemap places error:", error.message);
-        return staticPages;
-    }
-
-    const placePages: MetadataRoute.Sitemap =
-        (data as SitemapPlace[] | null)
-            ?.filter((place) => Boolean(place.slug))
-            .map((place) => ({
-                url: `${siteUrl}/places/${place.slug}`,
-                lastModified: place.updated_at || place.created_at || now,
-                changeFrequency: "weekly",
-                priority: 0.8,
-            })) ?? [];
+    const placePages: MetadataRoute.Sitemap = places
+        .filter((place) => Boolean(place.slug))
+        .filter((place) => place.is_published !== false)
+        .map((place) => ({
+            url: `${siteUrl}/places/${place.slug}`,
+            lastModified: place.updated_at || place.created_at || now,
+            changeFrequency: "weekly",
+            priority: 0.8,
+        }));
 
     return [...staticPages, ...placePages];
+}
+
+async function getPlacesFromJson(): Promise<SitemapPlace[]> {
+    try {
+        const filePath = path.join(
+            process.cwd(),
+            "public",
+            "data",
+            "places.json"
+        );
+
+        const fileContent = await fs.readFile(filePath, "utf8");
+        const places = JSON.parse(fileContent) as SitemapPlace[];
+
+        if (!Array.isArray(places)) {
+            return [];
+        }
+
+        return places;
+    } catch (error) {
+        console.error("Sitemap static places JSON read error:", error);
+        return [];
+    }
 }

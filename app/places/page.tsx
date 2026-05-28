@@ -1,5 +1,6 @@
+import { promises as fs } from "fs";
+import path from "path";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
 import { PlaceCard } from "@/components/PlaceCard";
 import {
     placeFilterGroups,
@@ -8,8 +9,7 @@ import {
 } from "@/lib/place-filters";
 import type { Place } from "@/types/database";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 3600;
 
 type PlacesPageProps = {
     searchParams?: Promise<{
@@ -54,8 +54,9 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
     const places = placesData
         .filter((place) => matchKeyword(place, params.q))
         .filter((place) => matchArea(place, params.area))
+        .filter((place) => matchCategory(place, params.category))
         .filter((place) => matchAllSelectedTags(place, selectedTags))
-        .filter((place) => matchPrice(place, params.price))
+        .filter((place) => matchPrice(place, selectedPrice))
         .sort((a, b) => {
             return (
                 new Date(b.created_at ?? 0).getTime() -
@@ -66,6 +67,7 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
     const hasFilter = Boolean(
         params.q ||
         params.area ||
+        params.category ||
         selectedTags.length > 0 ||
         selectedPrice !== "all"
     );
@@ -73,6 +75,7 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
     const activeFilterCount =
         Number(Boolean(params.q)) +
         Number(Boolean(params.area)) +
+        Number(Boolean(params.category)) +
         selectedTags.length +
         Number(selectedPrice !== "all");
 
@@ -219,38 +222,22 @@ export default async function PlacesPage({ searchParams }: PlacesPageProps) {
 }
 
 async function getPlaces() {
-    const { data, error } = await supabase
-        .from("places")
-        .select(
-            `
-      *,
-      categories (
-        id,
-        name,
-        slug,
-        icon
-      ),
-      place_tags (
-        id,
-        tag_id,
-        tags (
-          id,
-          name,
-          slug,
-          type
-        )
-      )
-    `
-        )
-        .eq("is_published", true)
-        .order("created_at", { ascending: false });
+    try {
+        const filePath = path.join(
+            process.cwd(),
+            "public",
+            "data",
+            "places.json"
+        );
 
-    if (error) {
-        console.error("Places query error:", error.message);
+        const fileContent = await fs.readFile(filePath, "utf8");
+        const places = JSON.parse(fileContent) as Place[];
+
+        return places.filter((place) => place.is_published);
+    } catch (error) {
+        console.error("Static places JSON read error:", error);
         return [];
     }
-
-    return (data ?? []) as unknown as Place[];
 }
 
 function MiniStat({
@@ -261,9 +248,11 @@ function MiniStat({
     label: string;
 }) {
     return (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.07] p-3 text-center backdrop-blur">
-            <p className="text-lg font-black text-[#F2C38B] sm:text-xl">{value}</p>
-            <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/45">
+        <div className="rounded-[22px] border border-white/10 bg-white/[0.07] px-3 py-4 text-center">
+            <p className="text-xl font-black tracking-[-0.04em] text-white sm:text-2xl">
+                {value}
+            </p>
+            <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
                 {label}
             </p>
         </div>
@@ -282,78 +271,70 @@ function FilterContent({
     hasFilter: boolean;
 }) {
     return (
-        <div>
+        <div className="space-y-5">
             <div>
-                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                    Harga
+                <p className="mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                    Budget
                 </p>
 
-                <div className="flex flex-wrap gap-2">
-                    {priceFilterOptions.map((filter) => {
-                        const active = selectedPrice === filter.value;
+                <div className="grid gap-2">
+                    {priceFilterOptions.map((option) => {
+                        const active = selectedPrice === option.value;
 
                         return (
                             <Link
-                                key={filter.value}
-                                href={makePriceHref(params, filter.value)}
-                                className={`inline-flex items-center rounded-full border px-3 py-2 text-xs font-black transition ${active
+                                key={option.value}
+                                href={buildFilterHref(params, {
+                                    price: option.value,
+                                })}
+                                className={`rounded-2xl border px-4 py-3 text-sm font-black transition ${active
                                         ? "border-[#1F5A4A] bg-[#1F5A4A] text-white"
                                         : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
                                     }`}
                             >
-                                <span className="mr-1.5">{active ? "✓" : "+"}</span>
-                                {filter.label}
+                                {option.label}
                             </Link>
                         );
                     })}
                 </div>
             </div>
 
-            <div className="mt-4">
-                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                    Semua
-                </p>
+            {placeFilterGroups.map((group) => (
+                <div key={group.title}>
+                    <p className="mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                        {group.title}
+                    </p>
 
+                    <div className="flex flex-wrap gap-2">
+                        {group.options.map((option) => {
+                            const active = selectedTags.includes(option.tag);
+
+                            return (
+                                <Link
+                                    key={option.tag}
+                                    href={buildTagHref(params, option.tag)}
+                                    className={`rounded-full border px-3 py-2 text-xs font-black transition ${active
+                                            ? "border-[#1F5A4A] bg-[#1F5A4A] text-white"
+                                            : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
+                                        }`}
+                                >
+                                    {active ? "✓ " : "+ "}
+                                    {option.label}
+                                </Link>
+                            );
+                        })}
+                    </div>
+                </div>
+            ))}
+
+            {hasFilter ? (
                 <Link
                     href="/places?category=coffee-shop"
-                    className={`inline-flex rounded-full border px-3 py-2 text-xs font-black transition ${!hasFilter
-                            ? "border-[#1F5A4A] bg-[#1F5A4A] text-white"
-                            : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
-                        }`}
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-2xl bg-[#201813] px-4 py-3 text-sm font-black text-white transition hover:bg-[#3A2D25]"
                 >
-                    Semua Coffee Shop
+                    Reset Filter
                 </Link>
-            </div>
-
-            <div className="mt-4 space-y-4">
-                {placeFilterGroups.map((group) => (
-                    <div key={group.title}>
-                        <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                            {group.title}
-                        </p>
-
-                        <div className="flex flex-wrap gap-2">
-                            {group.options.map((filter) => {
-                                const active = selectedTags.includes(filter.tag);
-
-                                return (
-                                    <Link
-                                        key={filter.tag}
-                                        href={makeFilterHref(params, filter.tag)}
-                                        className={`inline-flex items-center rounded-full border px-3 py-2 text-xs font-black transition ${active
-                                                ? "border-[#1F5A4A] bg-[#1F5A4A] text-white"
-                                                : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A] hover:text-[#1F5A4A]"
-                                            }`}
-                                    >
-                                        <span className="mr-1.5">{active ? "✓" : "+"}</span>
-                                        {filter.label}
-                                    </Link>
-                                );
-                            })}
-                        </div>
-                    </div>
-                ))}
-            </div>
+            ) : null}
         </div>
     );
 }
@@ -367,126 +348,302 @@ function ActiveFilters({
     selectedTags: string[];
     selectedPrice: PriceFilterValue;
 }) {
+    const activeItems: string[] = [];
+
+    if (params.q) activeItems.push(`Search: ${params.q}`);
+    if (params.area) activeItems.push(`Area: ${params.area}`);
+    if (params.category) activeItems.push(`Kategori: ${params.category}`);
+
+    selectedTags.forEach((tag) => {
+        activeItems.push(getTagLabel(tag));
+    });
+
+    if (selectedPrice !== "all") {
+        const label =
+            priceFilterOptions.find((option) => option.value === selectedPrice)
+                ?.label || selectedPrice;
+
+        activeItems.push(label);
+    }
+
+    if (activeItems.length === 0) return null;
+
     return (
-        <div className="mb-4 flex flex-wrap gap-2 rounded-[22px] border border-[#E7D8C8] bg-[#FFFDF8] p-3 shadow-sm">
-            {params.q ? (
-                <Link
-                    href={makeRemoveKeywordHref(params)}
-                    className="rounded-full bg-[#F8F1E8] px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#201813] hover:text-white"
-                >
-                    Search: {params.q} ×
-                </Link>
-            ) : null}
+        <div className="mb-5 rounded-[24px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_12px_34px_rgba(47,35,25,0.05)]">
+            <div className="mb-3 flex items-center justify-between gap-3">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#C8784A]">
+                    Filter Aktif
+                </p>
 
-            {selectedTags.map((tag) => (
                 <Link
-                    key={tag}
-                    href={makeRemoveTagHref(params, tag)}
-                    className="rounded-full bg-[#F8F1E8] px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#201813] hover:text-white"
+                    href="/places?category=coffee-shop"
+                    className="text-xs font-black text-[#1F5A4A] hover:underline"
                 >
-                    {getFilterLabel(tag)} ×
+                    Reset
                 </Link>
-            ))}
+            </div>
 
-            {selectedPrice !== "all" ? (
-                <Link
-                    href={makeRemovePriceHref(params)}
-                    className="rounded-full bg-[#F8F1E8] px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#201813] hover:text-white"
-                >
-                    Harga: {getPriceLabel(params.price)} ×
-                </Link>
-            ) : null}
-
-            {params.area ? (
-                <Link
-                    href={makeRemoveAreaHref(params)}
-                    className="rounded-full bg-[#F8F1E8] px-3 py-2 text-xs font-black text-[#201813] ring-1 ring-[#E7D8C8] transition hover:bg-[#201813] hover:text-white"
-                >
-                    Area: {params.area} ×
-                </Link>
-            ) : null}
+            <div className="flex flex-wrap gap-2">
+                {activeItems.map((item) => (
+                    <span
+                        key={item}
+                        className="rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-1.5 text-xs font-black text-[#4B4038]"
+                    >
+                        {item}
+                    </span>
+                ))}
+            </div>
         </div>
     );
 }
 
 function EmptyPlacesState() {
     return (
-        <div className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-7 shadow-[0_18px_60px_rgba(47,35,25,0.06)] sm:p-9">
-            <h2 className="text-2xl font-black text-[#201813]">
-                Belum ada tempat cocok.
-            </h2>
+        <div className="rounded-[30px] border border-dashed border-[#D7C5B2] bg-[#FFFDF8] px-6 py-14 text-center shadow-[0_14px_45px_rgba(47,35,25,0.04)]">
+            <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#F8F1E8] text-3xl">
+                ☕
+            </div>
 
-            <p className="mt-3 max-w-2xl text-sm font-semibold leading-7 text-[#756A60] sm:text-base">
-                Coba hapus beberapa filter aktif atau lihat semua coffee shop dulu.
-                Kadang tempat yang pas nggak selalu full spec.
+            <h3 className="mt-5 text-2xl font-black tracking-[-0.04em] text-[#201813]">
+                Belum ada tempat yang cocok
+            </h3>
+
+            <p className="mx-auto mt-3 max-w-md text-sm font-semibold leading-7 text-[#756A60]">
+                Coba reset filter atau pilih kombinasi lain. Kadang tempat hidden gem
+                itu bukan hilang, cuma filter-nya lagi terlalu picky.
             </p>
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <div className="mt-6 flex justify-center">
                 <Link
                     href="/places?category=coffee-shop"
-                    className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#201813] px-5 py-3 text-sm font-black text-white transition hover:bg-[#1F5A4A]"
+                    className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#201813] px-5 py-3 text-sm font-black text-white transition hover:bg-[#3A2D25]"
                 >
                     Lihat Semua Coffee Shop
-                </Link>
-
-                <Link
-                    href="/"
-                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition hover:bg-[#201813] hover:text-white"
-                >
-                    Kembali ke Home
                 </Link>
             </div>
         </div>
     );
 }
 
-function normalizeText(value?: string | null) {
-    return value?.toLowerCase().trim() || "";
-}
+function getSelectedTags(params: PageParams) {
+    const tags = [
+        ...(params.tags ? params.tags.split(",") : []),
+        ...(params.tag ? [params.tag] : []),
+    ];
 
-function getSingleTag(item: PlaceTagItem) {
-    if (Array.isArray(item.tags)) {
-        return item.tags[0] ?? null;
-    }
-
-    return item.tags ?? null;
-}
-
-function getSelectedTags(params: { tag?: string; tags?: string }) {
-    if (params.tags) {
-        return params.tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter(Boolean);
-    }
-
-    if (params.tag) {
-        return [params.tag];
-    }
-
-    return [];
+    return Array.from(
+        new Set(
+            tags
+                .map((item) => item.trim())
+                .filter(Boolean)
+        )
+    );
 }
 
 function getSelectedPrice(price?: string): PriceFilterValue {
-    const allowedPrices = priceFilterOptions.map((item) => item.value);
+    const allowedValues = priceFilterOptions.map((option) => option.value);
 
-    if (allowedPrices.includes(price as PriceFilterValue)) {
+    if (price && allowedValues.includes(price as PriceFilterValue)) {
         return price as PriceFilterValue;
     }
 
     return "all";
 }
 
-function getPriceLabel(price?: string) {
-    const selectedPrice = getSelectedPrice(price);
+function matchKeyword(place: Place, keyword?: string) {
+    if (!keyword) return true;
 
-    return (
-        priceFilterOptions.find((option) => option.value === selectedPrice)?.label ||
-        "Semua Harga"
+    const normalizedKeyword = normalizeText(keyword);
+
+    const searchableText = [
+        place.name,
+        place.short_description,
+        place.description,
+        place.area,
+        place.city,
+        getCategorySlug(place),
+        getCategoryName(place),
+        ...getPlaceTags(place).flatMap((tag) => [tag.name, tag.slug, tag.type]),
+    ]
+        .filter(Boolean)
+        .join(" ");
+
+    return normalizeText(searchableText).includes(normalizedKeyword);
+}
+
+function matchArea(place: Place, area?: string) {
+    if (!area) return true;
+
+    const normalizedArea = normalizeText(area);
+
+    return [place.area, place.city]
+        .filter(Boolean)
+        .some((item) => normalizeText(item).includes(normalizedArea));
+}
+
+function matchCategory(place: Place, category?: string) {
+    if (!category) return true;
+
+    const normalizedCategory = normalizeText(category);
+
+    return [getCategorySlug(place), getCategoryName(place)]
+        .filter(Boolean)
+        .some((item) => normalizeText(item).includes(normalizedCategory));
+}
+
+function matchAllSelectedTags(place: Place, selectedTags: string[]) {
+    if (selectedTags.length === 0) return true;
+
+    const placeTags = getPlaceTags(place).map((tag) => normalizeText(tag.slug));
+
+    return selectedTags.every((selectedTag) =>
+        placeTags.includes(normalizeText(selectedTag))
     );
 }
 
-function getFilterLabel(tag: string) {
+function matchPrice(place: Place, selectedPrice: PriceFilterValue) {
+    if (selectedPrice === "all") return true;
+
+    const min = Number(place.price_min ?? 0);
+    const max = Number(place.price_max ?? place.price_min ?? 0);
+
+    if (!min && !max) return false;
+
+    const placeMin = min || max;
+    const placeMax = max || min;
+
+    if (selectedPrice === "under-20k") {
+        return rangeOverlaps(placeMin, placeMax, 0, 20000);
+    }
+
+    if (selectedPrice === "20k-40k") {
+        return rangeOverlaps(placeMin, placeMax, 20000, 40000);
+    }
+
+    if (selectedPrice === "above-40k") {
+        return placeMax > 40000;
+    }
+
+    return true;
+}
+
+function rangeOverlaps(
+    placeMin: number,
+    placeMax: number,
+    filterMin: number,
+    filterMax: number
+) {
+    return placeMin <= filterMax && placeMax >= filterMin;
+}
+
+function getPlaceTags(place: Place): TagItem[] {
+    const placeTags = (place.place_tags ?? []) as PlaceTagItem[];
+
+    return placeTags
+        .flatMap((item) => {
+            if (!item.tags) return [];
+
+            if (Array.isArray(item.tags)) {
+                return item.tags;
+            }
+
+            return [item.tags];
+        })
+        .filter(Boolean);
+}
+
+function getCategorySlug(place: Place) {
+    const categories = place.categories;
+
+    if (Array.isArray(categories)) {
+        return categories[0]?.slug || "";
+    }
+
+    return categories?.slug || "";
+}
+
+function getCategoryName(place: Place) {
+    const categories = place.categories;
+
+    if (Array.isArray(categories)) {
+        return categories[0]?.name || "";
+    }
+
+    return categories?.name || "";
+}
+
+function makeTitle(params: PageParams) {
+    if (params.q) {
+        return `Hasil pencarian “${params.q}”`;
+    }
+
+    if (params.area) {
+        return `Coffee shop di ${params.area}`;
+    }
+
+    return "Cari coffee shop yang paling pas di Padang";
+}
+
+function makeDescription(params: PageParams) {
+    if (params.q) {
+        return "Saranwak menampilkan tempat yang cocok berdasarkan keyword, aktivitas, fasilitas, vibes, dan budget yang kamu pilih.";
+    }
+
+    if (params.area) {
+        return `Rekomendasi coffee shop di area ${params.area}, lengkap dengan filter budget, fasilitas, dan vibes.`;
+    }
+
+    return "Pilih coffee shop berdasarkan aktivitas, fasilitas, vibes, dan budget. Cocok buat nugas, WFC, nongkrong, meeting, atau first date yang tidak awkward.";
+}
+
+function buildTagHref(params: PageParams, tag: string) {
+    const selectedTags = getSelectedTags(params);
+    const isActive = selectedTags.includes(tag);
+
+    const nextTags = isActive
+        ? selectedTags.filter((item) => item !== tag)
+        : [...selectedTags, tag];
+
+    return buildFilterHref(params, {
+        tags: nextTags.join(","),
+    });
+}
+
+function buildFilterHref(
+    params: PageParams,
+    updates: Partial<PageParams & { price: PriceFilterValue }>
+) {
+    const nextParams = new URLSearchParams();
+
+    const mergedParams: PageParams = {
+        ...params,
+        ...updates,
+    };
+
+    if (mergedParams.q) nextParams.set("q", mergedParams.q);
+    if (mergedParams.area) nextParams.set("area", mergedParams.area);
+    if (mergedParams.category) nextParams.set("category", mergedParams.category);
+
+    if (mergedParams.tags) {
+        nextParams.set("tags", mergedParams.tags);
+    }
+
+    if (mergedParams.price && mergedParams.price !== "all") {
+        nextParams.set("price", mergedParams.price);
+    }
+
+    const query = nextParams.toString();
+
+    return query ? `/places?${query}` : "/places";
+}
+
+function normalizeText(value?: string | null) {
+    return String(value ?? "")
+        .toLowerCase()
+        .trim();
+}
+
+function getTagLabel(tag: string) {
     for (const group of placeFilterGroups) {
         const option = group.options.find((item) => item.tag === tag);
 
@@ -496,255 +653,4 @@ function getFilterLabel(tag: string) {
     }
 
     return tag;
-}
-
-function getPlaceTagSlugs(place: Place) {
-    return (
-        place.place_tags
-            ?.map((item) => {
-                const tag = getSingleTag(item as PlaceTagItem);
-                return tag?.slug;
-            })
-            .filter((slug): slug is string => Boolean(slug)) ?? []
-    );
-}
-
-function matchKeyword(place: Place, keyword?: string) {
-    const q = normalizeText(keyword);
-
-    if (!q) return true;
-
-    const tagText =
-        place.place_tags
-            ?.map((item) => {
-                const tag = getSingleTag(item as PlaceTagItem);
-                return [tag?.name, tag?.slug].filter(Boolean).join(" ");
-            })
-            .join(" ") ?? "";
-
-    const searchableText = [
-        place.name,
-        place.description,
-        place.short_description,
-        place.address,
-        place.area,
-        place.city,
-        tagText,
-    ]
-        .map((item) => normalizeText(item))
-        .join(" ");
-
-    return searchableText.includes(q);
-}
-
-function matchArea(place: Place, selectedArea?: string) {
-    if (!selectedArea) return true;
-
-    return normalizeText(place.area) === normalizeText(selectedArea);
-}
-
-function matchAllSelectedTags(place: Place, selectedTags: string[]) {
-    if (selectedTags.length === 0) return true;
-
-    const placeTagSlugs = getPlaceTagSlugs(place);
-
-    return selectedTags.every((selectedTag) => placeTagSlugs.includes(selectedTag));
-}
-
-function parsePriceToNumber(value?: number | string | null) {
-    if (typeof value === "number") {
-        return value;
-    }
-
-    if (!value) {
-        return null;
-    }
-
-    const raw = String(value).toLowerCase().trim();
-
-    const cleaned = raw
-        .replace(/rp/g, "")
-        .replace(/\./g, "")
-        .replace(/,/g, "")
-        .replace(/\s/g, "")
-        .replace(/ribu/g, "000")
-        .replace(/rb/g, "000")
-        .replace(/k/g, "000");
-
-    const result = Number(cleaned);
-
-    return Number.isNaN(result) ? null : result;
-}
-
-function parsePriceRange(priceRange?: string | null) {
-    if (!priceRange) {
-        return {
-            min: null,
-            max: null,
-        };
-    }
-
-    const matches = String(priceRange)
-        .toLowerCase()
-        .match(/\d+\s*(k|rb|ribu)?|\d+[.,]\d+/g);
-
-    if (!matches || matches.length === 0) {
-        return {
-            min: null,
-            max: null,
-        };
-    }
-
-    const prices = matches
-        .map((item) => parsePriceToNumber(item))
-        .filter((item): item is number => typeof item === "number");
-
-    if (prices.length === 0) {
-        return {
-            min: null,
-            max: null,
-        };
-    }
-
-    return {
-        min: Math.min(...prices),
-        max: Math.max(...prices),
-    };
-}
-
-function matchPrice(place: Place, price?: string) {
-    const selectedPrice = getSelectedPrice(price);
-
-    if (selectedPrice === "all") return true;
-
-    const priceMinFromColumn = parsePriceToNumber(place.price_min);
-    const priceMaxFromColumn = parsePriceToNumber(place.price_max);
-
-    const priceRange = parsePriceRange(place.price_range);
-
-    const min = priceMinFromColumn ?? priceRange.min;
-    const max = priceMaxFromColumn ?? priceRange.max ?? min;
-
-    if (typeof min !== "number" || typeof max !== "number") {
-        return false;
-    }
-
-    if (selectedPrice === "under-20k") {
-        return min < 20000;
-    }
-
-    if (selectedPrice === "20k-40k") {
-        return min <= 40000 && max >= 20000;
-    }
-
-    if (selectedPrice === "above-40k") {
-        return max > 40000;
-    }
-
-    return true;
-}
-
-function makeTitle(params: PageParams) {
-    if (params.q) {
-        return `Hasil pencarian "${params.q}"`;
-    }
-
-    if (params.area) {
-        return `Coffee shop di ${params.area}`;
-    }
-
-    if (params.price && getSelectedPrice(params.price) !== "all") {
-        return `Coffee shop ${getPriceLabel(params.price)}`;
-    }
-
-    const selectedTags = getSelectedTags(params);
-
-    if (selectedTags.length > 0) {
-        return `Coffee shop untuk ${getFilterLabel(selectedTags[0])}`;
-    }
-
-    return "Explore coffee shop di Padang";
-}
-
-function makeDescription(params: PageParams) {
-    const selectedTags = getSelectedTags(params);
-
-    if (params.q) {
-        return "Temukan coffee shop yang sesuai dengan kata kunci pencarian kamu.";
-    }
-
-    if (selectedTags.length > 0 || params.price || params.area) {
-        return "Hasil sudah disesuaikan berdasarkan filter yang kamu pilih.";
-    }
-
-    return "Cari coffee shop berdasarkan mood, fasilitas, area, budget, dan vibes.";
-}
-
-function createPlacesHref(params: PageParams, overrides: Partial<PageParams>) {
-    const nextParams: PageParams = {
-        category: params.category || "coffee-shop",
-        q: params.q,
-        tags: params.tags,
-        area: params.area,
-        price: params.price,
-        ...overrides,
-    };
-
-    delete nextParams.tag;
-
-    const urlParams = new URLSearchParams();
-
-    Object.entries(nextParams).forEach(([key, value]) => {
-        if (value && value !== "all") {
-            urlParams.set(key, value);
-        }
-    });
-
-    const queryString = urlParams.toString();
-
-    return queryString ? `/places?${queryString}` : "/places?category=coffee-shop";
-}
-
-function makeFilterHref(params: PageParams, tag: string) {
-    const selectedTags = getSelectedTags(params);
-    const nextTags = selectedTags.includes(tag)
-        ? selectedTags.filter((item) => item !== tag)
-        : [...selectedTags, tag];
-
-    return createPlacesHref(params, {
-        tags: nextTags.join(",") || undefined,
-    });
-}
-
-function makePriceHref(params: PageParams, price: PriceFilterValue) {
-    return createPlacesHref(params, {
-        price: price === "all" ? undefined : price,
-    });
-}
-
-function makeRemoveKeywordHref(params: PageParams) {
-    return createPlacesHref(params, {
-        q: undefined,
-    });
-}
-
-function makeRemoveTagHref(params: PageParams, tag: string) {
-    const selectedTags = getSelectedTags(params);
-    const nextTags = selectedTags.filter((item) => item !== tag);
-
-    return createPlacesHref(params, {
-        tags: nextTags.join(",") || undefined,
-    });
-}
-
-function makeRemovePriceHref(params: PageParams) {
-    return createPlacesHref(params, {
-        price: undefined,
-    });
-}
-
-function makeRemoveAreaHref(params: PageParams) {
-    return createPlacesHref(params, {
-        area: undefined,
-    });
 }

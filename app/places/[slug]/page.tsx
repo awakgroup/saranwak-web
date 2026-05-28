@@ -1,15 +1,17 @@
+import { promises as fs } from "fs";
+import path from "path";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { supabase } from "@/lib/supabase";
-import { getSafePlaceImageUrl } from "@/lib/image-url";
+
 import { PlaceCard } from "@/components/PlaceCard";
 import { PlaceDetailTracker } from "@/components/PlaceDetailTracker";
 import { TrackedExternalLink } from "@/components/TrackedExternalLink";
+import { getSafePlaceImageUrl } from "@/lib/image-url";
 import type { Place } from "@/types/database";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 3600;
 
 const siteUrl = "https://saranwak.com";
 
@@ -62,6 +64,8 @@ type PlaceDetail = {
     price_min?: number | string | null;
     price_max?: number | string | null;
     opening_hours: string | null;
+    is_featured?: boolean | null;
+    is_verified?: boolean | null;
     is_published: boolean;
     created_at?: string | null;
     updated_at?: string | null;
@@ -75,6 +79,14 @@ type PlaceDetailPageProps = {
         slug: string;
     }>;
 };
+
+export async function generateStaticParams() {
+    const places = await getPlacesFromJson();
+
+    return places.map((place) => ({
+        slug: place.slug,
+    }));
+}
 
 export async function generateMetadata({
     params,
@@ -96,8 +108,8 @@ export async function generateMetadata({
     const canonicalUrl = `${siteUrl}/places/${place.slug}`;
 
     return {
-        title: `${place.name} - ${category?.name || "Coffee Shop"} di ${place.area || place.city || "Padang"
-            } | Saranwak`,
+        title: `${place.name} - ${category?.name || "Coffee Shop"
+            } di ${place.area || place.city || "Padang"} | Saranwak`,
         description: seoDescription,
         alternates: {
             canonical: canonicalUrl,
@@ -257,11 +269,13 @@ function HeroSection({
     return (
         <section className="overflow-hidden rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] shadow-[0_18px_55px_rgba(47,35,25,0.08)] sm:rounded-[36px] sm:shadow-[0_22px_70px_rgba(47,35,25,0.08)]">
             <div className="relative min-h-[360px] overflow-hidden bg-[#181818] sm:min-h-[430px] lg:min-h-[520px]">
-                <img
+                <Image
                     src={mainImageUrl}
                     alt={place.name}
-                    className="absolute inset-0 h-full w-full object-cover"
-                    referrerPolicy="no-referrer"
+                    fill
+                    priority
+                    sizes="100vw"
+                    className="object-cover"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/30 to-black/88" />
@@ -507,12 +521,15 @@ function GallerySection({
                         key={photo.id || `${photo.image_url}-${index}`}
                         className="overflow-hidden rounded-[22px] border border-[#E7D8C8] bg-[#F8F1E8]"
                     >
-                        <img
-                            src={getSafePlaceImageUrl(photo.image_url)}
-                            alt={photo.caption || `${placeName} ${index + 1}`}
-                            className="h-56 w-full object-cover transition duration-500 hover:scale-105"
-                            referrerPolicy="no-referrer"
-                        />
+                        <div className="relative h-56 w-full overflow-hidden">
+                            <Image
+                                src={getSafePlaceImageUrl(photo.image_url)}
+                                alt={photo.caption || `${placeName} ${index + 1}`}
+                                fill
+                                sizes="(max-width: 640px) 100vw, 50vw"
+                                className="object-cover transition duration-500 hover:scale-105"
+                            />
+                        </div>
 
                         {photo.caption ? (
                             <figcaption className="px-4 py-3 text-xs font-bold leading-5 text-[#756A60]">
@@ -793,46 +810,33 @@ function MobileStickyActions({
     );
 }
 
-async function getPlaceBySlug(slug: string) {
-    const { data, error } = await supabase
-        .from("places")
-        .select(
-            `
-      *,
-      categories (
-        id,
-        name,
-        slug,
-        icon
-      ),
-      place_tags (
-        id,
-        tag_id,
-        tags (
-          id,
-          name,
-          slug,
-          type
-        )
-      ),
-      place_photos (
-        id,
-        image_url,
-        caption,
-        sort_order
-      )
-    `
-        )
-        .eq("slug", slug)
-        .eq("is_published", true)
-        .single();
+async function getPlacesFromJson() {
+    try {
+        const filePath = path.join(
+            process.cwd(),
+            "public",
+            "data",
+            "places.json"
+        );
 
-    if (error) {
-        console.error("Place detail query error:", error.message);
-        return null;
+        const fileContent = await fs.readFile(filePath, "utf8");
+        const places = JSON.parse(fileContent) as PlaceDetail[];
+
+        return places.filter((place) => place.is_published);
+    } catch (error) {
+        console.error("Static detail places JSON read error:", error);
+        return [];
     }
+}
 
-    return data as unknown as PlaceDetail;
+async function getPlaceBySlug(slug: string) {
+    const places = await getPlacesFromJson();
+
+    return (
+        places.find(
+            (place) => place.slug === slug && place.is_published
+        ) ?? null
+    );
 }
 
 async function getRelatedPlaces({
@@ -844,58 +848,40 @@ async function getRelatedPlaces({
     categorySlug?: string | null;
     area?: string | null;
 }) {
-    let query = supabase
-        .from("places")
-        .select(
-            `
-      *,
-      categories (
-        id,
-        name,
-        slug,
-        icon
-      ),
-      place_tags (
-        id,
-        tag_id,
-        tags (
-          id,
-          name,
-          slug,
-          type
-        )
-      )
-    `
-        )
-        .eq("is_published", true)
-        .neq("id", currentPlaceId)
-        .limit(6);
+    const places = await getPlacesFromJson();
 
-    if (categorySlug) {
-        query = query.eq("categories.slug", categorySlug);
-    }
+    const relatedPlaces = places
+        .filter((place) => place.id !== currentPlaceId)
+        .filter((place) => {
+            if (!categorySlug) return true;
 
-    const { data, error } = await query;
+            const category = getSingleCategory(place.categories);
 
-    if (error) {
-        console.error("Related places query error:", error.message);
-        return [];
-    }
+            return category?.slug === categorySlug;
+        })
+        .sort((a, b) => {
+            const aSameArea = normalizeText(a.area) === normalizeText(area);
+            const bSameArea = normalizeText(b.area) === normalizeText(area);
 
-    const places = (data ?? []) as unknown as Place[];
+            if (aSameArea !== bSameArea) {
+                return aSameArea ? -1 : 1;
+            }
 
-    if (!area) {
-        return places;
-    }
+            const aFeatured = Boolean(a.is_featured);
+            const bFeatured = Boolean(b.is_featured);
 
-    return places.sort((a, b) => {
-        const aSameArea = normalizeText(a.area) === normalizeText(area);
-        const bSameArea = normalizeText(b.area) === normalizeText(area);
+            if (aFeatured !== bFeatured) {
+                return aFeatured ? -1 : 1;
+            }
 
-        if (aSameArea === bSameArea) return 0;
+            const dateA = new Date(a.created_at ?? 0).getTime();
+            const dateB = new Date(b.created_at ?? 0).getTime();
 
-        return aSameArea ? -1 : 1;
-    });
+            return dateB - dateA;
+        })
+        .slice(0, 6);
+
+    return relatedPlaces as unknown as Place[];
 }
 
 function getSingleCategory(category: Category | Category[] | null) {

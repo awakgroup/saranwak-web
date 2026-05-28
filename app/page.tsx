@@ -1,15 +1,18 @@
+import { promises as fs } from "fs";
+import path from "path";
+import type { ReactNode } from "react";
+
 import { FeaturedPlacesSection } from "@/components/home/FeaturedPlacesSection";
 import { HomeHeroSection } from "@/components/home/HomeHeroSection";
 import { OwnerBusinessSection } from "@/components/home/OwnerBusinessSection";
 import PromoBannerCarousel from "@/components/PromoBannerCarousel";
 import { WhySaranwak } from "@/components/WhySaranwak";
-import { getFeaturedPlaces } from "@/lib/queries/places";
+import type { Place } from "@/types/database";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 3600;
 
 export default async function Home() {
-  const places = await getFeaturedPlaces();
+  const places = await getFeaturedPlacesFromJson();
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#F4F1EA] text-[#141414]">
@@ -40,11 +43,37 @@ export default async function Home() {
   );
 }
 
+async function getFeaturedPlacesFromJson() {
+  try {
+    const filePath = path.join(
+      process.cwd(),
+      "public",
+      "data",
+      "places.json"
+    );
+
+    const fileContent = await fs.readFile(filePath, "utf8");
+    const places = JSON.parse(fileContent) as Place[];
+
+    return places
+      .filter((place) => place.is_published && place.is_featured)
+      .sort((a, b) => {
+        const dateA = new Date(a.created_at ?? 0).getTime();
+        const dateB = new Date(b.created_at ?? 0).getTime();
+
+        return dateB - dateA;
+      });
+  } catch (error) {
+    console.error("Featured places JSON read error:", error);
+    return [];
+  }
+}
+
 function SectionBlock({
   children,
   variant = "default",
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   variant?: "default" | "compact" | "last";
 }) {
   return (
