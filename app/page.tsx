@@ -1,5 +1,3 @@
-import { promises as fs } from "fs";
-import path from "path";
 import type { ReactNode } from "react";
 
 import { FeaturedPlacesSection } from "@/components/home/FeaturedPlacesSection";
@@ -7,12 +5,13 @@ import { HomeHeroSection } from "@/components/home/HomeHeroSection";
 import { OwnerBusinessSection } from "@/components/home/OwnerBusinessSection";
 import PromoBannerCarousel from "@/components/PromoBannerCarousel";
 import { WhySaranwak } from "@/components/WhySaranwak";
+import { getFeaturedPlaces, type ApiPlace } from "@/lib/api/places";
 import type { Place } from "@/types/database";
 
 export const revalidate = 3600;
 
 export default async function Home() {
-  const places = await getFeaturedPlacesFromJson();
+  const places = await getHomeFeaturedPlaces();
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#F4F1EA] text-[#141414]">
@@ -43,30 +42,35 @@ export default async function Home() {
   );
 }
 
-async function getFeaturedPlacesFromJson() {
+async function getHomeFeaturedPlaces(): Promise<Place[]> {
   try {
-    const filePath = path.join(
-      process.cwd(),
-      "public",
-      "data",
-      "places.json"
-    );
+    const places = await getFeaturedPlaces(6);
 
-    const fileContent = await fs.readFile(filePath, "utf8");
-    const places = JSON.parse(fileContent) as Place[];
-
-    return places
-      .filter((place) => place.is_published && place.is_featured)
-      .sort((a, b) => {
-        const dateA = new Date(a.created_at ?? 0).getTime();
-        const dateB = new Date(b.created_at ?? 0).getTime();
-
-        return dateB - dateA;
-      });
+    return places.map(mapApiPlaceToLegacyPlace);
   } catch (error) {
-    console.error("Featured places JSON read error:", error);
+    console.error("Featured places D1 fetch error:", error);
     return [];
   }
+}
+
+function mapApiPlaceToLegacyPlace(place: ApiPlace): Place {
+  return {
+    ...place,
+
+    /**
+     * Adapter field lama.
+     * Component existing Saranwak kemungkinan masih pakai nama field lama.
+     */
+    maps_url: place.google_maps_url,
+    is_published: Boolean(place.is_active),
+    is_featured: Boolean(place.is_featured),
+
+    /**
+     * Fallback supaya komponen lama tidak crash kalau field ini belum ada.
+     */
+    tags: [],
+    gallery: [],
+  } as unknown as Place;
 }
 
 function SectionBlock({

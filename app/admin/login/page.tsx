@@ -3,6 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+type LoginResponse = {
+    success?: boolean;
+    message?: string;
+};
+
 export default function AdminLoginPage() {
     const router = useRouter();
 
@@ -30,12 +35,12 @@ export default function AdminLoginPage() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    username,
-                    password,
+                    username: username.trim(),
+                    password: password.trim(),
                 }),
             });
 
-            const result = await response.json();
+            const result = await parseLoginResponse(response);
 
             if (!response.ok) {
                 throw new Error(result.message || "Login gagal.");
@@ -78,6 +83,7 @@ export default function AdminLoginPage() {
                             onChange={(event) => setUsername(event.target.value)}
                             placeholder="admin"
                             className="input-cms"
+                            autoComplete="username"
                         />
                     </label>
 
@@ -91,6 +97,7 @@ export default function AdminLoginPage() {
                             onChange={(event) => setPassword(event.target.value)}
                             placeholder="••••••••"
                             className="input-cms"
+                            autoComplete="current-password"
                         />
                     </label>
 
@@ -133,4 +140,15 @@ export default function AdminLoginPage() {
       `}</style>
         </main>
     );
+}
+
+async function parseLoginResponse(response: Response): Promise<LoginResponse> {
+    try {
+        return (await response.json()) as LoginResponse;
+    } catch {
+        return {
+            success: false,
+            message: "Response login tidak valid.",
+        };
+    }
 }

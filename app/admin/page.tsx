@@ -37,6 +37,45 @@ import {
     parsePriceRange,
 } from "@/lib/admin-utils";
 
+type AdminPlacesResponse = {
+    success?: boolean;
+    message?: string;
+    categories?: Category[];
+    tags?: Tag[];
+    places?: AdminPlace[];
+};
+
+type AdminMutationResponse = {
+    success?: boolean;
+    message?: string;
+};
+
+async function parseAdminPlacesResponse(
+    response: Response
+): Promise<AdminPlacesResponse> {
+    try {
+        return (await response.json()) as AdminPlacesResponse;
+    } catch {
+        return {
+            success: false,
+            message: "Response CMS tidak valid.",
+        };
+    }
+}
+
+async function parseAdminMutationResponse(
+    response: Response
+): Promise<AdminMutationResponse> {
+    try {
+        return (await response.json()) as AdminMutationResponse;
+    } catch {
+        return {
+            success: false,
+            message: "Response CMS tidak valid.",
+        };
+    }
+}
+
 export default function AdminPage() {
     const router = useRouter();
 
@@ -148,7 +187,7 @@ export default function AdminPage() {
                 cache: "no-store",
             });
 
-            const result = await response.json();
+            const result = await parseAdminPlacesResponse(response);
 
             if (!response.ok) {
                 throw new Error(result.message || "Gagal mengambil data CMS.");
@@ -448,9 +487,7 @@ export default function AdminPage() {
         }
 
         if (!isValidInstagramUrl(form.instagram_url)) {
-            setErrorMessage(
-                "Instagram URL tidak valid. Gunakan link dari instagram.com."
-            );
+            setErrorMessage("Instagram URL tidak valid. Gunakan link dari instagram.com.");
             return;
         }
 
@@ -509,7 +546,7 @@ export default function AdminPage() {
                 }),
             });
 
-            const result = await response.json();
+            const result = await parseAdminMutationResponse(response);
 
             if (!response.ok) {
                 throw new Error(result.message || "Gagal menyimpan tempat.");
@@ -552,7 +589,7 @@ export default function AdminPage() {
                 method: "DELETE",
             });
 
-            const result = await response.json();
+            const result = await parseAdminMutationResponse(response);
 
             if (!response.ok) {
                 throw new Error(result.message || "Gagal menghapus tempat.");

@@ -1,0 +1,9 @@
+name = "saranwak"
+compatibility_date = "2026-06-01"
+pages_build_output_dir = "out"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "saranwak-db"
+database_id = "c3382197-5b28-4abd-b0a6-2116afe049c4"
+remote = true
