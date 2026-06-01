@@ -6,21 +6,14 @@ type PlaceRow = {
     id: string;
     name: string;
     slug: string;
-    description: string | null;
     short_description: string | null;
     category_id: string | null;
-    address: string | null;
     area: string | null;
     city: string | null;
     price_min: number | null;
     price_max: number | null;
     price_range: string | null;
     image_url: string | null;
-    instagram_url: string | null;
-    google_maps_url: string | null;
-    whatsapp_url: string | null;
-    website_url: string | null;
-    opening_hours: string | null;
     is_featured: number;
     is_active: number;
     created_at: string;
@@ -31,6 +24,13 @@ type PlaceRow = {
 
 type TagRow = {
     place_id: string;
+    id: string;
+    name: string;
+    slug: string;
+    type: string;
+};
+
+type CompactTag = {
     id: string;
     name: string;
     slug: string;
@@ -63,16 +63,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
             conditions.push(
                 `(
           p.name LIKE ?
-          OR p.description LIKE ?
           OR p.short_description LIKE ?
           OR p.area LIKE ?
-          OR p.address LIKE ?
+          OR p.city LIKE ?
           OR c.name LIKE ?
         )`
             );
 
             const keyword = `%${search}%`;
-            params.push(keyword, keyword, keyword, keyword, keyword, keyword);
+            params.push(keyword, keyword, keyword, keyword, keyword);
         }
 
         if (featured === "true") {
@@ -84,21 +83,14 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         p.id,
         p.name,
         p.slug,
-        p.description,
         p.short_description,
         p.category_id,
-        p.address,
         p.area,
         p.city,
         p.price_min,
         p.price_max,
         p.price_range,
         p.image_url,
-        p.instagram_url,
-        p.google_maps_url,
-        p.whatsapp_url,
-        p.website_url,
-        p.opening_hours,
         p.is_featured,
         p.is_active,
         p.created_at,
@@ -135,13 +127,28 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
             const tags = tagsByPlaceId.get(place.id) ?? [];
 
             return {
-                ...place,
+                id: place.id,
+                name: place.name,
+                slug: place.slug,
+
+                short_description: compactText(place.short_description, 180),
+
+                category_id: place.category_id,
+                area: place.area,
+                city: place.city,
+
+                price_min: place.price_min,
+                price_max: place.price_max,
+                price_range: place.price_range,
+
+                image_url: place.image_url,
 
                 is_featured: Boolean(place.is_featured),
                 is_active: Boolean(place.is_active),
                 is_published: Boolean(place.is_active),
 
-                maps_url: place.google_maps_url,
+                created_at: place.created_at,
+                updated_at: place.updated_at,
 
                 categories: place.category_id
                     ? {
@@ -152,16 +159,6 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
                     : null,
 
                 tags,
-
-                place_tags: tags.map((tag) => ({
-                    place_id: place.id,
-                    tag_id: tag.id,
-                    tags: tag,
-                    tag,
-                })),
-
-                gallery: [],
-                galleries: [],
             };
         });
 
@@ -190,15 +187,7 @@ export const onRequestHead: PagesFunction<Env> = async () => {
 };
 
 async function getTagsByPlaceId(db: D1Database, placeIds: string[]) {
-    const tagsByPlaceId = new Map<
-        string,
-        Array<{
-            id: string;
-            name: string;
-            slug: string;
-            type: string;
-        }>
-    >();
+    const tagsByPlaceId = new Map<string, CompactTag[]>();
 
     if (placeIds.length === 0) {
         return tagsByPlaceId;
@@ -240,13 +229,23 @@ async function getTagsByPlaceId(db: D1Database, placeIds: string[]) {
     return tagsByPlaceId;
 }
 
+function compactText(value: string | null, maxLength: number) {
+    const text = String(value ?? "").trim();
+
+    if (text.length <= maxLength) {
+        return text || null;
+    }
+
+    return `${text.slice(0, maxLength).trim()}...`;
+}
+
 function getPublicCacheHeaders() {
     return {
         "Cache-Control":
             "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
         "CDN-Cache-Control": "public, max-age=300",
         "Cloudflare-CDN-Cache-Control": "public, max-age=300",
-        "X-Saranwak-Api-Version": "places-cache-v2",
+        "X-Saranwak-Api-Version": "places-lite-v3",
     };
 }
 
@@ -262,7 +261,7 @@ function errorJson(body: ApiResponse, status = 500) {
         status,
         headers: {
             "Cache-Control": "no-store",
-            "X-Saranwak-Api-Version": "places-cache-v2-error",
+            "X-Saranwak-Api-Version": "places-lite-v3-error",
         },
     });
 }
