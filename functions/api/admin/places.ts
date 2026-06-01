@@ -53,7 +53,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
         /**
          * Safety limit.
-         * Jangan biarkan orang request limit besar dan bikin D1 kerja rodi.
+         * Public API tidak boleh bisa dipaksa ambil data super besar.
          */
         const safeLimit = Math.min(
             Number.isFinite(rawLimit) && rawLimit > 0 ? rawLimit : 100,
@@ -170,7 +170,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
                 tags,
 
                 /**
-                 * Support format lama dan baru.
+                 * Support format lama dan baru:
+                 * - place_tags[].tags.slug
+                 * - place_tags[].tag.slug
                  */
                 place_tags: tags.map((tag) => ({
                     place_id: place.id,
@@ -180,7 +182,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
                 })),
 
                 /**
-                 * Fallback supaya komponen lama tidak crash.
+                 * Fallback agar komponen lama tidak crash.
                  */
                 gallery: [],
                 galleries: [],
@@ -202,6 +204,17 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
             500
         );
     }
+};
+
+/**
+ * Support curl -I / HEAD request.
+ * Tanpa ini, curl -I bisa 404 walaupun GET jalan.
+ */
+export const onRequestHead: PagesFunction<Env> = async () => {
+    return new Response(null, {
+        status: 200,
+        headers: getPublicCacheHeaders(),
+    });
 };
 
 async function getTagsByPlaceId(db: D1Database, placeIds: string[]) {
@@ -255,18 +268,28 @@ async function getTagsByPlaceId(db: D1Database, placeIds: string[]) {
     return tagsByPlaceId;
 }
 
+function getPublicCacheHeaders() {
+    return {
+        /**
+         * Browser cache: 60 detik
+         * Shared/CDN cache: 5 menit
+         * Stale cache: boleh dipakai sambil revalidate background.
+         */
+        "Cache-Control":
+            "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
+
+        /**
+         * Tambahan header khusus CDN agar Cloudflare lebih jelas menangkap intent cache.
+         */
+        "CDN-Cache-Control": "public, max-age=300",
+        "Cloudflare-CDN-Cache-Control": "public, max-age=300",
+    };
+}
+
 function publicJson(body: ApiResponse, status = 200) {
     return Response.json(body, {
         status,
-        headers: {
-            /**
-             * Browser cache: 60 detik
-             * Edge/CDN cache: 5 menit
-             * Kalau cache stale, masih boleh dipakai sambil refresh background.
-             */
-            "Cache-Control":
-                "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
-        },
+        headers: getPublicCacheHeaders(),
     });
 }
 
@@ -275,7 +298,7 @@ function errorJson(body: ApiResponse, status = 500) {
         status,
         headers: {
             /**
-             * Error jangan di-cache. Kalau error di-cache, nanti debugging jadi horor.
+             * Error jangan di-cache.
              */
             "Cache-Control": "no-store",
         },
