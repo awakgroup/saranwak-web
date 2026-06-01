@@ -29,133 +29,180 @@ type PlaceRow = {
     category_slug: string | null;
 };
 
+type CategoryRow = {
+    id: string;
+    name: string;
+    slug: string;
+    created_at?: string | null;
+    updated_at?: string | null;
+};
+
 type TagRow = {
+    id: string;
+    name: string;
+    slug: string;
+    type: string;
+    created_at?: string | null;
+    updated_at?: string | null;
+};
+
+type PlaceTagRow = {
     place_id: string;
+    tag_id: string;
     id: string;
     name: string;
     slug: string;
     type: string;
 };
 
-type ApiResponse = {
+type GalleryRow = {
+    id: string;
+    place_id: string;
+    image_url: string;
+    alt_text: string | null;
+    sort_order: number | null;
+    created_at: string | null;
+};
+
+type PlacePayload = {
+    id?: string;
+    name?: string;
+    slug?: string;
+    category_id?: string;
+    description?: string | null;
+    short_description?: string | null;
+    address?: string | null;
+    area?: string | null;
+    city?: string | null;
+    image_url?: string | null;
+    google_maps_url?: string | null;
+    instagram_url?: string | null;
+    whatsapp_url?: string | null;
+    website_url?: string | null;
+    price_range?: string | null;
+    price_min?: number | null;
+    price_max?: number | null;
+    opening_hours?: string | null;
+    is_featured?: boolean | number | string;
+    is_published?: boolean | number | string;
+    is_active?: boolean | number | string;
+    tag_ids?: string[];
+    photo_urls?: string[];
+};
+
+type JsonResponseBody = {
     success: boolean;
-    data?: unknown;
     message?: string;
+    categories?: CategoryRow[];
+    tags?: TagRow[];
+    places?: unknown[];
 };
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
     try {
-        const url = new URL(context.request.url);
-
-        const search = url.searchParams.get("search")?.trim() ?? "";
-        const featured = url.searchParams.get("featured");
-        const rawLimit = Number(url.searchParams.get("limit") ?? "100");
-
-        /**
-         * Safety limit.
-         * Public API tidak boleh bisa dipaksa ambil data super besar.
-         */
-        const safeLimit = Math.min(
-            Number.isFinite(rawLimit) && rawLimit > 0 ? rawLimit : 100,
-            100
-        );
-
-        const conditions: string[] = ["p.is_active = 1"];
-        const params: unknown[] = [];
-
-        if (search) {
-            conditions.push(
-                `(
-          p.name LIKE ?
-          OR p.description LIKE ?
-          OR p.short_description LIKE ?
-          OR p.area LIKE ?
-          OR p.address LIKE ?
-          OR c.name LIKE ?
-        )`
-            );
-
-            const keyword = `%${search}%`;
-            params.push(keyword, keyword, keyword, keyword, keyword, keyword);
+        if (!isAdminAuthenticated(context.request)) {
+            return unauthorizedResponse();
         }
 
-        if (featured === "true") {
-            conditions.push("p.is_featured = 1");
-        }
+        const [categoriesResult, tagsResult, placesResult, galleriesResult] =
+            await Promise.all([
+                context.env.DB.prepare(
+                    `
+          SELECT id, name, slug, created_at, updated_at
+          FROM categories
+          ORDER BY name ASC
+        `
+                ).all<CategoryRow>(),
 
-        const placesQuery = `
-      SELECT
-        p.id,
-        p.name,
-        p.slug,
-        p.description,
-        p.short_description,
-        p.category_id,
-        p.address,
-        p.area,
-        p.city,
-        p.price_min,
-        p.price_max,
-        p.price_range,
-        p.image_url,
-        p.instagram_url,
-        p.google_maps_url,
-        p.whatsapp_url,
-        p.website_url,
-        p.opening_hours,
-        p.is_featured,
-        p.is_active,
-        p.created_at,
-        p.updated_at,
-        c.name AS category_name,
-        c.slug AS category_slug
-      FROM places p
-      LEFT JOIN categories c ON c.id = p.category_id
-      WHERE ${conditions.join(" AND ")}
-      ORDER BY p.is_featured DESC, p.created_at DESC
-      LIMIT ?
-    `;
+                context.env.DB.prepare(
+                    `
+          SELECT id, name, slug, type, created_at, updated_at
+          FROM tags
+          ORDER BY type ASC, name ASC
+        `
+                ).all<TagRow>(),
 
-        params.push(safeLimit);
+                context.env.DB.prepare(
+                    `
+          SELECT
+            p.id,
+            p.name,
+            p.slug,
+            p.description,
+            p.short_description,
+            p.category_id,
+            p.address,
+            p.area,
+            p.city,
+            p.price_min,
+            p.price_max,
+            p.price_range,
+            p.image_url,
+            p.instagram_url,
+            p.google_maps_url,
+            p.whatsapp_url,
+            p.website_url,
+            p.opening_hours,
+            p.is_featured,
+            p.is_active,
+            p.created_at,
+            p.updated_at,
+            c.name AS category_name,
+            c.slug AS category_slug
+          FROM places p
+          LEFT JOIN categories c ON c.id = p.category_id
+          ORDER BY p.created_at DESC
+        `
+                ).all<PlaceRow>(),
 
-        const placesResult = await context.env.DB
-            .prepare(placesQuery)
-            .bind(...params)
-            .all<PlaceRow>();
+                context.env.DB.prepare(
+                    `
+          SELECT id, place_id, image_url, alt_text, sort_order, created_at
+          FROM galleries
+          ORDER BY sort_order ASC, created_at ASC
+        `
+                ).all<GalleryRow>(),
+            ]);
 
         const places = placesResult.results ?? [];
-
-        if (places.length === 0) {
-            return publicJson({
-                success: true,
-                data: [],
-            });
-        }
+        const galleries = galleriesResult.results ?? [];
 
         const placeIds = places.map((place) => place.id);
-        const tagsByPlaceId = await getTagsByPlaceId(context.env.DB, placeIds);
 
-        const data = places.map((place) => {
-            const tags = tagsByPlaceId.get(place.id) ?? [];
+        const placeTagsByPlaceId = await getPlaceTagsByPlaceId(
+            context.env.DB,
+            placeIds
+        );
+
+        const galleriesByPlaceId = new Map<string, GalleryRow[]>();
+
+        for (const gallery of galleries) {
+            const current = galleriesByPlaceId.get(gallery.place_id) ?? [];
+
+            current.push(gallery);
+            galleriesByPlaceId.set(gallery.place_id, current);
+        }
+
+        const mappedPlaces = places.map((place) => {
+            const placeTags = placeTagsByPlaceId.get(place.id) ?? [];
+            const placePhotos = galleriesByPlaceId.get(place.id) ?? [];
+
+            const tags = placeTags.map((item) => ({
+                id: item.id,
+                name: item.name,
+                slug: item.slug,
+                type: item.type,
+            }));
 
             return {
                 ...place,
 
-                /**
-                 * Boolean adapter.
-                 */
                 is_featured: Boolean(place.is_featured),
-                is_active: Boolean(place.is_active),
                 is_published: Boolean(place.is_active),
+                is_active: Boolean(place.is_active),
 
-                /**
-                 * Legacy adapter.
-                 */
                 maps_url: place.google_maps_url,
 
-                /**
-                 * Category adapter.
-                 */
                 categories: place.category_id
                     ? {
                         id: place.category_id,
@@ -164,143 +211,558 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
                     }
                     : null,
 
-                /**
-                 * Filter support.
-                 */
                 tags,
 
-                /**
-                 * Support format lama dan baru:
-                 * - place_tags[].tags.slug
-                 * - place_tags[].tag.slug
-                 */
-                place_tags: tags.map((tag) => ({
-                    place_id: place.id,
-                    tag_id: tag.id,
-                    tags: tag,
-                    tag,
+                place_tags: placeTags.map((item) => ({
+                    place_id: item.place_id,
+                    tag_id: item.tag_id,
+                    tags: {
+                        id: item.id,
+                        name: item.name,
+                        slug: item.slug,
+                        type: item.type,
+                    },
+                    tag: {
+                        id: item.id,
+                        name: item.name,
+                        slug: item.slug,
+                        type: item.type,
+                    },
                 })),
 
-                /**
-                 * Fallback agar komponen lama tidak crash.
-                 */
-                gallery: [],
-                galleries: [],
+                place_photos: placePhotos.map((photo) => ({
+                    id: photo.id,
+                    place_id: photo.place_id,
+                    image_url: photo.image_url,
+                    alt_text: photo.alt_text,
+                    sort_order: photo.sort_order ?? 0,
+                    created_at: photo.created_at,
+                })),
+
+                galleries: placePhotos,
             };
         });
 
-        return publicJson({
+        return json({
             success: true,
-            data,
+            categories: categoriesResult.results ?? [],
+            tags: tagsResult.results ?? [],
+            places: mappedPlaces,
         });
     } catch (error) {
-        console.error("GET /api/places error:", error);
+        console.error("GET /api/admin/places error:", error);
 
-        return errorJson(
+        return json(
             {
                 success: false,
-                message: "Failed to fetch places",
+                message: "Gagal mengambil data CMS.",
             },
             500
         );
     }
 };
 
-/**
- * Support curl -I / HEAD request.
- * Tanpa ini, curl -I bisa 404 walaupun GET jalan.
- */
-export const onRequestHead: PagesFunction<Env> = async () => {
-    return new Response(null, {
-        status: 200,
-        headers: getPublicCacheHeaders(),
-    });
+export const onRequestPost: PagesFunction<Env> = async (context) => {
+    try {
+        if (!isAdminAuthenticated(context.request)) {
+            return unauthorizedResponse();
+        }
+
+        const payload = await readJsonPayload(context.request);
+        const validationError = validatePayload(payload);
+
+        if (validationError) {
+            return json(
+                {
+                    success: false,
+                    message: validationError,
+                },
+                400
+            );
+        }
+
+        const id = crypto.randomUUID();
+        const now = new Date().toISOString();
+
+        const name = cleanString(payload.name);
+        const slug = cleanString(payload.slug) || generateSlug(name);
+        const categoryId = cleanString(payload.category_id);
+        const isFeatured = toSqlBool(payload.is_featured);
+        const isActive = toSqlBool(payload.is_published ?? payload.is_active ?? true);
+
+        await context.env.DB.prepare(
+            `
+      INSERT INTO places (
+        id,
+        name,
+        slug,
+        description,
+        short_description,
+        category_id,
+        address,
+        area,
+        city,
+        price_min,
+        price_max,
+        price_range,
+        image_url,
+        instagram_url,
+        google_maps_url,
+        whatsapp_url,
+        website_url,
+        opening_hours,
+        is_featured,
+        is_active,
+        created_at,
+        updated_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `
+        )
+            .bind(
+                id,
+                name,
+                slug,
+                nullableString(payload.description),
+                nullableString(payload.short_description),
+                categoryId,
+                nullableString(payload.address),
+                nullableString(payload.area),
+                cleanString(payload.city) || "Padang",
+                nullableNumber(payload.price_min),
+                nullableNumber(payload.price_max),
+                nullableString(payload.price_range),
+                nullableString(payload.image_url),
+                nullableString(payload.instagram_url),
+                nullableString(payload.google_maps_url),
+                nullableString(payload.whatsapp_url),
+                nullableString(payload.website_url),
+                nullableString(payload.opening_hours),
+                isFeatured,
+                isActive,
+                now,
+                now
+            )
+            .run();
+
+        await replacePlaceTags(context.env.DB, id, payload.tag_ids ?? []);
+        await replaceGalleries(context.env.DB, id, payload.photo_urls ?? [], name);
+
+        return json({
+            success: true,
+            message: "Tempat berhasil ditambahkan.",
+        });
+    } catch (error) {
+        console.error("POST /api/admin/places error:", error);
+
+        return json(
+            {
+                success: false,
+                message:
+                    error instanceof Error ? error.message : "Gagal menambahkan tempat.",
+            },
+            500
+        );
+    }
 };
 
-async function getTagsByPlaceId(db: D1Database, placeIds: string[]) {
-    const tagsByPlaceId = new Map<
-        string,
-        Array<{
-            id: string;
-            name: string;
-            slug: string;
-            type: string;
-        }>
-    >();
+export const onRequestPatch: PagesFunction<Env> = async (context) => {
+    try {
+        if (!isAdminAuthenticated(context.request)) {
+            return unauthorizedResponse();
+        }
+
+        const payload = await readJsonPayload(context.request);
+        const id = cleanString(payload.id);
+
+        if (!id) {
+            return json(
+                {
+                    success: false,
+                    message: "ID tempat wajib dikirim.",
+                },
+                400
+            );
+        }
+
+        const validationError = validatePayload(payload);
+
+        if (validationError) {
+            return json(
+                {
+                    success: false,
+                    message: validationError,
+                },
+                400
+            );
+        }
+
+        const existing = await context.env.DB
+            .prepare("SELECT id FROM places WHERE id = ?")
+            .bind(id)
+            .first<{ id: string }>();
+
+        if (!existing) {
+            return json(
+                {
+                    success: false,
+                    message: "Tempat tidak ditemukan.",
+                },
+                404
+            );
+        }
+
+        const now = new Date().toISOString();
+
+        const name = cleanString(payload.name);
+        const slug = cleanString(payload.slug) || generateSlug(name);
+        const categoryId = cleanString(payload.category_id);
+        const isFeatured = toSqlBool(payload.is_featured);
+        const isActive = toSqlBool(payload.is_published ?? payload.is_active ?? true);
+
+        await context.env.DB.prepare(
+            `
+      UPDATE places
+      SET
+        name = ?,
+        slug = ?,
+        description = ?,
+        short_description = ?,
+        category_id = ?,
+        address = ?,
+        area = ?,
+        city = ?,
+        price_min = ?,
+        price_max = ?,
+        price_range = ?,
+        image_url = ?,
+        instagram_url = ?,
+        google_maps_url = ?,
+        whatsapp_url = ?,
+        website_url = ?,
+        opening_hours = ?,
+        is_featured = ?,
+        is_active = ?,
+        updated_at = ?
+      WHERE id = ?
+    `
+        )
+            .bind(
+                name,
+                slug,
+                nullableString(payload.description),
+                nullableString(payload.short_description),
+                categoryId,
+                nullableString(payload.address),
+                nullableString(payload.area),
+                cleanString(payload.city) || "Padang",
+                nullableNumber(payload.price_min),
+                nullableNumber(payload.price_max),
+                nullableString(payload.price_range),
+                nullableString(payload.image_url),
+                nullableString(payload.instagram_url),
+                nullableString(payload.google_maps_url),
+                nullableString(payload.whatsapp_url),
+                nullableString(payload.website_url),
+                nullableString(payload.opening_hours),
+                isFeatured,
+                isActive,
+                now,
+                id
+            )
+            .run();
+
+        await replacePlaceTags(context.env.DB, id, payload.tag_ids ?? []);
+        await replaceGalleries(context.env.DB, id, payload.photo_urls ?? [], name);
+
+        return json({
+            success: true,
+            message: "Tempat berhasil diperbarui.",
+        });
+    } catch (error) {
+        console.error("PATCH /api/admin/places error:", error);
+
+        return json(
+            {
+                success: false,
+                message:
+                    error instanceof Error ? error.message : "Gagal memperbarui tempat.",
+            },
+            500
+        );
+    }
+};
+
+export const onRequestDelete: PagesFunction<Env> = async (context) => {
+    try {
+        if (!isAdminAuthenticated(context.request)) {
+            return unauthorizedResponse();
+        }
+
+        const url = new URL(context.request.url);
+        const id = cleanString(url.searchParams.get("id"));
+
+        if (!id) {
+            return json(
+                {
+                    success: false,
+                    message: "ID tempat wajib dikirim.",
+                },
+                400
+            );
+        }
+
+        const existing = await context.env.DB
+            .prepare("SELECT id FROM places WHERE id = ?")
+            .bind(id)
+            .first<{ id: string }>();
+
+        if (!existing) {
+            return json(
+                {
+                    success: false,
+                    message: "Tempat tidak ditemukan.",
+                },
+                404
+            );
+        }
+
+        await context.env.DB.prepare(
+            `
+      UPDATE places
+      SET is_active = 0, updated_at = ?
+      WHERE id = ?
+    `
+        )
+            .bind(new Date().toISOString(), id)
+            .run();
+
+        return json({
+            success: true,
+            message: "Tempat berhasil dinonaktifkan.",
+        });
+    } catch (error) {
+        console.error("DELETE /api/admin/places error:", error);
+
+        return json(
+            {
+                success: false,
+                message:
+                    error instanceof Error ? error.message : "Gagal menghapus tempat.",
+            },
+            500
+        );
+    }
+};
+
+async function getPlaceTagsByPlaceId(db: D1Database, placeIds: string[]) {
+    const resultMap = new Map<string, PlaceTagRow[]>();
 
     if (placeIds.length === 0) {
-        return tagsByPlaceId;
+        return resultMap;
     }
 
     const placeholders = placeIds.map(() => "?").join(",");
 
-    const tagsResult = await db
-        .prepare(
-            `
-      SELECT
-        pt.place_id,
-        t.id,
-        t.name,
-        t.slug,
-        t.type
-      FROM place_tags pt
-      INNER JOIN tags t ON t.id = pt.tag_id
-      WHERE pt.place_id IN (${placeholders})
-      ORDER BY t.type ASC, t.name ASC
-    `
-        )
+    const result = await db.prepare(
+        `
+    SELECT
+      pt.place_id,
+      pt.tag_id,
+      t.id,
+      t.name,
+      t.slug,
+      t.type
+    FROM place_tags pt
+    INNER JOIN tags t ON t.id = pt.tag_id
+    WHERE pt.place_id IN (${placeholders})
+    ORDER BY t.type ASC, t.name ASC
+  `
+    )
         .bind(...placeIds)
-        .all<TagRow>();
+        .all<PlaceTagRow>();
 
-    for (const tag of tagsResult.results ?? []) {
-        const currentTags = tagsByPlaceId.get(tag.place_id) ?? [];
-
-        currentTags.push({
-            id: tag.id,
-            name: tag.name,
-            slug: tag.slug,
-            type: tag.type,
-        });
-
-        tagsByPlaceId.set(tag.place_id, currentTags);
+    for (const item of result.results ?? []) {
+        const current = resultMap.get(item.place_id) ?? [];
+        current.push(item);
+        resultMap.set(item.place_id, current);
     }
 
-    return tagsByPlaceId;
+    return resultMap;
 }
 
-function getPublicCacheHeaders() {
-    return {
-        /**
-         * Browser cache: 60 detik
-         * Shared/CDN cache: 5 menit
-         * Stale cache: boleh dipakai sambil revalidate background.
-         */
-        "Cache-Control":
-            "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
+async function replacePlaceTags(
+    db: D1Database,
+    placeId: string,
+    tagIds: string[]
+) {
+    await db.prepare("DELETE FROM place_tags WHERE place_id = ?")
+        .bind(placeId)
+        .run();
 
-        /**
-         * Tambahan header khusus CDN agar Cloudflare lebih jelas menangkap intent cache.
-         */
-        "CDN-Cache-Control": "public, max-age=300",
-        "Cloudflare-CDN-Cache-Control": "public, max-age=300",
-    };
+    const uniqueTagIds = Array.from(
+        new Set(tagIds.map((tagId) => cleanString(tagId)).filter(Boolean))
+    );
+
+    for (const tagId of uniqueTagIds) {
+        await db.prepare(
+            `
+      INSERT OR IGNORE INTO place_tags (place_id, tag_id)
+      VALUES (?, ?)
+    `
+        )
+            .bind(placeId, tagId)
+            .run();
+    }
 }
 
-function publicJson(body: ApiResponse, status = 200) {
-    return Response.json(body, {
-        status,
-        headers: getPublicCacheHeaders(),
-    });
+async function replaceGalleries(
+    db: D1Database,
+    placeId: string,
+    photoUrls: string[],
+    placeName: string
+) {
+    await db.prepare("DELETE FROM galleries WHERE place_id = ?")
+        .bind(placeId)
+        .run();
+
+    const urls = Array.from(
+        new Set(photoUrls.map((url) => cleanString(url)).filter(Boolean))
+    ).slice(0, 5);
+
+    for (const [index, url] of urls.entries()) {
+        await db.prepare(
+            `
+      INSERT INTO galleries (
+        id,
+        place_id,
+        image_url,
+        alt_text,
+        sort_order
+      )
+      VALUES (?, ?, ?, ?, ?)
+    `
+        )
+            .bind(
+                crypto.randomUUID(),
+                placeId,
+                url,
+                `${placeName} photo ${index + 1}`,
+                index
+            )
+            .run();
+    }
 }
 
-function errorJson(body: ApiResponse, status = 500) {
+async function readJsonPayload(request: Request): Promise<PlacePayload> {
+    try {
+        const body = (await request.json()) as PlacePayload;
+
+        if (!body || typeof body !== "object") {
+            throw new Error("Payload tidak valid.");
+        }
+
+        return body;
+    } catch {
+        throw new Error("Payload JSON tidak valid.");
+    }
+}
+
+function validatePayload(payload: PlacePayload) {
+    const name = cleanString(payload.name);
+    const slug = cleanString(payload.slug) || generateSlug(name);
+    const categoryId = cleanString(payload.category_id);
+
+    if (!name) {
+        return "Nama tempat wajib diisi.";
+    }
+
+    if (!slug) {
+        return "Slug wajib diisi.";
+    }
+
+    if (!categoryId) {
+        return "Kategori wajib dipilih.";
+    }
+
+    return "";
+}
+
+function isAdminAuthenticated(request: Request) {
+    const cookie = request.headers.get("Cookie") || "";
+
+    return cookie
+        .split(";")
+        .map((item) => item.trim())
+        .some((item) => item === "saranwak_admin_session=active");
+}
+
+function unauthorizedResponse() {
+    return json(
+        {
+            success: false,
+            message: "Unauthorized. Silakan login ulang.",
+        },
+        401
+    );
+}
+
+function cleanString(value: unknown) {
+    return String(value ?? "").trim();
+}
+
+function nullableString(value: unknown) {
+    const cleaned = cleanString(value);
+    return cleaned ? cleaned : null;
+}
+
+function nullableNumber(value: unknown) {
+    if (value === null || value === undefined || value === "") {
+        return null;
+    }
+
+    const number = Number(value);
+
+    if (Number.isNaN(number)) {
+        return null;
+    }
+
+    return number;
+}
+
+function toSqlBool(value: unknown) {
+    if (typeof value === "number") {
+        return value ? 1 : 0;
+    }
+
+    if (typeof value === "boolean") {
+        return value ? 1 : 0;
+    }
+
+    if (typeof value === "string") {
+        return ["true", "1", "yes", "on"].includes(value.toLowerCase()) ? 1 : 0;
+    }
+
+    return 0;
+}
+
+function generateSlug(value: string) {
+    return value
+        .toLowerCase()
+        .trim()
+        .replace(/&/g, "and")
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+}
+
+function json(body: JsonResponseBody, status = 200) {
     return Response.json(body, {
         status,
         headers: {
-            /**
-             * Error jangan di-cache.
-             */
             "Cache-Control": "no-store",
+            "X-Saranwak-Admin-Api": "places-no-store-v1",
         },
     });
 }

@@ -37,35 +37,47 @@ type TagRow = {
     type: string;
 };
 
+type ApiResponse = {
+    success: boolean;
+    data?: unknown;
+    message?: string;
+};
+
 export const onRequestGet: PagesFunction<Env> = async (context) => {
     try {
         const url = new URL(context.request.url);
 
         const search = url.searchParams.get("search")?.trim() ?? "";
         const featured = url.searchParams.get("featured");
-        const limit = Number(url.searchParams.get("limit") ?? "100");
+        const rawLimit = Number(url.searchParams.get("limit") ?? "100");
+
+        const safeLimit = Math.min(
+            Number.isFinite(rawLimit) && rawLimit > 0 ? rawLimit : 100,
+            100
+        );
 
         const conditions: string[] = ["p.is_active = 1"];
         const params: unknown[] = [];
 
         if (search) {
             conditions.push(
-                `(p.name LIKE ? 
-          OR p.description LIKE ? 
-          OR p.short_description LIKE ? 
-          OR p.area LIKE ? 
-          OR p.address LIKE ?)`
+                `(
+          p.name LIKE ?
+          OR p.description LIKE ?
+          OR p.short_description LIKE ?
+          OR p.area LIKE ?
+          OR p.address LIKE ?
+          OR c.name LIKE ?
+        )`
             );
 
             const keyword = `%${search}%`;
-            params.push(keyword, keyword, keyword, keyword, keyword);
+            params.push(keyword, keyword, keyword, keyword, keyword, keyword);
         }
 
         if (featured === "true") {
             conditions.push("p.is_featured = 1");
         }
-
-        const safeLimit = Number.isFinite(limit) && limit > 0 ? limit : 100;
 
         const placesQuery = `
       SELECT
@@ -96,7 +108,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       FROM places p
       LEFT JOIN categories c ON c.id = p.category_id
       WHERE ${conditions.join(" AND ")}
-      ORDER BY p.is_featured DESC, p.name ASC
+      ORDER BY p.is_featured DESC, p.created_at DESC
       LIMIT ?
     `;
 
@@ -110,54 +122,27 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         const places = placesResult.results ?? [];
 
         if (places.length === 0) {
-            return Response.json({
+            return publicJson({
                 success: true,
                 data: [],
             });
         }
 
         const placeIds = places.map((place) => place.id);
-        const placeholders = placeIds.map(() => "?").join(",");
-
-        const tagsResult = await context.env.DB
-            .prepare(
-                `
-        SELECT
-          pt.place_id,
-          t.id,
-          t.name,
-          t.slug,
-          t.type
-        FROM place_tags pt
-        INNER JOIN tags t ON t.id = pt.tag_id
-        WHERE pt.place_id IN (${placeholders})
-        ORDER BY t.type ASC, t.name ASC
-      `
-            )
-            .bind(...placeIds)
-            .all<TagRow>();
-
-        const tagsByPlaceId = new Map<string, Omit<TagRow, "place_id">[]>();
-
-        for (const tag of tagsResult.results ?? []) {
-            const existingTags = tagsByPlaceId.get(tag.place_id) ?? [];
-
-            existingTags.push({
-                id: tag.id,
-                name: tag.name,
-                slug: tag.slug,
-                type: tag.type,
-            });
-
-            tagsByPlaceId.set(tag.place_id, existingTags);
-        }
+        const tagsByPlaceId = await getTagsByPlaceId(context.env.DB, placeIds);
 
         const data = places.map((place) => {
             const tags = tagsByPlaceId.get(place.id) ?? [];
 
             return {
                 ...place,
-                tags,
+
+                is_featured: Boolean(place.is_featured),
+                is_active: Boolean(place.is_active),
+                is_published: Boolean(place.is_active),
+
+                maps_url: place.google_maps_url,
+
                 categories: place.category_id
                     ? {
                         id: place.category_id,
@@ -165,27 +150,119 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
                         slug: place.category_slug,
                     }
                     : null,
+
+                tags,
+
                 place_tags: tags.map((tag) => ({
                     place_id: place.id,
                     tag_id: tag.id,
                     tags: tag,
+                    tag,
                 })),
+
+                gallery: [],
+                galleries: [],
             };
         });
 
-        return Response.json({
+        return publicJson({
             success: true,
             data,
         });
     } catch (error) {
         console.error("GET /api/places error:", error);
 
-        return Response.json(
+        return errorJson(
             {
                 success: false,
                 message: "Failed to fetch places",
             },
-            { status: 500 }
+            500
         );
     }
 };
+
+export const onRequestHead: PagesFunction<Env> = async () => {
+    return new Response(null, {
+        status: 200,
+        headers: getPublicCacheHeaders(),
+    });
+};
+
+async function getTagsByPlaceId(db: D1Database, placeIds: string[]) {
+    const tagsByPlaceId = new Map<
+        string,
+        Array<{
+            id: string;
+            name: string;
+            slug: string;
+            type: string;
+        }>
+    >();
+
+    if (placeIds.length === 0) {
+        return tagsByPlaceId;
+    }
+
+    const placeholders = placeIds.map(() => "?").join(",");
+
+    const tagsResult = await db
+        .prepare(
+            `
+      SELECT
+        pt.place_id,
+        t.id,
+        t.name,
+        t.slug,
+        t.type
+      FROM place_tags pt
+      INNER JOIN tags t ON t.id = pt.tag_id
+      WHERE pt.place_id IN (${placeholders})
+      ORDER BY t.type ASC, t.name ASC
+    `
+        )
+        .bind(...placeIds)
+        .all<TagRow>();
+
+    for (const tag of tagsResult.results ?? []) {
+        const currentTags = tagsByPlaceId.get(tag.place_id) ?? [];
+
+        currentTags.push({
+            id: tag.id,
+            name: tag.name,
+            slug: tag.slug,
+            type: tag.type,
+        });
+
+        tagsByPlaceId.set(tag.place_id, currentTags);
+    }
+
+    return tagsByPlaceId;
+}
+
+function getPublicCacheHeaders() {
+    return {
+        "Cache-Control":
+            "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
+        "CDN-Cache-Control": "public, max-age=300",
+        "Cloudflare-CDN-Cache-Control": "public, max-age=300",
+        "X-Saranwak-Api-Version": "places-cache-v2",
+    };
+}
+
+function publicJson(body: ApiResponse, status = 200) {
+    return Response.json(body, {
+        status,
+        headers: getPublicCacheHeaders(),
+    });
+}
+
+function errorJson(body: ApiResponse, status = 500) {
+    return Response.json(body, {
+        status,
+        headers: {
+            "Cache-Control": "no-store",
+            "X-Saranwak-Api-Version": "places-cache-v2-error",
+        },
+    });
+}
