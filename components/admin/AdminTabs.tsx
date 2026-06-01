@@ -5,40 +5,37 @@ type AdminTabsProps = {
     onChange: (tab: AdminTab) => void;
 };
 
-const tabs: {
-    value: AdminTab;
-    label: string;
-}[] = [
-        {
-            value: "places",
-            label: "Kelola Tempat",
-        },
-        {
-            value: "analytics",
-            label: "Analytics",
-        },
-    ];
-
 export function AdminTabs({ activeTab, onChange }: AdminTabsProps) {
     return (
-        <div className="mb-6 flex w-full flex-col gap-2 rounded-[24px] border border-white/10 bg-white/[0.03] p-2 sm:w-fit sm:flex-row">
-            {tabs.map((tab) => {
-                const isActive = activeTab === tab.value;
+        <div className="mb-6 flex flex-wrap gap-2 rounded-[24px] border border-white/10 bg-white/[0.03] p-2">
+            <button
+                type="button"
+                onClick={() => onChange("places")}
+                className={[
+                    "rounded-2xl px-4 py-3 text-sm font-black transition",
+                    activeTab === "places"
+                        ? "bg-white text-black"
+                        : "text-neutral-400 hover:bg-white/[0.06] hover:text-white",
+                ].join(" ")}
+            >
+                Places
+            </button>
 
-                return (
-                    <button
-                        key={tab.value}
-                        type="button"
-                        onClick={() => onChange(tab.value)}
-                        className={`rounded-2xl px-5 py-3 text-sm font-black transition ${isActive
-                                ? "bg-white text-black"
-                                : "text-neutral-400 hover:bg-white/10 hover:text-white"
-                            }`}
-                    >
-                        {tab.label}
-                    </button>
-                );
-            })}
+            {/* Analytics hidden dulu sampai endpoint /api/admin/analytics siap */}
+            {/*
+      <button
+        type="button"
+        onClick={() => onChange("analytics")}
+        className={[
+          "rounded-2xl px-4 py-3 text-sm font-black transition",
+          activeTab === "analytics"
+            ? "bg-white text-black"
+            : "text-neutral-400 hover:bg-white/[0.06] hover:text-white",
+        ].join(" ")}
+      >
+        Analytics
+      </button>
+      */}
         </div>
     );
 }

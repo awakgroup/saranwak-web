@@ -71,7 +71,6 @@ type PlacePayload = {
     category_id?: string;
     description?: string | null;
     short_description?: string | null;
-    characteristics?: unknown;
     address?: string | null;
     area?: string | null;
     city?: string | null;
@@ -84,9 +83,9 @@ type PlacePayload = {
     price_min?: number | null;
     price_max?: number | null;
     opening_hours?: string | null;
-    is_featured?: boolean | number;
-    is_published?: boolean | number;
-    is_active?: boolean | number;
+    is_featured?: boolean | number | string;
+    is_published?: boolean | number | string;
+    is_active?: boolean | number | string;
     tag_ids?: string[];
     photo_urls?: string[];
 };
@@ -101,6 +100,10 @@ type JsonResponseBody = {
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
     try {
+        if (!isAdminAuthenticated(context.request)) {
+            return unauthorizedResponse();
+        }
+
         const [categoriesResult, tagsResult, placesResult, galleriesResult] =
             await Promise.all([
                 context.env.DB.prepare(
@@ -255,8 +258,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
     try {
-        const payload = await readJsonPayload(context.request);
+        if (!isAdminAuthenticated(context.request)) {
+            return unauthorizedResponse();
+        }
 
+        const payload = await readJsonPayload(context.request);
         const validationError = validatePayload(payload);
 
         if (validationError) {
@@ -278,36 +284,35 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         const isFeatured = toSqlBool(payload.is_featured);
         const isActive = toSqlBool(payload.is_published ?? payload.is_active ?? true);
 
-        await context.env.DB
-            .prepare(
-                `
-        INSERT INTO places (
-          id,
-          name,
-          slug,
-          description,
-          short_description,
-          category_id,
-          address,
-          area,
-          city,
-          price_min,
-          price_max,
-          price_range,
-          image_url,
-          instagram_url,
-          google_maps_url,
-          whatsapp_url,
-          website_url,
-          opening_hours,
-          is_featured,
-          is_active,
-          created_at,
-          updated_at
+        await context.env.DB.prepare(
+            `
+      INSERT INTO places (
+        id,
+        name,
+        slug,
+        description,
+        short_description,
+        category_id,
+        address,
+        area,
+        city,
+        price_min,
+        price_max,
+        price_range,
+        image_url,
+        instagram_url,
+        google_maps_url,
+        whatsapp_url,
+        website_url,
+        opening_hours,
+        is_featured,
+        is_active,
+        created_at,
+        updated_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `
-            )
             .bind(
                 id,
                 name,
@@ -335,12 +340,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
             .run();
 
         await replacePlaceTags(context.env.DB, id, payload.tag_ids ?? []);
-        await replaceGalleries(
-            context.env.DB,
-            id,
-            payload.photo_urls ?? [],
-            name
-        );
+        await replaceGalleries(context.env.DB, id, payload.photo_urls ?? [], name);
 
         return json({
             success: true,
@@ -362,8 +362,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
 export const onRequestPatch: PagesFunction<Env> = async (context) => {
     try {
-        const payload = await readJsonPayload(context.request);
+        if (!isAdminAuthenticated(context.request)) {
+            return unauthorizedResponse();
+        }
 
+        const payload = await readJsonPayload(context.request);
         const id = cleanString(payload.id);
 
         if (!id) {
@@ -388,14 +391,6 @@ export const onRequestPatch: PagesFunction<Env> = async (context) => {
             );
         }
 
-        const now = new Date().toISOString();
-
-        const name = cleanString(payload.name);
-        const slug = cleanString(payload.slug) || generateSlug(name);
-        const categoryId = cleanString(payload.category_id);
-        const isFeatured = toSqlBool(payload.is_featured);
-        const isActive = toSqlBool(payload.is_published ?? payload.is_active ?? true);
-
         const existing = await context.env.DB
             .prepare("SELECT id FROM places WHERE id = ?")
             .bind(id)
@@ -411,34 +406,41 @@ export const onRequestPatch: PagesFunction<Env> = async (context) => {
             );
         }
 
-        await context.env.DB
-            .prepare(
-                `
-        UPDATE places
-        SET
-          name = ?,
-          slug = ?,
-          description = ?,
-          short_description = ?,
-          category_id = ?,
-          address = ?,
-          area = ?,
-          city = ?,
-          price_min = ?,
-          price_max = ?,
-          price_range = ?,
-          image_url = ?,
-          instagram_url = ?,
-          google_maps_url = ?,
-          whatsapp_url = ?,
-          website_url = ?,
-          opening_hours = ?,
-          is_featured = ?,
-          is_active = ?,
-          updated_at = ?
-        WHERE id = ?
-      `
-            )
+        const now = new Date().toISOString();
+
+        const name = cleanString(payload.name);
+        const slug = cleanString(payload.slug) || generateSlug(name);
+        const categoryId = cleanString(payload.category_id);
+        const isFeatured = toSqlBool(payload.is_featured);
+        const isActive = toSqlBool(payload.is_published ?? payload.is_active ?? true);
+
+        await context.env.DB.prepare(
+            `
+      UPDATE places
+      SET
+        name = ?,
+        slug = ?,
+        description = ?,
+        short_description = ?,
+        category_id = ?,
+        address = ?,
+        area = ?,
+        city = ?,
+        price_min = ?,
+        price_max = ?,
+        price_range = ?,
+        image_url = ?,
+        instagram_url = ?,
+        google_maps_url = ?,
+        whatsapp_url = ?,
+        website_url = ?,
+        opening_hours = ?,
+        is_featured = ?,
+        is_active = ?,
+        updated_at = ?
+      WHERE id = ?
+    `
+        )
             .bind(
                 name,
                 slug,
@@ -465,12 +467,7 @@ export const onRequestPatch: PagesFunction<Env> = async (context) => {
             .run();
 
         await replacePlaceTags(context.env.DB, id, payload.tag_ids ?? []);
-        await replaceGalleries(
-            context.env.DB,
-            id,
-            payload.photo_urls ?? [],
-            name
-        );
+        await replaceGalleries(context.env.DB, id, payload.photo_urls ?? [], name);
 
         return json({
             success: true,
@@ -492,6 +489,10 @@ export const onRequestPatch: PagesFunction<Env> = async (context) => {
 
 export const onRequestDelete: PagesFunction<Env> = async (context) => {
     try {
+        if (!isAdminAuthenticated(context.request)) {
+            return unauthorizedResponse();
+        }
+
         const url = new URL(context.request.url);
         const id = cleanString(url.searchParams.get("id"));
 
@@ -520,18 +521,13 @@ export const onRequestDelete: PagesFunction<Env> = async (context) => {
             );
         }
 
-        /**
-         * Soft delete biar data tidak benar-benar hilang.
-         * Public API hanya baca is_active = 1.
-         */
-        await context.env.DB
-            .prepare(
-                `
-        UPDATE places
-        SET is_active = 0, updated_at = ?
-        WHERE id = ?
-      `
-            )
+        await context.env.DB.prepare(
+            `
+      UPDATE places
+      SET is_active = 0, updated_at = ?
+      WHERE id = ?
+    `
+        )
             .bind(new Date().toISOString(), id)
             .run();
 
@@ -562,22 +558,21 @@ async function getPlaceTagsByPlaceId(db: D1Database, placeIds: string[]) {
 
     const placeholders = placeIds.map(() => "?").join(",");
 
-    const result = await db
-        .prepare(
-            `
-      SELECT
-        pt.place_id,
-        pt.tag_id,
-        t.id,
-        t.name,
-        t.slug,
-        t.type
-      FROM place_tags pt
-      INNER JOIN tags t ON t.id = pt.tag_id
-      WHERE pt.place_id IN (${placeholders})
-      ORDER BY t.type ASC, t.name ASC
-    `
-        )
+    const result = await db.prepare(
+        `
+    SELECT
+      pt.place_id,
+      pt.tag_id,
+      t.id,
+      t.name,
+      t.slug,
+      t.type
+    FROM place_tags pt
+    INNER JOIN tags t ON t.id = pt.tag_id
+    WHERE pt.place_id IN (${placeholders})
+    ORDER BY t.type ASC, t.name ASC
+  `
+    )
         .bind(...placeIds)
         .all<PlaceTagRow>();
 
@@ -595,20 +590,21 @@ async function replacePlaceTags(
     placeId: string,
     tagIds: string[]
 ) {
-    await db.prepare("DELETE FROM place_tags WHERE place_id = ?").bind(placeId).run();
+    await db.prepare("DELETE FROM place_tags WHERE place_id = ?")
+        .bind(placeId)
+        .run();
 
     const uniqueTagIds = Array.from(
         new Set(tagIds.map((tagId) => cleanString(tagId)).filter(Boolean))
     );
 
     for (const tagId of uniqueTagIds) {
-        await db
-            .prepare(
-                `
-        INSERT OR IGNORE INTO place_tags (place_id, tag_id)
-        VALUES (?, ?)
-      `
-            )
+        await db.prepare(
+            `
+      INSERT OR IGNORE INTO place_tags (place_id, tag_id)
+      VALUES (?, ?)
+    `
+        )
             .bind(placeId, tagId)
             .run();
     }
@@ -620,26 +616,27 @@ async function replaceGalleries(
     photoUrls: string[],
     placeName: string
 ) {
-    await db.prepare("DELETE FROM galleries WHERE place_id = ?").bind(placeId).run();
+    await db.prepare("DELETE FROM galleries WHERE place_id = ?")
+        .bind(placeId)
+        .run();
 
     const urls = Array.from(
         new Set(photoUrls.map((url) => cleanString(url)).filter(Boolean))
     ).slice(0, 5);
 
     for (const [index, url] of urls.entries()) {
-        await db
-            .prepare(
-                `
-        INSERT INTO galleries (
-          id,
-          place_id,
-          image_url,
-          alt_text,
-          sort_order
+        await db.prepare(
+            `
+      INSERT INTO galleries (
+        id,
+        place_id,
+        image_url,
+        alt_text,
+        sort_order
+      )
+      VALUES (?, ?, ?, ?, ?)
+    `
         )
-        VALUES (?, ?, ?, ?, ?)
-      `
-            )
             .bind(
                 crypto.randomUUID(),
                 placeId,
@@ -683,6 +680,25 @@ function validatePayload(payload: PlacePayload) {
     }
 
     return "";
+}
+
+function isAdminAuthenticated(request: Request) {
+    const cookie = request.headers.get("Cookie") || "";
+
+    return cookie
+        .split(";")
+        .map((item) => item.trim())
+        .some((item) => item === "saranwak_admin_session=active");
+}
+
+function unauthorizedResponse() {
+    return json(
+        {
+            success: false,
+            message: "Unauthorized. Silakan login ulang.",
+        },
+        401
+    );
 }
 
 function cleanString(value: unknown) {

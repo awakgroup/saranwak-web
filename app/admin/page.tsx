@@ -10,8 +10,6 @@ import {
     type PlaceSortOption,
     type PlaceStatusFilter,
 } from "@/components/admin/PlaceListPanel";
-import { AnalyticsPanel } from "@/components/admin/AnalyticsPanel";
-
 import type {
     AdminPlace,
     AdminTab,
@@ -577,7 +575,7 @@ export default function AdminPage() {
         setErrorMessage("");
 
         const confirmed = window.confirm(
-            `Hapus "${place.name}"? Data ini akan hilang dari CMS dan website.`
+            `Hapus "${place.name}"? Data ini akan dinonaktifkan dari CMS dan website.`
         );
 
         if (!confirmed) return;
@@ -627,7 +625,7 @@ export default function AdminPage() {
                     <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-6 text-sm text-neutral-300 sm:rounded-[28px] sm:p-8">
                         Loading CMS...
                     </div>
-                ) : activeTab === "places" ? (
+                ) : (
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
                         <div className="min-w-0 space-y-5 sm:space-y-6">
                             <PlaceForm
@@ -674,8 +672,6 @@ export default function AdminPage() {
                             }}
                         />
                     </div>
-                ) : (
-                    <AnalyticsPanel />
                 )}
             </section>
 
