@@ -1,38 +1,41 @@
-import { promises as fs } from "fs";
-import path from "path";
 import Link from "next/link";
+
 import { PlaceCard } from "@/components/PlaceCard";
+import {
+    getFeaturedPlaces,
+    type ApiPlace,
+} from "@/lib/api/places";
 import type { Place } from "@/types/database";
 
-async function getRecommendedPlaces() {
+async function getRecommendedPlaces(): Promise<Place[]> {
     try {
-        const filePath = path.join(
-            process.cwd(),
-            "public",
-            "data",
-            "places.json"
-        );
+        const places = await getFeaturedPlaces(6);
 
-        const fileContent = await fs.readFile(filePath, "utf8");
-        const places = JSON.parse(fileContent) as Place[];
-
-        if (!Array.isArray(places)) {
-            return [];
-        }
-
-        return places
-            .filter((place) => place.is_published && place.is_featured)
-            .sort((a, b) => {
-                const dateA = new Date(a.created_at ?? 0).getTime();
-                const dateB = new Date(b.created_at ?? 0).getTime();
-
-                return dateB - dateA;
-            })
-            .slice(0, 6);
+        return places.map(mapApiPlaceToLegacyPlace);
     } catch (error) {
-        console.error("Recommended static places JSON read error:", error);
+        console.error("Recommended places D1 fetch error:", error);
         return [];
     }
+}
+
+function mapApiPlaceToLegacyPlace(place: ApiPlace): Place {
+    return {
+        ...place,
+
+        /**
+         * Adapter field lama.
+         * Komponen PlaceCard masih memakai format Place lama.
+         */
+        maps_url: place.google_maps_url,
+        is_published: Boolean(place.is_active),
+        is_featured: Boolean(place.is_featured),
+
+        /**
+         * Fallback supaya komponen lama tidak crash.
+         */
+        tags: [],
+        gallery: [],
+    } as unknown as Place;
 }
 
 const quickFilters = [
@@ -293,8 +296,8 @@ function FeaturedSection({ places }: { places: Place[] }) {
                     </h2>
 
                     <p className="mt-2 max-w-xl text-sm font-semibold leading-6 text-[#756A60]">
-                        Tempat pilihan dari data Saranwak yang sudah disiapkan untuk mode
-                        static.
+                        Tempat pilihan dari data Saranwak yang sudah tersimpan di Cloudflare
+                        D1.
                     </p>
                 </div>
 
@@ -313,8 +316,7 @@ function FeaturedSection({ places }: { places: Place[] }) {
                     </p>
 
                     <p className="mt-2 text-sm font-semibold leading-6 text-[#756A60]">
-                        Pastikan ada data dengan `is_featured: true` di
-                        `public/data/places.json`.
+                        Pastikan ada data aktif dengan status featured di database D1.
                     </p>
                 </div>
             ) : (

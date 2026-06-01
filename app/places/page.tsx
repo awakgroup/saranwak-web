@@ -1,11 +1,11 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { Suspense } from "react";
+
 import { PlacesClientPage } from "@/components/PlacesClientPage";
+import { getPlaces as getPlacesFromApi, type ApiPlace } from "@/lib/api/places";
 import type { Place } from "@/types/database";
 
 export default async function PlacesPage() {
-    const places = await getPlaces();
+    const places = await getPublishedPlaces();
 
     return (
         <Suspense fallback={<PlacesLoading />}>
@@ -14,27 +14,37 @@ export default async function PlacesPage() {
     );
 }
 
-async function getPlaces() {
+async function getPublishedPlaces(): Promise<Place[]> {
     try {
-        const filePath = path.join(
-            process.cwd(),
-            "public",
-            "data",
-            "places.json"
-        );
+        const places = await getPlacesFromApi({
+            limit: 100,
+        });
 
-        const fileContent = await fs.readFile(filePath, "utf8");
-        const places = JSON.parse(fileContent) as Place[];
-
-        if (!Array.isArray(places)) {
-            return [];
-        }
-
-        return places.filter((place) => place.is_published);
+        return places.map(mapApiPlaceToLegacyPlace);
     } catch (error) {
-        console.error("Static places JSON read error:", error);
+        console.error("Places D1 fetch error:", error);
         return [];
     }
+}
+
+function mapApiPlaceToLegacyPlace(place: ApiPlace): Place {
+    return {
+        ...place,
+
+        /**
+         * Adapter field lama.
+         * Komponen existing Saranwak masih banyak pakai nama lama.
+         */
+        maps_url: place.google_maps_url,
+        is_published: Boolean(place.is_active),
+        is_featured: Boolean(place.is_featured),
+
+        /**
+         * Fallback supaya komponen lama tidak crash.
+         */
+        tags: [],
+        gallery: [],
+    } as unknown as Place;
 }
 
 function PlacesLoading() {

@@ -9,6 +9,14 @@ import { PlaceCard } from "@/components/PlaceCard";
 import { PlaceDetailTracker } from "@/components/PlaceDetailTracker";
 import { TrackedExternalLink } from "@/components/TrackedExternalLink";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
+import {
+    getPlaceBySlug as getPlaceBySlugFromApi,
+    getPlaces as getPlacesFromApi,
+    type ApiGallery,
+    type ApiPlace,
+    type ApiPlaceDetail,
+    type ApiTag,
+} from "@/lib/api/places";
 import type { Place } from "@/types/database";
 
 export const revalidate = 3600;
@@ -81,10 +89,10 @@ type PlaceDetailPageProps = {
 };
 
 export async function generateStaticParams() {
-    const places = await getPlacesFromJson();
+    const slugs = await getStaticPlaceSlugs();
 
-    return places.map((place) => ({
-        slug: place.slug,
+    return slugs.map((slug) => ({
+        slug,
     }));
 }
 
@@ -810,6 +818,30 @@ function MobileStickyActions({
     );
 }
 
+async function getStaticPlaceSlugs() {
+    try {
+        const places = await getPlacesFromApi({
+            limit: 500,
+        });
+
+        const slugs = places
+            .map((place) => place.slug)
+            .filter((slug): slug is string => Boolean(slug));
+
+        if (slugs.length > 0) {
+            return slugs;
+        }
+    } catch (error) {
+        console.error("Static params D1 fetch error:", error);
+    }
+
+    const fallbackPlaces = await getPlacesFromJson();
+
+    return fallbackPlaces
+        .map((place) => place.slug)
+        .filter((slug): slug is string => Boolean(slug));
+}
+
 async function getPlacesFromJson() {
     try {
         const filePath = path.join(
@@ -822,19 +854,33 @@ async function getPlacesFromJson() {
         const fileContent = await fs.readFile(filePath, "utf8");
         const places = JSON.parse(fileContent) as PlaceDetail[];
 
-        return places.filter((place) => place.is_published);
+        if (!Array.isArray(places)) {
+            return [];
+        }
+
+        return places.filter((place) => place.is_published !== false);
     } catch (error) {
         console.error("Static detail places JSON read error:", error);
         return [];
     }
 }
 
-async function getPlaceBySlug(slug: string) {
+async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> {
+    try {
+        const place = await getPlaceBySlugFromApi(slug);
+
+        if (place) {
+            return mapApiPlaceDetailToPlaceDetail(place);
+        }
+    } catch (error) {
+        console.error("Place detail D1 fetch error:", error);
+    }
+
     const places = await getPlacesFromJson();
 
     return (
         places.find(
-            (place) => place.slug === slug && place.is_published
+            (place) => place.slug === slug && place.is_published !== false
         ) ?? null
     );
 }
@@ -848,6 +894,48 @@ async function getRelatedPlaces({
     categorySlug?: string | null;
     area?: string | null;
 }) {
+    try {
+        const apiPlaces = await getPlacesFromApi({
+            limit: 100,
+        });
+
+        const relatedPlaces = apiPlaces
+            .filter((place) => place.id !== currentPlaceId)
+            .filter((place) => {
+                if (!categorySlug) return true;
+
+                return (place.category_slug || "coffee-shop") === categorySlug;
+            })
+            .sort((a, b) => {
+                const aSameArea = normalizeText(a.area) === normalizeText(area);
+                const bSameArea = normalizeText(b.area) === normalizeText(area);
+
+                if (aSameArea !== bSameArea) {
+                    return aSameArea ? -1 : 1;
+                }
+
+                const aFeatured = Boolean(a.is_featured);
+                const bFeatured = Boolean(b.is_featured);
+
+                if (aFeatured !== bFeatured) {
+                    return aFeatured ? -1 : 1;
+                }
+
+                const dateA = new Date(a.created_at ?? 0).getTime();
+                const dateB = new Date(b.created_at ?? 0).getTime();
+
+                return dateB - dateA;
+            })
+            .slice(0, 6)
+            .map(mapApiPlaceToLegacyPlace);
+
+        if (relatedPlaces.length > 0) {
+            return relatedPlaces;
+        }
+    } catch (error) {
+        console.error("Related places D1 fetch error:", error);
+    }
+
     const places = await getPlacesFromJson();
 
     const relatedPlaces = places
@@ -882,6 +970,90 @@ async function getRelatedPlaces({
         .slice(0, 6);
 
     return relatedPlaces as unknown as Place[];
+}
+
+function mapApiPlaceDetailToPlaceDetail(place: ApiPlaceDetail): PlaceDetail {
+    const category = makeCategoryFromApiPlace(place);
+
+    return {
+        id: place.id,
+        name: place.name,
+        slug: place.slug,
+        description: place.description,
+        short_description: place.short_description,
+        characteristics: null,
+        address: place.address,
+        area: place.area,
+        city: place.city,
+        image_url: place.image_url,
+        google_maps_url: place.google_maps_url,
+        instagram_url: place.instagram_url,
+        price_range: place.price_range,
+        price_min: place.price_min,
+        price_max: place.price_max,
+        opening_hours: place.opening_hours,
+        is_featured: Boolean(place.is_featured),
+        is_verified: null,
+        is_published: Boolean(place.is_active),
+        created_at: place.created_at,
+        updated_at: place.updated_at,
+        categories: category,
+        place_tags: mapApiTagsToPlaceTags(place.tags ?? []),
+        place_photos: mapApiGalleriesToPlacePhotos(place.galleries ?? []),
+    };
+}
+
+function mapApiPlaceToLegacyPlace(place: ApiPlace): Place {
+    const category = makeCategoryFromApiPlace(place);
+
+    return {
+        ...place,
+        maps_url: place.google_maps_url,
+        is_published: Boolean(place.is_active),
+        is_featured: Boolean(place.is_featured),
+        categories: category,
+        place_tags: [],
+        place_photos: [],
+        tags: [],
+        gallery: [],
+    } as unknown as Place;
+}
+
+function makeCategoryFromApiPlace(place: ApiPlace | ApiPlaceDetail): Category | null {
+    if (!place.category_id && !place.category_name && !place.category_slug) {
+        return {
+            id: "cat_coffee_shop",
+            name: "Coffee Shop",
+            slug: "coffee-shop",
+        };
+    }
+
+    return {
+        id: place.category_id || place.category_slug || "cat_coffee_shop",
+        name: place.category_name || "Coffee Shop",
+        slug: place.category_slug || "coffee-shop",
+    };
+}
+
+function mapApiTagsToPlaceTags(tags: ApiTag[]): PlaceTagRelation[] {
+    return tags.map((tag) => ({
+        tag_id: tag.id,
+        tags: {
+            id: tag.id,
+            name: tag.name,
+            slug: tag.slug,
+            type: tag.type,
+        },
+    }));
+}
+
+function mapApiGalleriesToPlacePhotos(galleries: ApiGallery[]): PlacePhoto[] {
+    return galleries.map((gallery, index) => ({
+        id: gallery.id,
+        image_url: gallery.image_url,
+        caption: gallery.alt_text,
+        sort_order: gallery.sort_order ?? index + 1,
+    }));
 }
 
 function getSingleCategory(category: Category | Category[] | null) {
