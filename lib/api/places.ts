@@ -20,6 +20,12 @@ export type ApiGallery = {
     sort_order: number;
 };
 
+export type ApiPlaceTag = {
+    place_id: string;
+    tag_id: string;
+    tags: ApiTag;
+};
+
 export type ApiPlace = {
     id: string;
     name: string;
@@ -48,11 +54,7 @@ export type ApiPlace = {
 
     tags?: ApiTag[];
     categories?: ApiCategory | null;
-    place_tags?: Array<{
-        place_id: string;
-        tag_id: string;
-        tags: ApiTag;
-    }>;
+    place_tags?: ApiPlaceTag[];
 };
 
 export type ApiPlaceDetail = ApiPlace & {
@@ -78,9 +80,17 @@ export async function getPlaces(params?: {
 }) {
     const searchParams = new URLSearchParams();
 
-    if (params?.search) searchParams.set("search", params.search);
-    if (params?.featured) searchParams.set("featured", "true");
-    if (params?.limit) searchParams.set("limit", String(params.limit));
+    if (params?.search) {
+        searchParams.set("search", params.search);
+    }
+
+    if (params?.featured) {
+        searchParams.set("featured", "true");
+    }
+
+    if (params?.limit) {
+        searchParams.set("limit", String(params.limit));
+    }
 
     const queryString = searchParams.toString();
 
@@ -128,13 +138,27 @@ export async function getPlaceBySlug(slug: string) {
 export function mapApiPlaceToLegacyPlace(place: ApiPlace): Place {
     const tags = place.tags ?? [];
 
+    const placeTags =
+        place.place_tags ??
+        tags.map((tag) => ({
+            place_id: place.id,
+            tag_id: tag.id,
+            tags: tag,
+        }));
+
     return {
         ...place,
 
+        /**
+         * Adapter field lama dari schema JSON/Supabase sebelumnya.
+         */
         maps_url: place.google_maps_url,
         is_published: Boolean(place.is_active),
         is_featured: Boolean(place.is_featured),
 
+        /**
+         * Adapter kategori.
+         */
         categories:
             place.categories ??
             (place.category_id
@@ -145,16 +169,29 @@ export function mapApiPlaceToLegacyPlace(place: ApiPlace): Place {
                 }
                 : null),
 
+        /**
+         * Format tag langsung.
+         * Dipakai kalau filter membaca: place.tags[].slug
+         */
         tags,
 
-        place_tags:
-            place.place_tags ??
-            tags.map((tag) => ({
-                place_id: place.id,
-                tag_id: tag.id,
-                tags: tag,
-            })),
+        /**
+         * Format relasi tag.
+         * Support dua kemungkinan:
+         * - place_tags[].tags.slug
+         * - place_tags[].tag.slug
+         *
+         * Ini sengaja dibuat dobel supaya komponen lama tetap aman.
+         */
+        place_tags: placeTags.map((item) => ({
+            ...item,
+            tags: item.tags,
+            tag: item.tags,
+        })),
 
+        /**
+         * Fallback gallery agar komponen lama tidak crash.
+         */
         gallery: [],
         galleries: [],
     } as unknown as Place;
