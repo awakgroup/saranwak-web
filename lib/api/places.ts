@@ -1,3 +1,25 @@
+import type { Place } from "@/types/database";
+
+export type ApiTag = {
+    id: string;
+    name: string;
+    slug: string;
+    type: string;
+};
+
+export type ApiCategory = {
+    id: string;
+    name: string | null;
+    slug: string | null;
+};
+
+export type ApiGallery = {
+    id: string;
+    image_url: string;
+    alt_text: string | null;
+    sort_order: number;
+};
+
 export type ApiPlace = {
     id: string;
     name: string;
@@ -23,25 +45,18 @@ export type ApiPlace = {
     updated_at: string;
     category_name: string | null;
     category_slug: string | null;
-};
 
-export type ApiTag = {
-    id: string;
-    name: string;
-    slug: string;
-    type: string;
-};
-
-export type ApiGallery = {
-    id: string;
-    image_url: string;
-    alt_text: string | null;
-    sort_order: number;
+    tags?: ApiTag[];
+    categories?: ApiCategory | null;
+    place_tags?: Array<{
+        place_id: string;
+        tag_id: string;
+        tags: ApiTag;
+    }>;
 };
 
 export type ApiPlaceDetail = ApiPlace & {
-    tags: ApiTag[];
-    galleries: ApiGallery[];
+    galleries?: ApiGallery[];
 };
 
 type ApiResponse<T> = {
@@ -108,4 +123,39 @@ export async function getPlaceBySlug(slug: string) {
     const json = (await response.json()) as ApiResponse<ApiPlaceDetail>;
 
     return json.data;
+}
+
+export function mapApiPlaceToLegacyPlace(place: ApiPlace): Place {
+    const tags = place.tags ?? [];
+
+    return {
+        ...place,
+
+        maps_url: place.google_maps_url,
+        is_published: Boolean(place.is_active),
+        is_featured: Boolean(place.is_featured),
+
+        categories:
+            place.categories ??
+            (place.category_id
+                ? {
+                    id: place.category_id,
+                    name: place.category_name,
+                    slug: place.category_slug,
+                }
+                : null),
+
+        tags,
+
+        place_tags:
+            place.place_tags ??
+            tags.map((tag) => ({
+                place_id: place.id,
+                tag_id: tag.id,
+                tags: tag,
+            })),
+
+        gallery: [],
+        galleries: [],
+    } as unknown as Place;
 }

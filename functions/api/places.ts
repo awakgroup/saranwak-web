@@ -29,6 +29,14 @@ type PlaceRow = {
     category_slug: string | null;
 };
 
+type TagRow = {
+    place_id: string;
+    id: string;
+    name: string;
+    slug: string;
+    type: string;
+};
+
 export const onRequestGet: PagesFunction<Env> = async (context) => {
     try {
         const url = new URL(context.request.url);
@@ -59,7 +67,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
         const safeLimit = Number.isFinite(limit) && limit > 0 ? limit : 100;
 
-        const query = `
+        const placesQuery = `
       SELECT
         p.id,
         p.name,
@@ -94,14 +102,80 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
         params.push(safeLimit);
 
-        const result = await context.env.DB
-            .prepare(query)
+        const placesResult = await context.env.DB
+            .prepare(placesQuery)
             .bind(...params)
             .all<PlaceRow>();
 
+        const places = placesResult.results ?? [];
+
+        if (places.length === 0) {
+            return Response.json({
+                success: true,
+                data: [],
+            });
+        }
+
+        const placeIds = places.map((place) => place.id);
+        const placeholders = placeIds.map(() => "?").join(",");
+
+        const tagsResult = await context.env.DB
+            .prepare(
+                `
+        SELECT
+          pt.place_id,
+          t.id,
+          t.name,
+          t.slug,
+          t.type
+        FROM place_tags pt
+        INNER JOIN tags t ON t.id = pt.tag_id
+        WHERE pt.place_id IN (${placeholders})
+        ORDER BY t.type ASC, t.name ASC
+      `
+            )
+            .bind(...placeIds)
+            .all<TagRow>();
+
+        const tagsByPlaceId = new Map<string, Omit<TagRow, "place_id">[]>();
+
+        for (const tag of tagsResult.results ?? []) {
+            const existingTags = tagsByPlaceId.get(tag.place_id) ?? [];
+
+            existingTags.push({
+                id: tag.id,
+                name: tag.name,
+                slug: tag.slug,
+                type: tag.type,
+            });
+
+            tagsByPlaceId.set(tag.place_id, existingTags);
+        }
+
+        const data = places.map((place) => {
+            const tags = tagsByPlaceId.get(place.id) ?? [];
+
+            return {
+                ...place,
+                tags,
+                categories: place.category_id
+                    ? {
+                        id: place.category_id,
+                        name: place.category_name,
+                        slug: place.category_slug,
+                    }
+                    : null,
+                place_tags: tags.map((tag) => ({
+                    place_id: place.id,
+                    tag_id: tag.id,
+                    tags: tag,
+                })),
+            };
+        });
+
         return Response.json({
             success: true,
-            data: result.results ?? [],
+            data,
         });
     } catch (error) {
         console.error("GET /api/places error:", error);

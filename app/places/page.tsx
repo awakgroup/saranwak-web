@@ -1,7 +1,10 @@
 import { Suspense } from "react";
 
 import { PlacesClientPage } from "@/components/PlacesClientPage";
-import { getPlaces as getPlacesFromApi, type ApiPlace } from "@/lib/api/places";
+import {
+    getPlaces as getPlacesFromApi,
+    mapApiPlaceToLegacyPlace,
+} from "@/lib/api/places";
 import type { Place } from "@/types/database";
 
 export default async function PlacesPage() {
@@ -25,26 +28,6 @@ async function getPublishedPlaces(): Promise<Place[]> {
         console.error("Places D1 fetch error:", error);
         return [];
     }
-}
-
-function mapApiPlaceToLegacyPlace(place: ApiPlace): Place {
-    return {
-        ...place,
-
-        /**
-         * Adapter field lama.
-         * Komponen existing Saranwak masih banyak pakai nama lama.
-         */
-        maps_url: place.google_maps_url,
-        is_published: Boolean(place.is_active),
-        is_featured: Boolean(place.is_featured),
-
-        /**
-         * Fallback supaya komponen lama tidak crash.
-         */
-        tags: [],
-        gallery: [],
-    } as unknown as Place;
 }
 
 function PlacesLoading() {
