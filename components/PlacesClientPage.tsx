@@ -25,15 +25,32 @@ type PageParams = {
 };
 
 type TagItem = {
-    id: string;
-    name: string;
-    slug: string;
+    id?: string | null;
+    name?: string | null;
+    slug?: string | null;
     type?: string | null;
 };
 
 type PlaceTagItem = {
     tag_id?: string | null;
+    tag?: TagItem | TagItem[] | null;
     tags?: TagItem | TagItem[] | null;
+};
+
+type PlaceWithFlexibleTags = Place & {
+    tags?: TagItem[] | string[] | null;
+    place_tags?: PlaceTagItem[] | null;
+    categories?:
+    | {
+        id?: string | null;
+        name?: string | null;
+        slug?: string | null;
+    }
+    | string
+    | null;
+    category_id?: string | null;
+    category_name?: string | null;
+    category_slug?: string | null;
 };
 
 export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
@@ -114,7 +131,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                         <div className="grid grid-cols-3 gap-2 lg:min-w-[360px]">
                             <MiniStat value={places.length} label="Ditemukan" />
                             <MiniStat value={activeFilterCount} label="Filter" />
-                            <MiniStat value="Static" label="Mode" />
+                            <MiniStat value="D1" label="Mode" />
                         </div>
                     </div>
 
@@ -207,8 +224,8 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
 
                             <p className="max-w-md text-sm font-semibold leading-6 text-[#756A60]">
                                 {hasFilter
-                                    ? "Hasil sudah mengikuti filter aktif dan diolah langsung dari data static."
-                                    : "Menampilkan semua coffee shop published dari data static Saranwak."}
+                                    ? "Hasil sudah mengikuti filter aktif dari data Cloudflare D1."
+                                    : "Menampilkan semua coffee shop aktif dari database Saranwak."}
                             </p>
                         </div>
 
@@ -233,13 +250,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     );
 }
 
-function MiniStat({
-    value,
-    label,
-}: {
-    value: number | string;
-    label: string;
-}) {
+function MiniStat({ value, label }: { value: number | string; label: string }) {
     return (
         <div className="rounded-[22px] border border-white/10 bg-white/[0.07] px-3 py-4 text-center">
             <p className="text-xl font-black tracking-[-0.04em] text-white sm:text-2xl">
@@ -424,11 +435,7 @@ function getSelectedTags(params: PageParams) {
     ];
 
     return Array.from(
-        new Set(
-            tags
-                .map((item) => item.trim())
-                .filter(Boolean)
-        )
+        new Set(tags.map((item) => normalizeSlug(item)).filter(Boolean))
     );
 }
 
@@ -470,17 +477,17 @@ function matchArea(place: Place, area?: string) {
 
     return [place.area, place.city]
         .filter(Boolean)
-        .some((item) => normalizeText(item).includes(normalizedArea));
+        .some((item) => normalizeText(String(item)).includes(normalizedArea));
 }
 
 function matchCategory(place: Place, category?: string) {
     if (!category) return true;
 
-    const normalizedCategory = normalizeText(category);
+    const normalizedCategory = normalizeSlug(category);
 
     return [getCategorySlug(place), getCategoryName(place)]
         .filter(Boolean)
-        .some((item) => normalizeText(item).includes(normalizedCategory));
+        .some((item) => normalizeSlug(String(item)).includes(normalizedCategory));
 }
 
 function matchAllSelectedTags(place: Place, selectedTags: string[]) {
@@ -499,9 +506,7 @@ function getPlaceTagKeys(place: Place) {
     return placeTags.flatMap((tag) => {
         const keys = [tag.id, tag.slug, tag.name, tag.type];
 
-        return keys
-            .filter(Boolean)
-            .map((item) => normalizeSlug(String(item)));
+        return keys.filter(Boolean).map((item) => normalizeSlug(String(item)));
     });
 }
 
@@ -541,112 +546,190 @@ function rangeOverlaps(
 }
 
 function getPlaceTags(place: Place): TagItem[] {
-    const placeTags = (place.place_tags ?? []) as PlaceTagItem[];
+    const flexiblePlace = place as PlaceWithFlexibleTags;
+    const result: TagItem[] = [];
 
-    return placeTags
-        .flatMap((item) => {
-            if (!item.tags) return [];
+    const directTags = flexiblePlace.tags ?? [];
 
-            if (Array.isArray(item.tags)) {
-                return item.tags;
-            }
+    for (const tag of directTags) {
+        if (typeof tag === "string") {
+            result.push({
+                id: tag,
+                name: tag,
+                slug: tag,
+            });
+        } else if (tag) {
+            result.push(tag);
+        }
+    }
 
-            return [item.tags];
-        })
-        .filter((tag): tag is TagItem => {
-            return Boolean(tag && (tag.slug || tag.name || tag.id));
-        });
+    const relationalTags = flexiblePlace.place_tags ?? [];
+
+    for (const relation of relationalTags) {
+        const maybeTags = relation.tags ?? relation.tag;
+
+        if (Array.isArray(maybeTags)) {
+            maybeTags.forEach((tag) => {
+                if (tag) result.push(tag);
+            });
+        } else if (maybeTags) {
+            result.push(maybeTags);
+        }
+
+        if (relation.tag_id) {
+            result.push({
+                id: relation.tag_id,
+                slug: relation.tag_id,
+                name: relation.tag_id,
+            });
+        }
+    }
+
+    return dedupeTags(result);
+}
+
+function dedupeTags(tags: TagItem[]) {
+    const map = new Map<string, TagItem>();
+
+    for (const tag of tags) {
+        const key = normalizeSlug(
+            String(tag.slug || tag.id || tag.name || Math.random())
+        );
+
+        if (!map.has(key)) {
+            map.set(key, tag);
+        }
+    }
+
+    return Array.from(map.values());
 }
 
 function getCategorySlug(place: Place) {
-    const categories = place.categories;
+    const flexiblePlace = place as PlaceWithFlexibleTags;
 
-    if (Array.isArray(categories)) {
-        return categories[0]?.slug || "";
+    if (typeof flexiblePlace.categories === "string") {
+        return flexiblePlace.categories;
     }
 
-    return categories?.slug || "";
+    return (
+        flexiblePlace.categories?.slug ||
+        flexiblePlace.category_slug ||
+        flexiblePlace.category_id ||
+        ""
+    );
 }
 
 function getCategoryName(place: Place) {
-    const categories = place.categories;
+    const flexiblePlace = place as PlaceWithFlexibleTags;
 
-    if (Array.isArray(categories)) {
-        return categories[0]?.name || "";
+    if (typeof flexiblePlace.categories === "string") {
+        return flexiblePlace.categories;
     }
 
-    return categories?.name || "";
-}
-
-function makeTitle(params: PageParams) {
-    if (params.q) {
-        return `Hasil pencarian “${params.q}”`;
-    }
-
-    if (params.area) {
-        return `Coffee shop di ${params.area}`;
-    }
-
-    return "Cari coffee shop yang paling pas di Padang";
-}
-
-function makeDescription(params: PageParams) {
-    if (params.q) {
-        return "Saranwak menampilkan tempat yang cocok berdasarkan keyword, aktivitas, fasilitas, vibes, dan budget yang kamu pilih.";
-    }
-
-    if (params.area) {
-        return `Rekomendasi coffee shop di area ${params.area}, lengkap dengan filter budget, fasilitas, dan vibes.`;
-    }
-
-    return "Pilih coffee shop berdasarkan aktivitas, fasilitas, vibes, dan budget.";
+    return flexiblePlace.categories?.name || flexiblePlace.category_name || "";
 }
 
 function buildTagHref(params: PageParams, tag: string) {
     const selectedTags = getSelectedTags(params);
-    const isActive = selectedTags.includes(tag);
+    const normalizedTag = normalizeSlug(tag);
 
-    const nextTags = isActive
-        ? selectedTags.filter((item) => item !== tag)
-        : [...selectedTags, tag];
+    const nextTags = selectedTags.includes(normalizedTag)
+        ? selectedTags.filter((item) => item !== normalizedTag)
+        : [...selectedTags, normalizedTag];
 
     return buildFilterHref(params, {
-        tags: nextTags.join(","),
+        tags: nextTags.length > 0 ? nextTags.join(",") : undefined,
+        tag: undefined,
     });
 }
 
-function buildFilterHref(
-    params: PageParams,
-    updates: Partial<PageParams & { price: PriceFilterValue }>
-) {
-    const nextParams = new URLSearchParams();
+function buildFilterHref(params: PageParams, updates: Partial<PageParams>) {
+    const searchParams = new URLSearchParams();
 
-    const mergedParams: PageParams = {
+    const nextParams: PageParams = {
         ...params,
         ...updates,
     };
 
-    if (mergedParams.q) nextParams.set("q", mergedParams.q);
-    if (mergedParams.area) nextParams.set("area", mergedParams.area);
-    if (mergedParams.category) nextParams.set("category", mergedParams.category);
+    if (nextParams.q) searchParams.set("q", nextParams.q);
+    if (nextParams.area) searchParams.set("area", nextParams.area);
+    if (nextParams.category) searchParams.set("category", nextParams.category);
 
-    if (mergedParams.tags) {
-        nextParams.set("tags", mergedParams.tags);
+    if (nextParams.tags) {
+        searchParams.set("tags", nextParams.tags);
     }
 
-    if (mergedParams.price && mergedParams.price !== "all") {
-        nextParams.set("price", mergedParams.price);
+    if (nextParams.tag) {
+        searchParams.set("tag", nextParams.tag);
     }
 
-    const query = nextParams.toString();
+    if (nextParams.price && nextParams.price !== "all") {
+        searchParams.set("price", nextParams.price);
+    }
 
-    return query ? `/places/?${query}` : "/places/";
+    const queryString = searchParams.toString();
+
+    return `/places/${queryString ? `?${queryString}` : ""}`;
+}
+
+function getTagLabel(tag: string) {
+    const normalizedTag = normalizeSlug(tag);
+
+    for (const group of placeFilterGroups) {
+        const option = group.options.find(
+            (item) => normalizeSlug(item.tag) === normalizedTag
+        );
+
+        if (option) {
+            return option.label;
+        }
+    }
+
+    return tag
+        .split("-")
+        .filter(Boolean)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+}
+
+function makeTitle(params: PageParams) {
+    const selectedTags = getSelectedTags(params);
+
+    if (params.q) {
+        return `Hasil untuk "${params.q}"`;
+    }
+
+    if (selectedTags.length > 0) {
+        return `${getTagLabel(selectedTags[0])} di Padang`;
+    }
+
+    if (params.area) {
+        return `Coffee Shop di ${params.area}`;
+    }
+
+    return "Explore Coffee Shop Padang";
+}
+
+function makeDescription(params: PageParams) {
+    const selectedTags = getSelectedTags(params);
+
+    if (params.q) {
+        return "Temukan coffee shop yang paling cocok dari hasil pencarian kamu.";
+    }
+
+    if (selectedTags.length > 0) {
+        return "Rekomendasi tempat berdasarkan aktivitas, fasilitas, vibes, dan kebutuhan kamu.";
+    }
+
+    if (params.area) {
+        return "Cari tempat ngopi berdasarkan area favorit kamu di Padang.";
+    }
+
+    return "Jelajahi coffee shop di Padang berdasarkan kebutuhan, budget, dan suasana.";
 }
 
 function normalizeText(value?: string | null) {
-    return String(value ?? "")
-        .toLowerCase()
-        .trim();
+    return normalizeSlug(value);
 }
 
 function normalizeSlug(value?: string | null) {
@@ -654,17 +737,8 @@ function normalizeSlug(value?: string | null) {
         .toLowerCase()
         .trim()
         .replace(/_/g, "-")
-        .replace(/\s+/g, "-");
-}
-
-function getTagLabel(tag: string) {
-    for (const group of placeFilterGroups) {
-        const option = group.options.find((item) => item.tag === tag);
-
-        if (option) {
-            return option.label;
-        }
-    }
-
-    return tag;
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
 }
