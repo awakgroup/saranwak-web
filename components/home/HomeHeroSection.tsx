@@ -34,10 +34,54 @@ export function HomeHeroSection() {
 
 function HeroBackground() {
     return (
-        <>
-            <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_12%,#C8784A22,transparent_34%),radial-gradient(circle_at_88%_18%,#1F5A4A1F,transparent_30%)]" />
-            <div className="absolute left-0 top-0 -z-10 h-full w-full bg-[linear-gradient(180deg,#FFF8EF00,#F4F1EA_88%)]" />
-        </>
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+            {/* Ambient Warm Coffee & Forest Gradients */}
+            <div className="absolute -left-24 -top-24 h-[560px] w-[560px] rounded-full bg-[#E59B63]/25 blur-[120px]" />
+            <div className="absolute right-[-100px] top-4 h-[520px] w-[520px] rounded-full bg-[#1F5A4A]/15 blur-[130px]" />
+            <div className="absolute left-1/3 top-1/4 h-[400px] w-[400px] rounded-full bg-[#FCE8D3]/35 blur-[100px]" />
+
+            {/* Subtle Contour & Topographic Lines */}
+            <svg
+                className="absolute inset-0 h-full w-full opacity-[0.065]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+            >
+                <path
+                    d="M-100 130 C 200 50, 520 250, 920 110 C 1220 10, 1520 190, 1850 90"
+                    stroke="#201813"
+                    strokeWidth="1.5"
+                />
+                <path
+                    d="M-100 230 C 220 150, 500 350, 940 210 C 1240 110, 1500 290, 1850 190"
+                    stroke="#201813"
+                    strokeWidth="1.5"
+                    strokeDasharray="6 6"
+                />
+                <path
+                    d="M-100 330 C 180 250, 540 450, 900 310 C 1200 210, 1540 390, 1850 290"
+                    stroke="#201813"
+                    strokeWidth="1.5"
+                />
+                <circle cx="82%" cy="32%" r="190" stroke="#201813" strokeWidth="1" strokeDasharray="4 8" />
+                <circle cx="82%" cy="32%" r="260" stroke="#201813" strokeWidth="0.75" />
+            </svg>
+
+            {/* Fine Paper Noise Grain Overlay */}
+            <div
+                className="absolute inset-0 opacity-[0.035] mix-blend-multiply"
+                style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                }}
+            />
+
+            {/* Subtle Editorial Coordinates stamp */}
+            <div className="absolute right-8 top-6 hidden font-mono text-[10px] font-bold tracking-[0.28em] text-[#201813]/25 sm:block">
+                PADANG, WEST SUMATRA • 0°57′S 100°21′E
+            </div>
+
+            {/* Seamless Bottom Gradient Fade into #F4F1EA */}
+            <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-b from-transparent via-[#F4F1EA]/40 to-[#F4F1EA]" />
+        </div>
     );
 }
 

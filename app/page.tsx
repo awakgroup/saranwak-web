@@ -95,14 +95,19 @@ function SectionBlock({
 
 function HomeBackground() {
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-      <div className="absolute left-[-160px] top-[-140px] h-[360px] w-[360px] rounded-full bg-[#E8B86D]/25 blur-3xl" />
-      <div className="absolute right-[-180px] top-[220px] h-[420px] w-[420px] rounded-full bg-[#C47A3B]/15 blur-3xl" />
-      <div className="absolute bottom-[260px] left-1/2 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-[#F6D7A7]/20 blur-3xl" />
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+      {/* Mid-page ambient warmth for Featured Places & Promos */}
+      <div className="absolute left-[-160px] top-[750px] h-[500px] w-[500px] rounded-full bg-[#E5A86D]/15 blur-[120px]" />
+      <div className="absolute right-[-140px] top-[1400px] h-[520px] w-[520px] rounded-full bg-[#1F5A4A]/10 blur-[130px]" />
+      <div className="absolute bottom-[400px] left-1/2 h-[450px] w-[450px] -translate-x-1/2 rounded-full bg-[#F6D7A7]/15 blur-[110px]" />
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.45),rgba(244,241,234,0.6)_32%,rgba(244,241,234,1))]" />
-
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-black/10 to-transparent" />
+      {/* Global subtle paper grain */}
+      <div
+        className="absolute inset-0 opacity-[0.025] mix-blend-multiply"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
     </div>
   );
 }
