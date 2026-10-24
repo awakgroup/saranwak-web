@@ -1,4 +1,21 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Tentang Saranwak — Local Coffee Shop Guide dari Padang",
+    description:
+        "Cerita di balik Saranwak, platform panduan lokal yang membantu anak muda dan penikmat kopi di Padang menemukan tempat yang pas sesuai mood dan kebutuhan.",
+    alternates: {
+        canonical: "https://saranwak.com/about",
+    },
+    openGraph: {
+        title: "Tentang Saranwak — Local Coffee Shop Guide dari Padang",
+        description:
+            "Cerita di balik Saranwak, platform panduan lokal coffee shop di Padang.",
+        url: "https://saranwak.com/about",
+        type: "website",
+    },
+};
 
 const values = [
     {

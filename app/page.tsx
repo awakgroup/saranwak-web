@@ -10,11 +10,49 @@ import type { Place } from "@/types/database";
 
 export const revalidate = 3600;
 
+const homeJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://saranwak.com/#website",
+      "url": "https://saranwak.com",
+      "name": "Saranwak",
+      "description": "Local coffee shop guide dari Padang",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://saranwak.com/places?q={search_term_string}",
+        },
+        "query-input": "required name=search_term_string",
+      },
+      "inLanguage": "id-ID",
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://saranwak.com/#organization",
+      "name": "Saranwak",
+      "url": "https://saranwak.com",
+      "logo": "https://saranwak.com/favicon.png",
+      "areaServed": "Padang, Sumatera Barat, Indonesia",
+      "description":
+        "Panduan lokal terkurasi untuk menemukan coffee shop dan tempat nongkrong di Padang sesuai mood dan kebutuhan.",
+    },
+  ],
+};
+
 export default async function Home() {
   const places = await getHomeFeaturedPlaces();
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#F4F1EA] text-[#141414]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(homeJsonLd),
+        }}
+      />
       <HomeBackground />
 
       <div className="relative z-10">

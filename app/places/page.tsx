@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 
 import { PlacesClientPage } from "@/components/PlacesClientPage";
 import {
@@ -6,6 +7,22 @@ import {
     mapApiPlaceToLegacyPlace,
 } from "@/lib/api/places";
 import type { Place } from "@/types/database";
+
+export const metadata: Metadata = {
+    title: "Jelajahi Coffee Shop di Padang — Temukan Berdasarkan Mood & Kebutuhan",
+    description:
+        "Cari dan filter puluhan coffee shop terbaik di Padang berdasarkan area, range harga, fasilitas colokan, WiFi cepat, suasana nugas, dan nongkrong santai.",
+    alternates: {
+        canonical: "https://saranwak.com/places",
+    },
+    openGraph: {
+        title: "Jelajahi Coffee Shop di Padang | Saranwak",
+        description:
+            "Filter puluhan coffee shop terbaik di Padang berdasarkan budget, colokan, WiFi, dan vibes favoritmu.",
+        url: "https://saranwak.com/places",
+        type: "website",
+    },
+};
 
 export default async function PlacesPage() {
     const places = await getPublishedPlaces();

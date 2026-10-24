@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 
 import { PlaceCard } from "@/components/PlaceCard";
 import {
@@ -6,6 +7,22 @@ import {
     type ApiPlace,
 } from "@/lib/api/places";
 import type { Place } from "@/types/database";
+
+export const metadata: Metadata = {
+    title: "Rekomendasi Coffee Shop Terbaik di Padang — Pilihan Terkurasi",
+    description:
+        "Koleksi coffee shop pilihan di Padang yang paling cocok untuk nugas laptopan, nongkrong santai bareng teman, meeting kasual, hingga first date.",
+    alternates: {
+        canonical: "https://saranwak.com/rekomendasi",
+    },
+    openGraph: {
+        title: "Rekomendasi Coffee Shop Terbaik di Padang | Saranwak",
+        description:
+            "Koleksi coffee shop pilihan di Padang untuk nugas, nongkrong, meeting, dan first date.",
+        url: "https://saranwak.com/rekomendasi",
+        type: "website",
+    },
+};
 
 async function getRecommendedPlaces(): Promise<Place[]> {
     try {
