@@ -42,7 +42,7 @@ const businessLinks = [
 
 export function Footer() {
     return (
-        <footer className="border-t border-[#E3DED4] bg-[#F4F1EA] px-4 py-6 text-[#141414] sm:px-6 lg:px-8">
+        <footer className="border-t border-[#E3DED4] bg-[#F4F1EA] px-4 pt-6 pb-24 text-[#141414] sm:py-6 lg:px-8">
             <div className="mx-auto max-w-7xl">
                 <div className="relative overflow-hidden rounded-[28px] border border-[#E3DED4] bg-[#FFFDF8]/85 p-5 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-6">
                     <FooterDecor />
