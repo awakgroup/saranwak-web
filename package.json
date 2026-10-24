@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "preview:pages": "wrangler pages dev out",
     "import:places": "node scripts/csv-to-places-json.mjs",
     "export:places": "node scripts/places-json-to-csv.mjs"
   },
