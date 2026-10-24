@@ -126,6 +126,13 @@ export const metadata: Metadata = {
     email: false,
     url: false,
   },
+
+  other: {
+    "geo.region": "ID-SB",
+    "geo.placename": "Padang, Sumatera Barat",
+    "geo.position": "-0.9471;100.4172",
+    "ICBM": "-0.9471, 100.4172",
+  },
 };
 
 export const viewport: Viewport = {

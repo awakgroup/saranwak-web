@@ -35,7 +35,20 @@ const homeJsonLd = {
       "name": "Saranwak",
       "url": "https://saranwak.com",
       "logo": "https://saranwak.com/favicon.png",
-      "areaServed": "Padang, Sumatera Barat, Indonesia",
+      "areaServed": {
+        "@type": "City",
+        "name": "Padang",
+        "containedInPlace": {
+          "@type": "State",
+          "name": "Sumatera Barat",
+          "addressCountry": "ID",
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": -0.9471,
+          "longitude": 100.4172,
+        },
+      },
       "description":
         "Panduan lokal terkurasi untuk menemukan coffee shop dan tempat nongkrong di Padang sesuai mood dan kebutuhan.",
     },

@@ -1448,6 +1448,11 @@ function makePlaceJsonLd(
             addressRegion: "Sumatera Barat",
             addressCountry: "ID",
         },
+        geo: {
+            "@type": "GeoCoordinates",
+            "latitude": -0.9471,
+            "longitude": 100.4172,
+        },
         areaServed: place.area || place.city || "Padang",
         priceRange: place.price_range || undefined,
         openingHours: place.opening_hours || undefined,
