@@ -38,14 +38,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
             );
         }
 
-        const cookie = [
+        const isHttps = context.request.url.startsWith("https:");
+        const cookieParts = [
             "saranwak_admin_session=active",
             "Path=/",
             "HttpOnly",
             "SameSite=Lax",
             "Max-Age=86400",
-            "Secure",
-        ].join("; ");
+        ];
+        if (isHttps) {
+            cookieParts.push("Secure");
+        }
+        const cookie = cookieParts.join("; ");
 
         return Response.json(
             {

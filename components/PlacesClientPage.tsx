@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
     Search,
@@ -17,6 +17,7 @@ import {
     priceFilterOptions,
     type PriceFilterValue,
 } from "@/lib/place-filters";
+import { mapApiPlaceToLegacyPlace, type ApiPlace } from "@/lib/api/places";
 import type { Place } from "@/types/database";
 
 type PlacesClientPageProps = {
@@ -76,6 +77,28 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
 
     const [searchQuery, setSearchQuery] = useState(params.q || "");
     const [prevQ, setPrevQ] = useState(params.q);
+    const [livePlacesData, setLivePlacesData] = useState<Place[]>(placesData);
+
+    useEffect(() => {
+        let isMounted = true;
+        fetch("/api/places?limit=150")
+            .then((res) => {
+                if (!res.ok) throw new Error("Failed to fetch fresh places");
+                return res.json() as Promise<{ data?: ApiPlace[] }>;
+            })
+            .then((json) => {
+                if (isMounted && Array.isArray(json?.data) && json.data.length > 0) {
+                    setLivePlacesData(json.data.map(mapApiPlaceToLegacyPlace));
+                }
+            })
+            .catch(() => {
+                // Silently fallback to build-time static placesData
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     if (params.q !== prevQ) {
         setPrevQ(params.q);
@@ -87,7 +110,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const selectedTagsKey = selectedTags.join(",");
 
     const places = useMemo(() => {
-        return placesData
+        return livePlacesData
             .filter((place) => matchKeyword(place, params.q))
             .filter((place) => matchArea(place, params.area))
             .filter((place) => matchCategory(place, params.category))
@@ -101,7 +124,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
             });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
-        placesData,
+        livePlacesData,
         params.q,
         params.area,
         params.category,

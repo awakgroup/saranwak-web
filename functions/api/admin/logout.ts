@@ -1,12 +1,16 @@
-export const onRequestPost: PagesFunction = async () => {
-    const cookie = [
+export const onRequestPost: PagesFunction = async (context) => {
+    const isHttps = context.request.url.startsWith("https:");
+    const cookieParts = [
         "saranwak_admin_session=",
         "Path=/",
         "HttpOnly",
         "SameSite=Lax",
         "Max-Age=0",
-        "Secure",
-    ].join("; ");
+    ];
+    if (isHttps) {
+        cookieParts.push("Secure");
+    }
+    const cookie = cookieParts.join("; ");
 
     return Response.json(
         {
