@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-plus-jakarta-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-display: var(--font-fraunces), Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
 :root {
   --sw-bg: #f4f1ea;
   --sw-surface: #fffdf8;

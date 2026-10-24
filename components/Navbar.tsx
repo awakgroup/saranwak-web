@@ -50,7 +50,7 @@ export function Navbar() {
                     </div>
 
                     <div className="min-w-0">
-                        <p className="truncate text-xl font-black tracking-tight text-[#141414] sm:text-2xl">
+                        <p className="truncate font-serif text-xl font-bold tracking-tight text-[#141414] sm:text-2xl">
                             Saranwak
                         </p>
                         <p className="-mt-1 hidden text-[11px] font-bold text-[#6F6A61] sm:block">

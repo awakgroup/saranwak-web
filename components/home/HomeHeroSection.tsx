@@ -12,9 +12,9 @@ export function HomeHeroSection() {
                 <div className="min-w-0">
                     <HeroBadge />
 
-                    <h1 className="max-w-3xl text-[40px] font-black leading-[0.96] tracking-[-0.06em] text-[#201813] sm:text-6xl md:text-7xl">
+                    <h1 className="max-w-3xl font-serif text-[42px] font-bold leading-[1.02] tracking-[-0.03em] text-[#201813] sm:text-6xl md:text-7xl">
                         Cari Coffee Shop di Padang
-                        <span className="block text-[#1F5A4A]">sesuai mood kamu.</span>
+                        <span className="block italic text-[#1F5A4A]">sesuai mood kamu.</span>
                     </h1>
 
                     <p className="mt-4 max-w-2xl text-base font-medium leading-7 text-[#756A60] sm:text-lg sm:leading-8">
@@ -78,9 +78,9 @@ function HeroVisualCard() {
                                 Mood Finder
                             </p>
 
-                            <h2 className="mt-3 max-w-sm text-5xl font-black leading-[0.92] tracking-[-0.06em] text-white">
+                            <h2 className="mt-3 max-w-sm font-serif text-5xl font-bold leading-[0.98] tracking-[-0.03em] text-white">
                                 Ngopi,
-                                <span className="block text-[#F2C38B]">nugas,</span>
+                                <span className="block italic text-[#F2C38B]">nugas,</span>
                                 nongkrong.
                             </h2>
 

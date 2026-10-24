@@ -42,7 +42,7 @@ export function WhySaranwak() {
                             Kenapa Saranwak?
                         </div>
 
-                        <h2 className="mt-4 max-w-2xl text-[30px] font-black leading-[0.98] tracking-[-0.055em] text-[#201813] sm:text-5xl lg:text-[54px]">
+                        <h2 className="mt-4 max-w-2xl font-serif text-[32px] font-bold leading-[1.02] tracking-[-0.03em] text-[#201813] sm:text-5xl lg:text-[54px]">
                             Cari tempat nggak cuma modal feeling.
                         </h2>
                     </div>

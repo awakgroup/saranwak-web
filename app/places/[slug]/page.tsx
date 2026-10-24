@@ -4,6 +4,15 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import {
+    MapPin,
+    Clock,
+    Coins,
+    Share2,
+    Coffee,
+    Sparkles,
+    CheckCircle2,
+} from "lucide-react";
 
 import { PlaceCard } from "@/components/PlaceCard";
 import { PlaceDetailTracker } from "@/components/PlaceDetailTracker";
@@ -194,12 +203,35 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
             />
 
             <section className="mx-auto max-w-7xl">
-                <Link
-                    href="/places?category=coffee-shop"
-                    className="mb-4 inline-flex items-center rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-4 py-2 text-xs font-black text-[#4B4038] shadow-sm transition hover:bg-[#201813] hover:text-white"
-                >
-                    ← Kembali ke explore
-                </Link>
+                {/* Editorial Breadcrumbs */}
+                <nav className="mb-5 flex flex-wrap items-center gap-2 text-xs font-bold text-[#756A60]">
+                    <Link
+                        href="/"
+                        className="transition hover:text-[#201813]"
+                    >
+                        Home
+                    </Link>
+                    <span>/</span>
+                    <Link
+                        href="/places?category=coffee-shop"
+                        className="transition hover:text-[#201813]"
+                    >
+                        Explore
+                    </Link>
+                    {place.area ? (
+                        <>
+                            <span>/</span>
+                            <Link
+                                href={`/places?category=coffee-shop&area=${encodeURIComponent(place.area)}`}
+                                className="transition hover:text-[#201813]"
+                            >
+                                {place.area}
+                            </Link>
+                        </>
+                    ) : null}
+                    <span>/</span>
+                    <span className="truncate font-semibold text-[#201813]">{place.name}</span>
+                </nav>
 
                 <HeroSection
                     place={place}
@@ -209,8 +241,8 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
                     whatsappShareUrl={whatsappShareUrl}
                 />
 
-                <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
-                    <article className="min-w-0">
+                <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
+                    <article className="min-w-0 space-y-6">
                         <QuickSummarySection summary={quickSummary} />
 
                         {characteristics.length > 0 ? (
@@ -275,8 +307,8 @@ function HeroSection({
     const heroTags = [...activityTags, ...vibeTags].slice(0, 5);
 
     return (
-        <section className="overflow-hidden rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] shadow-[0_18px_55px_rgba(47,35,25,0.08)] sm:rounded-[36px] sm:shadow-[0_22px_70px_rgba(47,35,25,0.08)]">
-            <div className="relative min-h-[360px] overflow-hidden bg-[#181818] sm:min-h-[430px] lg:min-h-[520px]">
+        <section className="overflow-hidden rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] shadow-[0_20px_60px_rgba(47,35,25,0.08)] sm:rounded-[40px] sm:shadow-[0_24px_80px_rgba(47,35,25,0.10)]">
+            <div className="relative min-h-[380px] overflow-hidden bg-[#181818] sm:min-h-[460px] lg:min-h-[540px]">
                 <Image
                     src={mainImageUrl}
                     alt={place.name}
@@ -286,56 +318,74 @@ function HeroSection({
                     className="object-cover"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/30 to-black/88" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/40 to-black/90" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-transparent" />
 
-                <div className="relative z-10 flex min-h-[360px] flex-col justify-between p-5 sm:min-h-[430px] sm:p-7 lg:min-h-[520px] lg:p-9">
+                <div className="relative z-10 flex min-h-[380px] flex-col justify-between p-6 sm:min-h-[460px] sm:p-8 lg:min-h-[540px] lg:p-10">
                     <div className="flex flex-wrap items-center gap-2">
                         {category ? (
                             <Link
                                 href={`/places?category=${category.slug}`}
-                                className="rounded-full border border-white/20 bg-white/90 px-3 py-1.5 text-[11px] font-black text-[#201813] shadow-sm backdrop-blur transition hover:bg-white"
+                                className="rounded-full border border-white/20 bg-white/95 px-3.5 py-1.5 text-xs font-bold text-[#201813] shadow-sm backdrop-blur transition hover:bg-white"
                             >
                                 {category.name}
                             </Link>
                         ) : null}
 
                         {place.price_range ? (
-                            <span className="rounded-full border border-white/20 bg-[#F2C38B] px-3 py-1.5 text-[11px] font-black text-[#201813] shadow-sm">
+                            <span className="rounded-full border border-white/20 bg-[#F2C38B] px-3.5 py-1.5 text-xs font-bold text-[#201813] shadow-sm">
                                 {place.price_range}
                             </span>
                         ) : null}
 
                         {place.area ? (
-                            <span className="rounded-full border border-white/20 bg-white/15 px-3 py-1.5 text-[11px] font-black text-white shadow-sm backdrop-blur">
+                            <span className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/15 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm backdrop-blur">
+                                <MapPin className="h-3 w-3 text-[#F2C38B]" />
                                 {place.area}
+                            </span>
+                        ) : null}
+
+                        {place.is_featured ? (
+                            <span className="rounded-full bg-[#1F5A4A] px-3.5 py-1.5 text-xs font-bold text-white shadow-sm">
+                                Featured
+                            </span>
+                        ) : null}
+
+                        {place.is_verified ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur">
+                                <CheckCircle2 className="h-3 w-3 text-[#8BE4D2]" />
+                                Verified
                             </span>
                         ) : null}
                     </div>
 
                     <div className="max-w-4xl">
-                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#F2C38B] sm:text-xs">
-                            Detail tempat
-                        </p>
+                        <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#F2C38B] backdrop-blur">
+                            <Coffee className="h-3 w-3 text-[#F2C38B]" />
+                            Spot Pilihan Padang
+                        </div>
 
-                        <h1 className="mt-2 max-w-[340px] break-words text-[30px] font-black leading-[0.98] tracking-[-0.06em] text-white drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)] sm:max-w-2xl sm:text-5xl sm:leading-[0.95] md:text-6xl lg:max-w-4xl lg:text-[72px]">
+                        <h1 className="mt-3 font-serif text-3xl font-bold leading-[1.05] tracking-tight text-white drop-shadow-[0_8px_24px_rgba(0,0,0,0.4)] sm:text-5xl md:text-6xl lg:text-7xl">
                             {place.name}
                         </h1>
 
-                        <p className="mt-3 max-w-[330px] text-sm font-semibold leading-6 text-white/82 sm:max-w-2xl sm:text-base sm:leading-7">
-                            {[place.area, place.city || "Padang"].filter(Boolean).join(", ")}
-                            {place.address ? ` · ${place.address}` : ""}
+                        <p className="mt-3 flex items-center gap-1.5 text-sm font-medium leading-6 text-white/85 sm:text-base">
+                            <MapPin className="h-4 w-4 shrink-0 text-[#F2C38B]" />
+                            <span>
+                                {[place.area, place.city || "Padang"].filter(Boolean).join(", ")}
+                                {place.address ? ` · ${place.address}` : ""}
+                            </span>
                         </p>
 
                         {heroTags.length > 0 ? (
-                            <div className="mt-4 flex max-w-[340px] flex-wrap gap-2 sm:max-w-2xl">
+                            <div className="mt-5 flex flex-wrap gap-2">
                                 {heroTags.map((tag) => (
                                     <Link
                                         key={`${tag}-hero`}
                                         href={`/places?category=coffee-shop&tags=${encodeURIComponent(
                                             tagToSlug(tag)
                                         )}`}
-                                        className="rounded-full border border-white/20 bg-white/16 px-3 py-2 text-xs font-black text-white shadow-sm backdrop-blur transition hover:bg-white hover:text-[#201813] sm:px-4"
+                                        className="rounded-full border border-white/20 bg-white/15 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm backdrop-blur transition hover:bg-white hover:text-[#201813]"
                                     >
                                         {tag}
                                     </Link>
@@ -348,7 +398,8 @@ function HeroSection({
 
             <div className="grid gap-3 border-t border-[#E7D8C8] bg-[#FFFDF8] p-4 sm:grid-cols-3 sm:p-5">
                 <HeroAction
-                    label="Buka Google Maps"
+                    label="Buka di Google Maps"
+                    icon="maps"
                     href={place.google_maps_url}
                     disabledLabel="Maps belum tersedia"
                     eventName="google_maps_clicked"
@@ -358,6 +409,7 @@ function HeroSection({
 
                 <HeroAction
                     label="Lihat Instagram"
+                    icon="instagram"
                     href={place.instagram_url}
                     disabledLabel="Instagram belum tersedia"
                     eventName="instagram_clicked"
@@ -368,8 +420,9 @@ function HeroSection({
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition hover:bg-[#201813] hover:text-white"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-bold text-[#201813] transition hover:bg-[#201813] hover:text-white"
                 >
+                    <Share2 className="h-4 w-4" />
                     Share ke WhatsApp
                 </a>
             </div>
@@ -379,6 +432,7 @@ function HeroSection({
 
 function HeroAction({
     label,
+    icon,
     href,
     disabledLabel,
     eventName,
@@ -386,6 +440,7 @@ function HeroAction({
     primary = false,
 }: {
     label: string;
+    icon?: "maps" | "instagram";
     href?: string | null;
     disabledLabel: string;
     eventName: "google_maps_clicked" | "instagram_clicked";
@@ -394,7 +449,7 @@ function HeroAction({
 }) {
     if (!href) {
         return (
-            <span className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-5 py-3 text-sm font-black text-[#9B8C7C]">
+            <span className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-5 py-3 text-sm font-bold text-[#9B8C7C]">
                 {disabledLabel}
             </span>
         );
@@ -414,11 +469,13 @@ function HeroAction({
             }}
             className={
                 primary
-                    ? "inline-flex min-h-12 items-center justify-center rounded-full bg-[#201813] px-5 py-3 text-sm font-black text-white transition hover:bg-[#1F5A4A]"
-                    : "inline-flex min-h-12 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition hover:bg-[#201813] hover:text-white"
+                    ? "inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1F5A4A] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#164337]"
+                    : "inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-bold text-[#201813] transition hover:bg-[#201813] hover:text-white"
             }
         >
-            {label}
+            {icon === "maps" ? <MapPin className="h-4 w-4" /> : null}
+            {icon === "instagram" ? <InstagramIcon className="h-4 w-4" /> : null}
+            <span>{label}</span>
         </TrackedExternalLink>
     );
 }
@@ -427,18 +484,27 @@ function QuickSummarySection({ summary }: { summary: string }) {
     if (!summary) return null;
 
     return (
-        <section className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-[0_18px_55px_rgba(47,35,25,0.05)] sm:p-6">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                Ringkasan cepat
-            </p>
+        <section className="relative overflow-hidden rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
+            <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-[#F2C38B]/20 blur-2xl" />
 
-            <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#201813] sm:text-3xl">
-                Cocok buat apa?
-            </h2>
+            <div className="relative z-10">
+                <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-[#C8784A]" />
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                        Ringkasan Cepat
+                    </p>
+                </div>
 
-            <p className="mt-3 text-sm font-semibold leading-7 text-[#756A60] sm:text-base">
-                {summary}
-            </p>
+                <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+                    Cocok Buat Apa?
+                </h2>
+
+                <div className="mt-3 rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/70 p-4 sm:p-5">
+                    <p className="text-sm font-medium leading-7 text-[#4B4038] sm:text-base">
+                        {summary}
+                    </p>
+                </div>
+            </div>
         </section>
     );
 }
@@ -449,33 +515,33 @@ function CharacteristicsSection({
     characteristics: Characteristic[];
 }) {
     return (
-        <section className="mt-5 rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-[0_18px_55px_rgba(47,35,25,0.05)] sm:p-6">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                Keunggulan
+        <section className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                Keunggulan Utama
             </p>
 
-            <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#201813] sm:text-3xl">
-                Karakteristik tempat
+            <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+                Karakteristik Tempat
             </h2>
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <div className="mt-5 grid gap-3.5 sm:grid-cols-2">
                 {characteristics.map((item, index) => (
                     <div
                         key={`${item.title}-${index}`}
-                        className="rounded-[22px] border border-[#E7D8C8] bg-[#F8F1E8] p-4"
+                        className="group rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/60 p-4.5 transition hover:border-[#1F5A4A]/30 hover:bg-[#F8F1E8]"
                     >
-                        <p className="text-xs font-black text-[#C8784A]">
+                        <span className="font-serif text-xs font-bold text-[#C8784A]">
                             {String(index + 1).padStart(2, "0")}
-                        </p>
+                        </span>
 
                         {item.title ? (
-                            <h3 className="mt-2 text-base font-black leading-6 text-[#201813]">
+                            <h3 className="mt-1 font-serif text-base font-bold text-[#201813]">
                                 {item.title}
                             </h3>
                         ) : null}
 
                         {item.description ? (
-                            <p className="mt-2 text-sm font-semibold leading-6 text-[#756A60]">
+                            <p className="mt-2 text-xs font-medium leading-6 text-[#756A60] sm:text-sm">
                                 {item.description}
                             </p>
                         ) : null}
@@ -488,16 +554,16 @@ function CharacteristicsSection({
 
 function DescriptionSection({ description }: { description: string }) {
     return (
-        <section className="mt-5 rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-[0_18px_55px_rgba(47,35,25,0.05)] sm:p-6">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
+        <section className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
                 Deskripsi
             </p>
 
-            <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#201813] sm:text-3xl">
-                Tentang tempat ini
+            <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+                Tentang Tempat Ini
             </h2>
 
-            <div className="mt-3 whitespace-pre-line text-sm font-semibold leading-7 text-[#756A60] sm:text-base">
+            <div className="mt-4 whitespace-pre-line text-sm font-medium leading-7 text-[#5C534B] sm:text-base sm:leading-8">
                 {description}
             </div>
         </section>
@@ -512,35 +578,41 @@ function GallerySection({
     placeName: string;
 }) {
     return (
-        <section className="mt-5 rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-[0_18px_55px_rgba(47,35,25,0.05)] sm:p-6">
-            <div className="mb-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                    Galeri
-                </p>
+        <section className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
+            <div className="mb-4 flex items-center justify-between">
+                <div>
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                        Dokumentasi
+                    </p>
 
-                <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#201813] sm:text-3xl">
-                    Foto tempat
-                </h2>
+                    <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+                        Foto & Suasana Tempat
+                    </h2>
+                </div>
+
+                <span className="rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-1 text-xs font-bold text-[#756A60]">
+                    {images.length} Foto
+                </span>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3.5 sm:grid-cols-2">
                 {images.slice(0, 6).map((photo, index) => (
                     <figure
                         key={photo.id || `${photo.image_url}-${index}`}
-                        className="overflow-hidden rounded-[22px] border border-[#E7D8C8] bg-[#F8F1E8]"
+                        className="group overflow-hidden rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]"
                     >
-                        <div className="relative h-56 w-full overflow-hidden">
+                        <div className="relative h-60 w-full overflow-hidden bg-[#E3DED4]">
                             <Image
                                 src={getSafePlaceImageUrl(photo.image_url)}
                                 alt={photo.caption || `${placeName} ${index + 1}`}
                                 fill
                                 sizes="(max-width: 640px) 100vw, 50vw"
-                                className="object-cover transition duration-500 hover:scale-105"
+                                className="object-cover transition duration-700 group-hover:scale-105"
                             />
                         </div>
 
                         {photo.caption ? (
-                            <figcaption className="px-4 py-3 text-xs font-bold leading-5 text-[#756A60]">
+                            <figcaption className="px-4 py-2.5 text-xs font-medium text-[#756A60]">
                                 {photo.caption}
                             </figcaption>
                         ) : null}
@@ -557,27 +629,27 @@ function TagGroupsSection({
     groupedTags: [string, Tag[]][];
 }) {
     return (
-        <section className="mt-5 rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-[0_18px_55px_rgba(47,35,25,0.05)] sm:p-6">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                Info tambahan
+        <section className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                Kelengkapan & Vibes
             </p>
 
-            <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#201813] sm:text-3xl">
-                Fasilitas, vibes, dan aktivitas
+            <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+                Fasilitas, Suasana, & Aktivitas
             </h2>
 
             <div className="mt-5 grid gap-4">
                 {groupedTags.map(([type, tags]) => (
                     <div
                         key={type}
-                        className="rounded-[22px] border border-[#E7D8C8] bg-[#F8F1E8] p-4"
+                        className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/60 p-4.5"
                     >
                         <div className="mb-3">
-                            <h3 className="text-base font-black text-[#201813]">
+                            <h3 className="font-serif text-base font-bold text-[#201813]">
                                 {getTagGroupLabel(type)}
                             </h3>
 
-                            <p className="mt-1 text-xs font-semibold leading-5 text-[#756A60]">
+                            <p className="mt-1 text-xs font-medium leading-5 text-[#756A60]">
                                 {getTagGroupDescription(type)}
                             </p>
                         </div>
@@ -587,7 +659,7 @@ function TagGroupsSection({
                                 <Link
                                     key={tag.id}
                                     href={`/places?category=coffee-shop&tags=${tag.slug}`}
-                                    className="rounded-full border border-[#E7D8C8] bg-white px-3 py-2 text-xs font-black text-[#4B4038] transition hover:bg-[#201813] hover:text-white"
+                                    className="rounded-full border border-[#E7D8C8] bg-white px-3.5 py-1.5 text-xs font-bold text-[#4B4038] shadow-sm transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
                                 >
                                     {tag.name}
                                 </Link>
@@ -610,26 +682,27 @@ function PlaceSidebar({
     whatsappShareUrl: string;
 }) {
     return (
-        <aside className="h-fit rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-[0_18px_55px_rgba(47,35,25,0.08)] lg:sticky lg:top-24">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                Informasi tempat
-            </p>
-
-            <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#201813]">
-                Quick info
-            </h2>
-
-            <div className="mt-5 grid gap-3">
-                <InfoItem label="Nama" value={place.name} />
-                <InfoItem label="Kategori" value={category?.name || "Coffee Shop"} />
-                <InfoItem label="Area" value={place.area || "-"} />
-                <InfoItem label="Kota" value={place.city || "Padang"} />
-                <InfoItem label="Range harga" value={place.price_range || "-"} />
-                <InfoItem label="Jam buka" value={place.opening_hours || "-"} />
-                <InfoItem label="Alamat" value={place.address || "-"} />
+        <aside className="h-fit rounded-[30px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_20px_60px_rgba(47,35,25,0.07)] lg:sticky lg:top-24">
+            <div className="flex items-center gap-2">
+                <Coffee className="h-4 w-4 text-[#C8784A]" />
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                    Informasi Tempat
+                </p>
             </div>
 
-            <div className="mt-5 grid gap-2">
+            <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813]">
+                Quick Info
+            </h2>
+
+            <div className="mt-5 space-y-2.5">
+                <InfoItem icon="tag" label="Kategori" value={category?.name || "Coffee Shop"} />
+                <InfoItem icon="map" label="Area & Kota" value={`${place.area || "-"}, ${place.city || "Padang"}`} />
+                <InfoItem icon="wallet" label="Perkiraan Harga" value={place.price_range || "-"} />
+                <InfoItem icon="clock" label="Jam Operasional" value={place.opening_hours || "-"} />
+                <InfoItem icon="pin" label="Alamat Lengkap" value={place.address || "-"} />
+            </div>
+
+            <div className="mt-6 grid gap-2.5">
                 {place.google_maps_url ? (
                     <TrackedExternalLink
                         href={place.google_maps_url}
@@ -643,9 +716,10 @@ function PlaceSidebar({
                             city: place.city,
                             category: category?.slug ?? null,
                         }}
-                        className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#201813] px-5 py-3 text-sm font-black text-white transition hover:bg-[#1F5A4A]"
+                        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1F5A4A] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#164337]"
                     >
-                        Buka Google Maps
+                        <MapPin className="h-4 w-4" />
+                        Buka di Google Maps
                     </TrackedExternalLink>
                 ) : null}
 
@@ -662,8 +736,9 @@ function PlaceSidebar({
                             city: place.city,
                             category: category?.slug ?? null,
                         }}
-                        className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-black text-[#201813] transition hover:bg-[#201813] hover:text-white"
+                        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-bold text-[#201813] transition hover:bg-[#201813] hover:text-white"
                     >
+                        <InstagramIcon className="h-4 w-4" />
                         Lihat Instagram
                     </TrackedExternalLink>
                 ) : null}
@@ -672,8 +747,9 @@ function PlaceSidebar({
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-5 py-3 text-sm font-black text-[#201813] transition hover:bg-[#201813] hover:text-white"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-5 py-3 text-sm font-bold text-[#201813] transition hover:bg-[#201813] hover:text-white"
                 >
+                    <Share2 className="h-4 w-4" />
                     Share ke WhatsApp
                 </a>
             </div>
@@ -681,43 +757,59 @@ function PlaceSidebar({
     );
 }
 
-function InfoItem({ label, value }: { label: string; value: string }) {
+function InfoItem({
+    label,
+    value,
+    icon,
+}: {
+    label: string;
+    value: string;
+    icon?: "tag" | "map" | "wallet" | "clock" | "pin";
+}) {
     return (
-        <div className="rounded-[18px] border border-[#E7D8C8] bg-[#F8F1E8] p-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#9B8C7C]">
-                {label}
-            </p>
-
-            <p className="mt-1 text-sm font-black leading-6 text-[#201813]">
-                {value}
-            </p>
+        <div className="flex items-start gap-3 rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/60 p-3.5">
+            <div className="mt-0.5 text-[#C8784A]">
+                {icon === "tag" ? <Coffee className="h-4 w-4" /> : null}
+                {icon === "map" ? <MapPin className="h-4 w-4" /> : null}
+                {icon === "wallet" ? <Coins className="h-4 w-4" /> : null}
+                {icon === "clock" ? <Clock className="h-4 w-4" /> : null}
+                {icon === "pin" ? <MapPin className="h-4 w-4" /> : null}
+            </div>
+            <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#9B8C7C]">
+                    {label}
+                </p>
+                <p className="mt-0.5 text-xs font-bold leading-5 text-[#201813] sm:text-sm">
+                    {value}
+                </p>
+            </div>
         </div>
     );
 }
 
 function RelatedPlacesSection({ places }: { places: Place[] }) {
     return (
-        <section className="mt-8">
-            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <section className="mt-12 border-t border-[#E7D8C8] pt-10">
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                        Related places
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                        Rekomendasi Lain
                     </p>
 
-                    <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#201813] sm:text-3xl">
-                        Tempat lain yang mungkin cocok
+                    <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+                        Tempat Serupa di Padang
                     </h2>
 
-                    <p className="mt-2 max-w-xl text-sm font-semibold leading-6 text-[#756A60]">
-                        Rekomendasi lain dari Saranwak biar pilihan kamu nggak cuma satu.
+                    <p className="mt-1.5 text-xs font-medium text-[#756A60] sm:text-sm">
+                        Pilihan coffee shop lain di sekitar area atau dengan suasana serupa.
                     </p>
                 </div>
 
                 <Link
                     href="/places?category=coffee-shop"
-                    className="hidden rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-5 py-3 text-sm font-black text-[#1F5A4A] transition hover:bg-[#1F5A4A] hover:text-white sm:inline-flex"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-4 py-2 text-xs font-bold text-[#1F5A4A] shadow-sm transition hover:bg-[#1F5A4A] hover:text-white"
                 >
-                    Lihat semua
+                    Lihat Semua Tempat
                 </Link>
             </div>
 
@@ -732,6 +824,24 @@ function RelatedPlacesSection({ places }: { places: Place[] }) {
                 ))}
             </div>
         </section>
+    );
+}
+
+function InstagramIcon({ className = "h-4 w-4" }: { className?: string }) {
+    return (
+        <svg
+            className={className}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        >
+            <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+        </svg>
     );
 }
 
@@ -772,12 +882,13 @@ function MobileStickyActions({
                             city,
                             category: categorySlug ?? null,
                         }}
-                        className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-[#201813] px-3 py-2 text-xs font-black text-white"
+                        className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#1F5A4A] px-3 py-2 text-xs font-bold text-white shadow-sm"
                     >
+                        <MapPin className="h-3.5 w-3.5" />
                         Maps
                     </TrackedExternalLink>
                 ) : (
-                    <span className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-[#E7D8C8] px-3 py-2 text-xs font-black text-[#756A60]">
+                    <span className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-[#E7D8C8] px-3 py-2 text-xs font-bold text-[#756A60]">
                         Maps
                     </span>
                 )}
@@ -795,12 +906,13 @@ function MobileStickyActions({
                             city,
                             category: categorySlug ?? null,
                         }}
-                        className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-[#E7D8C8] bg-white px-3 py-2 text-xs font-black text-[#201813]"
+                        className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-[#E7D8C8] bg-white px-3 py-2 text-xs font-bold text-[#201813]"
                     >
+                        <InstagramIcon className="h-3.5 w-3.5" />
                         Instagram
                     </TrackedExternalLink>
                 ) : (
-                    <span className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-[#E7D8C8] px-3 py-2 text-xs font-black text-[#756A60]">
+                    <span className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-[#E7D8C8] px-3 py-2 text-xs font-bold text-[#756A60]">
                         Instagram
                     </span>
                 )}
@@ -809,8 +921,9 @@ function MobileStickyActions({
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-[#1F5A4A] px-3 py-2 text-xs font-black text-white"
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#201813] px-3 py-2 text-xs font-bold text-white"
                 >
+                    <Share2 className="h-3.5 w-3.5" />
                     Share
                 </a>
             </div>

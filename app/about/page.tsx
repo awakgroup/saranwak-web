@@ -40,23 +40,23 @@ export default function AboutPage() {
             <div className="mx-auto max-w-7xl">
                 <HeroAbout />
 
-                <section className="mt-6 grid gap-4 md:grid-cols-3">
+                <section className="mt-8 grid gap-4 md:grid-cols-3">
                     {values.map((item) => (
                         <ValueCard key={item.title} item={item} />
                     ))}
                 </section>
 
-                <section className="mt-6 grid gap-6 rounded-[30px] border border-[#E3DED4] bg-[#FFFDF8]/85 p-5 shadow-[0_18px_55px_rgba(47,35,25,0.05)] sm:p-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:p-8">
+                <section className="mt-8 grid gap-6 rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A] sm:text-xs">
+                        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
                             Fokus Kami
                         </p>
 
-                        <h2 className="mt-3 max-w-2xl text-3xl font-black leading-[1] tracking-[-0.055em] text-[#201813] sm:text-5xl">
-                            Mulai kecil, tapi dibuat serius.
+                        <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-4xl">
+                            Mulai kecil, dibuat dengan serius.
                         </h2>
 
-                        <p className="mt-4 max-w-2xl text-sm font-semibold leading-7 text-[#756A60] sm:text-base">
+                        <p className="mt-3 max-w-2xl text-sm font-medium leading-7 text-[#756A60] sm:text-base">
                             Untuk sekarang, Saranwak fokus membangun pengalaman mencari coffee
                             shop di Padang yang lebih rapi, relevan, dan gampang dipakai.
                             Bukan kejar banyak kategori dulu, tapi bikin fondasinya kuat.
@@ -67,13 +67,13 @@ export default function AboutPage() {
                         {focusPoints.map((item, index) => (
                             <div
                                 key={item}
-                                className="rounded-[22px] border border-[#E3DED4] bg-[#F8F1E8] p-4"
+                                className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/70 p-4.5"
                             >
-                                <p className="text-xs font-black text-[#C8784A]">
+                                <p className="font-serif text-xs font-bold text-[#C8784A]">
                                     0{index + 1}
                                 </p>
 
-                                <p className="mt-2 text-sm font-black leading-6 text-[#201813]">
+                                <p className="mt-1.5 text-xs font-bold leading-5 text-[#201813] sm:text-sm sm:leading-6">
                                     {item}
                                 </p>
                             </div>
@@ -89,20 +89,22 @@ export default function AboutPage() {
 
 function HeroAbout() {
     return (
-        <section className="relative overflow-hidden rounded-[34px] border border-[#E3DED4] bg-[#201813] p-5 text-white shadow-[0_22px_70px_rgba(32,24,19,0.14)] sm:p-7 lg:p-9">
+        <section className="relative overflow-hidden rounded-[34px] border border-[#E7D8C8] bg-[#191614] p-6 text-white shadow-[0_24px_80px_rgba(32,24,19,0.18)] sm:p-8 lg:p-10">
             <HeroDecor />
 
-            <div className="relative grid gap-7 lg:grid-cols-[1fr_0.75fr] lg:items-end">
+            <div className="relative z-10 grid gap-7 lg:grid-cols-[1fr_0.75fr] lg:items-end">
                 <div className="max-w-4xl">
-                    <div className="inline-flex rounded-full border border-white/10 bg-white/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#F2C38B] sm:text-xs">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.08] px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#F2C38B] backdrop-blur sm:text-xs">
+                        <span className="h-2 w-2 rounded-full bg-[#F2C38B]" />
                         Tentang Saranwak
                     </div>
 
-                    <h1 className="mt-4 max-w-4xl text-[40px] font-black leading-[0.95] tracking-[-0.065em] text-white sm:text-6xl lg:text-[74px]">
-                        Local guide buat cari tempat yang pas.
+                    <h1 className="mt-4 font-serif text-3xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                        Local guide
+                        <span className="block italic text-[#F2C38B]">buat cari tempat yang pas.</span>
                     </h1>
 
-                    <p className="mt-4 max-w-2xl text-sm font-semibold leading-7 text-white/68 sm:text-base">
+                    <p className="mt-4 max-w-2xl text-sm font-medium leading-7 text-white/70 sm:text-base">
                         Saranwak membantu orang menemukan coffee shop dan spot lokal di
                         Padang berdasarkan mood, kebutuhan, area, budget, fasilitas, dan
                         vibes.
@@ -111,26 +113,26 @@ function HeroAbout() {
                     <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                         <Link
                             href="/places?category=coffee-shop"
-                            className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#F2C38B] px-6 py-3 text-sm font-black text-[#201813] transition hover:-translate-y-0.5 hover:bg-white"
+                            className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#F2C38B] px-6 py-3 text-sm font-bold text-[#201813] shadow-sm transition hover:-translate-y-0.5 hover:bg-white"
                         >
-                            Lihat coffee shop →
+                            Lihat Coffee Shop →
                         </Link>
 
                         <a
                             href={contactUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] px-6 py-3 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-white hover:text-[#201813]"
+                            className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/15 bg-white/[0.08] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-white hover:text-[#201813]"
                         >
-                            Kerja sama
+                            Hubungi Kami
                         </a>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 lg:grid-cols-1">
-                    <MiniStat value="Padang" label="Fokus awal" />
-                    <MiniStat value="Coffee" label="Kategori awal" />
-                    <MiniStat value="Mood" label="Cara cari" />
+                <div className="grid grid-cols-3 gap-2.5 lg:grid-cols-1">
+                    <MiniStat value="Padang" label="Fokus Awal" />
+                    <MiniStat value="Coffee" label="Kategori Utama" />
+                    <MiniStat value="Mood" label="Metode Temu" />
                 </div>
             </div>
         </section>
@@ -147,14 +149,14 @@ function ValueCard({
     };
 }) {
     return (
-        <div className="relative overflow-hidden rounded-[26px] border border-[#E3DED4] bg-[#FFFDF8]/85 p-5 shadow-[0_14px_45px_rgba(47,35,25,0.045)] transition hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(47,35,25,0.08)]">
-            <p className="text-xs font-black text-[#C8784A]">{item.number}</p>
+        <div className="relative overflow-hidden rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_14px_45px_rgba(47,35,25,0.045)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(47,35,25,0.08)]">
+            <p className="font-serif text-xs font-bold text-[#C8784A]">{item.number}</p>
 
-            <h2 className="mt-3 text-xl font-black tracking-[-0.035em] text-[#201813]">
+            <h2 className="mt-2 font-serif text-lg font-bold text-[#201813]">
                 {item.title}
             </h2>
 
-            <p className="mt-2 text-sm font-semibold leading-6 text-[#756A60]">
+            <p className="mt-2 text-xs font-medium leading-6 text-[#756A60] sm:text-sm">
                 {item.description}
             </p>
         </div>
@@ -163,9 +165,9 @@ function ValueCard({
 
 function MiniStat({ value, label }: { value: string; label: string }) {
     return (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.07] p-4 text-center backdrop-blur lg:text-left">
-            <p className="text-lg font-black text-[#F2C38B] sm:text-2xl">{value}</p>
-            <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
+        <div className="rounded-2xl border border-white/12 bg-white/[0.08] p-4 text-center backdrop-blur lg:text-left">
+            <p className="font-serif text-xl font-bold text-[#F2C38B] sm:text-2xl">{value}</p>
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/50">
                 {label}
             </p>
         </div>
@@ -174,20 +176,20 @@ function MiniStat({ value, label }: { value: string; label: string }) {
 
 function BusinessCTA() {
     return (
-        <section className="mt-6 rounded-[30px] border border-[#E3DED4] bg-[#FFFDF8]/85 p-5 shadow-[0_18px_55px_rgba(47,35,25,0.05)] sm:p-6 lg:p-7">
+        <section className="mt-8 rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-8">
             <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
                 <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
                         Untuk Bisnis Lokal
                     </p>
 
-                    <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#201813] sm:text-3xl">
-                        Mau tempat kamu masuk Saranwak?
+                    <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+                        Mau Tempat Kamu Masuk Saranwak?
                     </h2>
 
-                    <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-[#756A60] sm:text-base">
+                    <p className="mt-2 max-w-2xl text-xs font-medium leading-6 text-[#756A60] sm:text-sm">
                         Hubungi kami untuk kerja sama, update informasi tempat, promo
-                        placement, atau pembuatan website bisnis.
+                        placement, atau pembuatan profil bisnis digital.
                     </p>
                 </div>
 
@@ -195,9 +197,9 @@ function BusinessCTA() {
                     href={contactUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#1F5A4A] px-5 py-3 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#18483B]"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#1F5A4A] px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#164337]"
                 >
-                    Contact Us →
+                    Hubungi via WhatsApp →
                 </a>
             </div>
         </section>
@@ -207,9 +209,9 @@ function BusinessCTA() {
 function HeroDecor() {
     return (
         <>
-            <div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#F2C38B]/18 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-28 -right-24 h-72 w-72 rounded-full bg-[#1F5A4A]/38 blur-3xl" />
-            <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:linear-gradient(rgba(255,255,255,0.14)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.14)_1px,transparent_1px)] [background-size:44px_44px]" />
+            <div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#C8784A]/25 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-28 -right-24 h-72 w-72 rounded-full bg-[#1F5A4A]/30 blur-3xl" />
+            <div className="pointer-events-none absolute inset-0 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.14)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.14)_1px,transparent_1px)] [background-size:44px_44px]" />
         </>
     );
 }

@@ -1,7 +1,20 @@
 import type { Metadata, Viewport } from "next";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-plus-jakarta-sans",
+  display: "swap",
+});
 
 const siteUrl = "https://saranwak.com";
 
@@ -129,8 +142,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" data-scroll-behavior="smooth">
-      <body>
+    <html
+      lang="id"
+      data-scroll-behavior="smooth"
+      className={`${fraunces.variable} ${plusJakartaSans.variable}`}
+    >
+      <body className="font-sans antialiased text-[#141414]">
         <Navbar />
         {children}
         <Footer />

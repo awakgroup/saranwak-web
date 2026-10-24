@@ -160,7 +160,7 @@ export function PlaceCard({
                         </span>
                     </div>
 
-                    <h3 className="line-clamp-2 text-[22px] font-black leading-[1.05] tracking-[-0.04em] text-white drop-shadow-sm">
+                    <h3 className="line-clamp-2 font-serif text-[22px] font-bold leading-[1.1] tracking-[-0.02em] text-white drop-shadow-sm">
                         {place.name}
                     </h3>
                 </div>

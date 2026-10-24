@@ -136,20 +136,22 @@ export default async function RekomendasiPage() {
 
 function HeroSection() {
     return (
-        <section className="relative overflow-hidden rounded-[34px] border border-[#E3DED4] bg-[#201813] p-5 text-white shadow-[0_22px_70px_rgba(32,24,19,0.13)] sm:p-7 lg:p-8">
+        <section className="relative overflow-hidden rounded-[34px] border border-[#E7D8C8] bg-[#191614] p-6 text-white shadow-[0_24px_80px_rgba(32,24,19,0.18)] sm:p-8 lg:p-10">
             <HeroDecor />
 
-            <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
-                <div className="max-w-4xl">
-                    <div className="inline-flex rounded-full border border-white/10 bg-white/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#F2C38B] sm:text-xs">
-                        Rekomendasi Saranwak
+            <div className="relative z-10 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+                <div className="max-w-3xl">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.08] px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#F2C38B] backdrop-blur sm:text-xs">
+                        <span className="h-2 w-2 rounded-full bg-[#F2C38B]" />
+                        Kurasi Rekomendasi
                     </div>
 
-                    <h1 className="mt-4 max-w-4xl text-[40px] font-black leading-[0.95] tracking-[-0.065em] text-white sm:text-6xl lg:text-[72px]">
-                        Cari tempat berdasarkan kebutuhan.
+                    <h1 className="mt-4 font-serif text-3xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                        Cari tempat ngopi
+                        <span className="block italic text-[#F2C38B]">sesuai kebutuhan kamu.</span>
                     </h1>
 
-                    <p className="mt-4 max-w-2xl text-sm font-semibold leading-7 text-white/68 sm:text-base">
+                    <p className="mt-4 max-w-2xl text-sm font-medium leading-7 text-white/70 sm:text-base">
                         Pilih mood, fasilitas, atau budget. Biar nggak asal scroll sampai
                         kopi keburu dingin.
                     </p>
@@ -157,9 +159,9 @@ function HeroSection() {
 
                 <Link
                     href="/places/?category=coffee-shop"
-                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#F2C38B] px-6 py-3 text-sm font-black text-[#201813] transition hover:-translate-y-0.5 hover:bg-white"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#F2C38B] px-6 py-3 text-sm font-bold text-[#201813] shadow-sm transition hover:-translate-y-0.5 hover:bg-white"
                 >
-                    Explore semua →
+                    Explore Semua Tempat →
                 </Link>
             </div>
         </section>
@@ -169,54 +171,54 @@ function HeroSection() {
 function HeroDecor() {
     return (
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-            <div className="absolute right-[-90px] top-[-90px] h-72 w-72 rounded-full bg-[#F2C38B]/20 blur-3xl" />
-            <div className="absolute bottom-[-120px] left-[-120px] h-80 w-80 rounded-full bg-[#1F5A4A]/35 blur-3xl" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_38%)]" />
+            <div className="absolute right-[-90px] top-[-90px] h-72 w-72 rounded-full bg-[#C8784A]/25 blur-3xl" />
+            <div className="absolute bottom-[-120px] left-[-120px] h-80 w-80 rounded-full bg-[#1F5A4A]/25 blur-3xl" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_45%)]" />
         </div>
     );
 }
 
 function ActivitySection() {
     return (
-        <section className="rounded-[30px] border border-[#E3DED4] bg-[#FFFDF8]/85 p-5 shadow-[0_18px_55px_rgba(47,35,25,0.05)] sm:p-6">
-            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <section className="rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
+            <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
                         Aktivitas
                     </p>
 
-                    <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#201813] sm:text-3xl">
+                    <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
                         Mau ngopi buat apa?
                     </h2>
                 </div>
 
-                <p className="max-w-sm text-sm font-semibold leading-6 text-[#756A60]">
-                    Pilih salah satu kebutuhan, nanti langsung masuk ke halaman explore.
+                <p className="max-w-sm text-xs font-semibold text-[#756A60] sm:text-sm">
+                    Pilih salah satu kebutuhan, langsung temukan tempat yang relevan.
                 </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-3.5 sm:grid-cols-2 xl:grid-cols-3">
                 {quickFilters.map((item) => (
                     <Link
                         key={item.href}
                         href={item.href}
-                        className="group rounded-[22px] border border-[#E3DED4] bg-[#F8F1E8] p-4 transition hover:-translate-y-1 hover:border-[#1F5A4A]/35 hover:bg-[#1F5A4A] hover:shadow-[0_18px_45px_rgba(31,90,74,0.12)]"
+                        className="group rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/70 p-4.5 transition duration-300 hover:-translate-y-1 hover:border-[#1F5A4A]/35 hover:bg-[#1F5A4A] hover:shadow-[0_18px_45px_rgba(31,90,74,0.14)]"
                     >
-                        <div className="flex items-start gap-3">
-                            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#FFFDF8] text-xl transition group-hover:rotate-[-8deg] group-hover:scale-105">
+                        <div className="flex items-start gap-3.5">
+                            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-white text-xl shadow-sm transition duration-300 group-hover:rotate-[-6deg] group-hover:scale-105">
                                 {item.emoji}
                             </div>
 
-                            <div className="min-w-0">
-                                <h3 className="text-base font-black tracking-[-0.02em] text-[#201813] transition group-hover:text-white">
+                            <div className="min-w-0 flex-1">
+                                <h3 className="font-serif text-base font-bold text-[#201813] transition group-hover:text-white">
                                     {item.label}
                                 </h3>
 
-                                <p className="mt-1 text-xs font-semibold leading-5 text-[#756A60] transition group-hover:text-white/70">
+                                <p className="mt-1 text-xs font-medium leading-5 text-[#756A60] transition group-hover:text-white/75">
                                     {item.description}
                                 </p>
 
-                                <p className="mt-3 text-xs font-black text-[#1F5A4A] transition group-hover:text-white">
+                                <p className="mt-3 text-xs font-bold text-[#1F5A4A] transition group-hover:text-white">
                                     Cek rekomendasi →
                                 </p>
                             </div>
@@ -230,21 +232,21 @@ function ActivitySection() {
 
 function QuickPickSection() {
     return (
-        <aside className="rounded-[30px] border border-[#E3DED4] bg-[#FFFDF8]/85 p-5 shadow-[0_18px_55px_rgba(47,35,25,0.05)] sm:p-6 lg:sticky lg:top-24 lg:self-start">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
+        <aside className="rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] lg:sticky lg:top-24 lg:self-start">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
                 Quick Pick
             </p>
 
-            <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#201813]">
-                Filter cepat
+            <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[#201813]">
+                Filter Cepat
             </h2>
 
-            <p className="mt-2 text-sm font-semibold leading-6 text-[#756A60]">
-                Cari langsung berdasarkan fasilitas atau budget.
+            <p className="mt-2 text-xs font-semibold leading-5 text-[#756A60]">
+                Cari langsung berdasarkan fasilitas favorit atau perkiraan budget.
             </p>
 
             <div className="mt-5">
-                <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-[#9B8C7C]">
+                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#9B8C7C]">
                     Fasilitas
                 </p>
 
@@ -253,7 +255,7 @@ function QuickPickSection() {
                         <Link
                             key={item.href}
                             href={item.href}
-                            className="rounded-full border border-[#E3DED4] bg-[#F8F1E8] px-3 py-2 text-xs font-black text-[#4B4038] transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
+                            className="rounded-full border border-[#E7D8C8] bg-[#F8F1E8]/70 px-3.5 py-1.5 text-xs font-bold text-[#4B4038] shadow-sm transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
                         >
                             {item.label}
                         </Link>
@@ -261,9 +263,9 @@ function QuickPickSection() {
                 </div>
             </div>
 
-            <div className="mt-6">
-                <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-[#9B8C7C]">
-                    Budget
+            <div className="mt-6 border-t border-[#E7D8C8]/60 pt-5">
+                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#9B8C7C]">
+                    Budget / Range Harga
                 </p>
 
                 <div className="grid gap-2">
@@ -271,7 +273,7 @@ function QuickPickSection() {
                         <Link
                             key={item.href}
                             href={item.href}
-                            className="rounded-2xl border border-[#E3DED4] bg-[#F8F1E8] px-4 py-3 text-sm font-black text-[#201813] transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
+                            className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/70 px-4 py-2.5 text-xs font-bold text-[#201813] transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
                         >
                             {item.label}
                         </Link>
@@ -284,39 +286,38 @@ function QuickPickSection() {
 
 function FeaturedSection({ places }: { places: Place[] }) {
     return (
-        <section className="mt-6 rounded-[30px] border border-[#E3DED4] bg-[#FFFDF8]/85 p-5 shadow-[0_18px_55px_rgba(47,35,25,0.05)] sm:p-6">
-            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <section className="mt-8 rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8784A]">
-                        Featured
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                        Featured Spots
                     </p>
 
-                    <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#201813] sm:text-3xl">
-                        Rekomendasi pilihan
+                    <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+                        Rekomendasi Pilihan
                     </h2>
 
-                    <p className="mt-2 max-w-xl text-sm font-semibold leading-6 text-[#756A60]">
-                        Tempat pilihan dari data Saranwak yang sudah tersimpan di Cloudflare
-                        D1.
+                    <p className="mt-1.5 text-xs font-semibold text-[#756A60] sm:text-sm">
+                        Koleksi coffee shop pilihan dengan suasana dan fasilitas terbaik di Padang.
                     </p>
                 </div>
 
                 <Link
                     href="/places/?category=coffee-shop"
-                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E3DED4] bg-[#201813] px-5 py-3 text-sm font-black text-white transition hover:bg-[#1F5A4A]"
+                    className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#201813] px-5 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#1F5A4A]"
                 >
-                    Lihat semua
+                    Lihat Semua Tempat →
                 </Link>
             </div>
 
             {places.length === 0 ? (
-                <div className="rounded-[24px] border border-dashed border-[#D7C5B2] bg-[#F8F1E8] p-6 text-center">
-                    <p className="text-sm font-black text-[#201813]">
+                <div className="rounded-[24px] border border-dashed border-[#D7C5B2] bg-[#F8F1E8] p-8 text-center">
+                    <p className="font-serif text-base font-bold text-[#201813]">
                         Belum ada rekomendasi featured.
                     </p>
 
-                    <p className="mt-2 text-sm font-semibold leading-6 text-[#756A60]">
-                        Pastikan ada data aktif dengan status featured di database D1.
+                    <p className="mt-1.5 text-xs font-medium text-[#756A60]">
+                        Pastikan data tempat aktif sudah tersimpan di database.
                     </p>
                 </div>
             ) : (

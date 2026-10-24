@@ -188,6 +188,10 @@ export default function AdminPage() {
             const result = await parseAdminPlacesResponse(response);
 
             if (!response.ok) {
+                if (response.status === 401) {
+                    router.push("/admin/login");
+                    return;
+                }
                 throw new Error(result.message || "Gagal mengambil data CMS.");
             }
 

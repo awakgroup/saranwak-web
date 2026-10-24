@@ -65,7 +65,7 @@ function SectionHeader({ placesCount }: { placesCount: number }) {
                     Featured Coffee Shops
                 </div>
 
-                <h2 className="mt-4 text-[34px] font-black leading-[0.96] tracking-[-0.055em] text-[#201813] sm:text-5xl lg:text-[56px]">
+                <h2 className="mt-4 font-serif text-[34px] font-bold leading-[1.02] tracking-[-0.03em] text-[#201813] sm:text-5xl lg:text-[56px]">
                     Coffee shop pilihan di Padang
                 </h2>
 
