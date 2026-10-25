@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
+import { getPlaceCoordinates } from "@/lib/place-coordinates";
 import "leaflet/dist/leaflet.css";
 
 interface PlacesMapViewProps {
@@ -61,6 +62,11 @@ export function PlacesMapView({ places, onSelectPlace }: PlacesMapViewProps) {
             markersLayerRef.current = markersLayer;
             mapInstanceRef.current = map;
             setIsMapReady(true);
+
+            // Invalidate size to ensure tiles render immediately
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 200);
         });
 
         return () => {
@@ -81,19 +87,17 @@ export function PlacesMapView({ places, onSelectPlace }: PlacesMapViewProps) {
             const map = mapInstanceRef.current;
             if (!markersLayer || !map) return;
 
+            map.invalidateSize();
             markersLayer.clearLayers();
 
-            const validPlaces = places.filter(
-                (p) => typeof p.latitude === "number" && typeof p.longitude === "number"
-            );
-
-            if (validPlaces.length === 0) return;
+            if (places.length === 0) return;
 
             const bounds: L.LatLngExpression[] = [];
 
-            validPlaces.forEach((place) => {
-                const lat = place.latitude as number;
-                const lng = place.longitude as number;
+            places.forEach((place) => {
+                const coords = getPlaceCoordinates(place);
+                const lat = coords.lat;
+                const lng = coords.lng;
                 bounds.push([lat, lng]);
 
                 // Create custom HTML marker pin with Saranwak aesthetic
@@ -102,22 +106,16 @@ export function PlacesMapView({ places, onSelectPlace }: PlacesMapViewProps) {
                 const customIcon = L.divIcon({
                     className: "saranwak-marker-container",
                     html: `
-                        <div class="group relative cursor-pointer -translate-x-1/2 -translate-y-full transition-transform duration-200 hover:scale-110">
-                            <div class="flex items-center gap-1.5 rounded-full border-2 ${
-                                isSelected
-                                    ? "border-[#201813] bg-[#201813] text-[#F2C38B] scale-110 ring-4 ring-[#C8784A]/30"
-                                    : "border-[#C8784A] bg-[#FFFDF8] text-[#201813] shadow-md hover:border-[#201813]"
-                            } px-2.5 py-1 text-xs font-black shadow-lg">
-                                <span class="h-2 w-2 rounded-full ${isSelected ? "bg-[#F2C38B]" : "bg-[#C8784A]"}"></span>
-                                <span class="max-w-[110px] truncate text-[11px] leading-tight font-extrabold">${place.name}</span>
+                        <div class="saranwak-pin-wrapper ${isSelected ? "selected" : ""}">
+                            <div class="saranwak-pin">
+                                <span class="saranwak-pin-dot"></span>
+                                <span class="saranwak-pin-label">${place.name}</span>
                             </div>
-                            <div class="mx-auto -mt-1 h-2 w-2 rotate-45 border-b-2 border-r-2 ${
-                                isSelected ? "border-[#201813] bg-[#201813]" : "border-[#C8784A] bg-[#FFFDF8]"
-                            }"></div>
+                            <div class="saranwak-pin-pointer"></div>
                         </div>
                     `,
-                    iconSize: [120, 42],
-                    iconAnchor: [60, 42],
+                    iconSize: [0, 0],
+                    iconAnchor: [0, 0],
                 });
 
                 const marker = L.marker([lat, lng], { icon: customIcon });
@@ -134,7 +132,7 @@ export function PlacesMapView({ places, onSelectPlace }: PlacesMapViewProps) {
             // Fit map to markers bounds
             if (bounds.length > 0) {
                 map.fitBounds(L.latLngBounds(bounds), {
-                    padding: [40, 40],
+                    padding: [50, 50],
                     maxZoom: 15,
                 });
             }
@@ -144,13 +142,14 @@ export function PlacesMapView({ places, onSelectPlace }: PlacesMapViewProps) {
     const handleResetView = () => {
         if (!mapInstanceRef.current || places.length === 0) return;
         import("leaflet").then((L) => {
-            const validCoords = places
-                .filter((p) => typeof p.latitude === "number" && typeof p.longitude === "number")
-                .map((p) => [p.latitude as number, p.longitude as number] as L.LatLngExpression);
+            const validCoords = places.map((p) => {
+                const c = getPlaceCoordinates(p);
+                return [c.lat, c.lng] as L.LatLngExpression;
+            });
 
             if (validCoords.length > 0 && mapInstanceRef.current) {
                 mapInstanceRef.current.fitBounds(L.latLngBounds(validCoords), {
-                    padding: [40, 40],
+                    padding: [50, 50],
                     maxZoom: 15,
                 });
             }

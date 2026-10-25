@@ -115,3 +115,72 @@ body {
   background: transparent !important;
   border: none !important;
 }
+
+.saranwak-pin-wrapper {
+  position: relative;
+  cursor: pointer;
+  transform: translate(-50%, -100%);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.saranwak-pin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FFFDF8;
+  border: 2px solid #C8784A;
+  color: #201813;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 6px 18px rgba(32, 24, 19, 0.22);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.saranwak-pin-wrapper:hover .saranwak-pin,
+.saranwak-pin-wrapper.selected .saranwak-pin {
+  background: #201813;
+  color: #F2C38B;
+  border-color: #201813;
+  transform: scale(1.08);
+}
+
+.saranwak-pin-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #C8784A;
+  flex-shrink: 0;
+}
+
+.saranwak-pin-wrapper.selected .saranwak-pin-dot {
+  background: #F2C38B;
+}
+
+.saranwak-pin-label {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saranwak-pin-pointer {
+  width: 8px;
+  height: 8px;
+  background: #FFFDF8;
+  border-right: 2px solid #C8784A;
+  border-bottom: 2px solid #C8784A;
+  transform: rotate(45deg);
+  margin-top: -5px;
+  transition: all 0.2s ease;
+}
+
+.saranwak-pin-wrapper:hover .saranwak-pin-pointer,
+.saranwak-pin-wrapper.selected .saranwak-pin-pointer {
+  background: #201813;
+  border-color: #201813;
+}
