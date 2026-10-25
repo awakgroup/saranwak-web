@@ -51,9 +51,36 @@ const contactUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
     "Hi SaranWak, saya ingin bekerjasama dengan saranwak.com"
 )}`;
 
+const aboutJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "@id": "https://saranwak.com/about#webpage",
+    "url": "https://saranwak.com/about",
+    "name": "Tentang Saranwak — Local Coffee Shop Guide dari Padang",
+    "description":
+        "Cerita di balik Saranwak, platform direktori dan panduan lokal terkurasi untuk menemukan coffee shop dan tempat nugas di Padang.",
+    "mainEntity": {
+        "@type": "Organization",
+        "@id": "https://saranwak.com/#organization",
+        "name": "Saranwak",
+        "alternateName": ["Saran Wak", "Saranwak Padang"],
+        "url": "https://saranwak.com",
+        "logo": "https://saranwak.com/favicon.png",
+        "disambiguatingDescription":
+            "Saranwak adalah platform teknologi dan panduan kurasi spot ngopi serta ruang kerja kreatif lokal di Padang, Sumatera Barat.",
+        "areaServed": "Padang, Sumatera Barat",
+    },
+};
+
 export default function AboutPage() {
     return (
         <main className="min-h-screen bg-[#F4F1EA] px-4 py-8 text-[#141414] sm:px-6 lg:px-8 lg:py-10">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(aboutJsonLd),
+                }}
+            />
             <div className="mx-auto max-w-7xl">
                 <HeroAbout />
 

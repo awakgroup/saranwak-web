@@ -4,6 +4,7 @@ import path from "path";
 
 import { FeaturedPlacesSection } from "@/components/home/FeaturedPlacesSection";
 import { HomeHeroSection } from "@/components/home/HomeHeroSection";
+import { HomeFaqSection, HOME_FAQS } from "@/components/home/HomeFaqSection";
 import { OwnerBusinessSection } from "@/components/home/OwnerBusinessSection";
 import PromoBannerCarousel from "@/components/PromoBannerCarousel";
 import { WhySaranwak } from "@/components/WhySaranwak";
@@ -20,7 +21,16 @@ const homeJsonLd = {
       "@id": "https://saranwak.com/#website",
       "url": "https://saranwak.com",
       "name": "Saranwak",
-      "description": "Local coffee shop guide dari Padang",
+      "alternateName": [
+        "Saran Wak",
+        "Saranwak Padang",
+        "saranwak.com",
+        "Saranwak Coffee Guide"
+      ],
+      "description":
+        "Platform panduan lokal dan direktori kurasi coffee shop di Padang berdasarkan suasana, kebutuhan nugas/WFC, budget, dan fasilitas.",
+      "disambiguatingDescription":
+        "Saranwak adalah direktori kurasi lokal independen untuk mencari rekomendasi coffee shop, cafe, dan ruang kerja di Kota Padang, Sumatera Barat. Bukan layanan konseling atau curhat pribadi.",
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
@@ -35,8 +45,21 @@ const homeJsonLd = {
       "@type": "Organization",
       "@id": "https://saranwak.com/#organization",
       "name": "Saranwak",
+      "alternateName": ["Saran Wak", "Saranwak Padang"],
       "url": "https://saranwak.com",
       "logo": "https://saranwak.com/favicon.png",
+      "description":
+        "Panduan lokal terkurasi untuk menemukan coffee shop, cafe, dan tempat nongkrong di Padang sesuai mood dan kebutuhan.",
+      "disambiguatingDescription":
+        "Saranwak adalah platform teknologi dan direktori kurasi spot ngopi lokal di Kota Padang, Sumatera Barat, Indonesia.",
+      "knowsAbout": [
+        "Coffee Shop di Padang",
+        "Rekomendasi Cafe di Padang",
+        "Tempat Nugas dan WFC di Padang",
+        "Tempat Nongkrong Padang",
+        "Kuliner dan Wisata Kota Padang",
+        "Direktori Kafe Sumatera Barat"
+      ],
       "areaServed": {
         "@type": "City",
         "name": "Padang",
@@ -51,8 +74,18 @@ const homeJsonLd = {
           "longitude": 100.4172,
         },
       },
-      "description":
-        "Panduan lokal terkurasi untuk menemukan coffee shop dan tempat nongkrong di Padang sesuai mood dan kebutuhan.",
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://saranwak.com/#faq",
+      "mainEntity": HOME_FAQS.map((faq) => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer,
+        },
+      })),
     },
   ],
 };
@@ -84,6 +117,10 @@ export default async function Home() {
 
           <SectionBlock>
             <WhySaranwak />
+          </SectionBlock>
+
+          <SectionBlock>
+            <HomeFaqSection />
           </SectionBlock>
 
           <SectionBlock variant="last">
