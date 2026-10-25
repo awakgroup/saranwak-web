@@ -1,22 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
     Dices,
     X,
     Sparkles,
     RotateCcw,
-    MapPin,
     ArrowRight,
-    Coffee,
     Clock,
 } from "lucide-react";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import { getPlaceOpenStatus } from "@/lib/opening-hours";
 import { OpenStatusBadge } from "@/components/OpenStatusBadge";
+import staticPlaces from "@/public/data/places.json";
 
 type RandomPlaceModalProps = {
     isOpen: boolean;
@@ -40,12 +38,52 @@ const areaOptions = [
     { label: "Koto Tangah", value: "Koto Tangah" },
 ];
 
+function extractPlaceTagSlugs(place: Place): string[] {
+    const list: string[] = [];
+
+    // Cek format place.tags (dari API)
+    const flexiblePlace = place as unknown as { tags?: Array<{ slug?: string; name?: string } | string> };
+    if (Array.isArray(flexiblePlace.tags)) {
+        for (const t of flexiblePlace.tags) {
+            if (typeof t === "string") {
+                list.push(t.toLowerCase());
+            } else if (t?.slug) {
+                list.push(t.slug.toLowerCase());
+            } else if (t?.name) {
+                list.push(t.name.toLowerCase());
+            }
+        }
+    }
+
+    // Cek format place.place_tags (dari DB / JSON lokal)
+    if (Array.isArray(place.place_tags)) {
+        for (const item of place.place_tags) {
+            const rawTag = Array.isArray(item.tags)
+                ? item.tags[0]
+                : (item.tags || (item as unknown as { tag?: { slug?: string; name?: string } }).tag);
+
+            if (rawTag?.slug) {
+                list.push(rawTag.slug.toLowerCase());
+            } else if (rawTag?.name) {
+                list.push(rawTag.name.toLowerCase());
+            }
+        }
+    }
+
+    return list;
+}
+
 export function RandomPlaceModal({
     isOpen,
     onClose,
     placesData = [],
 }: RandomPlaceModalProps) {
-    const [allPlaces, setAllPlaces] = useState<Place[]>(placesData);
+    // Inisialisasi langsung dengan staticPlaces agar tidak pernah kosong sedetik pun!
+    const [allPlaces, setAllPlaces] = useState<Place[]>(() => {
+        if (placesData && placesData.length > 0) return placesData;
+        return staticPlaces as unknown as Place[];
+    });
+
     const [selectedMood, setSelectedMood] = useState("all");
     const [selectedArea, setSelectedArea] = useState("all");
     const [onlyOpenNow, setOnlyOpenNow] = useState(true);
@@ -55,7 +93,7 @@ export function RandomPlaceModal({
     const [pickedPlace, setPickedPlace] = useState<Place | null>(null);
     const [hasPicked, setHasPicked] = useState(false);
 
-    // Fetch live places jika placesData belum disediakan
+    // Sync jika prop placesData berubah atau fetch update dari API
     useEffect(() => {
         if (placesData && placesData.length > 0) {
             setAllPlaces(placesData);
@@ -63,86 +101,88 @@ export function RandomPlaceModal({
         }
 
         fetch("/api/places?limit=150")
-            .then((res) => res.json() as Promise<{ data?: Place[] }>)
+            .then((res) => {
+                if (!res.ok) throw new Error();
+                return res.json() as Promise<{ data?: Place[] }>;
+            })
             .then((json) => {
                 if (Array.isArray(json?.data) && json.data.length > 0) {
                     setAllPlaces(json.data);
                 }
             })
             .catch(() => {
-                // Ignore silent error
+                // Tetap gunakan staticPlaces jika API gagal
             });
     }, [placesData]);
 
     if (!isOpen) return null;
 
     function handlePickRandom() {
-        if (allPlaces.length === 0) return;
+        const sourcePool = allPlaces.length > 0 ? allPlaces : (staticPlaces as unknown as Place[]);
 
-        // Filter kandidat berdasarkan preferensi
-        const candidates = allPlaces.filter((place) => {
-            // Filter Area
-            if (selectedArea !== "all") {
-                const area = (place.area || "").toLowerCase();
-                if (!area.includes(selectedArea.toLowerCase())) {
-                    return false;
-                }
+        // 1. Filter Area
+        let filtered = sourcePool;
+        if (selectedArea !== "all") {
+            const targetArea = selectedArea.toLowerCase();
+            const byArea = filtered.filter((place) =>
+                (place.area || "").toLowerCase().includes(targetArea)
+            );
+            if (byArea.length > 0) {
+                filtered = byArea;
             }
+        }
 
-            // Filter Mood / Tag
-            if (selectedMood !== "all") {
-                const tags = (place.place_tags || [])
-                    .map((item) => {
-                        if (Array.isArray(item.tags)) return item.tags[0]?.slug;
-                        return item.tags?.slug;
-                    })
-                    .filter(Boolean)
-                    .map((s) => s?.toLowerCase());
+        // 2. Filter Mood / Aktivitas
+        if (selectedMood !== "all") {
+            const byMood = filtered.filter((place) => {
+                const tagSlugs = extractPlaceTagSlugs(place);
+                const matchesTag = tagSlugs.some((s) => s.includes(selectedMood));
 
-                const nameAndDesc = `${place.name} ${place.description || ""}`.toLowerCase();
+                const searchableText = `${place.name} ${place.description || ""} ${place.short_description || ""}`.toLowerCase();
+                const matchesText = searchableText.includes(selectedMood);
 
-                const matchesTag = tags.some((t) => t?.includes(selectedMood));
-                const matchesText = nameAndDesc.includes(selectedMood);
+                return matchesTag || matchesText;
+            });
 
-                if (!matchesTag && !matchesText) {
-                    return false;
-                }
+            if (byMood.length > 0) {
+                filtered = byMood;
             }
+        }
 
-            // Filter Buka Sekarang
-            if (onlyOpenNow) {
-                const openStatus = getPlaceOpenStatus(place.opening_hours);
-                if (!openStatus.isOpen) {
-                    return false;
-                }
+        // 3. Filter Buka Sekarang (jika dicentang)
+        if (onlyOpenNow) {
+            const byOpenNow = filtered.filter((place) => {
+                return getPlaceOpenStatus(place.opening_hours).isOpen;
+            });
+
+            // Jika ada yang buka, gunakan. Jika tidak ada yang buka sama sekali (misal jam 4 pagi), gunakan filtered
+            if (byOpenNow.length > 0) {
+                filtered = byOpenNow;
             }
+        }
 
-            return true;
-        });
-
-        // Jika filter terlalu ketat dan kandidat kosong, fallback ke semua tempat
-        const pool = candidates.length > 0 ? candidates : allPlaces;
+        const finalCandidates = filtered.length > 0 ? filtered : sourcePool;
 
         setIsShuffling(true);
         setHasPicked(false);
         setPickedPlace(null);
 
-        // Animasi kocok slot machine selama 1.2 detik
+        // Animasi kocok slot machine selama ~1.1 detik
         let count = 0;
-        const maxShuffles = 16;
+        const maxCount = 14;
         const interval = setInterval(() => {
-            const randomIndex = Math.floor(Math.random() * pool.length);
-            setShufflingName(pool[randomIndex]?.name || "Memilih...");
+            const randomSample = finalCandidates[Math.floor(Math.random() * finalCandidates.length)];
+            setShufflingName(randomSample?.name || "Mencari cafe terbaik...");
             count += 1;
 
-            if (count >= maxShuffles) {
+            if (count >= maxCount) {
                 clearInterval(interval);
-                const finalChoice = pool[Math.floor(Math.random() * pool.length)];
-                setPickedPlace(finalChoice);
+                const finalWinner = finalCandidates[Math.floor(Math.random() * finalCandidates.length)];
+                setPickedPlace(finalWinner);
                 setIsShuffling(false);
                 setHasPicked(true);
             }
-        }, 75);
+        }, 80);
     }
 
     return (
@@ -247,14 +287,14 @@ export function RandomPlaceModal({
                             </label>
                         </div>
 
-                        {/* Shuffle Visual State */}
+                        {/* Shuffle Visual State (Saat Mengocok) */}
                         {isShuffling ? (
-                            <div className="my-6 rounded-2xl border border-dashed border-[#C8784A] bg-[#FFF8EF] p-6 text-center">
-                                <p className="animate-bounce text-3xl">🎰</p>
+                            <div className="my-5 rounded-2xl border border-dashed border-[#C8784A] bg-[#FFF8EF] p-5 text-center">
+                                <p className="animate-spin text-3xl">🎲</p>
                                 <p className="mt-2 text-xs font-black uppercase tracking-widest text-[#C8784A]">
-                                    Sedang mengocok...
+                                    Sedang mengocok pilihan...
                                 </p>
-                                <p className="mt-1 font-serif text-2xl font-bold text-[#201813]">
+                                <p className="mt-1 font-serif text-xl font-bold text-[#201813]">
                                     {shufflingName}
                                 </p>
                             </div>
@@ -265,17 +305,17 @@ export function RandomPlaceModal({
                             type="button"
                             onClick={handlePickRandom}
                             disabled={isShuffling}
-                            className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#181818] py-4 text-sm font-black text-white shadow-lg transition hover:bg-[#2A2A2A] active:scale-[0.99] disabled:opacity-50"
+                            className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#181818] py-4 text-sm font-black text-white shadow-lg transition hover:bg-[#2A2A2A] active:scale-[0.99] disabled:opacity-50"
                         >
-                            <Dices className="h-5 w-5 text-[#F3C48E]" />
-                            <span>Kocok & Cariin Sekarang!</span>
+                            <Dices className={`h-5 w-5 text-[#F3C48E] ${isShuffling ? "animate-spin" : ""}`} />
+                            <span>{isShuffling ? "Sedang Mengocok..." : "Kocok & Cariin Sekarang!"}</span>
                         </button>
                     </div>
                 ) : (
                     /* Hasil Pilihan */
                     pickedPlace && (
                         <div className="mt-5 space-y-4">
-                            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-800">
+                            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1.5 text-xs font-bold text-amber-800">
                                 <Sparkles className="h-3.5 w-3.5 text-amber-600" />
                                 <span>Rekomendasi Terpilih Buat Kamu! 🎉</span>
                             </div>
