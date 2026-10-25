@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { promises as fs } from "fs";
+import path from "path";
 
 import { PlaceCard } from "@/components/PlaceCard";
 import {
@@ -27,10 +29,20 @@ export const metadata: Metadata = {
 async function getRecommendedPlaces(): Promise<Place[]> {
     try {
         const places = await getFeaturedPlaces(6);
-
-        return places.map(mapApiPlaceToLegacyPlace);
+        if (places && places.length > 0) {
+            return places.map(mapApiPlaceToLegacyPlace);
+        }
     } catch (error) {
         console.error("Recommended places D1 fetch error:", error);
+    }
+
+    try {
+        const filePath = path.join(process.cwd(), "public", "data", "places.json");
+        const fileContent = await fs.readFile(filePath, "utf8");
+        const jsonPlaces = JSON.parse(fileContent) as Place[];
+        return jsonPlaces.filter((p) => p.is_published).slice(0, 6);
+    } catch (fallbackError) {
+        console.error("Fallback places.json error in rekomendasi:", fallbackError);
         return [];
     }
 }
@@ -58,50 +70,54 @@ function mapApiPlaceToLegacyPlace(place: ApiPlace): Place {
 const quickFilters = [
     {
         emoji: "💻",
-        label: "Buat Nugas",
-        description: "Fokus, laptopan, dan kerja tugas.",
-        href: "/places/?category=coffee-shop&tags=nugas,wifi,colokan",
-    },
-    {
-        emoji: "💬",
-        label: "Nongkrong",
-        description: "Ngobrol lama bareng teman.",
-        href: "/places/?category=coffee-shop&tags=nongkrong,rame",
+        label: "Buat Nugas & WFC",
+        description: "WiFi kencang, banyak colokan, tenang.",
+        href: "/rekomendasi/nugas-wfc/",
     },
     {
         emoji: "🌿",
-        label: "Me-time",
-        description: "Tenang buat recharge sendiri.",
-        href: "/places/?category=coffee-shop&tags=me-time,tenang",
+        label: "Outdoor & Senja",
+        description: "Area terbuka luas dan suasana asri.",
+        href: "/rekomendasi/outdoor/",
+    },
+    {
+        emoji: "💬",
+        label: "Nongkrong Santai",
+        description: "Ngobrol lama bareng teman sampai malam.",
+        href: "/rekomendasi/nongkrong/",
     },
     {
         emoji: "💕",
         label: "First Date",
-        description: "Nyaman buat ngobrol santai.",
-        href: "/places/?category=coffee-shop&tags=nge-date,tenang",
+        description: "Vibes hangat, tenang, dan estetik.",
+        href: "/rekomendasi/first-date/",
     },
     {
-        emoji: "⚡",
-        label: "WFC",
-        description: "WiFi, colokan, dan suasana nyaman.",
-        href: "/places/?category=coffee-shop&tags=wfc,wifi,colokan",
+        emoji: "🏷️",
+        label: "Hemat Kantong",
+        description: "Menu terjangkau di bawah Rp25.000.",
+        href: "/rekomendasi/murah/",
     },
     {
-        emoji: "🎵",
-        label: "Live Musik",
-        description: "Vibe rame dan hiburan musik.",
-        href: "/places/?category=coffee-shop&tags=live-musik,rame",
+        emoji: "🎲",
+        label: "Board Game",
+        description: "Main seru bareng teman sambil ngopi.",
+        href: "/rekomendasi/board-game/",
     },
 ];
 
 const facilityFilters = [
     {
-        label: "WiFi + Colokan",
-        href: "/places/?category=coffee-shop&tags=wifi,colokan",
+        label: "Outdoor",
+        href: "/rekomendasi/outdoor/",
     },
     {
-        label: "Outdoor",
-        href: "/places/?category=coffee-shop&tags=outdoor",
+        label: "WiFi + Colokan",
+        href: "/rekomendasi/nugas-wfc/",
+    },
+    {
+        label: "Board Game",
+        href: "/rekomendasi/board-game/",
     },
     {
         label: "Indoor Smoking",
@@ -111,16 +127,12 @@ const facilityFilters = [
         label: "Photobox",
         href: "/places/?category=coffee-shop&tags=photobox",
     },
-    {
-        label: "Board Game",
-        href: "/places/?category=coffee-shop&tags=board-game",
-    },
 ];
 
 const budgetFilters = [
     {
-        label: "Di bawah 20k",
-        href: "/places/?category=coffee-shop&price=under-20k",
+        label: "Di bawah 20k / Ramah Kantong",
+        href: "/rekomendasi/murah/",
     },
     {
         label: "20k - 40k",
@@ -132,11 +144,44 @@ const budgetFilters = [
     },
 ];
 
+const rekomendasiJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": "https://saranwak.com/rekomendasi#webpage",
+    "url": "https://saranwak.com/rekomendasi",
+    "name": "Rekomendasi Coffee Shop Terbaik di Padang",
+    "description":
+        "Koleksi kurasi coffee shop di Padang berdasarkan mood nugas, hangout, first date, outdoor, dan budget.",
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Beranda",
+                "item": "https://saranwak.com",
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Rekomendasi",
+                "item": "https://saranwak.com/rekomendasi",
+            },
+        ],
+    },
+};
+
 export default async function RekomendasiPage() {
     const places = await getRecommendedPlaces();
 
     return (
         <main className="min-h-screen bg-[#F4F1EA] px-4 py-8 text-[#201813] sm:px-6 lg:px-8 lg:py-10">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(rekomendasiJsonLd),
+                }}
+            />
             <div className="mx-auto max-w-7xl">
                 <HeroSection />
 

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getPlaces } from "@/lib/api/places";
+import { CURATED_COLLECTIONS } from "@/lib/curated-collections";
 
 export const dynamic = "force-static";
 
@@ -31,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             url: `${siteUrl}/rekomendasi`,
             lastModified: now,
             changeFrequency: "weekly",
-            priority: 0.8,
+            priority: 0.85,
         },
         {
             url: `${siteUrl}/about`,
@@ -41,9 +42,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
     ];
 
+    const curatedPages: MetadataRoute.Sitemap = CURATED_COLLECTIONS.map((c) => ({
+        url: `${siteUrl}/rekomendasi/${c.slug}`,
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.85,
+    }));
+
     const placePages = await getPlaceSitemapPages();
 
-    return [...staticPages, ...placePages];
+    return [...staticPages, ...curatedPages, ...placePages];
 }
 
 async function getPlaceSitemapPages(): Promise<MetadataRoute.Sitemap> {
