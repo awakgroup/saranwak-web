@@ -1,4 +1,6 @@
 import type { MetadataRoute } from "next";
+import { promises as fs } from "fs";
+import path from "path";
 import { getPlaces } from "@/lib/api/places";
 import { CURATED_COLLECTIONS } from "@/lib/curated-collections";
 
@@ -55,25 +57,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 }
 
 async function getPlaceSitemapPages(): Promise<MetadataRoute.Sitemap> {
+    const map = new Map<string, SitemapPlace>();
+
+    try {
+        const filePath = path.join(process.cwd(), "public", "data", "places.json");
+        const fileContent = await fs.readFile(filePath, "utf8");
+        const jsonPlaces = JSON.parse(fileContent) as SitemapPlace[];
+        jsonPlaces.forEach((p) => {
+            if (p.slug) map.set(p.slug, p);
+        });
+    } catch (err) {
+        console.error("Sitemap JSON read error:", err);
+    }
+
     try {
         const places = await getPlaces({
             limit: 500,
         });
 
-        return places
-            .filter((place): place is SitemapPlace & typeof place =>
-                Boolean(place.slug)
-            )
-            .map((place) => ({
-                url: `${siteUrl}/places/${place.slug}`,
-                lastModified: getSafeDate(place.updated_at ?? place.created_at),
-                changeFrequency: "weekly" as const,
-                priority: 0.7,
-            }));
+        places.forEach((place) => {
+            if (place.slug) {
+                map.set(place.slug, place as SitemapPlace);
+            }
+        });
     } catch (error) {
         console.error("Sitemap D1 fetch error:", error);
-        return [];
     }
+
+    return Array.from(map.values()).map((place) => ({
+        url: `${siteUrl}/places/${place.slug}`,
+        lastModified: getSafeDate(place.updated_at ?? place.created_at),
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+    }));
 }
 
 function getSafeDate(value?: string | null) {

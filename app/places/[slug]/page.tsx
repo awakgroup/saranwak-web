@@ -981,27 +981,30 @@ function MobileStickyActions({
 }
 
 async function getStaticPlaceSlugs() {
+    const slugSet = new Set<string>();
+
+    const fallbackPlaces = await getPlacesFromJson();
+    fallbackPlaces.forEach((place) => {
+        if (place.slug) {
+            slugSet.add(place.slug);
+        }
+    });
+
     try {
         const places = await getPlacesFromApi({
             limit: 500,
         });
 
-        const slugs = places
-            .map((place) => place.slug)
-            .filter((slug): slug is string => Boolean(slug));
-
-        if (slugs.length > 0) {
-            return slugs;
-        }
+        places.forEach((place) => {
+            if (place.slug) {
+                slugSet.add(place.slug);
+            }
+        });
     } catch (error) {
         console.error("Static params D1 fetch error:", error);
     }
 
-    const fallbackPlaces = await getPlacesFromJson();
-
-    return fallbackPlaces
-        .map((place) => place.slug)
-        .filter((slug): slug is string => Boolean(slug));
+    return Array.from(slugSet);
 }
 
 async function getPlacesFromJson() {
