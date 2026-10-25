@@ -37,27 +37,33 @@ export default async function PlacesPage() {
 }
 
 async function getPublishedPlaces(): Promise<Place[]> {
+    let jsonPlaces: Place[] = [];
+    try {
+        const filePath = path.join(process.cwd(), "public", "data", "places.json");
+        const fileContent = await fs.readFile(filePath, "utf8");
+        jsonPlaces = JSON.parse(fileContent) as Place[];
+    } catch (fallbackError) {
+        console.error("Places JSON fallback error:", fallbackError);
+    }
+
     try {
         const places = await getPlacesFromApi({
             limit: 100,
         });
 
         if (places && places.length > 0) {
-            return places.map(mapApiPlaceToLegacyPlace);
+            const apiPlaces = places.map(mapApiPlaceToLegacyPlace);
+            // Merge agar tempat baru di places.json tetap muncul
+            const map = new Map<string, Place>();
+            jsonPlaces.forEach((p) => map.set(p.slug, p));
+            apiPlaces.forEach((p) => map.set(p.slug, p));
+            return Array.from(map.values());
         }
     } catch (error) {
         console.error("Places D1 fetch error:", error);
     }
 
-    try {
-        const filePath = path.join(process.cwd(), "public", "data", "places.json");
-        const fileContent = await fs.readFile(filePath, "utf8");
-        const jsonPlaces = JSON.parse(fileContent) as Place[];
-        return jsonPlaces;
-    } catch (fallbackError) {
-        console.error("Places JSON fallback error:", fallbackError);
-        return [];
-    }
+    return jsonPlaces;
 }
 
 function PlacesLoading() {

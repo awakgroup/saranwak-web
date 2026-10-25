@@ -94,7 +94,12 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
             })
             .then((json) => {
                 if (isMounted && Array.isArray(json?.data) && json.data.length > 0) {
-                    setLivePlacesData(json.data.map(mapApiPlaceToLegacyPlace));
+                    const apiPlaces = json.data.map(mapApiPlaceToLegacyPlace);
+                    // Merge agar data baru dari build/JSON tidak tertimpa D1 lama
+                    const map = new Map<string, Place>();
+                    placesData.forEach((p) => map.set(p.slug, p));
+                    apiPlaces.forEach((p) => map.set(p.slug, p));
+                    setLivePlacesData(Array.from(map.values()));
                 }
             })
             .catch(() => {
@@ -104,7 +109,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [placesData]);
 
     if (params.q !== prevQ) {
         setPrevQ(params.q);
