@@ -35,6 +35,7 @@ export type AdminPlace = {
     opening_hours: string | null;
     is_featured: boolean;
     is_published: boolean;
+    source?: string | null;
     created_at: string;
     categories?:
     | {

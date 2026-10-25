@@ -87,6 +87,7 @@ type PlaceDetail = {
     is_featured?: boolean | null;
     is_verified?: boolean | null;
     is_published: boolean;
+    source?: string | null;
     created_at?: string | null;
     updated_at?: string | null;
     categories: Category | Category[] | null;
@@ -360,6 +361,13 @@ function HeroSection({
                             <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur">
                                 <CheckCircle2 className="h-3 w-3 text-[#8BE4D2]" />
                                 Verified
+                            </span>
+                        ) : null}
+
+                        {place.source === "admin_panel" ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-[#1F5A4A]/80 px-3.5 py-1.5 text-xs font-bold text-[#F2C38B] backdrop-blur border border-[#F2C38B]/30">
+                                <Sparkles className="h-3 w-3 text-[#F2C38B]" />
+                                CMS Added
                             </span>
                         ) : null}
                     </div>
@@ -1149,6 +1157,7 @@ function mapApiPlaceDetailToPlaceDetail(place: ApiPlaceDetail): PlaceDetail {
         is_featured: Boolean(place.is_featured),
         is_verified: null,
         is_published: Boolean(place.is_active),
+        source: place.source ?? null,
         created_at: place.created_at,
         updated_at: place.updated_at,
         categories: category,

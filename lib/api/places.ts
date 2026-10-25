@@ -47,6 +47,7 @@ export type ApiPlace = {
     opening_hours: string | null;
     is_featured: number;
     is_active: number;
+    source?: string | null;
     created_at: string;
     updated_at: string;
     category_name: string | null;

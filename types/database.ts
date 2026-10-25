@@ -76,6 +76,8 @@ export type Place = {
     is_published?: boolean | null;
     is_verified?: boolean | null;
 
+    source?: "admin_panel" | "curation_seed" | string | null;
+
     view_count?: number | null;
     maps_click_count?: number | null;
     instagram_click_count?: number | null;

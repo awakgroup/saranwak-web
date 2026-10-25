@@ -225,6 +225,17 @@ function PlaceListItem({
                         {place.is_published ? "Live" : "Draft"}
                     </div>
 
+                    {place.source === "admin_panel" ? (
+                        <div
+                            className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-wider ${selected
+                                    ? "bg-violet-900 text-violet-100"
+                                    : "bg-violet-500/20 text-violet-300 border border-violet-500/30"
+                                }`}
+                        >
+                            Admin CMS
+                        </div>
+                    ) : null}
+
                     {place.is_featured ? (
                         <div
                             className={`rounded-full px-2 py-1 text-[10px] font-black uppercase ${selected

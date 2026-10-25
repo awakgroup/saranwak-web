@@ -151,6 +151,12 @@ export function PlaceCard({
                             Verified
                         </span>
                     ) : null}
+
+                    {place.source === "admin_panel" ? (
+                        <span className="rounded-full bg-[#1F5A4A] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-white shadow-sm backdrop-blur">
+                            CMS Added
+                        </span>
+                    ) : null}
                 </div>
 
                 <div className="absolute right-4 top-4 z-[4]">
