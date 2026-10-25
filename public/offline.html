@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sedang Offline | Saranwak</title>
+  <link rel="icon" href="/favicon.png" type="image/png" />
+  <meta name="theme-color" content="#201813" />
+  <style>
+    :root {
+      --bg: #F4F1EA;
+      --card-bg: #FFFDF8;
+      --border: #E7D8C8;
+      --text: #201813;
+      --muted: #756A60;
+      --accent: #C8784A;
+      --teal: #1F5A4A;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 40px 28px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 16px 40px rgba(32, 24, 19, 0.08);
+    }
+    .icon-wrapper {
+      width: 64px;
+      height: 64px;
+      background: #F8EFE4;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 20px;
+      font-size: 28px;
+      border: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .btn-primary {
+      background: var(--text);
+      color: #FFFFFF;
+      text-decoration: none;
+      padding: 14px 20px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover {
+      background: var(--accent);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 14px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .btn-secondary:hover {
+      background: #F8F1E8;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon-wrapper">☕</div>
+    <h1>Kamu Sedang Offline</h1>
+    <p>
+      Koneksi internetmu sedang terputus. Pastikan data seluler atau Wi-Fi aktif untuk melihat info kafe terbaru di Padang.
+    </p>
+    <div class="btn-group">
+      <button class="btn-primary" onclick="window.location.reload()">
+        Muat Ulang Halaman
+      </button>
+      <a class="btn-secondary" href="/">
+        Kembali ke Beranda
+      </a>
+    </div>
+  </div>
+</body>
+</html>

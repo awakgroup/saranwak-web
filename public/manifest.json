@@ -1,0 +1,56 @@
+{
+  "name": "Saranwak — Panduan Coffee Shop Padang",
+  "short_name": "Saranwak",
+  "description": "Temukan coffee shop & cafe terbaik di Padang sesuai kebutuhan, suasana, budget, dan lokasi terdekat.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F4F1EA",
+  "theme_color": "#201813",
+  "orientation": "portrait-primary",
+  "lang": "id",
+  "dir": "ltr",
+  "categories": ["food", "lifestyle", "travel"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Jelajahi Cafe",
+      "short_name": "Cafe",
+      "description": "Cari coffee shop di Padang",
+      "url": "/places",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Koleksi Rekomendasi",
+      "short_name": "Koleksi",
+      "description": "Koleksi tematik pilihan cafe Padang",
+      "url": "/rekomendasi",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

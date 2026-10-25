@@ -3,6 +3,7 @@ import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { PwaRegister } from "@/components/PwaRegister";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -65,6 +66,13 @@ export const metadata: Metadata = {
   publisher: "Saranwak",
   applicationName: "Saranwak",
   category: "Local Guide",
+  manifest: "/manifest.webmanifest",
+
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Saranwak",
+  },
 
   alternates: {
     canonical: siteUrl,
@@ -76,9 +84,19 @@ export const metadata: Metadata = {
         url: "/favicon.png",
         type: "image/png",
       },
+      {
+        url: "/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
     ],
     shortcut: "/favicon.png",
-    apple: "/favicon.png",
+    apple: "/apple-touch-icon.png",
   },
 
   openGraph: {
@@ -158,6 +176,7 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Footer />
+        <PwaRegister />
       </body>
     </html>
   );
