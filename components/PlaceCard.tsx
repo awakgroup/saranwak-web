@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
+import { OpenStatusBadge } from "@/components/OpenStatusBadge";
 
 type PlaceCardProps = {
     place: Place;
@@ -135,7 +136,9 @@ export function PlaceCard({
 
                 <div className="absolute inset-0 z-[2] bg-gradient-to-t from-black/80 via-black/22 to-black/5" />
 
-                <div className="absolute left-4 top-4 z-[3] flex flex-wrap gap-2">
+                <div className="absolute left-4 top-4 z-[3] flex flex-wrap items-center gap-1.5">
+                    <OpenStatusBadge openingHours={place.opening_hours} />
+
                     {place.is_featured ? (
                         <span className="rounded-full bg-[#F3C48E] px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] text-[#201813] shadow-sm">
                             Featured

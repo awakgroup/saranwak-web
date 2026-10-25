@@ -17,6 +17,7 @@ import {
 import { PlaceCard } from "@/components/PlaceCard";
 import { PlaceDetailTracker } from "@/components/PlaceDetailTracker";
 import { TrackedExternalLink } from "@/components/TrackedExternalLink";
+import { OpenStatusBadge } from "@/components/OpenStatusBadge";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import {
     getPlaceBySlug as getPlaceBySlugFromApi,
@@ -344,6 +345,8 @@ function HeroSection({
                                 {place.area}
                             </span>
                         ) : null}
+
+                        <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
 
                         {place.is_featured ? (
                             <span className="rounded-full bg-[#1F5A4A] px-3.5 py-1.5 text-xs font-bold text-white shadow-sm">
@@ -698,7 +701,11 @@ function PlaceSidebar({
                 <InfoItem icon="tag" label="Kategori" value={category?.name || "Coffee Shop"} />
                 <InfoItem icon="map" label="Area & Kota" value={`${place.area || "-"}, ${place.city || "Padang"}`} />
                 <InfoItem icon="wallet" label="Perkiraan Harga" value={place.price_range || "-"} />
-                <InfoItem icon="clock" label="Jam Operasional" value={place.opening_hours || "-"} />
+                <InfoItem icon="clock" label="Jam Operasional" value={place.opening_hours || "-"}>
+                    {place.opening_hours ? (
+                        <OpenStatusBadge openingHours={place.opening_hours} mode="detail" className="mt-2" />
+                    ) : null}
+                </InfoItem>
                 <InfoItem icon="pin" label="Alamat Lengkap" value={place.address || "-"} />
             </div>
 
@@ -761,10 +768,12 @@ function InfoItem({
     label,
     value,
     icon,
+    children,
 }: {
     label: string;
     value: string;
     icon?: "tag" | "map" | "wallet" | "clock" | "pin";
+    children?: React.ReactNode;
 }) {
     return (
         <div className="flex items-start gap-3 rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/60 p-3.5">
@@ -782,6 +791,7 @@ function InfoItem({
                 <p className="mt-0.5 text-xs font-bold leading-5 text-[#201813] sm:text-sm">
                     {value}
                 </p>
+                {children}
             </div>
         </div>
     );

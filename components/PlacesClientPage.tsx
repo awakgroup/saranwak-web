@@ -18,6 +18,7 @@ import {
     type PriceFilterValue,
 } from "@/lib/place-filters";
 import { mapApiPlaceToLegacyPlace, type ApiPlace } from "@/lib/api/places";
+import { getPlaceOpenStatus } from "@/lib/opening-hours";
 import type { Place } from "@/types/database";
 
 type PlacesClientPageProps = {
@@ -31,6 +32,7 @@ type PageParams = {
     area?: string;
     category?: string;
     price?: string;
+    openNow?: string;
 };
 
 type TagItem = {
@@ -73,6 +75,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
         area: searchParams.get("area") || undefined,
         category: searchParams.get("category") || undefined,
         price: searchParams.get("price") || undefined,
+        openNow: searchParams.get("openNow") || undefined,
     };
 
     const [searchQuery, setSearchQuery] = useState(params.q || "");
@@ -116,6 +119,12 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
             .filter((place) => matchCategory(place, params.category))
             .filter((place) => matchAllSelectedTags(place, selectedTags))
             .filter((place) => matchPrice(place, selectedPrice))
+            .filter((place) => {
+                if (params.openNow === "true") {
+                    return getPlaceOpenStatus(place.opening_hours).isOpen;
+                }
+                return true;
+            })
             .sort((a, b) => {
                 return (
                     new Date(b.created_at ?? 0).getTime() -
@@ -128,6 +137,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
         params.q,
         params.area,
         params.category,
+        params.openNow,
         selectedPrice,
         selectedTagsKey,
     ]);
@@ -137,7 +147,8 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
         params.area ||
         params.category ||
         selectedTags.length > 0 ||
-        selectedPrice !== "all"
+        selectedPrice !== "all" ||
+        params.openNow === "true"
     );
 
     const activeFilterCount =
@@ -145,7 +156,8 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
         Number(Boolean(params.area)) +
         Number(Boolean(params.category)) +
         selectedTags.length +
-        Number(selectedPrice !== "all");
+        Number(selectedPrice !== "all") +
+        Number(params.openNow === "true");
 
     function handleSearchSubmit(e: FormEvent) {
         e.preventDefault();
@@ -395,8 +407,39 @@ function FilterContent({
     selectedPrice: PriceFilterValue;
     hasFilter: boolean;
 }) {
+    const isOpenNow = params.openNow === "true";
+
     return (
         <div className="space-y-6">
+            {/* Status Jam Buka Section */}
+            <div>
+                <p className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                    Jam Buka
+                </p>
+
+                <Link
+                    href={buildFilterHref(params, {
+                        openNow: isOpenNow ? undefined : "true",
+                    })}
+                    className={`flex items-center justify-between rounded-2xl border px-3.5 py-2.5 text-xs font-bold transition duration-200 ${
+                        isOpenNow
+                            ? "border-emerald-700 bg-emerald-800 text-white shadow-sm"
+                            : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-emerald-600/50 hover:bg-[#F8F1E8]"
+                    }`}
+                >
+                    <span className="flex items-center gap-2">
+                        <span className="relative flex h-2 w-2">
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                        </span>
+                        <span>Buka Sekarang Saja</span>
+                    </span>
+                    {isOpenNow ? (
+                        <Check className="h-3.5 w-3.5 shrink-0 text-white" />
+                    ) : null}
+                </Link>
+            </div>
+
             {/* Budget Section */}
             <div>
                 <p className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
@@ -514,6 +557,14 @@ function ActiveFilters({
             id: `cat-${params.category}`,
             label: `Kategori: ${params.category}`,
             removeHref: buildFilterHref(params, { category: undefined }),
+        });
+    }
+
+    if (params.openNow === "true") {
+        chips.push({
+            id: "open-now",
+            label: "🟢 Buka Sekarang Saja",
+            removeHref: buildFilterHref(params, { openNow: undefined }),
         });
     }
 
@@ -898,6 +949,10 @@ function buildFilterHref(params: PageParams, updates: Partial<PageParams>) {
 
     if (nextParams.price && nextParams.price !== "all") {
         searchParams.set("price", nextParams.price);
+    }
+
+    if (nextParams.openNow) {
+        searchParams.set("openNow", nextParams.openNow);
     }
 
     const queryString = searchParams.toString();
