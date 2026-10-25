@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getPlaceOpenStatus, type PlaceOpenStatus } from "@/lib/opening-hours";
 
 type OpenStatusBadgeProps = {
@@ -14,9 +14,20 @@ export function OpenStatusBadge({
     mode = "compact",
     className = "",
 }: OpenStatusBadgeProps) {
+    const [tick, setTick] = useState(0);
+
+    useEffect(() => {
+        // Refresh status setiap 60 detik agar selalu akurat dengan jam berjalan
+        const interval = setInterval(() => {
+            setTick((prev) => prev + 1);
+        }, 60000);
+
+        return () => clearInterval(interval);
+    }, []);
+
     const status: PlaceOpenStatus = useMemo(() => {
         return getPlaceOpenStatus(openingHours);
-    }, [openingHours]);
+    }, [openingHours, tick]);
 
     if (!openingHours || !openingHours.trim()) {
         return null;

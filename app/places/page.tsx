@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import { promises as fs } from "fs";
+import path from "path";
 import type { Metadata } from "next";
 
 import { PlacesClientPage } from "@/components/PlacesClientPage";
@@ -40,9 +42,20 @@ async function getPublishedPlaces(): Promise<Place[]> {
             limit: 100,
         });
 
-        return places.map(mapApiPlaceToLegacyPlace);
+        if (places && places.length > 0) {
+            return places.map(mapApiPlaceToLegacyPlace);
+        }
     } catch (error) {
         console.error("Places D1 fetch error:", error);
+    }
+
+    try {
+        const filePath = path.join(process.cwd(), "public", "data", "places.json");
+        const fileContent = await fs.readFile(filePath, "utf8");
+        const jsonPlaces = JSON.parse(fileContent) as Place[];
+        return jsonPlaces;
+    } catch (fallbackError) {
+        console.error("Places JSON fallback error:", fallbackError);
         return [];
     }
 }

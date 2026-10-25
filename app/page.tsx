@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { promises as fs } from "fs";
+import path from "path";
 
 import { FeaturedPlacesSection } from "@/components/home/FeaturedPlacesSection";
 import { HomeHeroSection } from "@/components/home/HomeHeroSection";
@@ -97,9 +99,20 @@ async function getHomeFeaturedPlaces(): Promise<Place[]> {
   try {
     const places = await getFeaturedPlaces(6);
 
-    return places.map(mapApiPlaceToLegacyPlace);
+    if (places && places.length > 0) {
+      return places.map(mapApiPlaceToLegacyPlace);
+    }
   } catch (error) {
     console.error("Featured places D1 fetch error:", error);
+  }
+
+  try {
+    const filePath = path.join(process.cwd(), "public", "data", "places.json");
+    const fileContent = await fs.readFile(filePath, "utf8");
+    const jsonPlaces = JSON.parse(fileContent) as Place[];
+    return jsonPlaces.filter((p) => p.is_featured).slice(0, 6);
+  } catch (fallbackError) {
+    console.error("Featured places JSON fallback error:", fallbackError);
     return [];
   }
 }

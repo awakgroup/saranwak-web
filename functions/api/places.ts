@@ -14,6 +14,7 @@ type PlaceRow = {
     price_max: number | null;
     price_range: string | null;
     image_url: string | null;
+    opening_hours: string | null;
     is_featured: number;
     is_active: number;
     created_at: string;
@@ -91,6 +92,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         p.price_max,
         p.price_range,
         p.image_url,
+        p.opening_hours,
         p.is_featured,
         p.is_active,
         p.created_at,
@@ -142,6 +144,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
                 price_range: place.price_range,
 
                 image_url: place.image_url,
+                opening_hours: place.opening_hours,
 
                 is_featured: Boolean(place.is_featured),
                 is_active: Boolean(place.is_active),
