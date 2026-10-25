@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { RandomPlaceModal } from "@/components/RandomPlaceModal";
 import {
     placeFilterGroups,
     placeFilterOptions,
@@ -14,6 +15,7 @@ export function HeroSearch() {
 
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [selectedPrice, setSelectedPrice] = useState<PriceFilterValue>("all");
+    const [isRandomOpen, setIsRandomOpen] = useState(false);
 
     const activeFilterCount =
         selectedTags.length + (selectedPrice !== "all" ? 1 : 0);
@@ -219,6 +221,14 @@ export function HeroSearch() {
                             Lihat Semua
                         </button>
 
+                        <button
+                            type="button"
+                            onClick={() => setIsRandomOpen(true)}
+                            className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-2xl border border-[#C8784A] bg-[#C8784A] px-5 py-3 text-sm font-black text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[#B3683D] hover:shadow-md"
+                        >
+                            <span>🎲 Bingung Mau ke Mana?</span>
+                        </button>
+
                         {hasActiveFilter ? (
                             <button
                                 type="button"
@@ -231,6 +241,11 @@ export function HeroSearch() {
                     </div>
                 </div>
             </div>
+
+            <RandomPlaceModal
+                isOpen={isRandomOpen}
+                onClose={() => setIsRandomOpen(false)}
+            />
         </section>
     );
 }

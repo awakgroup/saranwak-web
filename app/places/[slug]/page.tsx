@@ -12,6 +12,7 @@ import {
     Coffee,
     Sparkles,
     CheckCircle2,
+    ArrowRight,
 } from "lucide-react";
 
 import { PlaceCard } from "@/components/PlaceCard";
@@ -760,6 +761,33 @@ function PlaceSidebar({
                     Share ke WhatsApp
                 </a>
             </div>
+
+            {/* Owner Claim Listing Card */}
+            <div className="mt-8 overflow-hidden rounded-[24px] border border-[#E7D8C8] bg-gradient-to-br from-[#FFFDF8] via-white to-[#F8F1E8] p-5 shadow-sm">
+                <div className="flex items-start gap-3">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-[#1F5A4A]/10 text-xl text-[#1F5A4A]">
+                        💼
+                    </span>
+                    <div>
+                        <h4 className="font-serif text-sm font-bold text-[#201813]">
+                            Pemilik atau Pengelola {place.name}?
+                        </h4>
+                        <p className="mt-1 text-xs leading-relaxed text-[#756A60]">
+                            Klaim tempat ini untuk verifikasi profil resmi, perbarui info jam buka & fasilitas, atau diskusikan kerja sama promo di Saranwak.
+                        </p>
+                    </div>
+                </div>
+
+                <a
+                    href={makeOwnerClaimWhatsappUrl(place.name)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1F5A4A] py-3 text-xs font-black text-white shadow-sm transition hover:bg-[#164337] active:scale-[0.98]"
+                >
+                    <span>Klaim / Perbarui Tempat Ini</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                </a>
+            </div>
         </aside>
     );
 }
@@ -1482,4 +1510,11 @@ function tagToSlug(value: string) {
         .trim()
         .replace(/\s+/g, "-")
         .replace(/[^\w-]/g, "");
+}
+
+const WHATSAPP_CLAIM_NUMBER = "6281932097214";
+
+function makeOwnerClaimWhatsappUrl(placeName: string) {
+    const text = `Halo Admin Saranwak! Saya pemilik/pengelola dari "${placeName}". Saya ingin mengonfirmasi data tempat kami, memperbarui informasi jam buka & fasilitas, atau berdiskusi kerja sama promo di saranwak.com.`;
+    return `https://wa.me/${WHATSAPP_CLAIM_NUMBER}?text=${encodeURIComponent(text)}`;
 }

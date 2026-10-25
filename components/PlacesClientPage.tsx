@@ -10,8 +10,10 @@ import {
     RotateCcw,
     Check,
     Coffee,
+    Dices,
 } from "lucide-react";
 import { PlaceCard } from "@/components/PlaceCard";
+import { RandomPlaceModal } from "@/components/RandomPlaceModal";
 import {
     placeFilterGroups,
     priceFilterOptions,
@@ -81,6 +83,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const [searchQuery, setSearchQuery] = useState(params.q || "");
     const [prevQ, setPrevQ] = useState(params.q);
     const [livePlacesData, setLivePlacesData] = useState<Place[]>(placesData);
+    const [isRandomOpen, setIsRandomOpen] = useState(false);
 
     useEffect(() => {
         let isMounted = true;
@@ -357,7 +360,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                         ) : null}
 
                         {/* Results Count Header */}
-                        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                             <div>
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
                                     Koleksi Terverifikasi
@@ -368,11 +371,16 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                 </h2>
                             </div>
 
-                            <p className="text-xs font-semibold text-[#756A60] sm:text-sm">
-                                {hasFilter
-                                    ? "Hasil disaring berdasarkan kriteria pilihan kamu."
-                                    : "Menampilkan semua tempat yang tersedia di Padang."}
-                            </p>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsRandomOpen(true)}
+                                    className="inline-flex items-center gap-1.5 rounded-full border border-[#C8784A]/30 bg-[#FFF8EF] px-4 py-2 text-xs font-black text-[#C8784A] shadow-sm transition hover:bg-[#C8784A] hover:text-white active:scale-95"
+                                >
+                                    <Dices className="h-4 w-4" />
+                                    <span>Pilihin Acak 🎲</span>
+                                </button>
+                            </div>
                         </div>
 
                         {/* Places Grid or Empty State */}
@@ -393,6 +401,12 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                     </section>
                 </div>
             </section>
+
+            <RandomPlaceModal
+                isOpen={isRandomOpen}
+                onClose={() => setIsRandomOpen(false)}
+                placesData={livePlacesData}
+            />
         </main>
     );
 }
