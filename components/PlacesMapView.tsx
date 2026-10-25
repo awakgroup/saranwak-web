@@ -44,12 +44,13 @@ export function PlacesMapView({ places, onSelectPlace }: PlacesMapViewProps) {
                 attributionControl: false,
             });
 
-            // CartoDB Voyager tiles (warm, modern, perfect for food/lifestyle guides)
+            // OpenStreetMap Standard Tiles - 100% Free, NO API KEY required
             L.tileLayer(
-                "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
                     maxZoom: 19,
-                    subdomains: "abcd",
+                    attribution:
+                        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                 }
             ).addTo(map);
 
