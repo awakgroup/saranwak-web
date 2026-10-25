@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 const WHATSAPP_NUMBER = "6281932097214";
@@ -91,6 +93,17 @@ export function Footer() {
                                     {item.label}
                                 </Link>
                             ))}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (typeof window !== "undefined") {
+                                        window.dispatchEvent(new CustomEvent("saranwak:install-pwa"));
+                                    }
+                                }}
+                                className="w-fit text-left text-sm font-black text-[#4B4038] transition hover:text-[#1F5A4A]"
+                            >
+                                📲 Pasang Aplikasi di HP
+                            </button>
                         </FooterColumn>
 
                         <FooterColumn title="Bisnis">
