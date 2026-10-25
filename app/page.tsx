@@ -4,7 +4,8 @@ import path from "path";
 
 import { FeaturedPlacesSection } from "@/components/home/FeaturedPlacesSection";
 import { HomeHeroSection } from "@/components/home/HomeHeroSection";
-import { HomeFaqSection, HOME_FAQS } from "@/components/home/HomeFaqSection";
+import { HomeFaqSection } from "@/components/home/HomeFaqSection";
+import { HOME_FAQS } from "@/lib/faq-data";
 import { OwnerBusinessSection } from "@/components/home/OwnerBusinessSection";
 import PromoBannerCarousel from "@/components/PromoBannerCarousel";
 import { WhySaranwak } from "@/components/WhySaranwak";
