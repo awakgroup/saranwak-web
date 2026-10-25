@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import { OpenStatusBadge } from "@/components/OpenStatusBadge";
+import { BookmarkButton } from "@/components/BookmarkButton";
 
 type PlaceCardProps = {
     place: Place;
@@ -150,6 +151,10 @@ export function PlaceCard({
                             Verified
                         </span>
                     ) : null}
+                </div>
+
+                <div className="absolute right-4 top-4 z-[4]">
+                    <BookmarkButton place={place} />
                 </div>
 
                 <div className="absolute bottom-4 left-4 right-4 z-[3]">

@@ -19,6 +19,7 @@ import { PlaceCard } from "@/components/PlaceCard";
 import { PlaceDetailTracker } from "@/components/PlaceDetailTracker";
 import { TrackedExternalLink } from "@/components/TrackedExternalLink";
 import { OpenStatusBadge } from "@/components/OpenStatusBadge";
+import { BookmarkButton } from "@/components/BookmarkButton";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import {
     getPlaceBySlug as getPlaceBySlugFromApi,
@@ -400,7 +401,7 @@ function HeroSection({
                 </div>
             </div>
 
-            <div className="grid gap-3 border-t border-[#E7D8C8] bg-[#FFFDF8] p-4 sm:grid-cols-3 sm:p-5">
+            <div className="grid gap-3 border-t border-[#E7D8C8] bg-[#FFFDF8] p-4 sm:grid-cols-2 lg:grid-cols-4 sm:p-5">
                 <HeroAction
                     label="Buka di Google Maps"
                     icon="maps"
@@ -429,6 +430,8 @@ function HeroSection({
                     <Share2 className="h-4 w-4" />
                     Share ke WhatsApp
                 </a>
+
+                <BookmarkButton place={place as unknown as Place} variant="button" />
             </div>
         </section>
     );

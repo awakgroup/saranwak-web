@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Compass, Sparkles, Info } from "lucide-react";
+import { Home, Compass, Sparkles, Info, Bookmark } from "lucide-react";
+import { useSavedPlaces } from "@/lib/saved-places";
+import { SavedPlacesModal } from "@/components/SavedPlacesModal";
 
 const desktopNavItems = [
     {
@@ -60,6 +63,8 @@ const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`;
 
 export function Navbar() {
     const pathname = usePathname();
+    const { savedCount } = useSavedPlaces();
+    const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
 
     // Sembunyikan navbar publik di area admin
     if (pathname.startsWith("/admin")) {
@@ -119,8 +124,27 @@ export function Navbar() {
                         })}
                     </nav>
 
-                    {/* Right Action: Contact Us button */}
+                    {/* Right Action: Bookmark & Contact Us button */}
                     <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setIsSavedModalOpen(true)}
+                            aria-label={`Lihat ${savedCount} cafe tersimpan`}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-[#E3DED4] bg-[#FFFDF8] px-3 py-2 text-xs font-bold text-[#201813] shadow-sm transition hover:border-[#C8784A] hover:bg-[#FAF4ED] sm:px-4 sm:text-sm"
+                        >
+                            <Bookmark
+                                className={`h-4 w-4 transition-transform ${
+                                    savedCount > 0 ? "fill-current text-[#C8784A]" : "text-[#756A60]"
+                                }`}
+                            />
+                            <span className="hidden sm:inline">Tersimpan</span>
+                            {savedCount > 0 && (
+                                <span className="grid h-4.5 min-w-4.5 place-items-center rounded-full bg-[#C8784A] px-1.5 text-[10px] font-black text-white">
+                                    {savedCount}
+                                </span>
+                            )}
+                        </button>
+
                         <a
                             href={whatsappUrl}
                             target="_blank"
@@ -136,9 +160,9 @@ export function Navbar() {
             {/* Mobile Bottom Floating Navigation Dock */}
             <nav
                 aria-label="Mobile Navigation"
-                className="pointer-events-none fixed inset-x-0 bottom-4 z-50 px-4 pb-[env(safe-area-inset-bottom,0px)] md:hidden"
+                className="pointer-events-none fixed inset-x-0 bottom-4 z-50 px-3 pb-[env(safe-area-inset-bottom,0px)] md:hidden"
             >
-                <div className="pointer-events-auto mx-auto flex max-w-[360px] items-center justify-around gap-1 rounded-full border border-[#E7D8C8] bg-[#FFFDF8]/94 p-1.5 shadow-[0_16px_40px_rgba(32,24,19,0.18)] backdrop-blur-xl">
+                <div className="pointer-events-auto mx-auto flex max-w-[390px] items-center justify-around gap-1 rounded-full border border-[#E7D8C8] bg-[#FFFDF8]/94 p-1.5 shadow-[0_16px_40px_rgba(32,24,19,0.18)] backdrop-blur-xl">
                     {mobileBottomNavItems.map((item) => {
                         const active = item.isActive(pathname);
                         const Icon = item.icon;
@@ -167,8 +191,36 @@ export function Navbar() {
                             </Link>
                         );
                     })}
+
+                    {/* Bookmark in Mobile Dock */}
+                    <button
+                        type="button"
+                        onClick={() => setIsSavedModalOpen(true)}
+                        className="relative flex flex-1 flex-col items-center justify-center rounded-full py-1.5 text-[#756A60] transition duration-200 hover:bg-[#F4F1EA] hover:text-[#201813]"
+                    >
+                        <Bookmark
+                            className={`h-4 w-4 transition-transform duration-200 ${
+                                savedCount > 0 ? "fill-current text-[#C8784A]" : "text-[#756A60]"
+                            }`}
+                            strokeWidth={savedCount > 0 ? 2.5 : 2}
+                        />
+                        <span className="mt-0.5 text-[10px] font-bold tracking-tight">
+                            Tersimpan
+                        </span>
+                        {savedCount > 0 && (
+                            <span className="absolute -top-1 right-2 grid h-4 min-w-4 place-items-center rounded-full bg-[#C8784A] px-1 text-[9px] font-black text-white shadow-sm">
+                                {savedCount}
+                            </span>
+                        )}
+                    </button>
                 </div>
             </nav>
+
+            {/* Saved Places Modal */}
+            <SavedPlacesModal
+                isOpen={isSavedModalOpen}
+                onClose={() => setIsSavedModalOpen(false)}
+            />
         </>
     );
 }
