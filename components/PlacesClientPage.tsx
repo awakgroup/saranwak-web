@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -11,9 +12,23 @@ import {
     Check,
     Coffee,
     Dices,
+    LayoutGrid,
+    Map as MapIcon,
 } from "lucide-react";
 import { PlaceCard } from "@/components/PlaceCard";
 import { RandomPlaceModal } from "@/components/RandomPlaceModal";
+
+const PlacesMapView = dynamic(
+    () => import("@/components/PlacesMapView").then((mod) => mod.PlacesMapView),
+    {
+        ssr: false,
+        loading: () => (
+            <div className="flex h-[520px] w-full items-center justify-center rounded-[32px] border border-[#E7D8C8] bg-[#F8F1E8] text-[#756A60]">
+                <p className="text-sm font-bold animate-pulse">Memuat peta spot Padang...</p>
+            </div>
+        ),
+    }
+);
 import {
     placeFilterGroups,
     priceFilterOptions,
@@ -84,6 +99,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const [prevQ, setPrevQ] = useState(params.q);
     const [livePlacesData, setLivePlacesData] = useState<Place[]>(placesData);
     const [isRandomOpen, setIsRandomOpen] = useState(false);
+    const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
 
     useEffect(() => {
         let isMounted = true;
@@ -376,7 +392,35 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                 </h2>
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-2">
+                            <div className="flex flex-wrap items-center gap-2.5">
+                                {/* Toggle View Mode */}
+                                <div className="inline-flex rounded-full border border-[#E7D8C8] bg-white p-1 shadow-sm">
+                                    <button
+                                        type="button"
+                                        onClick={() => setViewMode("grid")}
+                                        className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition duration-200 ${
+                                            viewMode === "grid"
+                                                ? "bg-[#201813] text-white shadow-sm"
+                                                : "text-[#756A60] hover:text-[#201813] hover:bg-[#F8F1E8]"
+                                        }`}
+                                    >
+                                        <LayoutGrid className="h-3.5 w-3.5" />
+                                        <span>Daftar</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setViewMode("map")}
+                                        className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition duration-200 ${
+                                            viewMode === "map"
+                                                ? "bg-[#201813] text-white shadow-sm"
+                                                : "text-[#756A60] hover:text-[#201813] hover:bg-[#F8F1E8]"
+                                        }`}
+                                    >
+                                        <MapIcon className="h-3.5 w-3.5" />
+                                        <span>Peta</span>
+                                    </button>
+                                </div>
+
                                 <button
                                     type="button"
                                     onClick={() => setIsRandomOpen(true)}
@@ -388,9 +432,11 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             </div>
                         </div>
 
-                        {/* Places Grid or Empty State */}
+                        {/* Places Grid, Map View, or Empty State */}
                         {places.length === 0 ? (
                             <EmptyPlacesState params={params} />
+                        ) : viewMode === "map" ? (
+                            <PlacesMapView places={places} />
                         ) : (
                             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                                 {places.map((place, index) => (

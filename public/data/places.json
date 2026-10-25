@@ -232,7 +232,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.8653,
+    "longitude": 100.3491
   },
   {
     "id": "269b05ee-c785-4613-8493-ddc0c48aeb6d",
@@ -474,7 +476,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9254,
+    "longitude": 100.3687
   },
   {
     "id": "2d170836-d186-465d-bd07-1b4de6ec618f",
@@ -699,7 +703,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9542,
+    "longitude": 100.3887
   },
   {
     "id": "3c98e2e1-c4e1-439d-a64a-6832ff002110",
@@ -951,7 +957,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9471,
+    "longitude": 100.4172
   },
   {
     "id": "49fe4adb-7afb-4df9-8bd1-8a11a17b753c",
@@ -1176,7 +1184,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9082,
+    "longitude": 100.3648
   },
   {
     "id": "51f421d5-c195-4bbd-a2ca-bd856fe67f1a",
@@ -1398,7 +1408,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9385,
+    "longitude": 100.3752
   },
   {
     "id": "53bf5a5e-ae75-4bd4-b89a-586854806dec",
@@ -1606,7 +1618,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9290489,
+    "longitude": 100.353978
   },
   {
     "id": "59a30ac9-8436-42a3-baf4-dd10899068c3",
@@ -1858,7 +1872,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9546618,
+    "longitude": 100.3929291
   },
   {
     "id": "627bd686-aa2e-4a9c-b63f-aa186252a3c6",
@@ -2046,7 +2062,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9405838,
+    "longitude": 100.3544293
   },
   {
     "id": "6aac3ba8-7423-44b6-8842-2a56e5f39044",
@@ -2268,7 +2286,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9382,
+    "longitude": 100.3541
   },
   {
     "id": "6caddf39-7721-409e-98b0-b7ec37873874",
@@ -2318,7 +2338,9 @@
     },
     "place_tags": [],
     "place_photos": [],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9471,
+    "longitude": 100.4172
   },
   {
     "id": "727e11c8-5235-41ea-8f08-fde7576d51e4",
@@ -2446,7 +2468,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9368433,
+    "longitude": 100.3555197
   },
   {
     "id": "73c5af33-3001-4699-9876-d8774fca40e0",
@@ -2672,7 +2696,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9339594,
+    "longitude": 100.363108
   },
   {
     "id": "74f12484-da7a-4a1d-a8dd-895f9ff6d85d",
@@ -2897,7 +2923,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9471,
+    "longitude": 100.4172
   },
   {
     "id": "8610ee37-a285-46f1-afea-6820a9c1e42f",
@@ -3105,7 +3133,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9413196,
+    "longitude": 100.3566847
   },
   {
     "id": "86d9b0e6-be3c-4071-8d95-6f405a644b0e",
@@ -3327,7 +3357,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9471,
+    "longitude": 100.4172
   },
   {
     "id": "8aff8237-06e9-4a51-bbd7-514b92a9ed91",
@@ -3589,7 +3621,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.944032,
+    "longitude": 100.3568738
   },
   {
     "id": "91e55f96-b1db-4c90-a4bc-66bead463d68",
@@ -3807,7 +3841,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9342887,
+    "longitude": 100.3644352
   },
   {
     "id": "921e77b9-b6b8-4232-85b1-0936ec4ddde1",
@@ -4015,7 +4051,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9336861,
+    "longitude": 100.3594919
   },
   {
     "id": "93f31a33-3199-496c-8368-82e85cdb555a",
@@ -4257,7 +4295,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9449819,
+    "longitude": 100.3538644
   },
   {
     "id": "97c8f3b3-d0e2-426d-84f6-b3ea4011aee8",
@@ -4519,7 +4559,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9448922,
+    "longitude": 100.3587151
   },
   {
     "id": "9af14aca-df46-4904-84e7-ee3996b51603",
@@ -4691,7 +4733,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9412813,
+    "longitude": 100.3562702
   },
   {
     "id": "a8a44ba1-38e3-4890-b3c0-35cb263eb82e",
@@ -4903,7 +4947,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9471,
+    "longitude": 100.4172
   },
   {
     "id": "ae3d1da7-f3c4-4938-987e-9abed0d36b04",
@@ -5075,7 +5121,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.926939,
+    "longitude": 100.3559071
   },
   {
     "id": "b173fefa-d489-4a9f-83f3-a91444ccbc28",
@@ -5297,7 +5345,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9471,
+    "longitude": 100.4172
   },
   {
     "id": "b5961b7b-4711-4969-948d-b65049532df4",
@@ -5535,7 +5585,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9258599,
+    "longitude": 100.3633935
   },
   {
     "id": "bc0010ab-ab45-47d0-b981-55985dc17e69",
@@ -5697,7 +5749,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9405632,
+    "longitude": 100.3599237
   },
   {
     "id": "bc68b294-8cec-4c26-b687-a164b80c5046",
@@ -5833,7 +5887,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9103,
+    "longitude": 100.3512
   },
   {
     "id": "c41f457e-cc72-48a3-8f9f-2eefe78b9336",
@@ -6058,7 +6114,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9471,
+    "longitude": 100.4172
   },
   {
     "id": "d86a07ab-36ec-4046-bcb1-ba9be98f1921",
@@ -6316,7 +6374,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9347677,
+    "longitude": 100.3546828
   },
   {
     "id": "db29333e-4d90-41b6-b033-27717bd10ce2",
@@ -6528,7 +6588,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9342405,
+    "longitude": 100.3588516
   },
   {
     "id": "e1ac5a01-ed37-4cc8-bba0-e887607b1e8a",
@@ -6753,7 +6815,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9471,
+    "longitude": 100.4172
   },
   {
     "id": "fd3713cf-36bc-4dd6-903f-c95c9b1fe8ef",
@@ -6975,7 +7039,9 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9572,
+    "longitude": 100.3542
   },
   {
     "id": "ffa19103-837b-4d46-a96a-36c90762ed2e",
@@ -7210,6 +7276,8 @@
         "sort_order": 4
       }
     ],
-    "source": "curation_seed"
+    "source": "curation_seed",
+    "latitude": -0.9471,
+    "longitude": 100.4172
   }
 ]
