@@ -10,6 +10,7 @@ type PlaceCardProps = {
     place: Place;
     source?: "homepage_featured" | "places_list" | "related_places" | "place_card";
     position?: number;
+    userDistance?: string | null;
 };
 
 function formatPrice(place: Place) {
@@ -109,6 +110,7 @@ export function PlaceCard({
     place,
     source: _source = "place_card",
     position: _position,
+    userDistance,
 }: PlaceCardProps) {
     const tags = getMainTags(place, 4);
     const bestForTags = getBestForLabels(place);
@@ -138,6 +140,13 @@ export function PlaceCard({
                 <div className="absolute inset-0 z-[2] bg-gradient-to-t from-black/80 via-black/22 to-black/5" />
 
                 <div className="absolute left-4 top-4 z-[3] flex flex-wrap items-center gap-1.5">
+                    {userDistance ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[#1F5A4A] px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.05em] text-white shadow-md backdrop-blur">
+                            <span>📍</span>
+                            <span>{userDistance}</span>
+                        </span>
+                    ) : null}
+
                     <OpenStatusBadge openingHours={place.opening_hours} />
 
                     {place.is_featured ? (

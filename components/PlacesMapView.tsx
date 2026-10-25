@@ -13,15 +13,24 @@ import {
 } from "lucide-react";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
-import { getPlaceCoordinates } from "@/lib/place-coordinates";
+import {
+    calculateDistanceKm,
+    formatDistance,
+    getPlaceCoordinates,
+} from "@/lib/place-coordinates";
 import "leaflet/dist/leaflet.css";
 
 interface PlacesMapViewProps {
     places: Place[];
+    userCoords?: { lat: number; lng: number } | null;
     onSelectPlace?: (place: Place) => void;
 }
 
-export function PlacesMapView({ places, onSelectPlace }: PlacesMapViewProps) {
+export function PlacesMapView({
+    places,
+    userCoords,
+    onSelectPlace,
+}: PlacesMapViewProps) {
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<L.Map | null>(null);
     const markersLayerRef = useRef<L.LayerGroup | null>(null);
@@ -90,9 +99,39 @@ export function PlacesMapView({ places, onSelectPlace }: PlacesMapViewProps) {
             map.invalidateSize();
             markersLayer.clearLayers();
 
-            if (places.length === 0) return;
+            if (places.length === 0 && !userCoords) return;
 
             const bounds: L.LatLngExpression[] = [];
+
+            // Add user location marker if available
+            if (userCoords) {
+                bounds.push([userCoords.lat, userCoords.lng]);
+
+                const userIcon = L.divIcon({
+                    className: "saranwak-marker-container",
+                    html: `
+                        <div class="saranwak-user-marker" title="Lokasi Kamu">
+                            <div class="saranwak-user-marker-pulse"></div>
+                            <div class="saranwak-user-marker-core"></div>
+                        </div>
+                    `,
+                    iconSize: [0, 0],
+                    iconAnchor: [0, 0],
+                });
+
+                const userMarker = L.marker([userCoords.lat, userCoords.lng], {
+                    icon: userIcon,
+                    zIndexOffset: 1000,
+                });
+
+                userMarker.bindTooltip("📍 Lokasi Kamu", {
+                    permanent: false,
+                    direction: "top",
+                    offset: [0, -14],
+                });
+
+                markersLayer.addLayer(userMarker);
+            }
 
             places.forEach((place) => {
                 const coords = getPlaceCoordinates(place);
@@ -137,7 +176,7 @@ export function PlacesMapView({ places, onSelectPlace }: PlacesMapViewProps) {
                 });
             }
         });
-    }, [places, isMapReady, selectedPlace?.id, onSelectPlace]);
+    }, [places, isMapReady, selectedPlace?.id, onSelectPlace, userCoords?.lat, userCoords?.lng]);
 
     const handleResetView = () => {
         if (!mapInstanceRef.current || places.length === 0) return;
@@ -210,9 +249,24 @@ export function PlacesMapView({ places, onSelectPlace }: PlacesMapViewProps) {
 
                         {/* Info */}
                         <div className="min-w-0 flex-1 pr-4">
-                            <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#756A60]">
+                            <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-[#756A60]">
                                 <MapPin className="h-3 w-3 text-[#C8784A]" />
                                 <span>{selectedPlace.area || selectedPlace.city || "Padang"}</span>
+                                {userCoords && (
+                                    <>
+                                        <span>•</span>
+                                        <span className="inline-flex items-center gap-0.5 rounded-full bg-[#1F5A4A]/10 px-2 py-0.5 text-[10px] font-black text-[#1F5A4A]">
+                                            📍 {formatDistance(
+                                                calculateDistanceKm(
+                                                    userCoords.lat,
+                                                    userCoords.lng,
+                                                    getPlaceCoordinates(selectedPlace).lat,
+                                                    getPlaceCoordinates(selectedPlace).lng
+                                                )
+                                            )}
+                                        </span>
+                                    </>
+                                )}
                                 {selectedPlace.price_range && (
                                     <>
                                         <span>•</span>

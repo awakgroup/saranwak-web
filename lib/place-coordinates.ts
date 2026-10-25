@@ -169,3 +169,50 @@ export function getPlaceCoordinates(place: Place): { lat: number; lng: number } 
 
     return PADANG_AREA_COORDINATES["default"];
 }
+
+/**
+ * Menghitung jarak antara dua titik koordinat bumi (dalam kilometer) menggunakan Haversine Formula
+ */
+export function calculateDistanceKm(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+): number {
+    const R = 6371; // Radius bumi dalam km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((lat1 * Math.PI) / 180) *
+            Math.cos((lat2 * Math.PI) / 180) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
+/**
+ * Format jarak menjadi string yang ramah pengguna (contoh: "450 m" atau "2.4 km")
+ */
+export function formatDistance(km: number): string {
+    if (isNaN(km) || km < 0) return "";
+    if (km < 1) {
+        const meters = Math.round(km * 1000);
+        return `${meters} m`;
+    }
+    return `${km.toFixed(1)} km`;
+}
+
+/**
+ * Menghitung jarak pengguna ke suatu tempat (cafe)
+ */
+export function getDistanceToPlace(
+    userCoords: { lat: number; lng: number } | null | undefined,
+    place: Place
+): number | null {
+    if (!userCoords) return null;
+    const placeCoords = getPlaceCoordinates(place);
+    return calculateDistanceKm(userCoords.lat, userCoords.lng, placeCoords.lat, placeCoords.lng);
+}
+

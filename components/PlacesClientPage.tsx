@@ -11,9 +11,11 @@ import {
     RotateCcw,
     Check,
     Coffee,
+    Compass,
     Dices,
     LayoutGrid,
     Map as MapIcon,
+    Navigation,
 } from "lucide-react";
 import { PlaceCard } from "@/components/PlaceCard";
 import { RandomPlaceModal } from "@/components/RandomPlaceModal";
@@ -29,6 +31,11 @@ const PlacesMapView = dynamic(
         ),
     }
 );
+import {
+    calculateDistanceKm,
+    formatDistance,
+    getPlaceCoordinates,
+} from "@/lib/place-coordinates";
 import {
     placeFilterGroups,
     priceFilterOptions,
@@ -101,6 +108,53 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const [isRandomOpen, setIsRandomOpen] = useState(false);
     const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
 
+    // Geolocation state untuk fitur "📍 Terdekat"
+    const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+    const [isLocating, setIsLocating] = useState(false);
+    const [isNearbyActive, setIsNearbyActive] = useState(false);
+
+    const handleToggleNearby = () => {
+        if (isNearbyActive) {
+            setIsNearbyActive(false);
+            return;
+        }
+
+        if (userCoords) {
+            setIsNearbyActive(true);
+            return;
+        }
+
+        if (typeof window === "undefined" || !navigator.geolocation) {
+            alert("Browser kamu tidak mendukung fitur deteksi lokasi (geolocation).");
+            return;
+        }
+
+        setIsLocating(true);
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                setUserCoords({
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude,
+                });
+                setIsNearbyActive(true);
+                setIsLocating(false);
+            },
+            (err) => {
+                setIsLocating(false);
+                if (err.code === 1) {
+                    alert("Akses lokasi ditolak. Silakan aktifkan izin lokasi di browser kamu untuk melihat cafe terdekat.");
+                } else {
+                    alert("Gagal mendeteksi lokasi saat ini. Silakan coba beberapa saat lagi.");
+                }
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 60000,
+            }
+        );
+    };
+
     useEffect(() => {
         let isMounted = true;
         fetch("/api/places?limit=150")
@@ -144,7 +198,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const selectedTagsKey = selectedTags.join(",");
 
     const places = useMemo(() => {
-        return livePlacesData
+        const filtered = livePlacesData
             .filter((place) => matchKeyword(place, params.q))
             .filter((place) => matchArea(place, params.area))
             .filter((place) => matchCategory(place, params.category))
@@ -155,13 +209,34 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                     return getPlaceOpenStatus(place.opening_hours).isOpen;
                 }
                 return true;
-            })
-            .sort((a, b) => {
-                return (
-                    new Date(b.created_at ?? 0).getTime() -
-                    new Date(a.created_at ?? 0).getTime()
-                );
             });
+
+        if (isNearbyActive && userCoords) {
+            return [...filtered].sort((a, b) => {
+                const coordsA = getPlaceCoordinates(a);
+                const coordsB = getPlaceCoordinates(b);
+                const distA = calculateDistanceKm(
+                    userCoords.lat,
+                    userCoords.lng,
+                    coordsA.lat,
+                    coordsA.lng
+                );
+                const distB = calculateDistanceKm(
+                    userCoords.lat,
+                    userCoords.lng,
+                    coordsB.lat,
+                    coordsB.lng
+                );
+                return distA - distB;
+            });
+        }
+
+        return filtered.sort((a, b) => {
+            return (
+                new Date(b.created_at ?? 0).getTime() -
+                new Date(a.created_at ?? 0).getTime()
+            );
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         livePlacesData,
@@ -171,7 +246,26 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
         params.openNow,
         selectedPrice,
         selectedTagsKey,
+        isNearbyActive,
+        userCoords,
     ]);
+
+    // Map jarak per place untuk badge di kartu
+    const distanceMap = useMemo(() => {
+        if (!userCoords) return {} as Record<string, string>;
+        const map: Record<string, string> = {};
+        livePlacesData.forEach((place) => {
+            const coords = getPlaceCoordinates(place);
+            const distKm = calculateDistanceKm(
+                userCoords.lat,
+                userCoords.lng,
+                coords.lat,
+                coords.lng
+            );
+            map[place.slug] = formatDistance(distKm);
+        });
+        return map;
+    }, [livePlacesData, userCoords]);
 
     const hasFilter = Boolean(
         params.q ||
@@ -400,6 +494,40 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             </div>
 
                             <div className="flex flex-wrap items-center gap-2.5">
+                                {/* Toggle Terdekat Button */}
+                                <button
+                                    type="button"
+                                    onClick={handleToggleNearby}
+                                    disabled={isLocating}
+                                    title={
+                                        isNearbyActive
+                                            ? "Matikan urutan terdekat"
+                                            : "Urutkan cafe terdekat dari lokasimu"
+                                    }
+                                    className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-black shadow-sm transition active:scale-95 ${
+                                        isNearbyActive
+                                            ? "border-[#1F5A4A] bg-[#1F5A4A] text-white hover:bg-[#184639]"
+                                            : "border-[#1F5A4A]/30 bg-[#F0F8F5] text-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
+                                    }`}
+                                >
+                                    <Navigation
+                                        className={`h-3.5 w-3.5 ${
+                                            isLocating
+                                                ? "animate-spin"
+                                                : isNearbyActive
+                                                ? "text-[#F3C48E]"
+                                                : ""
+                                        }`}
+                                    />
+                                    <span>
+                                        {isLocating
+                                            ? "Mencari Lokasi..."
+                                            : isNearbyActive
+                                            ? "Terdekat Aktif"
+                                            : "📍 Terdekat"}
+                                    </span>
+                                </button>
+
                                 {/* Toggle View Mode */}
                                 <div className="inline-flex rounded-full border border-[#E7D8C8] bg-white p-1 shadow-sm">
                                     <button
@@ -439,11 +567,31 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             </div>
                         </div>
 
+                        {/* Indikator Urutan Terdekat Aktif */}
+                        {isNearbyActive && userCoords && (
+                            <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-[#1F5A4A]/25 bg-[#F0F8F5] px-4 py-2.5 text-xs font-bold text-[#1F5A4A] shadow-xs">
+                                <div className="flex items-center gap-2">
+                                    <span className="relative flex h-2.5 w-2.5">
+                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1F5A4A] opacity-75"></span>
+                                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#1F5A4A]"></span>
+                                    </span>
+                                    <span>Menampilkan urutan dari cafe paling dekat dengan posisimu</span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsNearbyActive(false)}
+                                    className="text-[11px] font-black underline hover:text-[#184639]"
+                                >
+                                    Reset Urutan
+                                </button>
+                            </div>
+                        )}
+
                         {/* Places Grid, Map View, or Empty State */}
                         {places.length === 0 ? (
                             <EmptyPlacesState params={params} />
                         ) : viewMode === "map" ? (
-                            <PlacesMapView places={places} />
+                            <PlacesMapView places={places} userCoords={userCoords} />
                         ) : (
                             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                                 {places.map((place, index) => (
@@ -452,6 +600,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                         place={place}
                                         source="places_list"
                                         position={index + 1}
+                                        userDistance={userCoords ? distanceMap[place.slug] : undefined}
                                     />
                                 ))}
                             </div>
