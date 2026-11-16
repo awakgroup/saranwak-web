@@ -185,6 +185,179 @@
     ]
   },
   {
+    "id": "c7a10f82-913a-4e2b-bb81-18f9e61234a1",
+    "name": "Kamtumi Coffee",
+    "slug": "kamtumi-coffee",
+    "description": "Berlokasi di kawasan strategis Ujung Gurun, Kamtumi Coffee mengusung konsep industrial minimalis dengan sentuhan vintage yang hangat dan estetik. Menawarkan area indoor ber-AC yang tenang dan ramah laptop untuk Work From Cafe (WFC), serta area semi-outdoor sejuk untuk nongkrong santai. Menyajikan aneka racikan kopi susu khas, artisan tea, hingga makanan pengganjal lapar dari pagi hingga tengah malam.",
+    "short_description": "Coffee shop bernuansa industrial vintage di Ujung Gurun yang nyaman untuk WFC, nugas, dan nongkrong malam.",
+    "characteristics": [
+      {
+        "title": "Spot Favorit WFC & Nugas di Pusat Kota",
+        "description": "Didesain dengan meja ergonomis, pencahayaan nyaman, koneksi WiFi stabil, dan colokan listrik memadai untuk bekerja atau mengerjakan tugas berjam-jam."
+      },
+      {
+        "title": "Zonasi Ruang Indoor AC & Semi-Outdoor",
+        "description": "Menyediakan ruang indoor ber-AC bebas asap rokok yang adem untuk fokus, serta teras semi-outdoor yang asri untuk merokok dan mengobrol santai."
+      },
+      {
+        "title": "Jam Buka Panjang (08.00 - 00.00 WIB)",
+        "description": "Menjadi andalan bagi penikmat kopi pagi sebelum mulai beraktivitas hingga tempat berkumpul santai di larut malam."
+      },
+      {
+        "title": "Signature Kopi Susu & Minuman Kekinian",
+        "description": "Terkenal dengan racikan Es Kopi Susu Kamtumi, Kopi Susu Krimi, Seasalt Butterscotch, hingga Cheese Cream Series yang lembut."
+      },
+      {
+        "title": "Pilihan Makanan & Cemilan Beragam",
+        "description": "Menyajikan aneka pasta seperti Spaghetti Carbonara & Bolognese, Risol Beef Mayo, Keju Aroma, dan cemilan gurih pendamping ngopi."
+      }
+    ],
+    "address": "Jl. Ujung Gurun No. 152, Ujung Gurun, Kec. Padang Barat, Kota Padang, Sumatera Barat 25114",
+    "area": "Padang Barat",
+    "city": "Padang",
+    "image_url": null,
+    "main_image_url": null,
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=Kamtumi+Coffee+Padang",
+    "instagram_url": "https://www.instagram.com/kamtumicoffee/",
+    "price_range": "Rp20k - Rp45k",
+    "price_min": 20000,
+    "price_max": 45000,
+    "opening_hours": "Buka Setiap Hari 08.00 - 00.00 WIB",
+    "is_featured": false,
+    "is_verified": true,
+    "is_published": true,
+    "created_at": "2026-11-16 11:38:00+00",
+    "updated_at": "2026-11-16 11:38:00+00",
+    "categories": {
+      "id": "3fff9d59-eb4d-4d58-a3fd-0b94ee412ee5",
+      "name": "Coffee Shop",
+      "slug": "coffee-shop",
+      "icon": "coffee"
+    },
+    "place_tags": [
+      {
+        "id": "c7a10f82-913a-4e2b-bb81-wfc",
+        "tag_id": "0dee3434-90df-45e7-855f-b896c866762c",
+        "tags": {
+          "id": "0dee3434-90df-45e7-855f-b896c866762c",
+          "name": "WFC",
+          "slug": "wfc",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-bb81-nugas",
+        "tag_id": "48b8f0d3-830a-4011-8f40-2bf22a1cb91b",
+        "tags": {
+          "id": "48b8f0d3-830a-4011-8f40-2bf22a1cb91b",
+          "name": "Nugas",
+          "slug": "nugas",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-bb81-indoor",
+        "tag_id": "1318851f-58c0-413a-bbef-c9fc99ab56b2",
+        "tags": {
+          "id": "1318851f-58c0-413a-bbef-c9fc99ab56b2",
+          "name": "Indoor",
+          "slug": "indoor",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-bb81-ac",
+        "tag_id": "6ba823b6-24f3-4385-8d59-67e019ba002b",
+        "tags": {
+          "id": "6ba823b6-24f3-4385-8d59-67e019ba002b",
+          "name": "AC",
+          "slug": "ac",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-bb81-wifi",
+        "tag_id": "b50b3f65-221b-4414-a95b-3f861176d5f9",
+        "tags": {
+          "id": "b50b3f65-221b-4414-a95b-3f861176d5f9",
+          "name": "WiFi",
+          "slug": "wifi",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-bb81-colokan",
+        "tag_id": "0ea4a96b-179f-4632-9afc-ef98cdd9cb1b",
+        "tags": {
+          "id": "0ea4a96b-179f-4632-9afc-ef98cdd9cb1b",
+          "name": "Colokan",
+          "slug": "colokan",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-bb81-outdoor",
+        "tag_id": "770dd8a2-9cc8-4fde-abdb-b4bf3307a45d",
+        "tags": {
+          "id": "770dd8a2-9cc8-4fde-abdb-b4bf3307a45d",
+          "name": "Outdoor",
+          "slug": "outdoor",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-bb81-nongkrong",
+        "tag_id": "d32ddb31-b92b-4968-8f57-94834f873f41",
+        "tags": {
+          "id": "d32ddb31-b92b-4968-8f57-94834f873f41",
+          "name": "Nongkrong",
+          "slug": "nongkrong",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-bb81-cozy",
+        "tag_id": "d30f0c87-4384-474d-ae52-976300282f7a",
+        "tags": {
+          "id": "d30f0c87-4384-474d-ae52-976300282f7a",
+          "name": "Cozy",
+          "slug": "cozy",
+          "type": "vibe"
+        }
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-bb81-aesthetic",
+        "tag_id": "d0765037-ba39-4f2b-90cd-a536a9cd46c9",
+        "tags": {
+          "id": "d0765037-ba39-4f2b-90cd-a536a9cd46c9",
+          "name": "Aesthetic",
+          "slug": "aesthetic",
+          "type": "vibe"
+        }
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-bb81-toilet",
+        "tag_id": "b92499b7-880d-4c02-8aac-a4073c213a4c",
+        "tags": {
+          "id": "b92499b7-880d-4c02-8aac-a4073c213a4c",
+          "name": "Toilet",
+          "slug": "toilet",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-bb81-smoking",
+        "tag_id": "d4d6cb33-3692-4482-9450-bcebd328fd96",
+        "tags": {
+          "id": "d4d6cb33-3692-4482-9450-bcebd328fd96",
+          "name": "Smoking Area",
+          "slug": "smoking-area",
+          "type": "facility"
+        }
+      }
+    ]
+  },
+  {
     "id": "21b53861-bf8b-4b42-be1e-55f3e21ec781",
     "name": "Kopi Kita (Fabriek)",
     "slug": "kopkit-fabriek-bloc",
