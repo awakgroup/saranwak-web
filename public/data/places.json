@@ -1,5 +1,158 @@
 [
   {
+    "id": "e9a8f211-54b3-4f91-8d26-724bc2f8a801",
+    "name": "Bat & Arrow",
+    "slug": "bat-and-arrow",
+    "description": "Menempati bangunan cagar budaya bekas gudang kolonial Belanda di tepi muara Batang Arau, Bat & Arrow (sering disebut Bat and Row) menghadirkan perpaduan unik antara kedai kopi, restoran, dan open-air beer garden berkonsep rustic-industrial dengan atmosfer tropis ala Bali. Menjadi salah satu magnet nongkrong dan nightlife paling ikonik di Kota Padang, tempat ini menawarkan pemandangan langsung ke aliran sungai, perahu nelayan, serta gemerlap senja menuju Jembatan Siti Nurbaya.",
+    "short_description": "Kafe, resto & beer garden (Bat and Row) berkonsep heritage industrial tepi sungai Batang Arau dekat Jembatan Siti Nurbaya.",
+    "characteristics": [
+      {
+        "title": "Riverside View Sungai Batang Arau",
+        "description": "Menghadap langsung ke dermaga perahu tradisional dan panorama senja memukau di muara Batang Arau menuju Jembatan Siti Nurbaya."
+      },
+      {
+        "title": "Arsitektur Heritage Bekas Gudang Kolonial",
+        "description": "Revitalisasi gudang tua peninggalan Belanda dengan pilar bata ekspos kokoh dan sentuhan tropical beer garden yang estetik."
+      },
+      {
+        "title": "Pusat Nightlife & Hangout Ikonik",
+        "description": "Atmosfer malam yang hidup dengan hiburan live music, meja biliar, dan menjadi titik temu favorit wisatawan lokal maupun mancanegara."
+      },
+      {
+        "title": "Ragam Menu Western, Pizza & Minuman Lengkap",
+        "description": "Menyajikan artisan pizza, burger, aneka pasta, makanan Meksiko, sajian kopi, mocktail segar, hingga varian minuman lengkap."
+      },
+      {
+        "title": "Area Semi-Outdoor Sejuk untuk Sunset Chill",
+        "description": "Area duduk terbuka yang lapang dengan hembusan angin sungai yang sejuk, sangat pas untuk santai sore, me-time, maupun nge-date."
+      }
+    ],
+    "address": "Jl. Batang Arau No. 25-28, Batang Arau, Kec. Padang Selatan, Kota Padang, Sumatera Barat 25118",
+    "area": "Padang Selatan",
+    "city": "Padang",
+    "image_url": null,
+    "main_image_url": null,
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=Bat+%26+Arrow+Padang",
+    "instagram_url": "https://www.instagram.com/batandarrow_official/",
+    "price_range": "Rp25k - Rp85k",
+    "price_min": 25000,
+    "price_max": 85000,
+    "opening_hours": "Senin - Jumat 14.00 - 23.30, Sabtu 16.00 - 02.00 WIB",
+    "is_featured": true,
+    "is_verified": true,
+    "is_published": true,
+    "created_at": "2026-11-16 10:45:00+00",
+    "updated_at": "2026-11-16 10:45:00+00",
+    "categories": {
+      "id": "3fff9d59-eb4d-4d58-a3fd-0b94ee412ee5",
+      "name": "Coffee Shop",
+      "slug": "coffee-shop",
+      "icon": "coffee"
+    },
+    "place_tags": [
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-724bc2f8a801-d32ddb31-b92b-4968-8f57-94834f873f41",
+        "tag_id": "d32ddb31-b92b-4968-8f57-94834f873f41",
+        "tags": {
+          "id": "d32ddb31-b92b-4968-8f57-94834f873f41",
+          "name": "Nongkrong",
+          "slug": "nongkrong",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-724bc2f8a801-770dd8a2-9cc8-4fde-abdb-b4bf3307a45d",
+        "tag_id": "770dd8a2-9cc8-4fde-abdb-b4bf3307a45d",
+        "tags": {
+          "id": "770dd8a2-9cc8-4fde-abdb-b4bf3307a45d",
+          "name": "Outdoor",
+          "slug": "outdoor",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-724bc2f8a801-338d18a9-d869-46be-9e99-f7bffcc9820f",
+        "tag_id": "338d18a9-d869-46be-9e99-f7bffcc9820f",
+        "tags": {
+          "id": "338d18a9-d869-46be-9e99-f7bffcc9820f",
+          "name": "Live Musik",
+          "slug": "live-musik",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-724bc2f8a801-6a8e1d9e-88fb-48aa-a9c1-5a68935dc297",
+        "tag_id": "6a8e1d9e-88fb-48aa-a9c1-5a68935dc297",
+        "tags": {
+          "id": "6a8e1d9e-88fb-48aa-a9c1-5a68935dc297",
+          "name": "Industrial",
+          "slug": "industrial",
+          "type": "vibe"
+        }
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-724bc2f8a801-d30f0c87-4384-474d-ae52-976300282f7a",
+        "tag_id": "d30f0c87-4384-474d-ae52-976300282f7a",
+        "tags": {
+          "id": "d30f0c87-4384-474d-ae52-976300282f7a",
+          "name": "Cozy",
+          "slug": "cozy",
+          "type": "vibe"
+        }
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-724bc2f8a801-d0765037-ba39-4f2b-90cd-a536a9cd46c9",
+        "tag_id": "d0765037-ba39-4f2b-90cd-a536a9cd46c9",
+        "tags": {
+          "id": "d0765037-ba39-4f2b-90cd-a536a9cd46c9",
+          "name": "Aesthetic",
+          "slug": "aesthetic",
+          "type": "vibe"
+        }
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-724bc2f8a801-5b4daff9-8fcd-4799-b23e-cf80a41f3376",
+        "tag_id": "5b4daff9-8fcd-4799-b23e-cf80a41f3376",
+        "tags": {
+          "id": "5b4daff9-8fcd-4799-b23e-cf80a41f3376",
+          "name": "Nge-date",
+          "slug": "nge-date",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-724bc2f8a801-b50b3f65-221b-4414-a95b-3f861176d5f9",
+        "tag_id": "b50b3f65-221b-4414-a95b-3f861176d5f9",
+        "tags": {
+          "id": "b50b3f65-221b-4414-a95b-3f861176d5f9",
+          "name": "WiFi",
+          "slug": "wifi",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-724bc2f8a801-b92499b7-880d-4c02-8aac-a4073c213a4c",
+        "tag_id": "b92499b7-880d-4c02-8aac-a4073c213a4c",
+        "tags": {
+          "id": "b92499b7-880d-4c02-8aac-a4073c213a4c",
+          "name": "Toilet",
+          "slug": "toilet",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-724bc2f8a801-d4d6cb33-3692-4482-9450-bcebd328fd96",
+        "tag_id": "d4d6cb33-3692-4482-9450-bcebd328fd96",
+        "tags": {
+          "id": "d4d6cb33-3692-4482-9450-bcebd328fd96",
+          "name": "Smoking Area",
+          "slug": "smoking-area",
+          "type": "facility"
+        }
+      }
+    ]
+  },
+  {
     "id": "21b53861-bf8b-4b42-be1e-55f3e21ec781",
     "name": "Kopi Kita (Fabriek)",
     "slug": "kopkit-fabriek-bloc",
