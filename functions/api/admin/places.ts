@@ -8,6 +8,7 @@ type PlaceRow = {
     slug: string;
     description: string | null;
     short_description: string | null;
+    characteristics?: string | null;
     category_id: string | null;
     address: string | null;
     area: string | null;
@@ -71,6 +72,7 @@ type PlacePayload = {
     category_id?: string;
     description?: string | null;
     short_description?: string | null;
+    characteristics?: unknown;
     address?: string | null;
     area?: string | null;
     city?: string | null;
@@ -98,11 +100,38 @@ type JsonResponseBody = {
     places?: unknown[];
 };
 
+let hasEnsuredCharacteristicsColumn = false;
+
+async function ensureCharacteristicsColumn(db: D1Database) {
+    if (hasEnsuredCharacteristicsColumn) return;
+    try {
+        await db.prepare("ALTER TABLE places ADD COLUMN characteristics TEXT").run();
+    } catch {
+        // Ignored if column already exists
+    }
+    hasEnsuredCharacteristicsColumn = true;
+}
+
+function parseCharacteristicsJson(value: unknown) {
+    if (!value) return null;
+    if (Array.isArray(value)) return value;
+    if (typeof value === "string") {
+        try {
+            return JSON.parse(value);
+        } catch {
+            return null;
+        }
+    }
+    return null;
+}
+
 export const onRequestGet: PagesFunction<Env> = async (context) => {
     try {
         if (!isAdminAuthenticated(context.request)) {
             return unauthorizedResponse();
         }
+
+        await ensureCharacteristicsColumn(context.env.DB);
 
         const [categoriesResult, tagsResult, placesResult, galleriesResult] =
             await Promise.all([
@@ -130,6 +159,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
             p.slug,
             p.description,
             p.short_description,
+            p.characteristics,
             p.category_id,
             p.address,
             p.area,
@@ -196,6 +226,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
             return {
                 ...place,
+
+                characteristics: parseCharacteristicsJson(place.characteristics),
 
                 is_featured: Boolean(place.is_featured),
                 is_published: Boolean(place.is_active),
@@ -281,6 +313,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
             );
         }
 
+        await ensureCharacteristicsColumn(context.env.DB);
+
         const id = crypto.randomUUID();
         const now = new Date().toISOString();
 
@@ -289,6 +323,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         const categoryId = cleanString(payload.category_id);
         const isFeatured = toSqlBool(payload.is_featured);
         const isActive = toSqlBool(payload.is_published ?? payload.is_active ?? true);
+        const characteristicsJson = payload.characteristics ? JSON.stringify(payload.characteristics) : null;
 
         await context.env.DB.prepare(
             `
@@ -298,6 +333,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         slug,
         description,
         short_description,
+        characteristics,
         category_id,
         address,
         area,
@@ -316,7 +352,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         created_at,
         updated_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
         )
             .bind(
@@ -325,6 +361,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
                 slug,
                 nullableString(payload.description),
                 nullableString(payload.short_description),
+                nullableString(characteristicsJson),
                 categoryId,
                 nullableString(payload.address),
                 nullableString(payload.area),
@@ -412,6 +449,8 @@ export const onRequestPatch: PagesFunction<Env> = async (context) => {
             );
         }
 
+        await ensureCharacteristicsColumn(context.env.DB);
+
         const now = new Date().toISOString();
 
         const name = cleanString(payload.name);
@@ -419,6 +458,7 @@ export const onRequestPatch: PagesFunction<Env> = async (context) => {
         const categoryId = cleanString(payload.category_id);
         const isFeatured = toSqlBool(payload.is_featured);
         const isActive = toSqlBool(payload.is_published ?? payload.is_active ?? true);
+        const characteristicsJson = payload.characteristics ? JSON.stringify(payload.characteristics) : null;
 
         await context.env.DB.prepare(
             `
@@ -428,6 +468,7 @@ export const onRequestPatch: PagesFunction<Env> = async (context) => {
         slug = ?,
         description = ?,
         short_description = ?,
+        characteristics = ?,
         category_id = ?,
         address = ?,
         area = ?,
@@ -452,6 +493,7 @@ export const onRequestPatch: PagesFunction<Env> = async (context) => {
                 slug,
                 nullableString(payload.description),
                 nullableString(payload.short_description),
+                nullableString(characteristicsJson),
                 categoryId,
                 nullableString(payload.address),
                 nullableString(payload.area),

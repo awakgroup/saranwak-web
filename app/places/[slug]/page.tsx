@@ -1146,13 +1146,24 @@ async function getRelatedPlaces({
 function mapApiPlaceDetailToPlaceDetail(place: ApiPlaceDetail): PlaceDetail {
     const category = makeCategoryFromApiPlace(place);
 
+    let characteristics = null;
+    if (Array.isArray(place.characteristics)) {
+        characteristics = place.characteristics;
+    } else if (typeof place.characteristics === "string") {
+        try {
+            characteristics = JSON.parse(place.characteristics);
+        } catch {
+            characteristics = null;
+        }
+    }
+
     return {
         id: place.id,
         name: place.name,
         slug: place.slug,
         description: place.description,
         short_description: place.short_description,
-        characteristics: null,
+        characteristics,
         address: place.address,
         area: place.area,
         city: place.city,

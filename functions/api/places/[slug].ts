@@ -8,6 +8,7 @@ type PlaceRow = {
     slug: string;
     description: string | null;
     short_description: string | null;
+    characteristics?: string | null;
     category_id: string | null;
     address: string | null;
     area: string | null;
@@ -43,6 +44,18 @@ type GalleryRow = {
     sort_order: number;
 };
 
+let hasEnsuredCharacteristicsColumn = false;
+
+async function ensureCharacteristicsColumn(db: D1Database) {
+    if (hasEnsuredCharacteristicsColumn) return;
+    try {
+        await db.prepare("ALTER TABLE places ADD COLUMN characteristics TEXT").run();
+    } catch {
+        // Ignored if column already exists
+    }
+    hasEnsuredCharacteristicsColumn = true;
+}
+
 export const onRequestGet: PagesFunction<Env> = async (context) => {
     try {
         const slug = context.params.slug;
@@ -57,6 +70,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
             );
         }
 
+        await ensureCharacteristicsColumn(context.env.DB);
+
         const place = await context.env.DB
             .prepare(
                 `
@@ -66,6 +81,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
           p.slug,
           p.description,
           p.short_description,
+          p.characteristics,
           p.category_id,
           p.address,
           p.area,
@@ -102,6 +118,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
                 },
                 { status: 404 }
             );
+        }
+
+        let characteristics = null;
+        if (place.characteristics) {
+            try {
+                characteristics = JSON.parse(place.characteristics);
+            } catch {
+                characteristics = null;
+            }
         }
 
         const tags = await context.env.DB
@@ -141,6 +166,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
             success: true,
             data: {
                 ...place,
+                characteristics,
                 tags: tags.results ?? [],
                 galleries: galleries.results ?? [],
             },

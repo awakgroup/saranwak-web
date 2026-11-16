@@ -32,6 +32,7 @@ export type ApiPlace = {
     slug: string;
     description: string | null;
     short_description: string | null;
+    characteristics?: (string | { title: string; description: string })[] | string | null;
     category_id: string | null;
     address: string | null;
     area: string | null;
