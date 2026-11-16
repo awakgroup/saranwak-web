@@ -160,11 +160,12 @@ export function PlaceCard({
                         </span>
                     ) : null}
 
-                    {place.is_verified ? (
+                    {/* Badge Verified di-hide sementara */}
+                    {/* {place.is_verified ? (
                         <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] text-[#1F5A4A] shadow-sm backdrop-blur">
                             Verified
                         </span>
-                    ) : null}
+                    ) : null} */}
 
                     {place.source === "admin_panel" ? (
                         <span className="rounded-full bg-[#1F5A4A] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-white shadow-sm backdrop-blur">

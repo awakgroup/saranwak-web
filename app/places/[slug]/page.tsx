@@ -362,12 +362,13 @@ function HeroSection({
                             </span>
                         ) : null}
 
-                        {place.is_verified ? (
+                        {/* Badge Verified di-hide sementara */}
+                        {/* {place.is_verified ? (
                             <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur">
                                 <CheckCircle2 className="h-3 w-3 text-[#8BE4D2]" />
                                 Verified
                             </span>
-                        ) : null}
+                        ) : null} */}
 
                         {place.source === "admin_panel" ? (
                             <span className="inline-flex items-center gap-1 rounded-full bg-[#1F5A4A]/80 px-3.5 py-1.5 text-xs font-bold text-[#F2C38B] backdrop-blur border border-[#F2C38B]/30">
