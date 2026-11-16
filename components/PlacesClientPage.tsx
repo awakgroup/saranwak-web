@@ -92,18 +92,20 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const params: PageParams = {
-        q: searchParams.get("q") || undefined,
-        tag: searchParams.get("tag") || undefined,
-        tags: searchParams.get("tags") || undefined,
-        area: searchParams.get("area") || undefined,
-        category: searchParams.get("category") || undefined,
-        price: searchParams.get("price") || undefined,
-        openNow: searchParams.get("openNow") || undefined,
-    };
+    const params: PageParams = useMemo(
+        () => ({
+            q: searchParams.get("q") || undefined,
+            tag: searchParams.get("tag") || undefined,
+            tags: searchParams.get("tags") || undefined,
+            area: searchParams.get("area") || undefined,
+            category: searchParams.get("category") || undefined,
+            price: searchParams.get("price") || undefined,
+            openNow: searchParams.get("openNow") || undefined,
+        }),
+        [searchParams]
+    );
 
     const [searchQuery, setSearchQuery] = useState(params.q || "");
-    const [prevQ, setPrevQ] = useState(params.q);
     const [livePlacesData, setLivePlacesData] = useState<Place[]>(placesData);
     const [isRandomOpen, setIsRandomOpen] = useState(false);
     const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
@@ -188,24 +190,52 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
         };
     }, [placesData]);
 
-    if (params.q !== prevQ) {
-        setPrevQ(params.q);
+    // Sinkronkan searchQuery jika params.q dari URL berubah
+    useEffect(() => {
         setSearchQuery(params.q || "");
-    }
+    }, [params.q]);
 
-    const selectedTags = getSelectedTags(params);
-    const selectedPrice = getSelectedPrice(params.price);
+    const currentQ = searchQuery.trim();
+
+    const effectiveParams = useMemo<PageParams>(
+        () => ({
+            ...params,
+            q: currentQ || undefined,
+        }),
+        [params, currentQ]
+    );
+
+    // Sinkronisasi URL query string (debounced 250ms) saat user mengetik tanpa reload
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (typeof window !== "undefined") {
+                const targetHref = buildFilterHref(params, {
+                    q: currentQ || undefined,
+                });
+                const currentFull =
+                    window.location.pathname + window.location.search;
+                if (currentFull !== targetHref) {
+                    window.history.replaceState(null, "", targetHref);
+                }
+            }
+        }, 250);
+
+        return () => clearTimeout(timer);
+    }, [currentQ, params]);
+
+    const selectedTags = getSelectedTags(effectiveParams);
+    const selectedPrice = getSelectedPrice(effectiveParams.price);
     const selectedTagsKey = selectedTags.join(",");
 
     const places = useMemo(() => {
         const filtered = livePlacesData
-            .filter((place) => matchKeyword(place, params.q))
-            .filter((place) => matchArea(place, params.area))
-            .filter((place) => matchCategory(place, params.category))
+            .filter((place) => matchKeyword(place, currentQ))
+            .filter((place) => matchArea(place, effectiveParams.area))
+            .filter((place) => matchCategory(place, effectiveParams.category))
             .filter((place) => matchAllSelectedTags(place, selectedTags))
             .filter((place) => matchPrice(place, selectedPrice))
             .filter((place) => {
-                if (params.openNow === "true") {
+                if (effectiveParams.openNow === "true") {
                     return getPlaceOpenStatus(place.opening_hours).isOpen;
                 }
                 return true;
@@ -240,10 +270,10 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         livePlacesData,
-        params.q,
-        params.area,
-        params.category,
-        params.openNow,
+        currentQ,
+        effectiveParams.area,
+        effectiveParams.category,
+        effectiveParams.openNow,
         selectedPrice,
         selectedTagsKey,
         isNearbyActive,
@@ -268,40 +298,44 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     }, [livePlacesData, userCoords]);
 
     const hasFilter = Boolean(
-        params.q ||
-        params.area ||
-        params.category ||
+        currentQ ||
+        effectiveParams.area ||
+        effectiveParams.category ||
         selectedTags.length > 0 ||
         selectedPrice !== "all" ||
-        params.openNow === "true"
+        effectiveParams.openNow === "true"
     );
 
     const activeFilterCount =
-        Number(Boolean(params.q)) +
-        Number(Boolean(params.area)) +
-        Number(Boolean(params.category)) +
+        Number(Boolean(currentQ)) +
+        Number(Boolean(effectiveParams.area)) +
+        Number(Boolean(effectiveParams.category)) +
         selectedTags.length +
         Number(selectedPrice !== "all") +
-        Number(params.openNow === "true");
+        Number(effectiveParams.openNow === "true");
 
     function handleSearchSubmit(e: FormEvent) {
         e.preventDefault();
         const trimmed = searchQuery.trim();
-        const targetHref = buildFilterHref(params, {
-            q: trimmed || undefined,
-        });
-        router.push(targetHref);
+        if (typeof window !== "undefined") {
+            const targetHref = buildFilterHref(params, {
+                q: trimmed || undefined,
+            });
+            window.history.replaceState(null, "", targetHref);
+        }
     }
 
     function handleClearSearch() {
         setSearchQuery("");
-        const targetHref = buildFilterHref(params, {
-            q: undefined,
-        });
-        router.push(targetHref);
+        if (typeof window !== "undefined") {
+            const targetHref = buildFilterHref(params, {
+                q: undefined,
+            });
+            window.history.replaceState(null, "", targetHref);
+        }
     }
 
-    const { prefix: titlePrefix, suffix: titleSuffix } = makeTitleParts(params);
+    const { prefix: titlePrefix, suffix: titleSuffix } = makeTitleParts(effectiveParams);
 
     return (
         <main className="min-h-screen bg-[#F4F1EA] px-4 pb-14 pt-4 text-[#201813] sm:px-6 sm:pt-6 lg:px-8 lg:pb-20 lg:pt-8">
@@ -324,7 +358,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             </h1>
 
                             <p className="mt-3 max-w-2xl text-sm font-medium leading-7 text-white/70 sm:text-base">
-                                {makeDescription(params)}
+                                {makeDescription(effectiveParams)}
                             </p>
 
                             {/* Search Form inside Hero */}
@@ -387,6 +421,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                 {hasFilter ? (
                                     <Link
                                         href="/places/?category=coffee-shop"
+                                        onClick={handleClearSearch}
                                         className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-bold text-[#201813] transition hover:bg-[#F2C38B]"
                                     >
                                         <RotateCcw className="h-3.5 w-3.5" />
@@ -434,7 +469,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
 
                             <div className="mt-4 border-t border-[#E7D8C8] pt-4">
                                 <FilterContent
-                                    params={params}
+                                    params={effectiveParams}
                                     selectedTags={selectedTags}
                                     selectedPrice={selectedPrice}
                                     hasFilter={hasFilter}
@@ -455,6 +490,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                 {hasFilter ? (
                                     <Link
                                         href="/places/?category=coffee-shop"
+                                        onClick={handleClearSearch}
                                         className="text-xs font-bold text-[#1F5A4A] transition hover:underline"
                                     >
                                         Reset
@@ -463,7 +499,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             </div>
 
                             <FilterContent
-                                params={params}
+                                params={effectiveParams}
                                 selectedTags={selectedTags}
                                 selectedPrice={selectedPrice}
                                 hasFilter={hasFilter}
@@ -475,9 +511,10 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                         {/* Interactive Active Filters Bar */}
                         {hasFilter ? (
                             <ActiveFilters
-                                params={params}
+                                params={effectiveParams}
                                 selectedTags={selectedTags}
                                 selectedPrice={selectedPrice}
+                                onClearSearch={handleClearSearch}
                             />
                         ) : null}
 
@@ -589,7 +626,10 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
 
                         {/* Places Grid, Map View, or Empty State */}
                         {places.length === 0 ? (
-                            <EmptyPlacesState params={params} />
+                            <EmptyPlacesState
+                                params={effectiveParams}
+                                onClearSearch={handleClearSearch}
+                            />
                         ) : viewMode === "map" ? (
                             <PlacesMapView places={places} userCoords={userCoords} />
                         ) : (
@@ -750,10 +790,12 @@ function ActiveFilters({
     params,
     selectedTags,
     selectedPrice,
+    onClearSearch,
 }: {
     params: PageParams;
     selectedTags: string[];
     selectedPrice: PriceFilterValue;
+    onClearSearch?: () => void;
 }) {
     const chips: ActiveFilterChip[] = [];
 
@@ -822,6 +864,9 @@ function ActiveFilters({
 
                 <Link
                     href="/places/?category=coffee-shop"
+                    onClick={() => {
+                        if (onClearSearch) onClearSearch();
+                    }}
                     className="inline-flex items-center gap-1 text-xs font-bold text-[#1F5A4A] transition hover:underline"
                 >
                     <RotateCcw className="h-3 w-3" />
@@ -834,6 +879,11 @@ function ActiveFilters({
                     <Link
                         key={chip.id}
                         href={chip.removeHref}
+                        onClick={() => {
+                            if (chip.id.startsWith("q-") && onClearSearch) {
+                                onClearSearch();
+                            }
+                        }}
                         title={`Hapus filter ${chip.label}`}
                         className="group inline-flex items-center gap-1.5 rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-1.5 text-xs font-bold text-[#4B4038] transition hover:border-[#C8784A] hover:bg-[#F0E6D8]"
                     >
@@ -846,7 +896,13 @@ function ActiveFilters({
     );
 }
 
-function EmptyPlacesState({ params }: { params: PageParams }) {
+function EmptyPlacesState({
+    params,
+    onClearSearch,
+}: {
+    params: PageParams;
+    onClearSearch?: () => void;
+}) {
     const popularTags = [
         { label: "WFC & Nugas", tag: "wfc" },
         { label: "Nongkrong", tag: "nongkrong" },
@@ -892,6 +948,9 @@ function EmptyPlacesState({ params }: { params: PageParams }) {
                 <div className="mt-7 flex justify-center">
                     <Link
                         href="/places/?category=coffee-shop"
+                        onClick={() => {
+                            if (onClearSearch) onClearSearch();
+                        }}
                         className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#201813] px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#3A2D25]"
                     >
                         <RotateCcw className="h-4 w-4" />
@@ -955,34 +1014,54 @@ function getSelectedPrice(price?: string): PriceFilterValue {
 }
 
 function matchKeyword(place: Place, keyword?: string) {
-    if (!keyword) return true;
+    if (!keyword || !keyword.trim()) return true;
 
-    const normalizedKeyword = normalizeText(keyword);
+    const rawTerms = normalizeSearchText(keyword).split(" ").filter(Boolean);
+    if (rawTerms.length === 0) return true;
 
-    const searchableText = [
-        place.name,
-        place.short_description,
-        place.description,
-        place.area,
-        place.city,
-        getCategorySlug(place),
-        getCategoryName(place),
-        ...getPlaceTags(place).flatMap((tag) => [tag.name, tag.slug, tag.type]),
-    ]
+    let charsText = "";
+    if (Array.isArray(place.characteristics)) {
+        charsText = place.characteristics
+            .map((c) => (typeof c === "string" ? c : `${c.title} ${c.description}`))
+            .join(" ");
+    } else if (typeof place.characteristics === "string") {
+        charsText = place.characteristics;
+    }
+
+    const tagsText = getPlaceTags(place)
+        .flatMap((tag) => [tag.name, tag.slug, tag.type])
         .filter(Boolean)
         .join(" ");
 
-    return normalizeText(searchableText).includes(normalizedKeyword);
+    const searchableText = normalizeSearchText(
+        [
+            place.name,
+            place.slug,
+            place.short_description,
+            place.description,
+            place.address,
+            place.area,
+            place.city,
+            getCategorySlug(place),
+            getCategoryName(place),
+            tagsText,
+            charsText,
+        ]
+            .filter(Boolean)
+            .join(" ")
+    );
+
+    return rawTerms.every((term) => searchableText.includes(term));
 }
 
 function matchArea(place: Place, area?: string) {
     if (!area) return true;
 
-    const normalizedArea = normalizeText(area);
+    const normalizedArea = normalizeSearchText(area);
 
-    return [place.area, place.city]
+    return [place.area, place.city, place.address]
         .filter(Boolean)
-        .some((item) => normalizeText(String(item)).includes(normalizedArea));
+        .some((item) => normalizeSearchText(String(item)).includes(normalizedArea));
 }
 
 function matchCategory(place: Place, category?: string) {
@@ -1219,8 +1298,16 @@ function makeDescription(params: PageParams) {
     return "Jelajahi coffee shop di Padang berdasarkan kebutuhan, budget, dan suasana.";
 }
 
+function normalizeSearchText(value?: string | null): string {
+    return String(value ?? "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
 function normalizeText(value?: string | null) {
-    return normalizeSlug(value);
+    return normalizeSearchText(value);
 }
 
 function normalizeSlug(value?: string | null) {
