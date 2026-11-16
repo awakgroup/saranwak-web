@@ -153,10 +153,10 @@ export function PlaceCard({
                     {place.is_featured ? (
                         <span
                             title="Tempat Pilihan (Featured)"
-                            className="grid h-6 w-6 place-items-center rounded-full bg-[#F3C48E] text-[#201813] shadow-md backdrop-blur transition hover:scale-110"
+                            className="grid h-6 w-6 place-items-center rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.18)] transition hover:scale-110"
                             aria-label="Featured place"
                         >
-                            <Star className="h-3 w-3 fill-[#201813] text-[#201813]" />
+                            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-500" />
                         </span>
                     ) : null}
 
