@@ -172,6 +172,8 @@ async function ensureKamtumiSlug(db: D1Database) {
     if (hasEnsuredKamtumiSlug) return;
     try {
         const existing = await db.prepare("SELECT id FROM places WHERE slug = 'kamtumi-coffee'").first();
+        const mainPhotoUrl = 'https://drive.google.com/file/d/107fx1KQ3EusFiJ7hPdDgmQX6R7crKlqr/view?usp=drive_link';
+
         if (!existing) {
             await db.prepare(`
                 INSERT OR IGNORE INTO places (
@@ -193,7 +195,7 @@ async function ensureKamtumiSlug(db: D1Database) {
                   20000,
                   45000,
                   'Rp20k - Rp45k',
-                  NULL,
+                  ?,
                   'https://www.instagram.com/kamtumicoffee/',
                   'https://www.google.com/maps/search/?api=1&query=Kamtumi+Coffee+Padang',
                   NULL,
@@ -204,7 +206,7 @@ async function ensureKamtumiSlug(db: D1Database) {
                   '2026-11-16 11:38:00+00',
                   '2026-11-16 11:38:00+00'
                 )
-            `).run();
+            `).bind(mainPhotoUrl).run();
 
             const tagIds = [
                 '0dee3434-90df-45e7-855f-b896c866762c',
@@ -225,6 +227,50 @@ async function ensureKamtumiSlug(db: D1Database) {
                     .bind('c7a10f82-913a-4e2b-bb81-18f9e61234a1', tagId)
                     .run();
             }
+        }
+
+        // Always update image_url if null or empty
+        await db.prepare("UPDATE places SET image_url = ? WHERE slug = 'kamtumi-coffee' AND (image_url IS NULL OR image_url = '')")
+            .bind(mainPhotoUrl)
+            .run();
+
+        const galleries = [
+            {
+                id: 'c7a10f82-913a-4e2b-photo-001',
+                url: 'https://drive.google.com/file/d/107fx1KQ3EusFiJ7hPdDgmQX6R7crKlqr/view?usp=drive_link',
+                caption: 'Area duduk komunal bernuansa vintage dengan meja kayu solid dan tirai tanaman hijau',
+                order: 0
+            },
+            {
+                id: 'c7a10f82-913a-4e2b-photo-002',
+                url: 'https://drive.google.com/file/d/13vBSSgjxxX3yRqPD8ZmkTGdUgF_pSnG7/view?usp=drive_link',
+                caption: 'Teras outdoor asri dengan kanopi tanaman berbunga dan neon sign Kamtumi',
+                order: 1
+            },
+            {
+                id: 'c7a10f82-913a-4e2b-photo-003',
+                url: 'https://drive.google.com/file/d/1pjzV_TxMrkMvOJTE7L83dUZHsSUNJgGV/view?usp=drive_link',
+                caption: 'Ruang indoor tenang yang ramah laptop dan dilengkapi colokan untuk WFC',
+                order: 2
+            },
+            {
+                id: 'c7a10f82-913a-4e2b-photo-004',
+                url: 'https://drive.google.com/file/d/1yA-qdzIxqZSZJ66uv9jbgXc1r4rGOAQ4/view?usp=drive_link',
+                caption: 'Sudut indoor bernuansa hangat dengan jendela kayu klasik dan neon box Kamtumi',
+                order: 3
+            },
+            {
+                id: 'c7a10f82-913a-4e2b-photo-005',
+                url: 'https://drive.google.com/file/d/1jmexxKYPTmrgLp-vrNowis2XbsG2mD-M/view?usp=drive_link',
+                caption: 'Halaman terbuka dengan pintu kayu rustic dan tanaman hias untuk santai sore',
+                order: 4
+            }
+        ];
+
+        for (const g of galleries) {
+            await db.prepare('INSERT OR IGNORE INTO galleries (id, place_id, image_url, alt_text, sort_order) VALUES (?, ?, ?, ?, ?)')
+                .bind(g.id, 'c7a10f82-913a-4e2b-bb81-18f9e61234a1', g.url, g.caption, g.order)
+                .run();
         }
     } catch {
         // Ignored

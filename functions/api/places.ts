@@ -121,6 +121,8 @@ async function ensureKamtumi(db: D1Database) {
     if (hasEnsuredKamtumi) return;
     try {
         const existing = await db.prepare("SELECT id FROM places WHERE slug = 'kamtumi-coffee'").first();
+        const mainPhotoUrl = 'https://drive.google.com/file/d/107fx1KQ3EusFiJ7hPdDgmQX6R7crKlqr/view?usp=drive_link';
+
         if (!existing) {
             await db.prepare(`
                 INSERT OR IGNORE INTO places (
@@ -142,7 +144,7 @@ async function ensureKamtumi(db: D1Database) {
                   20000,
                   45000,
                   'Rp20k - Rp45k',
-                  NULL,
+                  ?,
                   'https://www.instagram.com/kamtumicoffee/',
                   'https://www.google.com/maps/search/?api=1&query=Kamtumi+Coffee+Padang',
                   NULL,
@@ -153,7 +155,7 @@ async function ensureKamtumi(db: D1Database) {
                   '2026-11-16 11:38:00+00',
                   '2026-11-16 11:38:00+00'
                 )
-            `).run();
+            `).bind(mainPhotoUrl).run();
 
             const tagIds = [
                 '0dee3434-90df-45e7-855f-b896c866762c',
@@ -175,6 +177,11 @@ async function ensureKamtumi(db: D1Database) {
                     .run();
             }
         }
+
+        // Always ensure image_url is set
+        await db.prepare("UPDATE places SET image_url = ? WHERE slug = 'kamtumi-coffee' AND (image_url IS NULL OR image_url = '')")
+            .bind(mainPhotoUrl)
+            .run();
     } catch {
         // Ignored
     }

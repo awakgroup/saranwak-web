@@ -1,4 +1,4 @@
--- Migration 0007: Add Kamtumi Coffee
+-- Migration 0007: Add Kamtumi Coffee with photos
 INSERT OR IGNORE INTO places (
   id,
   name,
@@ -37,7 +37,7 @@ INSERT OR IGNORE INTO places (
   20000,
   45000,
   'Rp20k - Rp45k',
-  NULL,
+  'https://drive.google.com/file/d/107fx1KQ3EusFiJ7hPdDgmQX6R7crKlqr/view?usp=drive_link',
   'https://www.instagram.com/kamtumicoffee/',
   'https://www.google.com/maps/search/?api=1&query=Kamtumi+Coffee+Padang',
   NULL,
@@ -62,3 +62,10 @@ INSERT OR IGNORE INTO place_tags (place_id, tag_id) VALUES
   ('c7a10f82-913a-4e2b-bb81-18f9e61234a1', 'd0765037-ba39-4f2b-90cd-a536a9cd46c9'),
   ('c7a10f82-913a-4e2b-bb81-18f9e61234a1', 'b92499b7-880d-4c02-8aac-a4073c213a4c'),
   ('c7a10f82-913a-4e2b-bb81-18f9e61234a1', 'd4d6cb33-3692-4482-9450-bcebd328fd96');
+
+INSERT OR IGNORE INTO galleries (id, place_id, image_url, alt_text, sort_order) VALUES
+  ('c7a10f82-913a-4e2b-photo-001', 'c7a10f82-913a-4e2b-bb81-18f9e61234a1', 'https://drive.google.com/file/d/107fx1KQ3EusFiJ7hPdDgmQX6R7crKlqr/view?usp=drive_link', 'Area duduk komunal bernuansa vintage dengan meja kayu solid dan tirai tanaman hijau', 0),
+  ('c7a10f82-913a-4e2b-photo-002', 'c7a10f82-913a-4e2b-bb81-18f9e61234a1', 'https://drive.google.com/file/d/13vBSSgjxxX3yRqPD8ZmkTGdUgF_pSnG7/view?usp=drive_link', 'Teras outdoor asri dengan kanopi tanaman berbunga dan neon sign Kamtumi', 1),
+  ('c7a10f82-913a-4e2b-photo-003', 'c7a10f82-913a-4e2b-bb81-18f9e61234a1', 'https://drive.google.com/file/d/1pjzV_TxMrkMvOJTE7L83dUZHsSUNJgGV/view?usp=drive_link', 'Ruang indoor tenang yang ramah laptop dan dilengkapi colokan untuk WFC', 2),
+  ('c7a10f82-913a-4e2b-photo-004', 'c7a10f82-913a-4e2b-bb81-18f9e61234a1', 'https://drive.google.com/file/d/1yA-qdzIxqZSZJ66uv9jbgXc1r4rGOAQ4/view?usp=drive_link', 'Sudut indoor bernuansa hangat dengan jendela kayu klasik dan neon box Kamtumi', 3),
+  ('c7a10f82-913a-4e2b-photo-005', 'c7a10f82-913a-4e2b-bb81-18f9e61234a1', 'https://drive.google.com/file/d/1jmexxKYPTmrgLp-vrNowis2XbsG2mD-M/view?usp=drive_link', 'Halaman terbuka dengan pintu kayu rustic dan tanaman hias untuk santai sore', 4);

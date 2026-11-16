@@ -215,8 +215,8 @@
     "address": "Jl. Ujung Gurun No. 152, Ujung Gurun, Kec. Padang Barat, Kota Padang, Sumatera Barat 25114",
     "area": "Padang Barat",
     "city": "Padang",
-    "image_url": null,
-    "main_image_url": null,
+    "image_url": "https://drive.google.com/file/d/107fx1KQ3EusFiJ7hPdDgmQX6R7crKlqr/view?usp=drive_link",
+    "main_image_url": "https://drive.google.com/file/d/107fx1KQ3EusFiJ7hPdDgmQX6R7crKlqr/view?usp=drive_link",
     "google_maps_url": "https://www.google.com/maps/search/?api=1&query=Kamtumi+Coffee+Padang",
     "instagram_url": "https://www.instagram.com/kamtumicoffee/",
     "price_range": "Rp20k - Rp45k",
@@ -354,6 +354,38 @@
           "slug": "smoking-area",
           "type": "facility"
         }
+      }
+    ],
+    "place_photos": [
+      {
+        "id": "c7a10f82-913a-4e2b-photo-001",
+        "image_url": "https://drive.google.com/file/d/107fx1KQ3EusFiJ7hPdDgmQX6R7crKlqr/view?usp=drive_link",
+        "caption": "Area duduk komunal bernuansa vintage dengan meja kayu solid dan tirai tanaman hijau",
+        "sort_order": 0
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-photo-002",
+        "image_url": "https://drive.google.com/file/d/13vBSSgjxxX3yRqPD8ZmkTGdUgF_pSnG7/view?usp=drive_link",
+        "caption": "Teras outdoor asri dengan kanopi tanaman berbunga dan neon sign Kamtumi",
+        "sort_order": 1
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-photo-003",
+        "image_url": "https://drive.google.com/file/d/1pjzV_TxMrkMvOJTE7L83dUZHsSUNJgGV/view?usp=drive_link",
+        "caption": "Ruang indoor tenang yang ramah laptop dan dilengkapi colokan untuk WFC",
+        "sort_order": 2
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-photo-004",
+        "image_url": "https://drive.google.com/file/d/1yA-qdzIxqZSZJ66uv9jbgXc1r4rGOAQ4/view?usp=drive_link",
+        "caption": "Sudut indoor bernuansa hangat dengan jendela kayu klasik dan neon box Kamtumi",
+        "sort_order": 3
+      },
+      {
+        "id": "c7a10f82-913a-4e2b-photo-005",
+        "image_url": "https://drive.google.com/file/d/1jmexxKYPTmrgLp-vrNowis2XbsG2mD-M/view?usp=drive_link",
+        "caption": "Halaman terbuka dengan pintu kayu rustic dan tanaman hias untuk santai sore",
+        "sort_order": 4
       }
     ]
   },
