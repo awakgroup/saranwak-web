@@ -62,6 +62,8 @@ async function ensureBatAndArrowSlug(db: D1Database) {
     if (hasEnsuredBatAndArrowSlug) return;
     try {
         const existing = await db.prepare("SELECT id FROM places WHERE slug = 'bat-and-arrow'").first();
+        const mainPhotoUrl = 'https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link';
+
         if (!existing) {
             await db.prepare(`
                 INSERT OR IGNORE INTO places (
@@ -83,7 +85,7 @@ async function ensureBatAndArrowSlug(db: D1Database) {
                   25000,
                   85000,
                   'Rp25k - Rp85k',
-                  'https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link',
+                  ?,
                   'https://www.instagram.com/batandarrow_official/',
                   'https://www.google.com/maps/search/?api=1&query=Bat+%26+Arrow+Padang',
                   NULL,
@@ -94,51 +96,7 @@ async function ensureBatAndArrowSlug(db: D1Database) {
                   '2026-11-16 10:45:00+00',
                   '2026-11-16 10:45:00+00'
                 )
-            `).run();
-
-            // Also update image_url if row existed with null
-            await db.prepare("UPDATE places SET image_url = ? WHERE slug = 'bat-and-arrow' AND (image_url IS NULL OR image_url = '')")
-                .bind('https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link')
-                .run();
-
-            const galleries = [
-                {
-                    id: 'e9a8f211-54b3-4f91-8d26-photo-001',
-                    url: 'https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link',
-                    caption: 'Fasad heritage bekas gudang kolonial Belanda dengan logo Bat & Arrow',
-                    order: 0
-                },
-                {
-                    id: 'e9a8f211-54b3-4f91-8d26-photo-002',
-                    url: 'https://drive.google.com/file/d/1R0ula9oMQThjTi3dx6NJHK1j0ZDlhUuP/view?usp=drive_link',
-                    caption: 'Deck semi-outdoor tepi aliran sungai Batang Arau',
-                    order: 1
-                },
-                {
-                    id: 'e9a8f211-54b3-4f91-8d26-photo-003',
-                    url: 'https://drive.google.com/file/d/11uC7bAEX8zjMSAeULX_IqA9BjoarZSGd/view?usp=drive_link',
-                    caption: 'Suasana malam hangat dengan neon sign Bat & Arrow di area courtyard',
-                    order: 2
-                },
-                {
-                    id: 'e9a8f211-54b3-4f91-8d26-photo-004',
-                    url: 'https://drive.google.com/file/d/1sGQQ13Evgtgv--HZpx1zkJ1MQZago0sB/view?usp=drive_link',
-                    caption: 'Area duduk terbuka dengan dinding tanaman merambat ala tropical garden',
-                    order: 3
-                },
-                {
-                    id: 'e9a8f211-54b3-4f91-8d26-photo-005',
-                    url: 'https://drive.google.com/file/d/1iz71rg2FR6gk_jaZ06C3gdcDgFjeU05f/view?usp=drive_link',
-                    caption: 'Tempat hangout favorit komunitas dan traveler di Batang Arau',
-                    order: 4
-                }
-            ];
-
-            for (const g of galleries) {
-                await db.prepare('INSERT OR IGNORE INTO galleries (id, place_id, image_url, alt_text, sort_order) VALUES (?, ?, ?, ?, ?)')
-                    .bind(g.id, 'e9a8f211-54b3-4f91-8d26-724bc2f8a801', g.url, g.caption, g.order)
-                    .run();
-            }
+            `).bind(mainPhotoUrl).run();
 
             const tagIds = [
                 'd32ddb31-b92b-4968-8f57-94834f873f41',
@@ -157,6 +115,50 @@ async function ensureBatAndArrowSlug(db: D1Database) {
                     .bind('e9a8f211-54b3-4f91-8d26-724bc2f8a801', tagId)
                     .run();
             }
+        }
+
+        // Always update image_url if null or empty
+        await db.prepare("UPDATE places SET image_url = ? WHERE slug = 'bat-and-arrow' AND (image_url IS NULL OR image_url = '')")
+            .bind(mainPhotoUrl)
+            .run();
+
+        const galleries = [
+            {
+                id: 'e9a8f211-54b3-4f91-8d26-photo-001',
+                url: 'https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link',
+                caption: 'Fasad heritage bekas gudang kolonial Belanda dengan logo Bat & Arrow',
+                order: 0
+            },
+            {
+                id: 'e9a8f211-54b3-4f91-8d26-photo-002',
+                url: 'https://drive.google.com/file/d/1R0ula9oMQThjTi3dx6NJHK1j0ZDlhUuP/view?usp=drive_link',
+                caption: 'Deck semi-outdoor tepi aliran sungai Batang Arau',
+                order: 1
+            },
+            {
+                id: 'e9a8f211-54b3-4f91-8d26-photo-003',
+                url: 'https://drive.google.com/file/d/11uC7bAEX8zjMSAeULX_IqA9BjoarZSGd/view?usp=drive_link',
+                caption: 'Suasana malam hangat dengan neon sign Bat & Arrow di area courtyard',
+                order: 2
+            },
+            {
+                id: 'e9a8f211-54b3-4f91-8d26-photo-004',
+                url: 'https://drive.google.com/file/d/1sGQQ13Evgtgv--HZpx1zkJ1MQZago0sB/view?usp=drive_link',
+                caption: 'Area duduk terbuka dengan dinding tanaman merambat ala tropical garden',
+                order: 3
+            },
+            {
+                id: 'e9a8f211-54b3-4f91-8d26-photo-005',
+                url: 'https://drive.google.com/file/d/1iz71rg2FR6gk_jaZ06C3gdcDgFjeU05f/view?usp=drive_link',
+                caption: 'Tempat hangout favorit komunitas dan traveler di Batang Arau',
+                order: 4
+            }
+        ];
+
+        for (const g of galleries) {
+            await db.prepare('INSERT OR IGNORE INTO galleries (id, place_id, image_url, alt_text, sort_order) VALUES (?, ?, ?, ?, ?)')
+                .bind(g.id, 'e9a8f211-54b3-4f91-8d26-724bc2f8a801', g.url, g.caption, g.order)
+                .run();
         }
     } catch {
         // Ignored

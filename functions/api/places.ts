@@ -50,6 +50,8 @@ async function ensureBatAndArrow(db: D1Database) {
     if (hasEnsuredBatAndArrow) return;
     try {
         const existing = await db.prepare("SELECT id FROM places WHERE slug = 'bat-and-arrow'").first();
+        const mainPhotoUrl = 'https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link';
+
         if (!existing) {
             await db.prepare(`
                 INSERT OR IGNORE INTO places (
@@ -71,7 +73,7 @@ async function ensureBatAndArrow(db: D1Database) {
                   25000,
                   85000,
                   'Rp25k - Rp85k',
-                  'https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link',
+                  ?,
                   'https://www.instagram.com/batandarrow_official/',
                   'https://www.google.com/maps/search/?api=1&query=Bat+%26+Arrow+Padang',
                   NULL,
@@ -82,12 +84,7 @@ async function ensureBatAndArrow(db: D1Database) {
                   '2026-11-16 10:45:00+00',
                   '2026-11-16 10:45:00+00'
                 )
-            `).run();
-
-            // Also update image_url if row existed with null
-            await db.prepare("UPDATE places SET image_url = ? WHERE slug = 'bat-and-arrow' AND (image_url IS NULL OR image_url = '')")
-                .bind('https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link')
-                .run();
+            `).bind(mainPhotoUrl).run();
 
             const tagIds = [
                 'd32ddb31-b92b-4968-8f57-94834f873f41',
@@ -107,6 +104,11 @@ async function ensureBatAndArrow(db: D1Database) {
                     .run();
             }
         }
+
+        // Always ensure image_url is set
+        await db.prepare("UPDATE places SET image_url = ? WHERE slug = 'bat-and-arrow' AND (image_url IS NULL OR image_url = '')")
+            .bind(mainPhotoUrl)
+            .run();
     } catch {
         // Ignored
     }

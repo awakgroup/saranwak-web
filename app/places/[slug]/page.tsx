@@ -1049,7 +1049,11 @@ async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> {
             const mapped = mapApiPlaceDetailToPlaceDetail(place);
             return {
                 ...mapped,
-                characteristics: jsonPlace?.characteristics ?? null,
+                image_url: mapped.image_url || jsonPlace?.image_url || null,
+                place_photos: (mapped.place_photos && mapped.place_photos.length > 0)
+                    ? mapped.place_photos
+                    : (jsonPlace?.place_photos ?? []),
+                characteristics: mapped.characteristics || jsonPlace?.characteristics || null,
                 description: mapped.description || jsonPlace?.description || null,
                 short_description: mapped.short_description || jsonPlace?.short_description || null,
             };
