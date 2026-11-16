@@ -1031,23 +1031,29 @@ async function getPlacesFromJson() {
 }
 
 async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> {
+    const places = await getPlacesFromJson();
+    const jsonPlace =
+        places.find(
+            (place) => place.slug === slug && place.is_published !== false
+        ) ?? null;
+
     try {
         const place = await getPlaceBySlugFromApi(slug);
 
         if (place) {
-            return mapApiPlaceDetailToPlaceDetail(place);
+            const mapped = mapApiPlaceDetailToPlaceDetail(place);
+            return {
+                ...mapped,
+                characteristics: jsonPlace?.characteristics ?? null,
+                description: mapped.description || jsonPlace?.description || null,
+                short_description: mapped.short_description || jsonPlace?.short_description || null,
+            };
         }
     } catch (error) {
         console.error("Place detail D1 fetch error:", error);
     }
 
-    const places = await getPlacesFromJson();
-
-    return (
-        places.find(
-            (place) => place.slug === slug && place.is_published !== false
-        ) ?? null
-    );
+    return jsonPlace;
 }
 
 async function getRelatedPlaces({

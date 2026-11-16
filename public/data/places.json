@@ -3,9 +3,26 @@
     "id": "21b53861-bf8b-4b42-be1e-55f3e21ec781",
     "name": "Kopi Kita (Fabriek)",
     "slug": "kopkit-fabriek-bloc",
-    "description": null,
-    "short_description": null,
-    "characteristics": [],
+    "description": "Berlokasi di kawasan kreatif Fabriek Bloc Padang, Kopi Kita cabang ini menggabungkan atmosfer heritage bekas pabrik dengan kultur nongkrong 24 jam yang hidup. Menjadi melting pot bagi komunitas seni, mahasiswa, dan penikmat kopi di kawasan utara Padang.",
+    "short_description": "Kedai kopi 24 jam bernuansa industrial kreatif di kawasan heritage Fabriek Bloc, Koto Tangah.",
+    "characteristics": [
+      {
+        "title": "Berada di Hub Kreatif Fabriek Bloc",
+        "description": "Mengambil bagian dari revitalisasi kawasan heritage, memberikan ambiance industrial kreatif yang berbeda dari kedai kopi konvensional."
+      },
+      {
+        "title": "Operasional 24 Jam Nonstop",
+        "description": "Menjadi andalan bagi pencari kafein larut malam, mahasiswa yang begadang nugas, atau titik temu komunitas lintas jam."
+      },
+      {
+        "title": "Area Sangat Luas & Fleksibel",
+        "description": "Ruang duduk indoor dan semi-outdoor yang berkapasitas besar, cocok untuk rombongan besar tanpa khawatir kehabisan tempat."
+      },
+      {
+        "title": "Fasilitas Pendukung Komunitas",
+        "description": "Didukung oleh WiFi stabil, colokan di berbagai sudut, serta spot photobox kekinian untuk mengabadikan momen seru."
+      }
+    ],
     "address": "Jl. Parupuk Tabing, Parupuk Tabing, Kec. Koto Tangah, Kota Padang, Sumatera Barat 25586",
     "area": "Koto Tangah",
     "city": "Padang",
@@ -484,9 +501,26 @@
     "id": "2d170836-d186-465d-bd07-1b4de6ec618f",
     "name": "Kopi Kita (Sutomo)",
     "slug": "kopkit-sutomo",
-    "description": null,
-    "short_description": null,
-    "characteristics": [],
+    "description": "Berdiri di kawasan strategis Jalan Dr. Sutomo, cabang ini adalah salah satu titik paling ramai bagi mahasiswa dan pekerja muda Padang Timur. Menyajikan konsep nongkrong 24 jam dengan aksesibilitas tinggi dan fasilitas lengkap untuk produktivitas maupun santai.",
+    "short_description": "Spot kopi 24 jam favorit mahasiswa di Padang Timur dengan colokan melimpah dan ruangan ber-AC.",
+    "characteristics": [
+      {
+        "title": "Lokasi Strategis di Padang Timur",
+        "description": "Berada di koridor Dr. Sutomo yang mudah dijangkau dari berbagai kampus dan perkantoran."
+      },
+      {
+        "title": "Buka 24 Jam dengan Fasilitas Lengkap",
+        "description": "Menyediakan ruang indoor ber-AC, area smoking indoor, serta musholla yang bersih untuk kenyamanan ibadah."
+      },
+      {
+        "title": "Surga Nugas & WFC Mahasiswa",
+        "description": "Meja fungsional dengan ketersediaan colokan listrik melimpah dan koneksi internet cepat."
+      },
+      {
+        "title": "Pilihan Menu Lengkap & Terjangkau",
+        "description": "Dari kopi susu khas Kopkit hingga camilan dan makanan pengganjal perut dengan harga yang ramah di kantong."
+      }
+    ],
     "address": "Jl. Dr. Sutomo No.103, Kubu Marapalam, Kec. Padang Tim., Kota Padang, Sumatera Barat 25143",
     "area": "Padang Timur",
     "city": "Padang",
@@ -965,9 +999,26 @@
     "id": "49fe4adb-7afb-4df9-8bd1-8a11a17b753c",
     "name": "Kopi Kita (Gunung Pangilun)",
     "slug": "kopkit-gunung-pangilun",
-    "description": null,
-    "short_description": null,
-    "characteristics": [],
+    "description": "Menjadi magnet bagi mahasiswa UNP, ITP, dan kampus sekitarnya di koridor Gajah Mada, cabang Gunung Pangilun ini menawarkan ruang nongkrong dan belajar kelompok 24 jam dengan layout luas dan atmosfer dinamis.",
+    "short_description": "Titik kumpul mahasiswa di koridor Gajah Mada untuk belajar kelompok dan ngopi santai 24 jam.",
+    "characteristics": [
+      {
+        "title": "Dekat Kawasan Kampus & Pelajar",
+        "description": "Titik kumpul favorit mahasiswa untuk kerja kelompok, diskusi organisasi, atau sekadar melepas penat setelah kuliah."
+      },
+      {
+        "title": "Dukungan Produktivitas 24 Jam",
+        "description": "Kenyamanan ruang tanpa batas waktu tutup, ideal bagi yang membutuhkan tempat kondusif saat deadline tugas menumpuk."
+      },
+      {
+        "title": "Zonasi Ruang Beragam",
+        "description": "Area indoor dingin untuk konsentrasi penuh dan area semi-terbuka untuk obrolan santai yang lebih hidup."
+      },
+      {
+        "title": "Akses Parkir & Fasilitas Nyaman",
+        "description": "Area parkir motor yang memadai serta fasilitas musholla dan toilet yang terawat dengan baik."
+      }
+    ],
     "address": "Jalan Gajah Mada No.10 Kampung Lapai Baru, Kampung Olo, Nanggalo, Padang City, West Sumatra 25173",
     "area": "Nanggalo",
     "city": "Padang",
@@ -2704,9 +2755,26 @@
     "id": "74f12484-da7a-4a1d-a8dd-895f9ff6d85d",
     "name": "Kopi Kita (Ulak Karang)",
     "slug": "kopkit-ulak-karang",
-    "description": null,
-    "short_description": null,
-    "characteristics": [],
+    "description": "Menghadirkan suasana santai di bilangan Jhoni Anwar Ulak Karang, cabang ini menjadi pilihan tepat bagi warga Padang Utara yang menginginkan tempat ngopi 24 jam dengan sirkulasi udara segar dan suasana akrab.",
+    "short_description": "Tempat nongkrong 24 jam yang santai dan akrab di bilangan Jhoni Anwar, Padang Utara.",
+    "characteristics": [
+      {
+        "title": "Titik Transit Santai Padang Utara",
+        "description": "Mudah diakses dari jalur utama Ulak Karang dan dekat dengan pesisir pantai kota Padang."
+      },
+      {
+        "title": "Suasana Komunal yang Akrab",
+        "description": "Cocok untuk kumpul santai komunitas motor, kawan lama, hingga sesi nobar dan obrolan malam."
+      },
+      {
+        "title": "Fleksibilitas 24 Jam",
+        "description": "Memberikan keleluasaan waktu kapan saja kamu membutuhkan asupan kopi atau ruang meeting informal."
+      },
+      {
+        "title": "Fasilitas Nugas & Nongkrong Seimbang",
+        "description": "Dilengkapi WiFi, colokan listrik, serta pilihan minuman kopi dan non-kopi yang menyegarkan."
+      }
+    ],
     "address": "Jl. Jhoni Anwar No.9, Ulak Karang Utara, Kec. Padang Utara, Kota Padang, Sumatera Barat 25133",
     "area": "Padang Utara",
     "city": "Padang",
@@ -5895,9 +5963,26 @@
     "id": "c41f457e-cc72-48a3-8f9f-2eefe78b9336",
     "name": "Kopi Kita (Pondok)",
     "slug": "kopkit-x-savey",
-    "description": null,
-    "short_description": null,
-    "characteristics": [],
+    "description": "Terletak di kawasan bersejarah Kampung Pondok, cabang ini memadukan pesona arsitektur pecinan lama Padang dengan gaya hidup modern kedai kopi 24 jam. Suasananya memberi nuansa kultural yang khas bagi pengunjung.",
+    "short_description": "Ngopi 24 jam dengan nuansa kultural pecinan kota tua di kawasan Kampung Pondok.",
+    "characteristics": [
+      {
+        "title": "Nuansa Kultural Kawasan Heritage",
+        "description": "Berada di jantung kota tua Padang yang sarat sejarah dan keunikan visual arsitektur."
+      },
+      {
+        "title": "Spot Hangout Malam di Pusat Kota",
+        "description": "Lokasi tepat untuk menikmati gemerlap malam kota Padang Selatan dengan secangkir kopi hangat."
+      },
+      {
+        "title": "Kolaborasi Ruang & Gaya Hidup",
+        "description": "Mengusung konsep kolaboratif yang ramah bagi generasi muda penikmat street culture dan kopi kekinian."
+      },
+      {
+        "title": "Akses 24 Jam",
+        "description": "Selalu siap melayani pengunjung baik di jam pagi, sore selepas keliling kota tua, hingga larut malam."
+      }
+    ],
     "address": "Jl. Pd. No.106, Belakang Pd, Sel, Kampung Pondok, Padang Selatan, Padang City, West Sumatra 25134",
     "area": "Padang Selatan",
     "city": "Padang",
@@ -6596,9 +6681,26 @@
     "id": "e1ac5a01-ed37-4cc8-bba0-e887607b1e8a",
     "name": "Kopi Kita (Veteran)",
     "slug": "kopkit-veteran",
-    "description": null,
-    "short_description": null,
-    "characteristics": [],
+    "description": "Menempati jalan protokol Veteran yang legendaris, cabang ini berada di pusat denyut aktivitas kota Padang. Dikelilingi pusat perbelanjaan, kantor, dan hotel, menjadikannya meeting point paling efisien 24 jam.",
+    "short_description": "Meeting point 24 jam paling strategis di jalan protokol Veteran, Padang Barat.",
+    "characteristics": [
+      {
+        "title": "Pusat Kota & Aksesibilitas Maksimal",
+        "description": "Berada di jalur utama Padang Barat yang memudahkan temu janji dari berbagai penjuru kota."
+      },
+      {
+        "title": "Tempat Transit & Meeting Fleksibel",
+        "description": "Sangat pas untuk pertemuan singkat, istirahat di sela mobilitas kerja, atau nongkrong sepulang kantor."
+      },
+      {
+        "title": "Operasional 24 Jam",
+        "description": "Pilihan pasti saat mencari tempat yang tetap buka dan nyaman di tengah malam di pusat kota."
+      },
+      {
+        "title": "Kenyamanan Ruang Terjaga",
+        "description": "Dilengkapi AC, akses internet cepat, serta area duduk yang tertata rapi."
+      }
+    ],
     "address": "Sumatera, Jl. Veteran No.22b, Padang Pasir, Kec. Padang Barat, Padang Pasir, Barat, Kota Padang, Sumatera Barat 25115",
     "area": "Padang Barat",
     "city": "Padang",
@@ -7047,9 +7149,26 @@
     "id": "ffa19103-837b-4d46-a96a-36c90762ed2e",
     "name": "Kopi Kita (Jati)",
     "slug": "kopkit-jati",
-    "description": null,
-    "short_description": null,
-    "characteristics": [],
+    "description": "Berada dekat dengan pusat medis Rumah Sakit M. Djamil dan kawasan pemukiman Jati, cabang ini menjadi pelarian nyaman 24 jam bagi tenaga medis, keluarga pasien, mahasiswa kedokteran, dan warga sekitar.",
+    "short_description": "Ruang singgah 24 jam yang nyaman di kawasan Jati, dekat RSUP M. Djamil dan kampus kedokteran.",
+    "characteristics": [
+      {
+        "title": "Lokasi Sangat Dekat Sentra Medis",
+        "description": "Menjadi oase penting 24 jam bagi para dokter muda, perawat, serta pengunjung di sekitar RSUP Dr. M. Djamil."
+      },
+      {
+        "title": "Suasana Lebih Tenang & Santai",
+        "description": "Memberikan kenyamanan rehat dari rutinitas padat dengan pilihan tempat duduk yang ergonomis."
+      },
+      {
+        "title": "Fasilitas Lengkap untuk Belajar",
+        "description": "Banyak mahasiswa memanfaatkan cabang ini untuk belajar tenang dengan dukungan WiFi dan colokan listrik."
+      },
+      {
+        "title": "Pilihan Menu Menyegarkan",
+        "description": "Sajikan kopi, teh, dan aneka snack yang siap menemani kapan saja kamu butuh energi tambahan."
+      }
+    ],
     "address": "Jl. Abdul Muis No.9b, Jati Baru, Kec. Padang Tim., Kota Padang, Sumatera Barat 25129",
     "area": "Padang Timur",
     "city": "Padang",
