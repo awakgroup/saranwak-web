@@ -1,5 +1,6 @@
 import type { AdminPlace } from "@/types/admin";
 import { getCategoryName } from "@/lib/admin-utils";
+import { Star } from "lucide-react";
 
 export type PlaceStatusFilter = "all" | "live" | "draft" | "featured";
 
@@ -238,12 +239,14 @@ function PlaceListItem({
 
                     {place.is_featured ? (
                         <div
-                            className={`rounded-full px-2 py-1 text-[10px] font-black uppercase ${selected
+                            title="Featured"
+                            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-black uppercase ${selected
                                     ? "bg-amber-400 text-black"
                                     : "bg-amber-400/10 text-amber-300"
                                 }`}
                         >
-                            Featured
+                            <Star className="h-2.5 w-2.5 fill-current" />
+                            <span>Featured</span>
                         </div>
                     ) : null}
                 </div>

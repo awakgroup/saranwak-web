@@ -13,6 +13,7 @@ import {
     Sparkles,
     CheckCircle2,
     ArrowRight,
+    Star,
 } from "lucide-react";
 
 import { PlaceCard } from "@/components/PlaceCard";
@@ -352,8 +353,12 @@ function HeroSection({
                         <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
 
                         {place.is_featured ? (
-                            <span className="rounded-full bg-[#1F5A4A] px-3.5 py-1.5 text-xs font-bold text-white shadow-sm">
-                                Featured
+                            <span
+                                title="Tempat Pilihan (Featured)"
+                                className="grid h-7 w-7 place-items-center rounded-full bg-[#F2C38B] text-[#201813] shadow-md backdrop-blur transition hover:scale-110"
+                                aria-label="Featured place"
+                            >
+                                <Star className="h-3.5 w-3.5 fill-[#201813] text-[#201813]" />
                             </span>
                         ) : null}
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Star } from "lucide-react";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import { OpenStatusBadge } from "@/components/OpenStatusBadge";
@@ -150,8 +151,12 @@ export function PlaceCard({
                     <OpenStatusBadge openingHours={place.opening_hours} />
 
                     {place.is_featured ? (
-                        <span className="rounded-full bg-[#F3C48E] px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] text-[#201813] shadow-sm">
-                            Featured
+                        <span
+                            title="Tempat Pilihan (Featured)"
+                            className="grid h-6 w-6 place-items-center rounded-full bg-[#F3C48E] text-[#201813] shadow-md backdrop-blur transition hover:scale-110"
+                            aria-label="Featured place"
+                        >
+                            <Star className="h-3 w-3 fill-[#201813] text-[#201813]" />
                         </span>
                     ) : null}
 
