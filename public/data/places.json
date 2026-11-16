@@ -30,8 +30,8 @@
     "address": "Jl. Batang Arau No. 25-28, Batang Arau, Kec. Padang Selatan, Kota Padang, Sumatera Barat 25118",
     "area": "Padang Selatan",
     "city": "Padang",
-    "image_url": null,
-    "main_image_url": null,
+    "image_url": "https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link",
+    "main_image_url": "https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link",
     "google_maps_url": "https://www.google.com/maps/search/?api=1&query=Bat+%26+Arrow+Padang",
     "instagram_url": "https://www.instagram.com/batandarrow_official/",
     "price_range": "Rp25k - Rp85k",
@@ -149,6 +149,38 @@
           "slug": "smoking-area",
           "type": "facility"
         }
+      }
+    ],
+    "place_photos": [
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-photo-001",
+        "image_url": "https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link",
+        "caption": "Fasad heritage bekas gudang kolonial Belanda dengan logo Bat & Arrow",
+        "sort_order": 0
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-photo-002",
+        "image_url": "https://drive.google.com/file/d/1R0ula9oMQThjTi3dx6NJHK1j0ZDlhUuP/view?usp=drive_link",
+        "caption": "Deck semi-outdoor tepi aliran sungai Batang Arau",
+        "sort_order": 1
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-photo-003",
+        "image_url": "https://drive.google.com/file/d/11uC7bAEX8zjMSAeULX_IqA9BjoarZSGd/view?usp=drive_link",
+        "caption": "Suasana malam hangat dengan neon sign Bat & Arrow di area courtyard",
+        "sort_order": 2
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-photo-004",
+        "image_url": "https://drive.google.com/file/d/1sGQQ13Evgtgv--HZpx1zkJ1MQZago0sB/view?usp=drive_link",
+        "caption": "Area duduk terbuka dengan dinding tanaman merambat ala tropical garden",
+        "sort_order": 3
+      },
+      {
+        "id": "e9a8f211-54b3-4f91-8d26-photo-005",
+        "image_url": "https://drive.google.com/file/d/1iz71rg2FR6gk_jaZ06C3gdcDgFjeU05f/view?usp=drive_link",
+        "caption": "Tempat hangout favorit komunitas dan traveler di Batang Arau",
+        "sort_order": 4
       }
     ]
   },

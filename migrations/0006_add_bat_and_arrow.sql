@@ -1,4 +1,4 @@
--- Migration 0006: Add Bat & Arrow
+-- Migration 0006: Add Bat & Arrow with photos
 INSERT OR IGNORE INTO places (
   id,
   name,
@@ -37,7 +37,7 @@ INSERT OR IGNORE INTO places (
   25000,
   85000,
   'Rp25k - Rp85k',
-  NULL,
+  'https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link',
   'https://www.instagram.com/batandarrow_official/',
   'https://www.google.com/maps/search/?api=1&query=Bat+%26+Arrow+Padang',
   NULL,
@@ -60,3 +60,10 @@ INSERT OR IGNORE INTO place_tags (place_id, tag_id) VALUES
   ('e9a8f211-54b3-4f91-8d26-724bc2f8a801', 'b50b3f65-221b-4414-a95b-3f861176d5f9'),
   ('e9a8f211-54b3-4f91-8d26-724bc2f8a801', 'b92499b7-880d-4c02-8aac-a4073c213a4c'),
   ('e9a8f211-54b3-4f91-8d26-724bc2f8a801', 'd4d6cb33-3692-4482-9450-bcebd328fd96');
+
+INSERT OR IGNORE INTO galleries (id, place_id, image_url, alt_text, sort_order) VALUES
+  ('e9a8f211-54b3-4f91-8d26-photo-001', 'e9a8f211-54b3-4f91-8d26-724bc2f8a801', 'https://drive.google.com/file/d/1HriYF7IUZ6UxnOUBrdrpc39rdU5mdceU/view?usp=drive_link', 'Fasad heritage bekas gudang kolonial Belanda dengan logo Bat & Arrow', 0),
+  ('e9a8f211-54b3-4f91-8d26-photo-002', 'e9a8f211-54b3-4f91-8d26-724bc2f8a801', 'https://drive.google.com/file/d/1R0ula9oMQThjTi3dx6NJHK1j0ZDlhUuP/view?usp=drive_link', 'Deck semi-outdoor tepi aliran sungai Batang Arau', 1),
+  ('e9a8f211-54b3-4f91-8d26-photo-003', 'e9a8f211-54b3-4f91-8d26-724bc2f8a801', 'https://drive.google.com/file/d/11uC7bAEX8zjMSAeULX_IqA9BjoarZSGd/view?usp=drive_link', 'Suasana malam hangat dengan neon sign Bat & Arrow di area courtyard', 2),
+  ('e9a8f211-54b3-4f91-8d26-photo-004', 'e9a8f211-54b3-4f91-8d26-724bc2f8a801', 'https://drive.google.com/file/d/1sGQQ13Evgtgv--HZpx1zkJ1MQZago0sB/view?usp=drive_link', 'Area duduk terbuka dengan dinding tanaman merambat ala tropical garden', 3),
+  ('e9a8f211-54b3-4f91-8d26-photo-005', 'e9a8f211-54b3-4f91-8d26-724bc2f8a801', 'https://drive.google.com/file/d/1iz71rg2FR6gk_jaZ06C3gdcDgFjeU05f/view?usp=drive_link', 'Tempat hangout favorit komunitas dan traveler di Batang Arau', 4);
