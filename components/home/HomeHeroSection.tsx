@@ -1,206 +1,331 @@
-import Link from "next/link";
-import { HeroSearch } from "@/components/HeroSearch";
-import { homeCategories } from "@/constant/home";
+"use client";
 
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+    MapPin,
+    Sparkles,
+    Wallet,
+    Search,
+    ArrowRight,
+    Coffee,
+    Laptop,
+    Waves,
+    Mountain,
+    Flame,
+    ChevronDown,
+} from "lucide-react";
+
+const AREA_OPTIONS = [
+    { label: "Semua Area", value: "" },
+    { label: "Padang Barat", value: "Padang Barat" },
+    { label: "Padang Utara", value: "Padang Utara" },
+    { label: "Padang Timur", value: "Padang Timur" },
+    { label: "Padang Selatan", value: "Padang Selatan" },
+    { label: "Koto Tangah", value: "Koto Tangah" },
+];
+
+const MOOD_OPTIONS = [
+    { label: "Semua Suasana", value: "" },
+    { label: "WFC & Nugas", value: "wfc" },
+    { label: "Santai & Nongkrong", value: "nongkrong" },
+    { label: "Aesthetic & Date", value: "nge-date" },
+    { label: "Outdoor & Santai", value: "outdoor" },
+    { label: "Tenang & Me-time", value: "tenang" },
+];
+
+const BUDGET_OPTIONS = [
+    { label: "Semua Budget", value: "" },
+    { label: "< 20k (Terjangkau)", value: "tier_1" },
+    { label: "20k – 40k (Standar)", value: "tier_2" },
+    { label: "> 40k (Premium)", value: "tier_3" },
+];
+
+const CATEGORY_EMBLEMS = [
+    {
+        label: "SPECIALTY COFFEE",
+        sub: "Single Origin & Brew",
+        icon: Coffee,
+        href: "/places?category=coffee-shop",
+    },
+    {
+        label: "WORK FROM CAFE",
+        sub: "Wifi & Stopkontak",
+        icon: Laptop,
+        href: "/places?category=coffee-shop&tags=wfc",
+    },
+    {
+        label: "RIVERSIDE & HERITAGE",
+        sub: "Batang Arau & Muaro",
+        icon: Waves,
+        href: "/places?category=coffee-shop&q=Padang+Selatan",
+    },
+    {
+        label: "ROOFTOP & VIEWS",
+        sub: "Bukit Lampu & Sunset",
+        icon: Mountain,
+        href: "/places?category=coffee-shop&tags=outdoor",
+    },
+    {
+        label: "LOCAL ROASTERY",
+        sub: "Kebanggaan Padang",
+        icon: Flame,
+        href: "/places?category=coffee-shop",
+    },
+];
 
 export function HomeHeroSection() {
+    const router = useRouter();
+    const [selectedArea, setSelectedArea] = useState("");
+    const [selectedMood, setSelectedMood] = useState("");
+    const [selectedBudget, setSelectedBudget] = useState("");
+
+    function handleSearch(e?: React.FormEvent) {
+        if (e) e.preventDefault();
+        const params = new URLSearchParams();
+        params.set("category", "coffee-shop");
+
+        if (selectedArea) {
+            params.set("q", selectedArea);
+        }
+        if (selectedMood) {
+            params.set("tags", selectedMood);
+        }
+        if (selectedBudget) {
+            params.set("price", selectedBudget);
+        }
+
+        router.push(`/places?${params.toString()}`);
+    }
+
     return (
-        <section className="relative overflow-hidden px-4 pb-10 pt-4 sm:px-5 sm:pt-5 md:pb-14 md:pt-6 lg:pb-16 lg:pt-7">
-            <HeroBackground />
+        <section className="relative px-3 pt-3 sm:px-6 sm:pt-4 md:pt-6 lg:px-8">
+            {/* Top Atmospheric Ambient Glows */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 -top-20 -z-10 flex justify-center overflow-hidden"
+            >
+                <div className="h-[480px] w-[900px] rounded-full bg-[#E5A86D]/20 blur-[130px]" />
+                <div className="h-[440px] w-[500px] -translate-x-1/2 rounded-full bg-[#1F5A4A]/12 blur-[140px]" />
+            </div>
 
-            <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-12">
-                <div className="min-w-0">
-                    <HeroBadge />
+            <div className="mx-auto max-w-7xl">
+                {/* 1. Large Rounded Hero Canvas */}
+                <div className="relative min-h-[500px] overflow-hidden rounded-[32px] border border-[#E4DDD3] bg-[#1E1916] shadow-[0_24px_70px_rgba(32,24,19,0.14)] sm:min-h-[580px] sm:rounded-[44px] md:min-h-[640px]">
+                    {/* Background Hero Image */}
+                    <div className="absolute inset-0">
+                        <Image
+                            src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=2000&q=85"
+                            alt="Atmospheric coffee shop in Padang"
+                            fill
+                            priority
+                            sizes="(max-width: 1280px) 100vw, 1280px"
+                            className="object-cover object-center brightness-[0.78] contrast-[1.05]"
+                        />
 
-                    <h1 className="max-w-3xl font-serif text-[42px] font-bold leading-[1.02] tracking-[-0.03em] text-[#201813] sm:text-6xl md:text-7xl">
-                        Cari Coffee Shop di Padang
-                        <span className="block italic text-[#1F5A4A]">sesuai mood kamu.</span>
-                    </h1>
+                        {/* Rich Multi-Layer Gradient Overlays for High Contrast Readability */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/30" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+                        <div className="absolute inset-0 bg-[#201813]/25 mix-blend-multiply" />
+                    </div>
 
-                    <p className="mt-4 max-w-2xl text-base font-medium leading-7 text-[#756A60] sm:text-lg sm:leading-8">
-                        Saranwak bantu kamu menemukan coffee shop di Padang berdasarkan
-                        budget, aktivitas, fasilitas, dan vibes. Cocok buat nugas,
-                        nongkrong, first date, meeting santai, sampai ngopi sendirian.
-                    </p>
+                    {/* Subtle Topographic & Editorial Watermark */}
+                    <div className="pointer-events-none absolute right-8 top-8 hidden select-none font-mono text-[11px] font-bold tracking-[0.28em] text-white/35 md:block">
+                        PADANG, WEST SUMATRA • 0°57′S 100°21′E
+                    </div>
 
-                    <HeroSearch />
+                    {/* Hero Content (Positioned in Top-Middle Area to Leave Room for Overlapping Capsule) */}
+                    <div className="relative z-10 flex min-h-[460px] flex-col justify-between p-6 sm:min-h-[520px] sm:p-10 md:min-h-[560px] md:p-14 lg:p-16">
+                        {/* Top Badge */}
+                        <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-bold text-white shadow-sm backdrop-blur-md">
+                            <span className="h-2 w-2 rounded-full bg-[#E5A86D]" />
+                            <span>Kurasi Tempat Ngopi & WFC Kota Padang</span>
+                        </div>
+
+                        {/* Headline & Description & CTA */}
+                        <div className="my-auto max-w-2xl pt-6 sm:pt-8">
+                            <h1 className="font-serif text-[40px] font-bold leading-[1.04] tracking-[-0.03em] text-white sm:text-6xl md:text-7xl">
+                                Find Your Next
+                                <span className="block font-serif italic text-[#F2C38B]">
+                                    Coffee Spot.
+                                </span>
+                            </h1>
+
+                            <p className="mt-4 max-w-xl text-base font-medium leading-relaxed text-white/85 sm:text-lg sm:leading-relaxed">
+                                Panduan kurasi puluhan coffee shop pilihan di Kota Padang untuk
+                                WFC, nugas, meeting santai, hingga nongkrong sore bersama teman.
+                            </p>
+
+                            <div className="mt-7 flex flex-wrap items-center gap-4 sm:mt-8">
+                                <Link
+                                    href="/places?category=coffee-shop"
+                                    className="group inline-flex items-center gap-2.5 rounded-full bg-[#C8784A] px-7 py-3.5 text-sm font-bold text-white shadow-[0_12px_28px_rgba(200,120,74,0.35)] transition-all duration-300 hover:scale-[1.02] hover:bg-[#B5673B] active:scale-[0.98] sm:text-base"
+                                >
+                                    <span>Jelajahi Sekarang</span>
+                                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                                </Link>
+
+                                <Link
+                                    href="/rekomendasi"
+                                    className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-sm font-bold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 sm:text-base"
+                                >
+                                    <span>Rekomendasi Editor</span>
+                                </Link>
+                            </div>
+                        </div>
+
+                        {/* Bottom Spacer to let the floating search bar overlap comfortably */}
+                        <div className="h-10 sm:h-14 md:h-16" />
+                    </div>
                 </div>
 
-                <HeroVisualCard />
-            </div>
-        </section>
-    );
-}
+                {/* 2. Floating Capsule Search Bar (Overlapping the Hero Card) */}
+                <div className="relative z-20 -mt-10 px-2 sm:-mt-12 sm:px-6 md:-mt-14">
+                    <form
+                        onSubmit={handleSearch}
+                        className="mx-auto max-w-4xl rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-2.5 shadow-[0_20px_60px_rgba(32,24,19,0.14)] backdrop-blur-xl sm:rounded-full sm:p-2 sm:pl-6"
+                    >
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-0">
+                            {/* Segment 1: Area */}
+                            <div className="relative flex flex-1 items-center gap-3 px-3 py-2 sm:py-1">
+                                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#FAF3EC] text-[#C8784A]">
+                                    <MapPin className="h-5 w-5" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <label
+                                        htmlFor="hero-area-select"
+                                        className="block text-[10px] font-black uppercase tracking-[0.16em] text-[#8C827A]"
+                                    >
+                                        Pilih Area
+                                    </label>
+                                    <div className="relative">
+                                        <select
+                                            id="hero-area-select"
+                                            value={selectedArea}
+                                            onChange={(e) => setSelectedArea(e.target.value)}
+                                            className="w-full appearance-none bg-transparent pr-6 text-sm font-bold text-[#201813] outline-none transition focus:text-[#C8784A] cursor-pointer"
+                                        >
+                                            {AREA_OPTIONS.map((opt) => (
+                                                <option key={opt.value} value={opt.value}>
+                                                    {opt.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#8C827A]" />
+                                    </div>
+                                </div>
+                            </div>
 
-function HeroBackground() {
-    return (
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-            {/* Ambient Warm Coffee & Forest Gradients */}
-            <div className="absolute -left-24 -top-24 h-[560px] w-[560px] rounded-full bg-[#E59B63]/25 blur-[120px]" />
-            <div className="absolute right-[-100px] top-4 h-[520px] w-[520px] rounded-full bg-[#1F5A4A]/15 blur-[130px]" />
-            <div className="absolute left-1/3 top-1/4 h-[400px] w-[400px] rounded-full bg-[#FCE8D3]/35 blur-[100px]" />
+                            {/* Divider 1 */}
+                            <div className="hidden h-9 w-px bg-[#E7D8C8] sm:block" />
 
-            {/* Subtle Contour & Topographic Lines */}
-            <svg
-                className="absolute inset-0 h-full w-full opacity-[0.065]"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-            >
-                <path
-                    d="M-100 130 C 200 50, 520 250, 920 110 C 1220 10, 1520 190, 1850 90"
-                    stroke="#201813"
-                    strokeWidth="1.5"
-                />
-                <path
-                    d="M-100 230 C 220 150, 500 350, 940 210 C 1240 110, 1500 290, 1850 190"
-                    stroke="#201813"
-                    strokeWidth="1.5"
-                    strokeDasharray="6 6"
-                />
-                <path
-                    d="M-100 330 C 180 250, 540 450, 900 310 C 1200 210, 1540 390, 1850 290"
-                    stroke="#201813"
-                    strokeWidth="1.5"
-                />
-                <circle cx="82%" cy="32%" r="190" stroke="#201813" strokeWidth="1" strokeDasharray="4 8" />
-                <circle cx="82%" cy="32%" r="260" stroke="#201813" strokeWidth="0.75" />
-            </svg>
+                            {/* Segment 2: Mood & Kebutuhan */}
+                            <div className="relative flex flex-1 items-center gap-3 px-3 py-2 sm:py-1 sm:pl-4">
+                                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#EEF5F2] text-[#1F5A4A]">
+                                    <Sparkles className="h-5 w-5" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <label
+                                        htmlFor="hero-mood-select"
+                                        className="block text-[10px] font-black uppercase tracking-[0.16em] text-[#8C827A]"
+                                    >
+                                        Suasana / Mood
+                                    </label>
+                                    <div className="relative">
+                                        <select
+                                            id="hero-mood-select"
+                                            value={selectedMood}
+                                            onChange={(e) => setSelectedMood(e.target.value)}
+                                            className="w-full appearance-none bg-transparent pr-6 text-sm font-bold text-[#201813] outline-none transition focus:text-[#1F5A4A] cursor-pointer"
+                                        >
+                                            {MOOD_OPTIONS.map((opt) => (
+                                                <option key={opt.value} value={opt.value}>
+                                                    {opt.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#8C827A]" />
+                                    </div>
+                                </div>
+                            </div>
 
-            {/* Fine Paper Noise Grain Overlay */}
-            <div
-                className="absolute inset-0 opacity-[0.035] mix-blend-multiply"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-                }}
-            />
+                            {/* Divider 2 */}
+                            <div className="hidden h-9 w-px bg-[#E7D8C8] sm:block" />
 
-            {/* Subtle Editorial Coordinates stamp */}
-            <div className="absolute right-8 top-6 hidden font-mono text-[10px] font-bold tracking-[0.28em] text-[#201813]/25 sm:block">
-                PADANG, WEST SUMATRA • 0°57′S 100°21′E
-            </div>
+                            {/* Segment 3: Budget */}
+                            <div className="relative flex flex-1 items-center gap-3 px-3 py-2 sm:py-1 sm:pl-4">
+                                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#FAF3EC] text-[#756A60]">
+                                    <Wallet className="h-5 w-5" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <label
+                                        htmlFor="hero-budget-select"
+                                        className="block text-[10px] font-black uppercase tracking-[0.16em] text-[#8C827A]"
+                                    >
+                                        Range Budget
+                                    </label>
+                                    <div className="relative">
+                                        <select
+                                            id="hero-budget-select"
+                                            value={selectedBudget}
+                                            onChange={(e) => setSelectedBudget(e.target.value)}
+                                            className="w-full appearance-none bg-transparent pr-6 text-sm font-bold text-[#201813] outline-none transition focus:text-[#201813] cursor-pointer"
+                                        >
+                                            {BUDGET_OPTIONS.map((opt) => (
+                                                <option key={opt.value} value={opt.value}>
+                                                    {opt.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#8C827A]" />
+                                    </div>
+                                </div>
+                            </div>
 
-            {/* Seamless Bottom Gradient Fade into #F4F1EA */}
-            <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-b from-transparent via-[#F4F1EA]/40 to-[#F4F1EA]" />
-        </div>
-    );
-}
-
-function HeroBadge() {
-    return (
-        <div className="mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-[#E7D8C8] bg-[#FFFDF8]/90 px-3 py-2 text-xs font-black text-[#1F5A4A] shadow-sm backdrop-blur sm:px-4 sm:text-sm">
-            <span className="h-2 w-2 shrink-0 rounded-full bg-[#C8784A]" />
-            <span className="truncate">Local coffee shop guide dari Padang</span>
-        </div>
-    );
-}
-
-function HeroVisualCard() {
-    return (
-        <div className="relative hidden lg:block lg:pl-2">
-            <div className="absolute -right-10 top-10 h-44 w-44 rounded-full bg-[#1F5A4A]/20 blur-3xl sm:h-56 sm:w-56" />
-            <div className="absolute -bottom-8 left-8 h-40 w-40 rounded-full bg-[#C8784A]/20 blur-3xl sm:h-48 sm:w-48" />
-
-            <div className="relative z-10 overflow-hidden rounded-[40px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_26px_80px_rgba(32,24,19,0.14)]">
-                <div className="overflow-hidden rounded-[30px] bg-[#181818]">
-                    <div className="relative min-h-[360px] p-6 text-white">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_18%,#C8784A66,transparent_28%),radial-gradient(circle_at_80%_24%,#1F5A4A70,transparent_30%),linear-gradient(135deg,#181818,#2A241F)]" />
-                        <div className="absolute -right-16 top-20 h-44 w-44 rounded-full border border-white/10" />
-                        <div className="absolute -bottom-20 -left-16 h-52 w-52 rounded-full border border-white/10" />
-
-                        <div className="relative z-10 flex items-center justify-between gap-4">
-                            <span className="rounded-full bg-[#FFFDF8] px-4 py-2 text-xs font-black text-[#201813]">
-                                Padang Guide
-                            </span>
-
-                            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white/10 text-2xl backdrop-blur">
-                                ☕
-                            </span>
-                        </div>
-
-                        <div className="relative z-10 mt-10">
-                            <p className="text-xs font-black uppercase tracking-[0.24em] text-white/50">
-                                Mood Finder
-                            </p>
-
-                            <h2 className="mt-3 max-w-sm font-serif text-5xl font-bold leading-[0.98] tracking-[-0.03em] text-white">
-                                Ngopi,
-                                <span className="block italic text-[#F2C38B]">nugas,</span>
-                                nongkrong.
-                            </h2>
-
-                            <p className="mt-5 max-w-sm text-sm font-semibold leading-7 text-white/66">
-                                Pilih kebutuhan kamu, lalu Saranwak bantu munculin tempat yang
-                                paling cocok. Tanpa drama “di mana ya enaknya?”.
-                            </p>
-                        </div>
-
-                        <div className="relative z-10 mt-7 grid gap-3">
-                            {homeCategories.map((category) => (
-                                <Link
-                                    key={category.label}
-                                    href={category.href}
-                                    className="group rounded-[22px] border border-white/10 bg-white/[0.08] p-4 backdrop-blur transition duration-300 hover:-translate-y-1 hover:bg-white/[0.13]"
+                            {/* Action Button: Dark Green Pill Button */}
+                            <div className="p-1 sm:p-0 sm:pl-2">
+                                <button
+                                    type="submit"
+                                    className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1F5A4A] px-6 py-3.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(31,90,74,0.25)] transition-all duration-300 hover:scale-[1.02] hover:bg-[#174639] active:scale-[0.98] sm:w-auto"
                                 >
-                                    <div className="flex gap-4">
-                                        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#FFFDF8] text-2xl transition duration-300 group-hover:rotate-[-8deg] group-hover:scale-105">
-                                            {category.emoji}
-                                        </div>
+                                    <Search className="h-4 w-4" />
+                                    <span>Cari Tempat</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
 
-                                        <div className="min-w-0">
-                                            <h3 className="font-black text-white">
-                                                {category.label}
-                                            </h3>
-
-                                            <p className="mt-1 text-sm font-medium leading-6 text-white/64">
-                                                {category.desc}
-                                            </p>
-                                        </div>
+                {/* 3. Category Emblem Ticker (Beneath Search Bar) */}
+                <div className="mt-10 overflow-x-auto pb-2 sm:mt-12">
+                    <div className="mx-auto flex min-w-max items-center justify-center gap-6 px-4 sm:gap-10 md:gap-14">
+                        {CATEGORY_EMBLEMS.map((emblem) => {
+                            const Icon = emblem.icon;
+                            return (
+                                <Link
+                                    key={emblem.label}
+                                    href={emblem.href}
+                                    className="group flex items-center gap-2.5 text-[#756A60] transition-colors duration-200 hover:text-[#201813]"
+                                >
+                                    <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/70 text-[#756A60] shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-[#1F5A4A] group-hover:text-white">
+                                        <Icon className="h-4 w-4" />
+                                    </div>
+                                    <div className="text-left">
+                                        <p className="text-[11px] font-black uppercase tracking-[0.18em] transition-colors group-hover:text-[#201813]">
+                                            {emblem.label}
+                                        </p>
+                                        <p className="text-[10px] font-medium text-[#8C827A]">
+                                            {emblem.sub}
+                                        </p>
                                     </div>
                                 </Link>
-                            ))}
-                        </div>
-
-                        <HeroStats />
+                            );
+                        })}
                     </div>
                 </div>
             </div>
-
-            <div className="absolute -bottom-4 left-1/2 z-20 w-fit -translate-x-1/2 rotate-[-2deg] whitespace-nowrap rounded-2xl bg-[#C8784A] px-5 py-3 text-xs font-black text-white shadow-xl">
-                Mulai dari Padang dulu
-            </div>
-        </div>
-    );
-}
-
-function HeroStats() {
-    const stats = [
-        {
-            value: "32+",
-            label: "Places",
-        },
-        {
-            value: "4",
-            label: "Filter",
-        },
-        {
-            value: "1",
-            label: "Kota",
-        },
-    ];
-
-    return (
-        <div className="relative z-10 mt-4 grid grid-cols-3 gap-2">
-            {stats.map((stat) => (
-                <div
-                    key={stat.label}
-                    className="rounded-2xl border border-white/10 bg-white/[0.08] p-3"
-                >
-                    <p className="text-2xl font-black text-[#F2C38B]">{stat.value}</p>
-                    <p className="mt-1 text-[10px] font-black uppercase tracking-[0.16em] text-white/45">
-                        {stat.label}
-                    </p>
-                </div>
-            ))}
-        </div>
+        </section>
     );
 }

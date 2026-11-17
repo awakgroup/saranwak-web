@@ -4,6 +4,7 @@ import path from "path";
 
 import { FeaturedPlacesSection } from "@/components/home/FeaturedPlacesSection";
 import { HomeHeroSection } from "@/components/home/HomeHeroSection";
+import { HomeBrandBanner } from "@/components/home/HomeBrandBanner";
 import { HomeFaqSection } from "@/components/home/HomeFaqSection";
 import { HOME_FAQS } from "@/lib/faq-data";
 import { OwnerBusinessSection } from "@/components/home/OwnerBusinessSection";
@@ -107,13 +108,13 @@ export default async function Home() {
       <div className="relative z-10">
         <HomeHeroSection />
 
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 pb-14 sm:gap-12 sm:px-6 lg:gap-14 lg:px-8 lg:pb-20">
-          <SectionBlock variant="compact">
-            <PromoBannerCarousel />
-          </SectionBlock>
-
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-12 px-4 pb-14 sm:gap-14 sm:px-6 lg:gap-16 lg:px-8 lg:pb-20">
           <SectionBlock>
             <FeaturedPlacesSection places={places} />
+          </SectionBlock>
+
+          <SectionBlock variant="compact">
+            <PromoBannerCarousel />
           </SectionBlock>
 
           <SectionBlock>
@@ -122,6 +123,10 @@ export default async function Home() {
 
           <SectionBlock>
             <HomeFaqSection />
+          </SectionBlock>
+
+          <SectionBlock>
+            <HomeBrandBanner />
           </SectionBlock>
 
           <SectionBlock variant="last">
