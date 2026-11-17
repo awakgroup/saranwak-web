@@ -1,5 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Coffee, MapPin, Heart, Sparkles, Compass, ArrowRight, MessageCircle } from "lucide-react";
 
 export const metadata: Metadata = {
     title: "Tentang Saranwak — Local Coffee Shop Guide dari Padang",
@@ -20,35 +22,50 @@ export const metadata: Metadata = {
 const values = [
     {
         number: "01",
-        title: "Mulai dari Padang",
+        title: "Lahir dari Padang",
+        icon: MapPin,
         description:
-            "Saranwak dimulai dari Padang karena rekomendasi lokal paling bagus lahir dari orang yang paham daerahnya.",
+            "Saranwak dimulai dari Kota Padang karena rekomendasi lokal terbaik lahir dari mereka yang benar-benar menjelajahi setiap sudut kotanya.",
     },
     {
         number: "02",
-        title: "Fokus ke coffee shop",
+        title: "Kurasi Terverifikasi",
+        icon: Coffee,
         description:
-            "Kami mulai dari coffee shop dulu supaya data lebih rapi, relevan, dan enak dipakai sebelum masuk kategori lain.",
+            "Kami memverifikasi langsung fasilitas, colokan, Wi-Fi, jam buka, hingga suasana agar ekspektasimu sesuai saat tiba di lokasi.",
     },
     {
         number: "03",
-        title: "Cari sesuai kebutuhan",
+        title: "Pencarian Berbasis Mood",
+        icon: Sparkles,
         description:
-            "User bisa cari tempat berdasarkan mood, aktivitas, budget, fasilitas, dan vibes.",
+            "Nggak cuma cari nama kafe. Temukan tempat berdasarkan kebutuhan nyata: nugas/WFC, meeting santai, sunset view, atau sekadar me-time.",
     },
 ];
 
-const focusPoints = [
-    "Coffee shop Padang sebagai fokus awal",
-    "Filter berdasarkan mood dan kebutuhan",
-    "Informasi tempat yang lebih rapi",
-    "Kolaborasi dengan bisnis lokal",
+const pillars = [
+    {
+        title: "Direktori Terkurasi",
+        desc: "Setiap tempat diulas berdasarkan kriteria riil: fasilitas colokan, kecepatan Wi-Fi, dan kenyamanan tempat duduk.",
+    },
+    {
+        title: "Dukungan Bisnis Lokal",
+        desc: "Membantu roastery independen dan kedai kopi lokal Padang dikenal lebih luas oleh generasi muda dan digital nomad.",
+    },
+    {
+        title: "Tanpa Drama Salah Pilih",
+        desc: "Hemat waktu tanpa bingung bertanya 'di mana enaknya?'. Cukup pilih mood atau budget kamu hari ini.",
+    },
+    {
+        title: "Pembaruan Berkala",
+        desc: "Informasi jam buka, kontak WhatsApp, tautan Google Maps, dan menu terus kami perbarui secara berkala.",
+    },
 ];
 
 const WHATSAPP_NUMBER = "6281932097214";
 
 const contactUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    "Hi SaranWak, saya ingin bekerjasama dengan saranwak.com"
+    "Hi Saranwak, saya ingin bekerjasama / mendaftarkan tempat di saranwak.com"
 )}`;
 
 const aboutJsonLd = {
@@ -74,57 +91,95 @@ const aboutJsonLd = {
 
 export default function AboutPage() {
     return (
-        <main className="min-h-screen bg-[#F4F1EA] px-3 pb-28 pt-3 text-[#141414] sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+        <main className="min-h-screen bg-[#F4F1EA] px-3 pb-28 pt-3 text-[#141414] sm:px-6 sm:pb-20 sm:pt-6 lg:px-8">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify(aboutJsonLd),
                 }}
             />
-            <div className="mx-auto max-w-7xl">
+            <div className="mx-auto flex max-w-7xl flex-col gap-10 sm:gap-14">
+                {/* 1. Hero Section with Atmospheric Image Canvas */}
                 <HeroAbout />
 
-                <section className="mt-8 grid gap-4 md:grid-cols-3">
-                    {values.map((item) => (
-                        <ValueCard key={item.title} item={item} />
-                    ))}
-                </section>
-
-                <section className="mt-8 grid gap-6 rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-                    <div>
-                        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
-                            Fokus Kami
-                        </p>
-
-                        <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-4xl">
-                            Mulai kecil, dibuat dengan serius.
+                {/* 2. Core Values Grid */}
+                <section>
+                    <div className="mb-6">
+                        <div className="mb-2.5 h-1 w-12 rounded-full bg-[#C8784A]" />
+                        <h2 className="font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+                            Mengapa Saranwak Ada?
                         </h2>
-
-                        <p className="mt-3 max-w-2xl text-sm font-medium leading-7 text-[#756A60] sm:text-base">
-                            Untuk sekarang, Saranwak fokus membangun pengalaman mencari coffee
-                            shop di Padang yang lebih rapi, relevan, dan gampang dipakai.
-                            Bukan kejar banyak kategori dulu, tapi bikin fondasinya kuat.
+                        <p className="mt-1 text-sm font-medium text-[#756A60]">
+                            Prinsip kami dalam membangun panduan kopi paling nyaman untuk Kota Padang.
                         </p>
                     </div>
 
-                    <div className="grid gap-3 sm:grid-cols-2">
-                        {focusPoints.map((item, index) => (
-                            <div
-                                key={item}
-                                className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/70 p-4.5"
-                            >
-                                <p className="font-serif text-xs font-bold text-[#C8784A]">
-                                    0{index + 1}
-                                </p>
-
-                                <p className="mt-1.5 text-xs font-bold leading-5 text-[#201813] sm:text-sm sm:leading-6">
-                                    {item}
-                                </p>
-                            </div>
+                    <div className="grid gap-5 md:grid-cols-3">
+                        {values.map((item) => (
+                            <ValueCard key={item.title} item={item} />
                         ))}
                     </div>
                 </section>
 
+                {/* 3. The Story & Pillars Section */}
+                <section className="relative overflow-hidden rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-10 lg:p-12">
+                    <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:gap-12">
+                        <div>
+                            <div className="inline-flex items-center gap-2 rounded-full border border-[#E7D8C8] bg-[#FAF3EC] px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#C8784A]">
+                                <Heart className="h-3.5 w-3.5 text-[#C8784A]" />
+                                Komitmen Kami
+                            </div>
+
+                            <h2 className="mt-4 font-serif text-3xl font-bold tracking-tight text-[#201813] sm:text-4xl">
+                                Dari Padang, untuk para penikmat kopi & ruang bertumbuh.
+                            </h2>
+
+                            <p className="mt-4 text-sm font-medium leading-relaxed text-[#756A60] sm:text-base sm:leading-relaxed">
+                                Kota Padang punya denyut budaya ngopi yang luar biasa hidup — mulai dari
+                                warung kopi legendaris di kawasan pecinan Pondok hingga specialty roastery modern
+                                di sepanjang tepian Batang Arau dan pusat kota.
+                            </p>
+
+                            <p className="mt-3 text-sm font-medium leading-relaxed text-[#756A60] sm:text-base sm:leading-relaxed">
+                                Saranwak hadir agar setiap cangkir kopi yang kamu kunjungi punya cerita yang tepat:
+                                laptopan berjam-jam tanpa khawatir baterai habis, ngobrol hangat saat senja,
+                                atau sekadar menikmati manual brew terbaik karya barista lokal.
+                            </p>
+
+                            <div className="mt-6 flex items-center gap-3">
+                                <Link
+                                    href="/places?category=coffee-shop"
+                                    className="inline-flex items-center gap-2 rounded-full bg-[#1F5A4A] px-6 py-3 text-xs font-bold text-white shadow-sm transition hover:bg-[#164337] active:scale-95 sm:text-sm"
+                                >
+                                    <span>Jelajahi Direktori</span>
+                                    <ArrowRight className="h-4 w-4" />
+                                </Link>
+                            </div>
+                        </div>
+
+                        {/* 4 Pillars Grid */}
+                        <div className="grid gap-3.5 sm:grid-cols-2">
+                            {pillars.map((item, index) => (
+                                <div
+                                    key={item.title}
+                                    className="rounded-[22px] border border-[#E7D8C8]/80 bg-[#FAF4ED]/60 p-5 transition duration-300 hover:-translate-y-1 hover:border-[#1F5A4A]/40 hover:bg-white hover:shadow-md"
+                                >
+                                    <p className="font-mono text-xs font-bold text-[#C8784A]">
+                                        0{index + 1}
+                                    </p>
+                                    <h3 className="mt-2 font-serif text-base font-bold text-[#201813]">
+                                        {item.title}
+                                    </h3>
+                                    <p className="mt-1.5 text-xs font-medium leading-relaxed text-[#756A60]">
+                                        {item.desc}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* 4. Business CTA Section */}
                 <BusinessCTA />
             </div>
         </main>
@@ -133,50 +188,57 @@ export default function AboutPage() {
 
 function HeroAbout() {
     return (
-        <section className="relative overflow-hidden rounded-[34px] border border-[#E7D8C8] bg-[#191614] p-6 text-white shadow-[0_24px_80px_rgba(32,24,19,0.18)] sm:p-8 lg:p-10">
-            <HeroDecor />
+        <section className="relative min-h-[420px] overflow-hidden rounded-[32px] border border-[#E4DDD3] bg-[#1E1916] shadow-[0_20px_60px_rgba(32,24,19,0.12)] sm:min-h-[480px] sm:rounded-[44px]">
+            {/* Background Image */}
+            <div className="absolute inset-0">
+                <Image
+                    src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=2000&q=85"
+                    alt="Coffee brewing atmosphere in Padang"
+                    fill
+                    priority
+                    sizes="(max-width: 1280px) 100vw, 1280px"
+                    className="object-cover object-center brightness-[0.70] contrast-[1.05]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/35" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
+            </div>
 
-            <div className="relative z-10 grid gap-7 lg:grid-cols-[1fr_0.75fr] lg:items-end">
-                <div className="max-w-4xl">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.08] px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#F2C38B] backdrop-blur sm:text-xs">
-                        <span className="h-2 w-2 rounded-full bg-[#F2C38B]" />
-                        Tentang Saranwak
+            <div className="relative z-10 flex min-h-[400px] flex-col justify-between p-6 sm:min-h-[460px] sm:p-10 md:p-14 lg:p-16">
+                <div>
+                    <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-bold text-white shadow-sm backdrop-blur-md">
+                        <Compass className="h-3.5 w-3.5 text-[#E5A86D]" />
+                        <span>Mengenal Lebih Dekat</span>
                     </div>
 
-                    <h1 className="mt-4 font-serif text-3xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                        Local guide
-                        <span className="block italic text-[#F2C38B]">buat cari tempat yang pas.</span>
-                    </h1>
+                    <div className="mt-6 max-w-3xl">
+                        <h1 className="font-serif text-3xl font-bold leading-[1.05] tracking-[-0.03em] text-white sm:text-5xl lg:text-6xl">
+                            Local guide
+                            <span className="block font-serif italic text-[#F2C38B]">
+                                untuk setiap cangkir ceritamu.
+                            </span>
+                        </h1>
 
-                    <p className="mt-4 max-w-2xl text-sm font-medium leading-7 text-white/70 sm:text-base">
-                        Saranwak membantu orang menemukan coffee shop dan spot lokal di
-                        Padang berdasarkan mood, kebutuhan, area, budget, fasilitas, dan
-                        vibes.
-                    </p>
-
-                    <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                        <Link
-                            href="/places?category=coffee-shop"
-                            className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#F2C38B] px-6 py-3 text-sm font-bold text-[#201813] shadow-sm transition hover:-translate-y-0.5 hover:bg-white"
-                        >
-                            Lihat Coffee Shop →
-                        </Link>
-
-                        <a
-                            href={contactUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/15 bg-white/[0.08] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-white hover:text-[#201813]"
-                        >
-                            Hubungi Kami
-                        </a>
+                        <p className="mt-4 max-w-2xl text-sm font-medium leading-relaxed text-white/85 sm:text-base sm:leading-relaxed">
+                            Saranwak membantu kamu menemukan coffee shop dan spot ruang kerja terbaik di Padang
+                            berdasarkan mood, fasilitas Wi-Fi & colokan, budget, hingga suasana.
+                        </p>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2.5 lg:grid-cols-1">
-                    <MiniStat value="Padang" label="Fokus Awal" />
-                    <MiniStat value="Coffee" label="Kategori Utama" />
-                    <MiniStat value="Mood" label="Metode Temu" />
+                {/* Bottom Stats Rail */}
+                <div className="mt-8 flex flex-wrap items-center gap-3 sm:gap-4">
+                    <MiniStat value="35+" label="Spot Terkurasi" />
+                    <MiniStat value="100%" label="Independen" />
+                    <MiniStat value="Padang" label="Fokus Kota" />
+                    <div className="ml-auto hidden sm:block">
+                        <Link
+                            href="/places?category=coffee-shop"
+                            className="inline-flex items-center gap-2 rounded-full bg-[#C8784A] px-6 py-3 text-xs font-bold text-white shadow-md transition hover:bg-[#B5673B] active:scale-95 sm:text-sm"
+                        >
+                            <span>Cari Coffee Shop Sekarang</span>
+                            <ArrowRight className="h-4 w-4" />
+                        </Link>
+                    </div>
                 </div>
             </div>
         </section>
@@ -189,18 +251,27 @@ function ValueCard({
     item: {
         number: string;
         title: string;
+        icon: React.ComponentType<{ className?: string }>;
         description: string;
     };
 }) {
+    const Icon = item.icon;
     return (
-        <div className="relative overflow-hidden rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_14px_45px_rgba(47,35,25,0.045)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(47,35,25,0.08)]">
-            <p className="font-serif text-xs font-bold text-[#C8784A]">{item.number}</p>
+        <div className="group relative overflow-hidden rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_12px_36px_rgba(47,35,25,0.04)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(47,35,25,0.08)]">
+            <div className="flex items-center justify-between">
+                <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[#FAF3EC] text-[#C8784A] transition-transform duration-300 group-hover:scale-110">
+                    <Icon className="h-5 w-5" />
+                </div>
+                <span className="font-mono text-xs font-bold text-[#756A60]/60">
+                    {item.number}
+                </span>
+            </div>
 
-            <h2 className="mt-2 font-serif text-lg font-bold text-[#201813]">
+            <h3 className="mt-4 font-serif text-xl font-bold tracking-tight text-[#201813]">
                 {item.title}
-            </h2>
+            </h3>
 
-            <p className="mt-2 text-xs font-medium leading-6 text-[#756A60] sm:text-sm">
+            <p className="mt-2 text-xs font-medium leading-relaxed text-[#756A60] sm:text-sm sm:leading-relaxed">
                 {item.description}
             </p>
         </div>
@@ -209,9 +280,9 @@ function ValueCard({
 
 function MiniStat({ value, label }: { value: string; label: string }) {
     return (
-        <div className="rounded-2xl border border-white/12 bg-white/[0.08] p-4 text-center backdrop-blur lg:text-left">
-            <p className="font-serif text-xl font-bold text-[#F2C38B] sm:text-2xl">{value}</p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/50">
+        <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 text-center backdrop-blur-md sm:px-5 sm:py-3 sm:text-left">
+            <p className="font-serif text-lg font-bold text-[#F2C38B] sm:text-2xl">{value}</p>
+            <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.16em] text-white/60 sm:text-[10px]">
                 {label}
             </p>
         </div>
@@ -220,42 +291,39 @@ function MiniStat({ value, label }: { value: string; label: string }) {
 
 function BusinessCTA() {
     return (
-        <section className="mt-8 rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-8">
-            <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
-                <div>
-                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
-                        Untuk Bisnis Lokal
-                    </p>
+        <section className="relative overflow-hidden rounded-[32px] border border-[#E7D8C8] bg-[#1F5A4A] p-6 text-white shadow-[0_20px_50px_rgba(31,90,74,0.22)] sm:p-10 md:p-12">
+            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#E5A86D]/20 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-24 -left-20 h-64 w-64 rounded-full bg-black/25 blur-3xl" />
 
-                    <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
-                        Mau Tempat Kamu Masuk Saranwak?
+            <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                <div className="max-w-2xl">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[#F2C38B] backdrop-blur">
+                        <MessageCircle className="h-3.5 w-3.5" />
+                        Untuk Pemilik Kafe & Mitra
+                    </div>
+
+                    <h2 className="mt-3 font-serif text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-4xl">
+                        Ingin Coffee Shop Kamu Terdaftar di Saranwak?
                     </h2>
 
-                    <p className="mt-2 max-w-2xl text-xs font-medium leading-6 text-[#756A60] sm:text-sm">
-                        Hubungi kami untuk kerja sama, update informasi tempat, promo
-                        placement, atau pembuatan profil bisnis digital.
+                    <p className="mt-2 text-xs font-medium leading-relaxed text-white/80 sm:text-sm sm:leading-relaxed">
+                        Kami membuka pintu kurasi dan kerja sama untuk coffee shop lokal di Kota Padang.
+                        Mulai dari update data tempat, penambahan fasilitas, hingga promosi kreatif.
                     </p>
                 </div>
 
-                <a
-                    href={contactUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#1F5A4A] px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#164337]"
-                >
-                    Hubungi via WhatsApp →
-                </a>
+                <div className="shrink-0">
+                    <a
+                        href={contactUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 rounded-full bg-[#C8784A] px-7 py-3.5 text-xs font-bold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-[#B5673B] active:scale-95 sm:text-sm"
+                    >
+                        <span>Hubungi via WhatsApp</span>
+                        <ArrowRight className="h-4 w-4" />
+                    </a>
+                </div>
             </div>
         </section>
-    );
-}
-
-function HeroDecor() {
-    return (
-        <>
-            <div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#C8784A]/25 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-28 -right-24 h-72 w-72 rounded-full bg-[#1F5A4A]/30 blur-3xl" />
-            <div className="pointer-events-none absolute inset-0 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.14)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.14)_1px,transparent_1px)] [background-size:44px_44px]" />
-        </>
     );
 }

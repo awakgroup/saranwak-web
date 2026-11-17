@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
@@ -349,24 +350,37 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     return (
         <main className="min-h-screen bg-[#F4F1EA] px-3 pb-28 pt-3 text-[#201813] sm:px-6 sm:pb-16 sm:pt-6 lg:px-8 lg:pb-20 lg:pt-8">
             <section className="mx-auto max-w-7xl">
-                {/* Editorial Hero Header */}
-                <div className="relative mb-8 overflow-hidden rounded-[32px] border border-[#E7D8C8] bg-[#191614] p-6 text-white shadow-[0_24px_80px_rgba(32,24,19,0.18)] sm:p-8 lg:p-10">
-                    <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#C8784A]/25 blur-3xl" />
-                    <div className="pointer-events-none absolute -bottom-24 -left-20 h-64 w-64 rounded-full bg-[#1F5A4A]/20 blur-3xl" />
+                {/* Editorial Hero Header with Atmospheric Image */}
+                <div className="relative mb-8 overflow-hidden rounded-[32px] border border-[#E4DDD3] bg-[#1E1916] p-6 text-white shadow-[0_24px_70px_rgba(32,24,19,0.14)] sm:p-8 lg:p-10">
+                    {/* Background Cover Image */}
+                    <div className="absolute inset-0">
+                        <Image
+                            src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=2000&q=85"
+                            alt="Explore coffee shops in Padang"
+                            fill
+                            priority
+                            sizes="(max-width: 1280px) 100vw, 1280px"
+                            className="object-cover object-center brightness-[0.70] contrast-[1.05]"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/35" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
+                    </div>
 
                     <div className="relative z-10 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
                         <div className="max-w-3xl">
-                            <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.08] px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#F2C38B] backdrop-blur">
+                            <div className="mb-3 h-1 w-12 rounded-full bg-[#C8784A]" />
+
+                            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#F2C38B] backdrop-blur-md">
                                 <Coffee className="h-3.5 w-3.5 text-[#F2C38B]" />
                                 Padang Coffee Directory
                             </div>
 
                             <h1 className="mt-4 font-serif text-3xl font-bold leading-[1.05] tracking-[-0.02em] text-white sm:text-5xl lg:text-6xl">
                                 {titlePrefix}
-                                <span className="block italic text-[#F2C38B]">{titleSuffix}</span>
+                                <span className="block font-serif italic text-[#F2C38B]">{titleSuffix}</span>
                             </h1>
 
-                            <p className="mt-3 max-w-2xl text-sm font-medium leading-7 text-white/70 sm:text-base">
+                            <p className="mt-3 max-w-2xl text-sm font-medium leading-relaxed text-white/85 sm:text-base">
                                 {makeDescription(effectiveParams)}
                             </p>
 
@@ -396,7 +410,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                     ) : null}
                                     <button
                                         type="submit"
-                                        className="mr-1.5 shrink-0 rounded-full bg-[#F2C38B] px-4 py-2 text-xs font-bold text-[#201813] transition hover:bg-white sm:px-5 sm:py-2.5 sm:text-sm"
+                                        className="mr-1.5 shrink-0 rounded-full bg-[#C8784A] px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[#B5673B] sm:px-5 sm:py-2.5 sm:text-sm"
                                     >
                                         Cari
                                     </button>
