@@ -175,7 +175,7 @@ export default async function RekomendasiPage() {
     const places = await getRecommendedPlaces();
 
     return (
-        <main className="min-h-screen bg-[#F4F1EA] px-4 py-8 text-[#201813] sm:px-6 lg:px-8 lg:py-10">
+        <main className="min-h-screen bg-[#F4F1EA] px-3 pb-28 pt-3 text-[#201813] sm:px-6 sm:py-8 lg:px-8 lg:py-10">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{

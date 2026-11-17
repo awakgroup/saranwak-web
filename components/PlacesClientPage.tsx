@@ -347,7 +347,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const { prefix: titlePrefix, suffix: titleSuffix } = makeTitleParts(effectiveParams);
 
     return (
-        <main className="min-h-screen bg-[#F4F1EA] px-4 pb-14 pt-4 text-[#201813] sm:px-6 sm:pt-6 lg:px-8 lg:pb-20 lg:pt-8">
+        <main className="min-h-screen bg-[#F4F1EA] px-3 pb-28 pt-3 text-[#201813] sm:px-6 sm:pb-16 sm:pt-6 lg:px-8 lg:pb-20 lg:pt-8">
             <section className="mx-auto max-w-7xl">
                 {/* Editorial Hero Header */}
                 <div className="relative mb-8 overflow-hidden rounded-[32px] border border-[#E7D8C8] bg-[#191614] p-6 text-white shadow-[0_24px_80px_rgba(32,24,19,0.18)] sm:p-8 lg:p-10">

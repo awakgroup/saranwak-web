@@ -88,12 +88,12 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                     return (
                         <div
                             key={place.id}
-                            className="w-[280px] shrink-0 sm:w-[320px] md:w-[360px]"
+                            className="w-[76vw] max-w-[280px] shrink-0 sm:w-[320px] md:w-[360px]"
                             style={{ scrollSnapAlign: "start" }}
                         >
                             <Link
                                 href={`/places/${place.slug}`}
-                                className="group relative block aspect-[3/4] w-full overflow-hidden rounded-[28px] border border-[#E7D8C8]/60 bg-[#1A1614] shadow-[0_12px_36px_rgba(32,24,19,0.12)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 hover:shadow-[0_24px_50px_rgba(32,24,19,0.22)]"
+                                className="group relative block aspect-[3/4] w-full overflow-hidden rounded-[26px] border border-[#E7D8C8]/60 bg-[#1A1614] shadow-[0_10px_30px_rgba(32,24,19,0.12)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 hover:shadow-[0_24px_50px_rgba(32,24,19,0.22)] active:scale-[0.98] sm:rounded-[28px]"
                             >
                                 {/* Cover Photo */}
                                 <Image

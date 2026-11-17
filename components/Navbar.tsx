@@ -4,7 +4,15 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Compass, Sparkles, Info, Bookmark } from "lucide-react";
+import {
+    Home,
+    Compass,
+    Sparkles,
+    Info,
+    Bookmark,
+    Search,
+    MessageCircle,
+} from "lucide-react";
 import { useSavedPlaces } from "@/lib/saved-places";
 import { SavedPlacesModal } from "@/components/SavedPlacesModal";
 
@@ -37,7 +45,9 @@ const mobileBottomNavItems = [
         label: "Explore",
         href: "/places?category=coffee-shop",
         icon: Compass,
-        isActive: (pathname: string) => pathname.startsWith("/places"),
+        isActive: (pathname: string) =>
+            pathname === "/places" ||
+            (pathname.startsWith("/places") && !pathname.match(/^\/places\/[^/]+$/)),
     },
     {
         label: "Rekomendasi",
@@ -71,15 +81,66 @@ export function Navbar() {
         return null;
     }
 
+    // Cek apakah sedang berada di halaman detail tempat (/places/[slug])
+    // Di halaman ini, bottom dock disembunyikan agar MobileStickyActions (arah maps & detail) bekerja maksimal
+    const isPlaceDetailPage =
+        pathname.startsWith("/places/") && pathname.split("/").filter(Boolean).length === 2;
+
     return (
         <>
             {/* Top Header Navbar */}
-            <header className="sticky top-0 z-40 border-b border-[#E3DED4] bg-[#F4F1EA]/88 backdrop-blur-2xl">
-                <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:h-20 sm:px-5">
-                    {/* Brand Logo */}
+            <header className="sticky top-0 z-40 border-b border-[#E3DED4] bg-[#F4F1EA]/92 backdrop-blur-2xl">
+                <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-20 sm:px-5">
+                    {/* Mobile App Bar Layout */}
+                    <div className="flex h-full w-full items-center justify-between md:hidden">
+                        <Link href="/" className="flex items-center gap-2.5">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#181818] shadow-sm transition active:scale-95">
+                                <Image
+                                    src="/favicon.png"
+                                    alt="Saranwak"
+                                    width={36}
+                                    height={36}
+                                    priority
+                                    className="h-full w-full object-cover"
+                                />
+                            </div>
+
+                            <div>
+                                <p className="font-serif text-lg font-bold leading-tight tracking-tight text-[#141414]">
+                                    Saranwak
+                                </p>
+                                <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#756A60]">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-[#1F5A4A] animate-pulse" />
+                                    <span>Kota Padang</span>
+                                </div>
+                            </div>
+                        </Link>
+
+                        <div className="flex items-center gap-1.5">
+                            <Link
+                                href="/places?category=coffee-shop"
+                                aria-label="Cari Coffee Shop"
+                                className="grid h-9 w-9 place-items-center rounded-full border border-[#E7D8C8] bg-[#FFFDF8] text-[#201813] shadow-sm transition duration-150 active:scale-90"
+                            >
+                                <Search className="h-4 w-4" />
+                            </Link>
+
+                            <a
+                                href={whatsappUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label="Hubungi Saranwak via WhatsApp"
+                                className="grid h-9 w-9 place-items-center rounded-full bg-[#181818] text-[#FFFDF8] shadow-sm transition duration-150 active:scale-90"
+                            >
+                                <MessageCircle className="h-4 w-4" />
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Desktop Brand Logo */}
                     <Link
                         href="/"
-                        className="group flex min-w-0 items-center gap-2.5 sm:gap-3"
+                        className="group hidden min-w-0 items-center gap-2.5 sm:gap-3 md:flex"
                     >
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#181818] shadow-sm transition duration-300 group-hover:-rotate-6 group-hover:scale-105 sm:h-12 sm:w-12">
                             <Image
@@ -124,8 +185,8 @@ export function Navbar() {
                         })}
                     </nav>
 
-                    {/* Right Action: Bookmark & Contact Us button */}
-                    <div className="flex items-center gap-2">
+                    {/* Desktop Right Action: Bookmark & Contact Us button */}
+                    <div className="hidden items-center gap-2 md:flex">
                         <button
                             type="button"
                             onClick={() => setIsSavedModalOpen(true)}
@@ -157,64 +218,66 @@ export function Navbar() {
                 </div>
             </header>
 
-            {/* Mobile Bottom Floating Navigation Dock */}
-            <nav
-                aria-label="Mobile Navigation"
-                className="pointer-events-none fixed inset-x-0 bottom-4 z-50 px-3 pb-[env(safe-area-inset-bottom,0px)] md:hidden"
-            >
-                <div className="pointer-events-auto mx-auto flex max-w-[390px] items-center justify-around gap-1 rounded-full border border-[#E7D8C8] bg-[#FFFDF8]/94 p-1.5 shadow-[0_16px_40px_rgba(32,24,19,0.18)] backdrop-blur-xl">
-                    {mobileBottomNavItems.map((item) => {
-                        const active = item.isActive(pathname);
-                        const Icon = item.icon;
+            {/* Mobile Bottom Floating Navigation Dock (App-Style) */}
+            {!isPlaceDetailPage && (
+                <nav
+                    aria-label="Mobile Navigation"
+                    className="pointer-events-none fixed inset-x-0 bottom-3 z-50 px-3 pb-[env(safe-area-inset-bottom,0px)] md:hidden"
+                >
+                    <div className="pointer-events-auto mx-auto flex max-w-[390px] items-center justify-around gap-1 rounded-full border border-[#E7D8C8]/90 bg-[#FFFDF8]/94 p-1.5 shadow-[0_16px_40px_rgba(32,24,19,0.18)] backdrop-blur-2xl">
+                        {mobileBottomNavItems.map((item) => {
+                            const active = item.isActive(pathname);
+                            const Icon = item.icon;
 
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={[
-                                    "flex flex-1 flex-col items-center justify-center rounded-full py-1.5 transition duration-200",
-                                    active
-                                        ? "bg-[#181818] text-[#FFFDF8] shadow-sm"
-                                        : "text-[#756A60] hover:bg-[#F4F1EA] hover:text-[#201813]",
-                                ].join(" ")}
-                            >
-                                <Icon
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
                                     className={[
-                                        "h-4 w-4 transition-transform duration-200",
-                                        active ? "scale-110 text-[#E59B63]" : "text-[#756A60]",
+                                        "flex flex-1 flex-col items-center justify-center rounded-full py-1.5 transition-all duration-150 active:scale-90",
+                                        active
+                                            ? "bg-[#181818] text-[#FFFDF8] shadow-sm"
+                                            : "text-[#756A60] hover:bg-[#F4F1EA] hover:text-[#201813]",
                                     ].join(" ")}
-                                    strokeWidth={active ? 2.5 : 2}
-                                />
-                                <span className="mt-0.5 text-[10px] font-bold tracking-tight">
-                                    {item.label}
-                                </span>
-                            </Link>
-                        );
-                    })}
+                                >
+                                    <Icon
+                                        className={[
+                                            "h-4 w-4 transition-transform duration-200",
+                                            active ? "scale-110 text-[#E59B63]" : "text-[#756A60]",
+                                        ].join(" ")}
+                                        strokeWidth={active ? 2.5 : 2}
+                                    />
+                                    <span className="mt-0.5 text-[10px] font-bold tracking-tight">
+                                        {item.label}
+                                    </span>
+                                </Link>
+                            );
+                        })}
 
-                    {/* Bookmark in Mobile Dock */}
-                    <button
-                        type="button"
-                        onClick={() => setIsSavedModalOpen(true)}
-                        className="relative flex flex-1 flex-col items-center justify-center rounded-full py-1.5 text-[#756A60] transition duration-200 hover:bg-[#F4F1EA] hover:text-[#201813]"
-                    >
-                        <Bookmark
-                            className={`h-4 w-4 transition-transform duration-200 ${
-                                savedCount > 0 ? "fill-current text-[#C8784A]" : "text-[#756A60]"
-                            }`}
-                            strokeWidth={savedCount > 0 ? 2.5 : 2}
-                        />
-                        <span className="mt-0.5 text-[10px] font-bold tracking-tight">
-                            Tersimpan
-                        </span>
-                        {savedCount > 0 && (
-                            <span className="absolute -top-1 right-2 grid h-4 min-w-4 place-items-center rounded-full bg-[#C8784A] px-1 text-[9px] font-black text-white shadow-sm">
-                                {savedCount}
+                        {/* Bookmark in Mobile Dock */}
+                        <button
+                            type="button"
+                            onClick={() => setIsSavedModalOpen(true)}
+                            className="relative flex flex-1 flex-col items-center justify-center rounded-full py-1.5 text-[#756A60] transition-all duration-150 hover:bg-[#F4F1EA] hover:text-[#201813] active:scale-90"
+                        >
+                            <Bookmark
+                                className={`h-4 w-4 transition-transform duration-200 ${
+                                    savedCount > 0 ? "fill-current text-[#C8784A]" : "text-[#756A60]"
+                                }`}
+                                strokeWidth={savedCount > 0 ? 2.5 : 2}
+                            />
+                            <span className="mt-0.5 text-[10px] font-bold tracking-tight">
+                                Tersimpan
                             </span>
-                        )}
-                    </button>
-                </div>
-            </nav>
+                            {savedCount > 0 && (
+                                <span className="absolute -top-1 right-2 grid h-4 min-w-4 place-items-center rounded-full bg-[#C8784A] px-1 text-[9px] font-black text-white shadow-sm">
+                                    {savedCount}
+                                </span>
+                            )}
+                        </button>
+                    </div>
+                </nav>
+            )}
 
             {/* Saved Places Modal */}
             <SavedPlacesModal

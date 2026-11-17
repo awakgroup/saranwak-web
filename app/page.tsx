@@ -108,7 +108,7 @@ export default async function Home() {
       <div className="relative z-10">
         <HomeHeroSection />
 
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-12 px-4 pb-14 sm:gap-14 sm:px-6 lg:gap-16 lg:px-8 lg:pb-20">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-3 pb-28 sm:gap-14 sm:px-6 sm:pb-20 lg:gap-16 lg:px-8">
           <SectionBlock>
             <FeaturedPlacesSection places={places} />
           </SectionBlock>
