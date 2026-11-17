@@ -189,12 +189,12 @@ export function RandomPlaceModal({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             {/* Backdrop Blur */}
             <div
-                className="absolute inset-0 bg-black/65 backdrop-blur-md transition-opacity"
+                className="absolute inset-0 bg-black/65 backdrop-blur-md transition-opacity duration-200"
                 onClick={onClose}
             />
 
             {/* Modal Card */}
-            <div className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-2xl sm:p-7">
+            <div className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-2xl sm:p-7 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]">
                 {/* Header Modal */}
                 <div className="flex items-center justify-between border-b border-[#E7D8C8] pb-4">
                     <div className="flex items-center gap-2.5">

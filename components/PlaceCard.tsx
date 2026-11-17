@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Star, ArrowUpRight } from "lucide-react";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import { OpenStatusBadge } from "@/components/OpenStatusBadge";
@@ -124,7 +124,7 @@ export function PlaceCard({
         <Link
             href={detailHref}
             prefetch={false}
-            className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-[#EADCCB] bg-[#FFFDF8] shadow-[0_14px_40px_rgba(47,35,25,0.07)] outline-none transition-all duration-500 hover:-translate-y-1.5 hover:border-[#1F5A4A]/35 hover:shadow-[0_28px_80px_rgba(47,35,25,0.15)] active:scale-[0.985] focus-visible:ring-4 focus-visible:ring-[#1F5A4A]/20"
+            className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-[#EADCCB] bg-[#FFFDF8] shadow-[0_14px_40px_rgba(47,35,25,0.07)] outline-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 hover:border-[#1F5A4A]/40 hover:shadow-[0_26px_65px_rgba(47,35,25,0.14)] active:scale-[0.985] focus-visible:ring-4 focus-visible:ring-[#1F5A4A]/20"
         >
             <div className="relative aspect-[4/3] overflow-hidden bg-[#E3DED4]">
                 <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-[#E7D8C8] via-[#F8F1E8] to-[#E3DED4]" />
@@ -132,7 +132,7 @@ export function PlaceCard({
                 <img
                     src={imageUrl}
                     alt={getImageAlt(place)}
-                    className="relative z-[1] h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    className="relative z-[1] h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 will-change-transform"
                     loading="lazy"
                     decoding="async"
                     referrerPolicy="no-referrer"
@@ -253,8 +253,9 @@ export function PlaceCard({
                             </p>
                         </div>
 
-                        <span className="shrink-0 rounded-full bg-white px-4 py-2 text-xs font-black text-[#201813] transition group-hover:bg-[#F3C48E]">
-                            Lihat
+                        <span className="inline-flex items-center gap-1 shrink-0 rounded-full bg-white px-4 py-2 text-xs font-black text-[#201813] transition-colors duration-200 group-hover:bg-[#F3C48E]">
+                            <span>Lihat</span>
+                            <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                         </span>
                     </div>
                 </div>

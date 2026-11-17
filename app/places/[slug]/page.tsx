@@ -14,6 +14,12 @@ import {
     CheckCircle2,
     ArrowRight,
     Star,
+    Laptop,
+    Users,
+    Sun,
+    Utensils,
+    Building2,
+    Music,
 } from "lucide-react";
 
 import { PlaceCard } from "@/components/PlaceCard";
@@ -530,6 +536,76 @@ function QuickSummarySection({ summary }: { summary: string }) {
     );
 }
 
+function getCharacteristicIcon(title?: string, description?: string) {
+    const text = `${title || ""} ${description || ""}`.toLowerCase();
+    if (
+        text.includes("roastery") ||
+        text.includes("beans") ||
+        text.includes("v60") ||
+        text.includes("manual brew") ||
+        text.includes("kopi") ||
+        text.includes("espresso")
+    ) {
+        return <Coffee className="h-4 w-4 text-[#C8784A]" />;
+    }
+    if (
+        text.includes("wfc") ||
+        text.includes("laptop") ||
+        text.includes("colokan") ||
+        text.includes("wifi") ||
+        text.includes("nugas") ||
+        text.includes("kerja")
+    ) {
+        return <Laptop className="h-4 w-4 text-[#1F5A4A]" />;
+    }
+    if (
+        text.includes("meeting") ||
+        text.includes("komunal") ||
+        text.includes("diskusi") ||
+        text.includes("komunitas")
+    ) {
+        return <Users className="h-4 w-4 text-[#C8784A]" />;
+    }
+    if (
+        text.includes("outdoor") ||
+        text.includes("teras") ||
+        text.includes("taman") ||
+        text.includes("sunset") ||
+        text.includes("sungai") ||
+        text.includes("asri")
+    ) {
+        return <Sun className="h-4 w-4 text-amber-600" />;
+    }
+    if (
+        text.includes("makanan") ||
+        text.includes("pizza") ||
+        text.includes("pasta") ||
+        text.includes("cemilan") ||
+        text.includes("menu") ||
+        text.includes("kuliner")
+    ) {
+        return <Utensils className="h-4 w-4 text-[#C8784A]" />;
+    }
+    if (
+        text.includes("heritage") ||
+        text.includes("kolonial") ||
+        text.includes("arsitektur") ||
+        text.includes("bangunan") ||
+        text.includes("gudang")
+    ) {
+        return <Building2 className="h-4 w-4 text-[#1F5A4A]" />;
+    }
+    if (
+        text.includes("music") ||
+        text.includes("live music") ||
+        text.includes("nightlife") ||
+        text.includes("akustik")
+    ) {
+        return <Music className="h-4 w-4 text-purple-600" />;
+    }
+    return <Sparkles className="h-4 w-4 text-[#C8784A]" />;
+}
+
 function CharacteristicsSection({
     characteristics,
 }: {
@@ -537,9 +613,12 @@ function CharacteristicsSection({
 }) {
     return (
         <section className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
-                Keunggulan Utama
-            </p>
+            <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#1F5A4A]" />
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                    Keunggulan Utama
+                </p>
+            </div>
 
             <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
                 Karakteristik Tempat
@@ -549,20 +628,25 @@ function CharacteristicsSection({
                 {characteristics.map((item, index) => (
                     <div
                         key={`${item.title}-${index}`}
-                        className="group rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/60 p-4.5 transition hover:border-[#1F5A4A]/30 hover:bg-[#F8F1E8]"
+                        className="group relative flex flex-col rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/60 p-5 shadow-xs transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-[#1F5A4A]/35 hover:bg-[#F8F1E8] hover:shadow-[0_12px_28px_rgba(47,35,25,0.08)]"
                     >
-                        <span className="font-serif text-xs font-bold text-[#C8784A]">
-                            {String(index + 1).padStart(2, "0")}
-                        </span>
+                        <div className="mb-3 flex items-center justify-between">
+                            <div className="grid h-8 w-8 place-items-center rounded-xl border border-[#E7D8C8] bg-white shadow-xs transition-transform duration-200 group-hover:scale-105 group-hover:border-[#1F5A4A]/30">
+                                {getCharacteristicIcon(item.title, item.description)}
+                            </div>
+                            <span className="rounded-full bg-[#C8784A]/10 px-2.5 py-0.5 font-mono text-xs font-bold text-[#C8784A]">
+                                {String(index + 1).padStart(2, "0")}
+                            </span>
+                        </div>
 
                         {item.title ? (
-                            <h3 className="mt-1 font-serif text-base font-bold text-[#201813]">
+                            <h3 className="font-serif text-base font-bold leading-snug text-[#201813] transition-colors group-hover:text-[#1F5A4A]">
                                 {item.title}
                             </h3>
                         ) : null}
 
                         {item.description ? (
-                            <p className="mt-2 text-xs font-medium leading-6 text-[#756A60] sm:text-sm">
+                            <p className="mt-2 text-xs font-medium leading-relaxed text-[#756A60] sm:text-sm">
                                 {item.description}
                             </p>
                         ) : null}
@@ -922,8 +1006,8 @@ function MobileStickyActions({
     categorySlug?: string | null;
 }) {
     return (
-        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[#E7D8C8] bg-[#FFFDF8]/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-16px_40px_rgba(32,24,19,0.12)] backdrop-blur md:hidden">
-            <div className="mx-auto grid max-w-md grid-cols-3 gap-2">
+        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[#E7D8C8] bg-[#FFFDF8]/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-16px_40px_rgba(32,24,19,0.14)] backdrop-blur-md md:hidden">
+            <div className="mx-auto flex max-w-md items-center gap-2">
                 {mapsUrl ? (
                     <TrackedExternalLink
                         href={mapsUrl}
@@ -937,14 +1021,14 @@ function MobileStickyActions({
                             city,
                             category: categorySlug ?? null,
                         }}
-                        className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#1F5A4A] px-3 py-2 text-xs font-bold text-white shadow-sm"
+                        className="flex-1 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1F5A4A] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all duration-150 active:scale-95"
                     >
-                        <MapPin className="h-3.5 w-3.5" />
-                        Maps
+                        <MapPin className="h-4 w-4 shrink-0" />
+                        <span>Petunjuk Arah</span>
                     </TrackedExternalLink>
                 ) : (
-                    <span className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-[#E7D8C8] px-3 py-2 text-xs font-bold text-[#756A60]">
-                        Maps
+                    <span className="flex-1 inline-flex min-h-12 items-center justify-center rounded-full bg-[#E7D8C8] px-4 py-2.5 text-xs font-bold text-[#756A60]">
+                        Maps Belum Tersedia
                     </span>
                 )}
 
@@ -961,25 +1045,22 @@ function MobileStickyActions({
                             city,
                             category: categorySlug ?? null,
                         }}
-                        className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-[#E7D8C8] bg-white px-3 py-2 text-xs font-bold text-[#201813]"
+                        className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-full border border-[#E7D8C8] bg-white px-4 py-2.5 text-xs font-bold text-[#201813] transition-all duration-150 active:scale-95"
                     >
-                        <InstagramIcon className="h-3.5 w-3.5" />
-                        Instagram
+                        <InstagramIcon className="h-4 w-4 shrink-0" />
+                        <span className="hidden sm:inline">Instagram</span>
                     </TrackedExternalLink>
-                ) : (
-                    <span className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-[#E7D8C8] px-3 py-2 text-xs font-bold text-[#756A60]">
-                        Instagram
-                    </span>
-                )}
+                ) : null}
 
                 <a
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#201813] px-3 py-2 text-xs font-bold text-white"
+                    className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-full bg-[#201813] px-4 py-2.5 text-xs font-bold text-white transition-all duration-150 active:scale-95"
+                    aria-label="Bagikan ke WhatsApp"
                 >
-                    <Share2 className="h-3.5 w-3.5" />
-                    Share
+                    <Share2 className="h-4 w-4 shrink-0" />
+                    <span className="hidden sm:inline">Share</span>
                 </a>
             </div>
         </div>

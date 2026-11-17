@@ -71,7 +71,7 @@ export function SavedPlacesModal({ isOpen, onClose }: SavedPlacesModalProps) {
             />
 
             {/* Modal Box */}
-            <div className="relative flex max-h-[88vh] w-full max-w-xl flex-col overflow-hidden rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] shadow-[0_24px_80px_rgba(32,24,19,0.25)]">
+            <div className="relative flex max-h-[88vh] w-full max-w-xl flex-col overflow-hidden rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] shadow-[0_24px_80px_rgba(32,24,19,0.25)] transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]">
                 {/* Header */}
                 <div className="flex items-center justify-between border-b border-[#E7D8C8] px-6 py-5">
                     <div className="flex items-center gap-3">

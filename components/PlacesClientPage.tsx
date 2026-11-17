@@ -88,6 +88,15 @@ type PlaceWithFlexibleTags = Place & {
     category_slug?: string | null;
 };
 
+const quickMoodOptions = [
+    { label: "💻 WFC & Nugas", tag: "wfc" },
+    { label: "☕ Specialty & Manual Brew", tag: "specialty-coffee" },
+    { label: "❄️ Indoor AC", tag: "ac" },
+    { label: "🌿 Outdoor Asri", tag: "outdoor" },
+    { label: "👥 Meeting Room", tag: "meeting" },
+    { label: "💰 Budget < 20rb", price: "under-20k" },
+];
+
 export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -393,6 +402,36 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                     </button>
                                 </div>
                             </form>
+
+                            {/* Quick Mood / Filter Shortcuts */}
+                            <div className="mt-4 flex flex-wrap items-center gap-2 sm:mt-5">
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-white/45">
+                                    Pilihan Cepat:
+                                </span>
+                                {quickMoodOptions.map((mood) => {
+                                    const isSelected = mood.tag
+                                        ? selectedTags.includes(normalizeSlug(mood.tag))
+                                        : selectedPrice === mood.price;
+                                    const href = mood.tag
+                                        ? buildTagHref(effectiveParams, mood.tag)
+                                        : buildFilterHref(effectiveParams, {
+                                            price: isSelected ? "all" : (mood.price as PriceFilterValue),
+                                        });
+
+                                    return (
+                                        <Link
+                                            key={mood.label}
+                                            href={href}
+                                            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 ${isSelected
+                                                    ? "border border-[#F2C38B] bg-[#F2C38B] text-[#201813] shadow-sm"
+                                                    : "border border-white/20 bg-white/[0.08] text-white/85 backdrop-blur hover:border-white/40 hover:bg-white/15 hover:text-white"
+                                                }`}
+                                        >
+                                            {mood.label}
+                                        </Link>
+                                    );
+                                })}
+                            </div>
                         </div>
 
                         {/* Stats pill counter */}
