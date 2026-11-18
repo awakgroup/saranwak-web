@@ -123,7 +123,32 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const [searchQuery, setSearchQuery] = useState(params.q || "");
     const [livePlacesData, setLivePlacesData] = useState<Place[]>(placesData);
     const [isRandomOpen, setIsRandomOpen] = useState(false);
-    const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
+    const [viewMode, setViewMode] = useState<"grid" | "map">(
+        searchParams?.get("view") === "map" ? "map" : "grid"
+    );
+
+    // Sync viewMode if searchParams.get("view") changes
+    useEffect(() => {
+        const view = searchParams?.get("view");
+        if (view === "map") {
+            setViewMode("map");
+        } else if (view === "grid") {
+            setViewMode("grid");
+        }
+    }, [searchParams]);
+
+    const handleSetViewMode = (mode: "grid" | "map") => {
+        setViewMode(mode);
+        if (typeof window !== "undefined") {
+            const url = new URL(window.location.href);
+            if (mode === "map") {
+                url.searchParams.set("view", "map");
+            } else {
+                url.searchParams.delete("view");
+            }
+            window.history.replaceState(null, "", url.toString());
+        }
+    };
 
     // Geolocation state untuk fitur "📍 Terdekat"
     const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -376,21 +401,43 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
 
                     {/* Hero Content Header */}
                     <div className="relative z-10 max-w-3xl px-6 pb-4 pt-10 sm:px-12 sm:pt-14 lg:px-16">
-                        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#FDBA74] backdrop-blur-md">
-                            <span className="h-2 w-2 animate-ping rounded-full bg-[#FF5C35]" />
-                            <span>DIREKTORI &amp; EXPLORE KOTA PADANG</span>
-                        </div>
+                        {viewMode === "map" ? (
+                            <>
+                                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#FF5C35]/30 bg-[#FFECE5] px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#D8431F] backdrop-blur-md">
+                                    <span className="h-2 w-2 animate-ping rounded-full bg-[#FF5C35]" />
+                                    <span>PETA DIGITAL &amp; SPOT WFC PADANG</span>
+                                </div>
 
-                        <h1 className="font-sans text-3xl font-extrabold leading-[1.15] tracking-tight text-white sm:text-5xl">
-                            Temukan Sanctuary Ngopi &amp; Nugas di Kota Padang <br />
-                            <span className="font-serif font-normal italic bg-gradient-to-r from-[#FDBA74] via-[#FF8E68] to-[#FF5C35] bg-clip-text text-transparent">
-                                Ngopi Enak, Nugas Tenang
-                            </span>
-                        </h1>
+                                <h1 className="font-sans text-3xl font-extrabold leading-[1.15] tracking-tight text-white sm:text-5xl">
+                                    Peta Interaktif, <br />
+                                    <span className="font-serif font-normal italic bg-gradient-to-r from-[#FDBA74] via-[#FF8E68] to-[#FF5C35] bg-clip-text text-transparent">
+                                        Jelajahi Spot Ngopi di Padang
+                                    </span>
+                                </h1>
 
-                        <p className="mt-3.5 max-w-2xl text-xs font-normal leading-relaxed text-[#D6CECA] sm:text-sm lg:text-base">
-                            Jelajahi {livePlacesData.length}+ coffee shop &amp; ruang kerja terkurasi di penjuru Kota Padang. Temukan atmosfer kondusif, stopkontak terverifikasi, dan racikan kopi berkualitas tanpa zonk.
-                        </p>
+                                <p className="mt-3.5 max-w-2xl text-xs font-normal leading-relaxed text-[#D6CECA] sm:text-sm lg:text-base">
+                                    Temukan kedai kopi artisanal, tempat nugas nyaman, dan suasana terbaik di setiap sudut Kota Padang langsung di peta interaktif.
+                                </p>
+                            </>
+                        ) : (
+                            <>
+                                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#FDBA74] backdrop-blur-md">
+                                    <span className="h-2 w-2 animate-ping rounded-full bg-[#FF5C35]" />
+                                    <span>DIREKTORI &amp; EXPLORE KOTA PADANG</span>
+                                </div>
+
+                                <h1 className="font-sans text-3xl font-extrabold leading-[1.15] tracking-tight text-white sm:text-5xl">
+                                    Temukan Sanctuary Ngopi &amp; Nugas di Kota Padang <br />
+                                    <span className="font-serif font-normal italic bg-gradient-to-r from-[#FDBA74] via-[#FF8E68] to-[#FF5C35] bg-clip-text text-transparent">
+                                        Ngopi Enak, Nugas Tenang
+                                    </span>
+                                </h1>
+
+                                <p className="mt-3.5 max-w-2xl text-xs font-normal leading-relaxed text-[#D6CECA] sm:text-sm lg:text-base">
+                                    Jelajahi {livePlacesData.length}+ coffee shop &amp; ruang kerja terkurasi di penjuru Kota Padang. Temukan atmosfer kondusif, stopkontak terverifikasi, dan racikan kopi berkualitas tanpa zonk.
+                                </p>
+                            </>
+                        )}
                     </div>
 
                     {/* Floating Multi-Criteria Search & Filter Bar in Hero Footer */}
@@ -536,34 +583,186 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                     <HomeFeaturePillars />
                 </div>
 
-                {/* Main Content: Sidebar + Places Grid */}
-                <div className="grid gap-6 lg:grid-cols-[300px_1fr] lg:items-start xl:grid-cols-[320px_1fr]">
-                    <aside className="lg:sticky lg:top-24">
-                        {/* Mobile Collapsible Filter Drawer */}
-                        <details className="group rounded-[26px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_14px_45px_rgba(47,35,25,0.06)] lg:hidden">
-                            <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
-                                <div className="flex items-center gap-2.5">
-                                    <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#F4F1EA] text-[#1F5A4A]">
-                                        <SlidersHorizontal className="h-4 w-4" />
+                {/* Top View Controls & Toolbar */}
+                <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <div className="flex items-center gap-2.5">
+                            <h2 className="font-sans text-lg font-extrabold tracking-tight text-[#19120D] sm:text-xl">
+                                {viewMode === "map"
+                                    ? "Peta Interaktif Spot Ngopi Padang"
+                                    : "Daftar Tempat Kopi Terkurasi"}
+                            </h2>
+                            <span className="rounded-full bg-[#FFECE5] px-2.5 py-0.5 text-xs font-bold text-[#D8431F]">
+                                {places.length} Ditampilkan
+                            </span>
+                        </div>
+                        <p className="mt-0.5 text-xs text-[#756A63]">
+                            Menampilkan {places.length} dari {livePlacesData.length} Spot Terkurasi di Kota Padang
+                        </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2.5">
+                        {/* Toggle Terdekat Button */}
+                        <button
+                            type="button"
+                            onClick={handleToggleNearby}
+                            disabled={isLocating}
+                            title={
+                                isNearbyActive
+                                    ? "Matikan urutan terdekat"
+                                    : "Urutkan cafe terdekat dari lokasimu"
+                            }
+                            className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-bold shadow-sm transition active:scale-95 ${
+                                isNearbyActive
+                                    ? "border-[#19120D] bg-[#19120D] text-white hover:bg-[#FF5C35]"
+                                    : "border-[#EBE5DC] bg-white text-[#19120D] hover:border-[#FF5C35] hover:text-[#FF5C35]"
+                            }`}
+                        >
+                            <Navigation
+                                className={`h-3.5 w-3.5 ${
+                                    isLocating
+                                        ? "animate-spin"
+                                        : isNearbyActive
+                                        ? "text-[#FDBA74]"
+                                        : "text-[#FF5C35]"
+                                }`}
+                            />
+                            <span>
+                                {isLocating
+                                    ? "Mencari Lokasi..."
+                                    : isNearbyActive
+                                    ? "Terdekat Aktif"
+                                    : "📍 Terdekat (GPS)"}
+                            </span>
+                        </button>
+
+                        {/* Toggle View Mode */}
+                        <div className="inline-flex rounded-full border border-[#EBE5DC] bg-[#FAF7F2] p-1 shadow-xs">
+                            <button
+                                type="button"
+                                onClick={() => setViewMode("grid")}
+                                className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition duration-200 ${
+                                    viewMode === "grid"
+                                        ? "bg-[#19120D] text-white shadow-sm"
+                                        : "text-[#756A63] hover:text-[#19120D] hover:bg-white"
+                                }`}
+                            >
+                                <LayoutGrid className="h-3.5 w-3.5" />
+                                <span>Daftar</span>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setViewMode("map")}
+                                className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition duration-200 ${
+                                    viewMode === "map"
+                                        ? "bg-[#19120D] text-white shadow-sm"
+                                        : "text-[#756A63] hover:text-[#19120D] hover:bg-white"
+                                }`}
+                            >
+                                <MapIcon className="h-3.5 w-3.5" />
+                                <span>Peta</span>
+                            </button>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={() => setIsRandomOpen(true)}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-[#FF5C35]/30 bg-[#FFF8EF] px-3.5 py-1.5 text-xs font-bold text-[#FF5C35] shadow-xs transition hover:bg-[#FF5C35] hover:text-white active:scale-95"
+                        >
+                            <Dices className="h-3.5 w-3.5" />
+                            <span>Pilihin Acak 🎲</span>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Indikator Urutan Terdekat Aktif */}
+                {isNearbyActive && userCoords && (
+                    <div className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-[#1F5A4A]/25 bg-[#F0F8F5] px-4 py-2.5 text-xs font-bold text-[#1F5A4A] shadow-xs">
+                        <div className="flex items-center gap-2">
+                            <span className="relative flex h-2.5 w-2.5">
+                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1F5A4A] opacity-75"></span>
+                                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#1F5A4A]"></span>
+                            </span>
+                            <span>Menampilkan urutan dari cafe paling dekat dengan posisimu</span>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setIsNearbyActive(false)}
+                            className="text-[11px] font-black underline hover:text-[#184639]"
+                        >
+                            Reset Urutan
+                        </button>
+                    </div>
+                )}
+
+                {/* Conditional View: Full-width Map View vs Sidebar + Places Grid */}
+                {viewMode === "map" ? (
+                    <div className="w-full">
+                        <PlacesMapView places={places} userCoords={userCoords} />
+                    </div>
+                ) : (
+                    <div className="grid gap-6 lg:grid-cols-[300px_1fr] lg:items-start xl:grid-cols-[320px_1fr]">
+                        <aside className="lg:sticky lg:top-24">
+                            {/* Mobile Collapsible Filter Drawer */}
+                            <details className="group rounded-[26px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_14px_45px_rgba(47,35,25,0.06)] lg:hidden">
+                                <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#F4F1EA] text-[#1F5A4A]">
+                                            <SlidersHorizontal className="h-4 w-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-[#201813]">
+                                                Filter Pilihan
+                                            </p>
+                                            <p className="text-xs font-medium text-[#756A60]">
+                                                {activeFilterCount > 0
+                                                    ? `${activeFilterCount} filter aktif`
+                                                    : "Pilih budget, fasilitas, & suasana"}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="text-sm font-bold text-[#201813]">
-                                            Filter Pilihan
-                                        </p>
-                                        <p className="text-xs font-medium text-[#756A60]">
-                                            {activeFilterCount > 0
-                                                ? `${activeFilterCount} filter aktif`
-                                                : "Pilih budget, fasilitas, & suasana"}
-                                        </p>
+
+                                    <span className="rounded-full bg-[#201813] px-3.5 py-1.5 text-xs font-bold text-white transition group-open:bg-[#1F5A4A]">
+                                        Pilih Filter
+                                    </span>
+                                </summary>
+
+                                <div className="mt-4 border-t border-[#E7D8C8] pt-4">
+                                    <FilterContent
+                                        params={effectiveParams}
+                                        selectedTags={selectedTags}
+                                        selectedPrice={selectedPrice}
+                                        hasFilter={hasFilter}
+                                    />
+                                </div>
+                            </details>
+
+                            {/* Desktop Sticky Filter Card */}
+                            <div className="hidden rounded-3xl border border-[#EBE5DC] bg-white p-6 shadow-bento lg:block">
+                                <div className="mb-5 flex items-center justify-between border-b border-[#EBE5DC] pb-4">
+                                    <div className="flex items-center gap-2">
+                                        <SlidersHorizontal className="h-4 w-4 text-[#FF5C35]" />
+                                        <h2 className="font-sans text-base font-extrabold text-[#19120D]">
+                                            Filter Kurasi
+                                        </h2>
+                                        {activeFilterCount > 0 && (
+                                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FFECE5] text-[11px] font-extrabold text-[#D8431F]">
+                                                {activeFilterCount}
+                                            </span>
+                                        )}
                                     </div>
+
+                                    {hasFilter ? (
+                                        <Link
+                                            href="/places/?category=coffee-shop"
+                                            onClick={handleClearSearch}
+                                            className="text-xs font-bold text-[#FF5C35] transition hover:text-[#D8431F]"
+                                        >
+                                            Reset Semua
+                                        </Link>
+                                    ) : null}
                                 </div>
 
-                                <span className="rounded-full bg-[#201813] px-3.5 py-1.5 text-xs font-bold text-white transition group-open:bg-[#1F5A4A]">
-                                    Pilih Filter
-                                </span>
-                            </summary>
-
-                            <div className="mt-4 border-t border-[#E7D8C8] pt-4">
                                 <FilterContent
                                     params={effectiveParams}
                                     selectedTags={selectedTags}
@@ -571,187 +770,41 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                     hasFilter={hasFilter}
                                 />
                             </div>
-                        </details>
+                        </aside>
 
-                        {/* Desktop Sticky Filter Card */}
-                        <div className="hidden rounded-3xl border border-[#EBE5DC] bg-white p-6 shadow-bento lg:block">
-                            <div className="mb-5 flex items-center justify-between border-b border-[#EBE5DC] pb-4">
-                                <div className="flex items-center gap-2">
-                                    <SlidersHorizontal className="h-4 w-4 text-[#FF5C35]" />
-                                    <h2 className="font-sans text-base font-extrabold text-[#19120D]">
-                                        Filter Kurasi
-                                    </h2>
-                                    {activeFilterCount > 0 && (
-                                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FFECE5] text-[11px] font-extrabold text-[#D8431F]">
-                                            {activeFilterCount}
-                                        </span>
-                                    )}
+                        <section className="min-w-0">
+                            {/* Interactive Active Filters Bar */}
+                            {hasFilter ? (
+                                <ActiveFilters
+                                    params={effectiveParams}
+                                    selectedTags={selectedTags}
+                                    selectedPrice={selectedPrice}
+                                    onClearSearch={handleClearSearch}
+                                />
+                            ) : null}
+
+                            {/* Places Grid or Empty State */}
+                            {places.length === 0 ? (
+                                <EmptyPlacesState
+                                    params={effectiveParams}
+                                    onClearSearch={handleClearSearch}
+                                />
+                            ) : (
+                                <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                                    {places.map((place, index) => (
+                                        <PlaceCard
+                                            key={place.id}
+                                            place={place}
+                                            source="places_list"
+                                            position={index + 1}
+                                            userDistance={userCoords ? distanceMap[place.slug] : undefined}
+                                        />
+                                    ))}
                                 </div>
-
-                                {hasFilter ? (
-                                    <Link
-                                        href="/places/?category=coffee-shop"
-                                        onClick={handleClearSearch}
-                                        className="text-xs font-bold text-[#FF5C35] transition hover:text-[#D8431F]"
-                                    >
-                                        Reset Semua
-                                    </Link>
-                                ) : null}
-                            </div>
-
-                            <FilterContent
-                                params={effectiveParams}
-                                selectedTags={selectedTags}
-                                selectedPrice={selectedPrice}
-                                hasFilter={hasFilter}
-                            />
-                        </div>
-                    </aside>
-
-                    <section className="min-w-0">
-                        {/* Interactive Active Filters Bar */}
-                        {hasFilter ? (
-                            <ActiveFilters
-                                params={effectiveParams}
-                                selectedTags={selectedTags}
-                                selectedPrice={selectedPrice}
-                                onClearSearch={handleClearSearch}
-                            />
-                        ) : null}
-
-                        {/* Results Count Header */}
-                        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                            <div>
-                                <div className="flex items-center gap-2.5">
-                                    <h2 className="font-sans text-xl font-extrabold tracking-tight text-[#19120D] sm:text-2xl">
-                                        Daftar Tempat Kopi Terkurasi
-                                    </h2>
-                                    <span className="rounded-full bg-[#FFECE5] px-2.5 py-0.5 text-xs font-bold text-[#D8431F]">
-                                        {places.length} Ditampilkan
-                                    </span>
-                                </div>
-                                <p className="mt-0.5 text-xs text-[#756A63]">
-                                    Menampilkan {places.length} dari {livePlacesData.length} Spot Terkurasi di Kota Padang
-                                </p>
-                            </div>
-
-                            <div className="flex flex-wrap items-center gap-2.5">
-                                {/* Toggle Terdekat Button */}
-                                <button
-                                    type="button"
-                                    onClick={handleToggleNearby}
-                                    disabled={isLocating}
-                                    title={
-                                        isNearbyActive
-                                            ? "Matikan urutan terdekat"
-                                            : "Urutkan cafe terdekat dari lokasimu"
-                                    }
-                                    className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-bold shadow-sm transition active:scale-95 ${
-                                        isNearbyActive
-                                            ? "border-[#19120D] bg-[#19120D] text-white hover:bg-[#FF5C35]"
-                                            : "border-[#EBE5DC] bg-white text-[#19120D] hover:border-[#FF5C35] hover:text-[#FF5C35]"
-                                    }`}
-                                >
-                                    <Navigation
-                                        className={`h-3.5 w-3.5 ${
-                                            isLocating
-                                                ? "animate-spin"
-                                                : isNearbyActive
-                                                ? "text-[#FDBA74]"
-                                                : "text-[#FF5C35]"
-                                        }`}
-                                    />
-                                    <span>
-                                        {isLocating
-                                            ? "Mencari Lokasi..."
-                                            : isNearbyActive
-                                            ? "Terdekat Aktif"
-                                            : "📍 Terdekat (GPS)"}
-                                    </span>
-                                </button>
-
-                                {/* Toggle View Mode */}
-                                <div className="inline-flex rounded-full border border-[#EBE5DC] bg-white p-1 shadow-xs">
-                                    <button
-                                        type="button"
-                                        onClick={() => setViewMode("grid")}
-                                        className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition duration-200 ${
-                                            viewMode === "grid"
-                                                ? "bg-[#19120D] text-white shadow-sm"
-                                                : "text-[#756A63] hover:text-[#19120D] hover:bg-[#FAF7F2]"
-                                        }`}
-                                    >
-                                        <LayoutGrid className="h-3.5 w-3.5" />
-                                        <span>Daftar</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setViewMode("map")}
-                                        className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition duration-200 ${
-                                            viewMode === "map"
-                                                ? "bg-[#19120D] text-white shadow-sm"
-                                                : "text-[#756A63] hover:text-[#19120D] hover:bg-[#FAF7F2]"
-                                        }`}
-                                    >
-                                        <MapIcon className="h-3.5 w-3.5" />
-                                        <span>Peta</span>
-                                    </button>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setIsRandomOpen(true)}
-                                    className="inline-flex items-center gap-1.5 rounded-full border border-[#FF5C35]/30 bg-[#FFF8EF] px-4 py-2 text-xs font-bold text-[#FF5C35] shadow-xs transition hover:bg-[#FF5C35] hover:text-white active:scale-95"
-                                >
-                                    <Dices className="h-4 w-4" />
-                                    <span>Pilihin Acak 🎲</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Indikator Urutan Terdekat Aktif */}
-                        {isNearbyActive && userCoords && (
-                            <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-[#1F5A4A]/25 bg-[#F0F8F5] px-4 py-2.5 text-xs font-bold text-[#1F5A4A] shadow-xs">
-                                <div className="flex items-center gap-2">
-                                    <span className="relative flex h-2.5 w-2.5">
-                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1F5A4A] opacity-75"></span>
-                                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#1F5A4A]"></span>
-                                    </span>
-                                    <span>Menampilkan urutan dari cafe paling dekat dengan posisimu</span>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setIsNearbyActive(false)}
-                                    className="text-[11px] font-black underline hover:text-[#184639]"
-                                >
-                                    Reset Urutan
-                                </button>
-                            </div>
-                        )}
-
-                        {/* Places Grid, Map View, or Empty State */}
-                        {places.length === 0 ? (
-                            <EmptyPlacesState
-                                params={effectiveParams}
-                                onClearSearch={handleClearSearch}
-                            />
-                        ) : viewMode === "map" ? (
-                            <PlacesMapView places={places} userCoords={userCoords} />
-                        ) : (
-                            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                                {places.map((place, index) => (
-                                    <PlaceCard
-                                        key={place.id}
-                                        place={place}
-                                        source="places_list"
-                                        position={index + 1}
-                                        userDistance={userCoords ? distanceMap[place.slug] : undefined}
-                                    />
-                                ))}
-                            </div>
-                        )}
-                    </section>
-                </div>
+                            )}
+                        </section>
+                    </div>
+                )}
             </section>
 
             <RandomPlaceModal

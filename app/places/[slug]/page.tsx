@@ -194,7 +194,7 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
     const jsonLd = makePlaceJsonLd(place, tags, category, galleryImages);
 
     return (
-        <main className="min-h-screen bg-[#F4F1EA] px-4 pb-28 pt-5 text-[#201813] sm:px-5 sm:pb-16 sm:pt-8 md:pb-16 lg:px-8">
+        <main className="min-h-screen bg-[#FAF7F2] px-4 pb-28 pt-5 text-[#19120D] sm:px-5 sm:pb-16 sm:pt-8 md:pb-16 lg:px-8">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
@@ -215,17 +215,17 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
 
             <section className="mx-auto max-w-7xl">
                 {/* Editorial Breadcrumbs */}
-                <nav className="mb-5 flex flex-wrap items-center gap-2 text-xs font-bold text-[#756A60]">
+                <nav className="mb-5 flex flex-wrap items-center gap-2 text-xs font-semibold text-[#756A63]">
                     <Link
                         href="/"
-                        className="transition hover:text-[#201813]"
+                        className="transition hover:text-[#19120D]"
                     >
                         Home
                     </Link>
                     <span>/</span>
                     <Link
                         href="/places?category=coffee-shop"
-                        className="transition hover:text-[#201813]"
+                        className="transition hover:text-[#19120D]"
                     >
                         Explore
                     </Link>
@@ -234,14 +234,14 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
                             <span>/</span>
                             <Link
                                 href={`/places?category=coffee-shop&area=${encodeURIComponent(place.area)}`}
-                                className="transition hover:text-[#201813]"
+                                className="transition hover:text-[#19120D]"
                             >
                                 {place.area}
                             </Link>
                         </>
                     ) : null}
                     <span>/</span>
-                    <span className="truncate font-semibold text-[#201813]">{place.name}</span>
+                    <span className="truncate font-bold text-[#19120D]">{place.name}</span>
                 </nav>
 
                 <HeroSection
@@ -318,40 +318,40 @@ function HeroSection({
     const heroTags = [...activityTags, ...vibeTags].slice(0, 5);
 
     return (
-        <section className="overflow-hidden rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] shadow-[0_20px_60px_rgba(47,35,25,0.08)] sm:rounded-[40px] sm:shadow-[0_24px_80px_rgba(47,35,25,0.10)]">
-            <div className="relative min-h-[380px] overflow-hidden bg-[#181818] sm:min-h-[460px] lg:min-h-[540px]">
+        <section className="overflow-hidden rounded-[32px] border border-[#EBE5DC] bg-white shadow-md">
+            <div className="relative min-h-[380px] overflow-hidden bg-gradient-to-b from-[#2B1D15] to-[#120B07] text-white sm:min-h-[460px] lg:min-h-[520px]">
                 <Image
                     src={mainImageUrl}
                     alt={place.name}
                     fill
                     priority
                     sizes="100vw"
-                    className="object-cover"
+                    className="object-cover opacity-35"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/40 to-black/90" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/45 to-black/90" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-transparent" />
 
-                <div className="relative z-10 flex min-h-[380px] flex-col justify-between p-6 sm:min-h-[460px] sm:p-8 lg:min-h-[540px] lg:p-10">
+                <div className="relative z-10 flex min-h-[380px] flex-col justify-between p-6 sm:min-h-[460px] sm:p-8 lg:min-h-[520px] lg:p-10">
                     <div className="flex flex-wrap items-center gap-2">
                         {category ? (
                             <Link
                                 href={`/places?category=${category.slug}`}
-                                className="rounded-full border border-white/20 bg-white/95 px-3.5 py-1.5 text-xs font-bold text-[#201813] shadow-sm backdrop-blur transition hover:bg-white"
+                                className="rounded-full border border-white/20 bg-white/95 px-3.5 py-1.5 text-xs font-bold text-[#19120D] shadow-sm backdrop-blur transition hover:bg-white"
                             >
                                 {category.name}
                             </Link>
                         ) : null}
 
                         {place.price_range ? (
-                            <span className="rounded-full border border-white/20 bg-[#F2C38B] px-3.5 py-1.5 text-xs font-bold text-[#201813] shadow-sm">
+                            <span className="rounded-full border border-white/20 bg-[#FDBA74] px-3.5 py-1.5 text-xs font-bold text-[#19120D] shadow-sm">
                                 {place.price_range}
                             </span>
                         ) : null}
 
                         {place.area ? (
                             <span className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/15 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm backdrop-blur">
-                                <MapPin className="h-3 w-3 text-[#F2C38B]" />
+                                <MapPin className="h-3 w-3 text-[#FDBA74]" />
                                 {place.area}
                             </span>
                         ) : null}
@@ -367,35 +367,20 @@ function HeroSection({
                                 <Star className="h-4 w-4 fill-amber-400 text-amber-500" />
                             </span>
                         ) : null}
-
-                        {/* Badge Verified di-hide sementara */}
-                        {/* {place.is_verified ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur">
-                                <CheckCircle2 className="h-3 w-3 text-[#8BE4D2]" />
-                                Verified
-                            </span>
-                        ) : null} */}
-
-                        {place.source === "admin_panel" ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-[#1F5A4A]/80 px-3.5 py-1.5 text-xs font-bold text-[#F2C38B] backdrop-blur border border-[#F2C38B]/30">
-                                <Sparkles className="h-3 w-3 text-[#F2C38B]" />
-                                CMS Added
-                            </span>
-                        ) : null}
                     </div>
 
                     <div className="max-w-4xl">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#F2C38B] backdrop-blur">
-                            <Coffee className="h-3 w-3 text-[#F2C38B]" />
+                        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#FF5C35]/40 bg-[#FF5C35]/20 px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-[#FDBA74] backdrop-blur">
+                            <Star className="h-3.5 w-3.5 text-[#FF5C35]" />
                             Spot Pilihan Padang
                         </div>
 
-                        <h1 className="mt-3 font-serif text-3xl font-bold leading-[1.05] tracking-tight text-white drop-shadow-[0_8px_24px_rgba(0,0,0,0.4)] sm:text-5xl md:text-6xl lg:text-7xl">
+                        <h1 className="mt-3 font-sans text-3xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
                             {place.name}
                         </h1>
 
-                        <p className="mt-3 flex items-center gap-1.5 text-sm font-medium leading-6 text-white/85 sm:text-base">
-                            <MapPin className="h-4 w-4 shrink-0 text-[#F2C38B]" />
+                        <p className="mt-3 flex items-center gap-1.5 text-xs font-medium leading-relaxed text-stone-300 sm:text-sm">
+                            <MapPin className="h-4 w-4 shrink-0 text-[#FF5C35]" />
                             <span>
                                 {[place.area, place.city || "Padang"].filter(Boolean).join(", ")}
                                 {place.address ? ` · ${place.address}` : ""}
@@ -410,7 +395,7 @@ function HeroSection({
                                         href={`/places?category=coffee-shop&tags=${encodeURIComponent(
                                             tagToSlug(tag)
                                         )}`}
-                                        className="rounded-full border border-white/20 bg-white/15 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm backdrop-blur transition hover:bg-white hover:text-[#201813]"
+                                        className="rounded-lg border border-white/10 bg-white/10 px-3 py-1 text-xs font-medium text-stone-200 transition hover:bg-white/20"
                                     >
                                         {tag}
                                     </Link>
@@ -421,7 +406,7 @@ function HeroSection({
                 </div>
             </div>
 
-            <div className="grid gap-3 border-t border-[#E7D8C8] bg-[#FFFDF8] p-4 sm:grid-cols-2 lg:grid-cols-4 sm:p-5">
+            <div className="grid gap-3 border-t border-[#EBE5DC] bg-white p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4">
                 <HeroAction
                     label="Buka di Google Maps"
                     icon="maps"
@@ -445,7 +430,7 @@ function HeroSection({
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-bold text-[#201813] transition hover:bg-[#201813] hover:text-white"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#EBE5DC] bg-white px-5 py-3 text-sm font-bold text-[#19120D] transition hover:bg-[#19120D] hover:text-white"
                 >
                     <Share2 className="h-4 w-4" />
                     Share ke WhatsApp
@@ -476,7 +461,7 @@ function HeroAction({
 }) {
     if (!href) {
         return (
-            <span className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-5 py-3 text-sm font-bold text-[#9B8C7C]">
+            <span className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#EBE5DC] bg-[#FAF6F0] px-5 py-3 text-sm font-bold text-[#756A63]">
                 {disabledLabel}
             </span>
         );
@@ -496,8 +481,8 @@ function HeroAction({
             }}
             className={
                 primary
-                    ? "inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1F5A4A] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#164337]"
-                    : "inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-bold text-[#201813] transition hover:bg-[#201813] hover:text-white"
+                    ? "inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#FF5C35] hover:bg-[#D8431F] px-5 py-3 text-sm font-bold text-white shadow-sm transition-all active:scale-95"
+                    : "inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#EBE5DC] bg-white px-5 py-3 text-sm font-bold text-[#19120D] transition hover:bg-[#19120D] hover:text-white"
             }
         >
             {icon === "maps" ? <MapPin className="h-4 w-4" /> : null}
@@ -511,25 +496,19 @@ function QuickSummarySection({ summary }: { summary: string }) {
     if (!summary) return null;
 
     return (
-        <section className="relative overflow-hidden rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
-            <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-[#F2C38B]/20 blur-2xl" />
-
+        <section className="relative overflow-hidden rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-xs sm:p-7">
             <div className="relative z-10">
-                <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-[#C8784A]" />
-                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
-                        Ringkasan Cepat
-                    </p>
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
+                    <Sparkles className="h-4 w-4 text-[#FF5C35]" />
+                    <span>Ringkasan Cepat</span>
                 </div>
 
-                <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+                <h2 className="mt-2 font-sans text-xl font-extrabold text-[#19120D] sm:text-2xl">
                     Cocok Buat Apa?
                 </h2>
 
-                <div className="mt-3 rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/70 p-4 sm:p-5">
-                    <p className="text-sm font-medium leading-7 text-[#4B4038] sm:text-base">
-                        {summary}
-                    </p>
+                <div className="mt-3 rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] p-4 text-sm leading-relaxed text-[#19120D] sm:p-5 sm:text-base">
+                    {summary}
                 </div>
             </div>
         </section>
@@ -612,15 +591,13 @@ function CharacteristicsSection({
     characteristics: Characteristic[];
 }) {
     return (
-        <section className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
-            <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#1F5A4A]" />
-                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
-                    Keunggulan Utama
-                </p>
+        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-xs sm:p-7">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
+                <span className="h-2 w-2 rounded-full bg-[#FF5C35]" />
+                <span>Keunggulan Utama</span>
             </div>
 
-            <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+            <h2 className="mt-2 font-sans text-xl font-extrabold text-[#19120D] sm:text-2xl">
                 Karakteristik Tempat
             </h2>
 
@@ -628,25 +605,25 @@ function CharacteristicsSection({
                 {characteristics.map((item, index) => (
                     <div
                         key={`${item.title}-${index}`}
-                        className="group relative flex flex-col rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/60 p-5 shadow-xs transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-[#1F5A4A]/35 hover:bg-[#F8F1E8] hover:shadow-[0_12px_28px_rgba(47,35,25,0.08)]"
+                        className="group relative flex flex-col rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] p-4.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#FF5C35]/50 hover:bg-white hover:shadow-sm"
                     >
                         <div className="mb-3 flex items-center justify-between">
-                            <div className="grid h-8 w-8 place-items-center rounded-xl border border-[#E7D8C8] bg-white shadow-xs transition-transform duration-200 group-hover:scale-105 group-hover:border-[#1F5A4A]/30">
+                            <div className="grid h-8 w-8 place-items-center rounded-xl border border-[#EBE5DC] bg-white shadow-xs">
                                 {getCharacteristicIcon(item.title, item.description)}
                             </div>
-                            <span className="rounded-full bg-[#C8784A]/10 px-2.5 py-0.5 font-mono text-xs font-bold text-[#C8784A]">
+                            <span className="rounded-full bg-[#FFECE5] px-2.5 py-0.5 font-sans text-xs font-bold text-[#FF5C35]">
                                 {String(index + 1).padStart(2, "0")}
                             </span>
                         </div>
 
                         {item.title ? (
-                            <h3 className="font-serif text-base font-bold leading-snug text-[#201813] transition-colors group-hover:text-[#1F5A4A]">
+                            <h3 className="font-sans text-base font-bold leading-snug text-[#19120D] transition-colors group-hover:text-[#FF5C35]">
                                 {item.title}
                             </h3>
                         ) : null}
 
                         {item.description ? (
-                            <p className="mt-2 text-xs font-medium leading-relaxed text-[#756A60] sm:text-sm">
+                            <p className="mt-2 text-xs font-medium leading-relaxed text-[#756A63] sm:text-sm">
                                 {item.description}
                             </p>
                         ) : null}
@@ -659,16 +636,16 @@ function CharacteristicsSection({
 
 function DescriptionSection({ description }: { description: string }) {
     return (
-        <section className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-xs sm:p-7">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#756A63]">
                 Deskripsi
             </p>
 
-            <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+            <h2 className="mt-1 font-sans text-xl font-extrabold text-[#19120D] sm:text-2xl">
                 Tentang Tempat Ini
             </h2>
 
-            <div className="mt-4 whitespace-pre-line text-sm font-medium leading-7 text-[#5C534B] sm:text-base sm:leading-8">
+            <div className="mt-4 whitespace-pre-line text-sm font-normal leading-relaxed text-[#756A63] sm:text-base">
                 {description}
             </div>
         </section>
@@ -683,30 +660,30 @@ function GallerySection({
     placeName: string;
 }) {
     return (
-        <section className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
+        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-xs sm:p-7">
             <div className="mb-4 flex items-center justify-between">
                 <div>
-                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#756A63]">
                         Dokumentasi
                     </p>
 
-                    <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
-                        Foto & Suasana Tempat
+                    <h2 className="mt-1 font-sans text-xl font-extrabold text-[#19120D] sm:text-2xl">
+                        Foto &amp; Suasana Tempat
                     </h2>
                 </div>
 
-                <span className="rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-1 text-xs font-bold text-[#756A60]">
+                <span className="rounded-full bg-[#FAF6F0] px-3 py-1 text-xs font-bold text-[#19120D]">
                     {images.length} Foto
                 </span>
             </div>
 
-            <div className="grid gap-3.5 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
                 {images.slice(0, 6).map((photo, index) => (
                     <figure
                         key={photo.id || `${photo.image_url}-${index}`}
-                        className="group overflow-hidden rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]"
+                        className="group overflow-hidden rounded-2xl border border-[#EBE5DC] bg-[#FAF6F0]"
                     >
-                        <div className="relative h-60 w-full overflow-hidden bg-[#E3DED4]">
+                        <div className="relative h-60 w-full overflow-hidden bg-[#EAE4DC]">
                             <Image
                                 src={getSafePlaceImageUrl(photo.image_url)}
                                 alt={photo.caption || `${placeName} ${index + 1}`}
@@ -717,7 +694,7 @@ function GallerySection({
                         </div>
 
                         {photo.caption ? (
-                            <figcaption className="px-4 py-2.5 text-xs font-medium text-[#756A60]">
+                            <figcaption className="px-4 py-2.5 text-xs font-medium text-[#756A63]">
                                 {photo.caption}
                             </figcaption>
                         ) : null}
@@ -734,27 +711,27 @@ function TagGroupsSection({
     groupedTags: [string, Tag[]][];
 }) {
     return (
-        <section className="rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_16px_50px_rgba(47,35,25,0.05)] sm:p-7">
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
-                Kelengkapan & Vibes
+        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-xs sm:p-7">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#756A63]">
+                Kelengkapan &amp; Vibes
             </p>
 
-            <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
-                Fasilitas, Suasana, & Aktivitas
+            <h2 className="mt-1 font-sans text-xl font-extrabold text-[#19120D] sm:text-2xl">
+                Fasilitas, Suasana, &amp; Aktivitas
             </h2>
 
             <div className="mt-5 grid gap-4">
                 {groupedTags.map(([type, tags]) => (
                     <div
                         key={type}
-                        className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/60 p-4.5"
+                        className="rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] p-4.5"
                     >
                         <div className="mb-3">
-                            <h3 className="font-serif text-base font-bold text-[#201813]">
+                            <h3 className="font-sans text-base font-bold text-[#19120D]">
                                 {getTagGroupLabel(type)}
                             </h3>
 
-                            <p className="mt-1 text-xs font-medium leading-5 text-[#756A60]">
+                            <p className="mt-1 text-xs leading-5 text-[#756A63]">
                                 {getTagGroupDescription(type)}
                             </p>
                         </div>
@@ -764,7 +741,7 @@ function TagGroupsSection({
                                 <Link
                                     key={tag.id}
                                     href={`/places?category=coffee-shop&tags=${tag.slug}`}
-                                    className="rounded-full border border-[#E7D8C8] bg-white px-3.5 py-1.5 text-xs font-bold text-[#4B4038] shadow-sm transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
+                                    className="rounded-lg border border-[#EBE5DC] bg-white px-3 py-1.5 text-xs font-semibold text-[#19120D] shadow-xs transition hover:border-[#FF5C35] hover:bg-[#FF5C35] hover:text-white"
                                 >
                                     {tag.name}
                                 </Link>
@@ -787,15 +764,15 @@ function PlaceSidebar({
     whatsappShareUrl: string;
 }) {
     return (
-        <aside className="h-fit rounded-[30px] border border-[#E7D8C8] bg-[#FFFDF8] p-6 shadow-[0_20px_60px_rgba(47,35,25,0.07)] lg:sticky lg:top-24">
+        <aside className="h-fit rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-xs lg:sticky lg:top-24">
             <div className="flex items-center gap-2">
-                <Coffee className="h-4 w-4 text-[#C8784A]" />
-                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
+                <Coffee className="h-4 w-4 text-[#FF5C35]" />
+                <p className="text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
                     Informasi Tempat
                 </p>
             </div>
 
-            <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-[#201813]">
+            <h2 className="mt-1 font-sans text-xl font-extrabold text-[#19120D]">
                 Quick Info
             </h2>
 
@@ -825,7 +802,7 @@ function PlaceSidebar({
                             city: place.city,
                             category: category?.slug ?? null,
                         }}
-                        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1F5A4A] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#164337]"
+                        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#FF5C35] px-5 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#D8431F]"
                     >
                         <MapPin className="h-4 w-4" />
                         Buka di Google Maps
@@ -845,7 +822,7 @@ function PlaceSidebar({
                             city: place.city,
                             category: category?.slug ?? null,
                         }}
-                        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#E7D8C8] bg-white px-5 py-3 text-sm font-bold text-[#201813] transition hover:bg-[#201813] hover:text-white"
+                        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#EBE5DC] bg-white px-5 py-2.5 text-xs font-bold text-[#19120D] transition hover:bg-[#19120D] hover:text-white"
                     >
                         <InstagramIcon className="h-4 w-4" />
                         Lihat Instagram
@@ -856,7 +833,7 @@ function PlaceSidebar({
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-5 py-3 text-sm font-bold text-[#201813] transition hover:bg-[#201813] hover:text-white"
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] px-5 py-2.5 text-xs font-bold text-[#19120D] transition hover:bg-[#19120D] hover:text-white"
                 >
                     <Share2 className="h-4 w-4" />
                     Share ke WhatsApp
@@ -864,17 +841,17 @@ function PlaceSidebar({
             </div>
 
             {/* Owner Claim Listing Card */}
-            <div className="mt-8 overflow-hidden rounded-[24px] border border-[#E7D8C8] bg-gradient-to-br from-[#FFFDF8] via-white to-[#F8F1E8] p-5 shadow-sm">
+            <div className="mt-8 overflow-hidden rounded-2xl border border-[#EBE5DC] bg-[#FAF6F0] p-5 shadow-xs">
                 <div className="flex items-start gap-3">
-                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-[#1F5A4A]/10 text-xl text-[#1F5A4A]">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#FFECE5] text-xl text-[#FF5C35]">
                         💼
                     </span>
                     <div>
-                        <h4 className="font-serif text-sm font-bold text-[#201813]">
+                        <h4 className="font-sans text-sm font-bold text-[#19120D]">
                             Pemilik atau Pengelola {place.name}?
                         </h4>
-                        <p className="mt-1 text-xs leading-relaxed text-[#756A60]">
-                            Klaim tempat ini untuk verifikasi profil resmi, perbarui info jam buka & fasilitas, atau diskusikan kerja sama promo di Saranwak.
+                        <p className="mt-1 text-xs leading-relaxed text-[#756A63]">
+                            Klaim tempat ini untuk verifikasi profil resmi, perbarui info jam buka &amp; fasilitas, atau diskusikan kerja sama promo di Saranwak.
                         </p>
                     </div>
                 </div>
@@ -883,7 +860,7 @@ function PlaceSidebar({
                     href={makeOwnerClaimWhatsappUrl(place.name)}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1F5A4A] py-3 text-xs font-black text-white shadow-sm transition hover:bg-[#164337] active:scale-[0.98]"
+                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#FF5C35] py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#D8431F] active:scale-[0.98]"
                 >
                     <span>Klaim / Perbarui Tempat Ini</span>
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -905,8 +882,8 @@ function InfoItem({
     children?: React.ReactNode;
 }) {
     return (
-        <div className="flex items-start gap-3 rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/60 p-3.5">
-            <div className="mt-0.5 text-[#C8784A]">
+        <div className="flex items-start gap-3 rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] p-3.5">
+            <div className="mt-0.5 text-[#FF5C35]">
                 {icon === "tag" ? <Coffee className="h-4 w-4" /> : null}
                 {icon === "map" ? <MapPin className="h-4 w-4" /> : null}
                 {icon === "wallet" ? <Coins className="h-4 w-4" /> : null}
@@ -914,10 +891,10 @@ function InfoItem({
                 {icon === "pin" ? <MapPin className="h-4 w-4" /> : null}
             </div>
             <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#9B8C7C]">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#756A63]">
                     {label}
                 </p>
-                <p className="mt-0.5 text-xs font-bold leading-5 text-[#201813] sm:text-sm">
+                <p className="mt-0.5 font-sans text-xs font-bold leading-5 text-[#19120D] sm:text-sm">
                     {value}
                 </p>
                 {children}
@@ -928,27 +905,31 @@ function InfoItem({
 
 function RelatedPlacesSection({ places }: { places: Place[] }) {
     return (
-        <section className="mt-12 border-t border-[#E7D8C8] pt-10">
-            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <section className="mt-14 border-t border-[#EBE5DC] pt-10">
+            <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
-                        Rekomendasi Lain
-                    </p>
+                    <div className="flex items-center gap-2 mb-1.5">
+                        <span className="text-xs font-black uppercase tracking-wider text-[#FF5C35]">
+                            Rekomendasi Lain
+                        </span>
+                        <span>☕</span>
+                    </div>
 
-                    <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
+                    <h2 className="font-sans text-2xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl">
                         Tempat Serupa di Padang
                     </h2>
 
-                    <p className="mt-1.5 text-xs font-medium text-[#756A60] sm:text-sm">
+                    <p className="mt-1 text-xs text-[#756A63] sm:text-sm">
                         Pilihan coffee shop lain di sekitar area atau dengan suasana serupa.
                     </p>
                 </div>
 
                 <Link
                     href="/places?category=coffee-shop"
-                    className="inline-flex items-center gap-1.5 rounded-full border border-[#E7D8C8] bg-[#FFFDF8] px-4 py-2 text-xs font-bold text-[#1F5A4A] shadow-sm transition hover:bg-[#1F5A4A] hover:text-white"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#FF5C35] transition-colors hover:text-[#D8431F] sm:text-sm"
                 >
-                    Lihat Semua Tempat
+                    <span>Lihat Semua Tempat</span>
+                    <ArrowRight className="h-4 w-4" />
                 </Link>
             </div>
 
@@ -1006,7 +987,7 @@ function MobileStickyActions({
     categorySlug?: string | null;
 }) {
     return (
-        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[#E7D8C8] bg-[#FFFDF8]/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-16px_40px_rgba(32,24,19,0.14)] backdrop-blur-md md:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[#EBE5DC] bg-white/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-16px_40px_rgba(25,18,13,0.14)] backdrop-blur-md md:hidden">
             <div className="mx-auto flex max-w-md items-center gap-2">
                 {mapsUrl ? (
                     <TrackedExternalLink
@@ -1021,13 +1002,13 @@ function MobileStickyActions({
                             city,
                             category: categorySlug ?? null,
                         }}
-                        className="flex-1 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1F5A4A] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all duration-150 active:scale-95"
+                        className="flex-1 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#FF5C35] hover:bg-[#D8431F] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all duration-150 active:scale-95"
                     >
                         <MapPin className="h-4 w-4 shrink-0" />
                         <span>Petunjuk Arah</span>
                     </TrackedExternalLink>
                 ) : (
-                    <span className="flex-1 inline-flex min-h-12 items-center justify-center rounded-full bg-[#E7D8C8] px-4 py-2.5 text-xs font-bold text-[#756A60]">
+                    <span className="flex-1 inline-flex min-h-12 items-center justify-center rounded-full bg-[#FAF6F0] px-4 py-2.5 text-xs font-bold text-[#756A63]">
                         Maps Belum Tersedia
                     </span>
                 )}
