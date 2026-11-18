@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Bookmark } from "lucide-react";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import { useSavedPlaces, savePlaceToStorage } from "@/lib/saved-places";
@@ -13,6 +14,7 @@ type FeaturedPlacesSectionProps = {
 };
 
 export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
+    const router = useRouter();
     const { isPlaceSaved } = useSavedPlaces();
 
     if (!places || places.length === 0) {
@@ -51,10 +53,10 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                 </Link>
             </div>
 
-            {/* 4 Tall Vertical Cards with Overlay Info */}
+            {/* 4 Tall Vertical Cards with Overlay Info - Aligned with Stitch dec9997f853d48fb839362e5da60ed89 */}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {displayPlaces.map((place) => {
-                    const imageUrl = getSafePlaceImageUrl(place.image_url);
+                    const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
                     const district = getDistrictName(place);
                     const subtitle = getVibeSubtitle(place);
                     const priceLabel = getDisplayPrice(place);
@@ -63,9 +65,10 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                     return (
                         <article
                             key={place.id}
-                            className="group relative flex h-96 cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#19120D] p-5 text-white shadow-md transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[#FF5C35]/50 hover:shadow-2xl"
+                            onClick={() => router.push(`/places/${place.slug}`)}
+                            className="group relative flex h-96 cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#19120D] p-5 text-white shadow-bento transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[#FF5C35]/50 hover:shadow-2xl active:scale-[0.99]"
                         >
-                            {/* Full Card Clickable Link */}
+                            {/* Accessible Link overlay for crawlers & keyboard navigation */}
                             <Link
                                 href={`/places/${place.slug}`}
                                 className="absolute inset-0 z-10"
@@ -154,22 +157,24 @@ function getDistrictName(place: Place): string {
 
 function getVibeSubtitle(place: Place): string {
     if (place.short_description) {
-        return place.short_description.slice(0, 34);
+        return place.short_description.slice(0, 36);
     }
-    return "Co-Working & WFC Santai";
+    if (place.description) {
+        return place.description.slice(0, 36);
+    }
+    return "Co-Working & WFC Tenang";
 }
 
 function getDisplayPrice(place: Place): string {
     if (place.price_range) {
-        if (place.price_range.includes("15k") || place.price_range.includes("18k")) {
-            return "Rp 18k";
+        const match = place.price_range.match(/Rp?\s*(\d+)k/i);
+        if (match && match[1]) {
+            return `Rp ${match[1]}k`;
         }
-        if (place.price_range.includes("20k") || place.price_range.includes("22k")) {
-            return "Rp 22k";
-        }
-        if (place.price_range.includes("25k")) {
-            return "Rp 25k";
-        }
+        return place.price_range.split("-")[0].trim();
+    }
+    if (place.price_min) {
+        return `Rp ${Math.round(place.price_min / 1000)}k`;
     }
     return "Rp 20k";
 }

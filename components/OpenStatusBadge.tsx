@@ -85,50 +85,60 @@ export function OpenStatusBadge({
         );
     }
 
-    // Mode Compact (Untuk Kartu Tempat)
+    // Mode Compact (Untuk Kartu Tempat ala Stitch dec9997f853d48fb839362e5da60ed89)
     if (status.variant === "24hours") {
         return (
             <span
                 className={[
-                    "inline-flex items-center gap-1.5 rounded-full border border-amber-400/40 bg-amber-950/85 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider text-amber-200 shadow-sm backdrop-blur-md",
+                    "inline-flex items-center gap-1.5 rounded-full border border-amber-400/30 bg-black/40 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-md shadow-sm",
                     className,
                 ].join(" ")}
             >
-                <span className="relative flex h-1.5 w-1.5">
+                <span className="relative flex h-2 w-2">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-amber-400" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400" />
                 </span>
-                <span>24 Jam</span>
+                <span>24 Jam Non-Stop</span>
             </span>
         );
     }
 
     if (status.isOpen) {
+        const closeText = status.detailLabel.startsWith("Tutup pukul ")
+            ? `Hingga ${status.detailLabel.replace("Tutup pukul ", "")}`
+            : status.detailLabel;
+
         return (
             <span
                 className={[
-                    "inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-950/85 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider text-emerald-300 shadow-sm backdrop-blur-md",
+                    "inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-md shadow-sm",
                     className,
                 ].join(" ")}
             >
-                <span className="relative flex h-1.5 w-1.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#10B981] opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-[#10B981]" />
                 </span>
-                <span>Buka</span>
+                <span>Buka • {closeText}</span>
             </span>
         );
     }
 
+    const openNextText = status.detailLabel.startsWith("Buka pukul ")
+        ? `Buka ${status.detailLabel.replace("Buka pukul ", "")}`
+        : status.detailLabel.startsWith("Buka esok pukul ")
+        ? `Esok ${status.detailLabel.replace("Buka esok pukul ", "")}`
+        : "Tutup";
+
     return (
         <span
             className={[
-                "inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/75 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-neutral-300 shadow-sm backdrop-blur-md",
+                "inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[11px] font-semibold text-white/80 backdrop-blur-md shadow-sm",
                 className,
             ].join(" ")}
         >
-            <span className="h-1.5 w-1.5 rounded-full bg-neutral-400" />
-            <span>Tutup</span>
+            <span className="h-2 w-2 rounded-full bg-[#80756F]" />
+            <span>Tutup • {openNextText}</span>
         </span>
     );
 }

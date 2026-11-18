@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Bookmark, Star } from "lucide-react";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
@@ -16,6 +17,7 @@ type PlaceCardProps = {
 };
 
 export function PlaceCard({ place, userDistance }: PlaceCardProps) {
+    const router = useRouter();
     const { isPlaceSaved } = useSavedPlaces();
     const isSaved = isPlaceSaved(place.slug);
     const detailHref = `/places/${place.slug}`;
@@ -25,7 +27,10 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
     const priceText = getDisplayPrice(place);
 
     return (
-        <article className="group relative flex h-[390px] cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#19120D] p-5 text-white shadow-bento transition-all duration-300 hover:-translate-y-1.5 hover:border-[#FF5C35]/50 hover:shadow-2xl">
+        <article
+            onClick={() => router.push(detailHref)}
+            className="group relative flex h-[390px] cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#19120D] p-5 text-white shadow-bento transition-all duration-300 hover:-translate-y-1.5 hover:border-[#FF5C35]/50 hover:shadow-2xl active:scale-[0.99]"
+        >
             {/* Full Card Clickable Link */}
             <Link
                 href={detailHref}
