@@ -24,6 +24,7 @@ import {
     formatDistance,
     getPlaceCoordinates,
 } from "@/lib/place-coordinates";
+import { getPlaceOpenStatus } from "@/lib/opening-hours";
 import "leaflet/dist/leaflet.css";
 
 interface PlacesMapViewProps {
@@ -347,6 +348,7 @@ export function PlacesMapView({
                             const isSelected = selectedPlace?.id === place.id;
                             const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
                             const priceText = place.price_range || "Mulai Rp 18k";
+                            const openStatus = getPlaceOpenStatus(place.opening_hours);
 
                             return (
                                 <article
@@ -374,9 +376,25 @@ export function PlacesMapView({
                                         <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5">
                                             <div>
                                                 <div className="mb-0.5 flex items-center gap-1.5">
-                                                    <span className="h-2 w-2 rounded-full bg-[#10B981]" />
-                                                    <span className="text-[10px] font-semibold text-[#756A63]">
-                                                        {place.opening_hours || "Buka Setiap Hari"}
+                                                    <span
+                                                        className={`h-2 w-2 rounded-full ${
+                                                            openStatus.variant === "24hours"
+                                                                ? "bg-amber-500 animate-pulse"
+                                                                : openStatus.isOpen
+                                                                ? "bg-[#10B981] animate-pulse"
+                                                                : "bg-[#A39B95]"
+                                                        }`}
+                                                    />
+                                                    <span
+                                                        className={`text-[10px] font-semibold ${
+                                                            openStatus.isOpen ? "text-[#10B981]" : "text-[#756A63]"
+                                                        }`}
+                                                    >
+                                                        {openStatus.isOpen
+                                                            ? openStatus.is24Hours
+                                                                ? "Buka 24 Jam"
+                                                                : `Buka • ${openStatus.detailLabel}`
+                                                            : `Tutup • ${openStatus.detailLabel}`}
                                                     </span>
                                                 </div>
                                                 <h3 className="truncate font-sans text-sm font-bold text-[#19120D] transition-colors group-hover:text-[#FF5C35] sm:text-base">

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Bookmark } from "lucide-react";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import { useSavedPlaces, savePlaceToStorage } from "@/lib/saved-places";
+import { OpenStatusBadge } from "@/components/OpenStatusBadge";
 import type { Place } from "@/types/database";
 
 type FeaturedPlacesSectionProps = {
@@ -85,10 +86,7 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
 
                             {/* Top Badges */}
                             <div className="pointer-events-none relative z-20 flex items-center justify-between">
-                                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
-                                    <span className="h-2 w-2 animate-ping rounded-full bg-[#10B981]" />
-                                    <span>{getOpeningStatus(place)}</span>
-                                </div>
+                                <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
 
                                 <button
                                     type="button"
@@ -159,16 +157,6 @@ function getVibeSubtitle(place: Place): string {
         return place.short_description.slice(0, 34);
     }
     return "Co-Working & WFC Santai";
-}
-
-function getOpeningStatus(place: Place): string {
-    if (place.opening_hours) {
-        if (place.opening_hours.toLowerCase().includes("24")) {
-            return "24 Jam Nonstop";
-        }
-        return `Buka • ${place.opening_hours.slice(0, 15)}`;
-    }
-    return "Buka • Hingga 23:00";
 }
 
 function getDisplayPrice(place: Place): string {

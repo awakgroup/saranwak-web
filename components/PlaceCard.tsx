@@ -6,7 +6,7 @@ import { Bookmark, Star } from "lucide-react";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import { useSavedPlaces, savePlaceToStorage } from "@/lib/saved-places";
-import { getPlaceOpenStatus } from "@/lib/opening-hours";
+import { OpenStatusBadge } from "@/components/OpenStatusBadge";
 
 type PlaceCardProps = {
     place: Place;
@@ -20,7 +20,6 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
     const isSaved = isPlaceSaved(place.slug);
     const detailHref = `/places/${place.slug}`;
     const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
-    const openStatus = getPlaceOpenStatus(place.opening_hours);
     const district = getPlaceArea(place);
     const subtitle = getPlaceSubtitle(place);
     const priceText = getDisplayPrice(place);
@@ -57,20 +56,7 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
                         </span>
                     ) : null}
 
-                    <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
-                        <span
-                            className={`h-2 w-2 rounded-full ${
-                                openStatus.isOpen
-                                    ? "animate-ping bg-[#10B981]"
-                                    : "bg-[#80756F]"
-                            }`}
-                        />
-                        <span>
-                            {openStatus.isOpen
-                                ? openStatus.statusLabel || "Buka Sekarang"
-                                : "Tutup"}
-                        </span>
-                    </div>
+                    <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
 
                     {place.is_featured ? (
                         <span
