@@ -17,9 +17,14 @@ import {
     LayoutGrid,
     Map as MapIcon,
     Navigation,
+    MapPin,
+    Wallet,
+    ChevronDown,
+    Lightbulb,
 } from "lucide-react";
 import { PlaceCard } from "@/components/PlaceCard";
 import { RandomPlaceModal } from "@/components/RandomPlaceModal";
+import { HomeFeaturePillars } from "@/components/home/HomeFeaturePillars";
 
 const PlacesMapView = dynamic(
     () => import("@/components/PlacesMapView").then((mod) => mod.PlacesMapView),
@@ -350,147 +355,185 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     return (
         <main className="min-h-screen bg-[#F4F1EA] px-3 pb-28 pt-3 text-[#201813] sm:px-6 sm:pb-16 sm:pt-6 lg:px-8 lg:pb-20 lg:pt-8">
             <section className="mx-auto max-w-7xl">
-                {/* Editorial Hero Header with Atmospheric Image */}
-                <div className="relative mb-8 overflow-hidden rounded-[32px] border border-[#E4DDD3] bg-[#1E1916] p-6 text-white shadow-[0_24px_70px_rgba(32,24,19,0.14)] sm:p-8 lg:p-10">
-                    {/* Background Cover Image */}
-                    <div className="absolute inset-0">
+                {/* 1. EDITORIAL HERO SECTION WITH CURVED WARM BACKDROP & EMBEDDED FILTER BAR */}
+                <div className="relative mb-8 flex min-h-[440px] flex-col justify-between overflow-hidden rounded-[2.5rem] border border-[#2A1D15] bg-[#19120D] text-white shadow-2xl lg:min-h-[480px]">
+                    {/* Background Cover Image with Atmospheric Soft Overlay */}
+                    <div className="pointer-events-none absolute inset-0">
                         <Image
                             src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=2000&q=85"
                             alt="Explore coffee shops in Padang"
                             fill
                             priority
                             sizes="(max-width: 1280px) 100vw, 1280px"
-                            className="object-cover object-center brightness-[0.70] contrast-[1.05]"
+                            className="object-cover object-center brightness-[0.65] contrast-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/35" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/30" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#19120D]/95 via-[#19120D]/50 to-transparent" />
                     </div>
 
-                    <div className="relative z-10 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
-                        <div className="max-w-3xl">
-                            <div className="mb-3 h-1 w-12 rounded-full bg-[#C8784A]" />
+                    {/* Ambient Glow */}
+                    <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-gradient-to-br from-[#FF5C35]/30 to-[#FDBA74]/20 blur-3xl" />
 
-                            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#F2C38B] backdrop-blur-md">
-                                <Coffee className="h-3.5 w-3.5 text-[#F2C38B]" />
-                                Padang Coffee Directory
-                            </div>
+                    {/* Hero Content Header */}
+                    <div className="relative z-10 max-w-3xl px-6 pb-4 pt-10 sm:px-12 sm:pt-14 lg:px-16">
+                        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#FDBA74] backdrop-blur-md">
+                            <span className="h-2 w-2 animate-ping rounded-full bg-[#FF5C35]" />
+                            <span>DIREKTORI &amp; EXPLORE KOTA PADANG</span>
+                        </div>
 
-                            <h1 className="mt-4 font-serif text-3xl font-bold leading-[1.05] tracking-[-0.02em] text-white sm:text-5xl lg:text-6xl">
-                                {titlePrefix}
-                                <span className="block font-serif italic text-[#F2C38B]">{titleSuffix}</span>
-                            </h1>
+                        <h1 className="font-sans text-3xl font-extrabold leading-[1.15] tracking-tight text-white sm:text-5xl">
+                            Temukan Sanctuary Ngopi &amp; Nugas di Kota Padang <br />
+                            <span className="font-serif font-normal italic bg-gradient-to-r from-[#FDBA74] via-[#FF8E68] to-[#FF5C35] bg-clip-text text-transparent">
+                                Ngopi Enak, Nugas Tenang
+                            </span>
+                        </h1>
 
-                            <p className="mt-3 max-w-2xl text-sm font-medium leading-relaxed text-white/85 sm:text-base">
-                                {makeDescription(effectiveParams)}
-                            </p>
+                        <p className="mt-3.5 max-w-2xl text-xs font-normal leading-relaxed text-[#D6CECA] sm:text-sm lg:text-base">
+                            Jelajahi {livePlacesData.length}+ coffee shop &amp; ruang kerja terkurasi di penjuru Kota Padang. Temukan atmosfer kondusif, stopkontak terverifikasi, dan racikan kopi berkualitas tanpa zonk.
+                        </p>
+                    </div>
 
-                            {/* Search Form inside Hero */}
+                    {/* Floating Multi-Criteria Search & Filter Bar in Hero Footer */}
+                    <div className="relative z-10 px-5 pb-8 pt-2 sm:px-10 lg:px-14">
+                        <div className="w-full rounded-3xl border border-white/40 bg-white/95 p-3 text-[#19120D] shadow-2xl backdrop-blur-2xl sm:p-4">
                             <form
                                 onSubmit={handleSearchSubmit}
-                                className="relative mt-6 max-w-xl"
+                                className="grid grid-cols-1 items-center gap-3 sm:grid-cols-2 lg:grid-cols-12"
                             >
-                                <div className="relative flex items-center overflow-hidden rounded-full border border-white/20 bg-white/[0.10] shadow-inner backdrop-blur transition duration-200 focus-within:border-[#F2C38B] focus-within:bg-white/[0.16]">
-                                    <Search className="ml-4 h-4 w-4 shrink-0 text-white/50 sm:h-5 sm:w-5" />
-                                    <input
-                                        type="text"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        placeholder="Cari nama cafe, menu, area, vibes..."
-                                        className="w-full bg-transparent px-3 py-3 text-sm font-medium text-white placeholder-white/45 outline-none sm:py-3.5 sm:text-base"
-                                    />
+                                {/* 1. Search Input */}
+                                <div className="flex items-center gap-2.5 rounded-2xl border border-[#EBE5DC] bg-[#F8F5F0] p-3 transition-all hover:border-[#FF5C35]/40 lg:col-span-3">
+                                    <Search className="h-5 w-5 shrink-0 text-[#FF5C35]" />
+                                    <div className="flex w-full flex-col">
+                                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#756A63]">
+                                            Pencarian
+                                        </span>
+                                        <input
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            placeholder="Cari kafe, jalan, vibes..."
+                                            className="w-full border-none bg-transparent p-0 text-xs font-bold text-[#19120D] outline-none placeholder:text-[#756A63]/60 focus:ring-0 sm:text-sm"
+                                        />
+                                    </div>
                                     {searchQuery ? (
                                         <button
                                             type="button"
                                             onClick={handleClearSearch}
-                                            aria-label="Hapus kata kunci pencarian"
-                                            className="mr-2 grid h-7 w-7 place-items-center rounded-full bg-white/15 text-white/80 transition hover:bg-white/25 hover:text-white"
+                                            className="text-[#756A63] hover:text-[#19120D]"
                                         >
                                             <X className="h-3.5 w-3.5" />
                                         </button>
                                     ) : null}
+                                </div>
+
+                                {/* 2. Area / Lokasi Dropdown */}
+                                <div className="flex items-center gap-2.5 rounded-2xl border border-[#EBE5DC] bg-[#F8F5F0] p-3 transition-all hover:border-[#FF5C35]/40 lg:col-span-3">
+                                    <MapPin className="h-5 w-5 shrink-0 text-[#FF5C35]" />
+                                    <div className="flex w-full flex-col">
+                                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#756A63]">
+                                            Area / Lokasi
+                                        </span>
+                                        <div className="relative">
+                                            <select
+                                                value={effectiveParams.area || ""}
+                                                onChange={(e) => {
+                                                    const newHref = buildFilterHref(effectiveParams, {
+                                                        area: e.target.value || undefined,
+                                                    });
+                                                    router.push(newHref);
+                                                }}
+                                                className="w-full cursor-pointer appearance-none border-none bg-transparent p-0 pr-5 text-xs font-bold text-[#19120D] outline-none focus:ring-0 sm:text-sm"
+                                            >
+                                                <option value="">Semua Wilayah</option>
+                                                <option value="Padang Barat">Padang Barat</option>
+                                                <option value="Padang Timur">Padang Timur</option>
+                                                <option value="Padang Selatan">Padang Selatan</option>
+                                                <option value="Padang Utara">Padang Utara</option>
+                                                <option value="Koto Tangah">Koto Tangah / Kuranji</option>
+                                            </select>
+                                            <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#756A63]" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 3. Suasana / Vibe Dropdown */}
+                                <div className="flex items-center gap-2.5 rounded-2xl border border-[#EBE5DC] bg-[#F8F5F0] p-3 transition-all hover:border-[#FF5C35]/40 lg:col-span-2">
+                                    <SlidersHorizontal className="h-5 w-5 shrink-0 text-[#FF5C35]" />
+                                    <div className="flex w-full flex-col">
+                                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#756A63]">
+                                            Suasana
+                                        </span>
+                                        <div className="relative">
+                                            <select
+                                                value={selectedTags[0] || ""}
+                                                onChange={(e) => {
+                                                    const tagVal = e.target.value;
+                                                    const newHref = tagVal
+                                                        ? buildFilterHref(effectiveParams, { tags: tagVal })
+                                                        : buildFilterHref(effectiveParams, { tags: undefined });
+                                                    router.push(newHref);
+                                                }}
+                                                className="w-full cursor-pointer appearance-none border-none bg-transparent p-0 pr-5 text-xs font-bold text-[#19120D] outline-none focus:ring-0 sm:text-sm"
+                                            >
+                                                <option value="">Semua Vibe</option>
+                                                <option value="wfc">Tenang &amp; Nugas (WFC)</option>
+                                                <option value="nongkrong">Nongkrong Santai</option>
+                                                <option value="nge-date">Aesthetic &amp; Date</option>
+                                                <option value="outdoor">Outdoor Asri</option>
+                                                <option value="tenang">Tenang / Me-time</option>
+                                            </select>
+                                            <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#756A63]" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 4. Budget Dropdown */}
+                                <div className="flex items-center gap-2.5 rounded-2xl border border-[#EBE5DC] bg-[#F8F5F0] p-3 transition-all hover:border-[#FF5C35]/40 lg:col-span-2">
+                                    <Wallet className="h-5 w-5 shrink-0 text-[#FF5C35]" />
+                                    <div className="flex w-full flex-col">
+                                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#756A63]">
+                                            Budget
+                                        </span>
+                                        <div className="relative">
+                                            <select
+                                                value={selectedPrice}
+                                                onChange={(e) => {
+                                                    const priceVal = e.target.value as PriceFilterValue;
+                                                    const newHref = buildFilterHref(effectiveParams, {
+                                                        price: priceVal,
+                                                    });
+                                                    router.push(newHref);
+                                                }}
+                                                className="w-full cursor-pointer appearance-none border-none bg-transparent p-0 pr-5 text-xs font-bold text-[#19120D] outline-none focus:ring-0 sm:text-sm"
+                                            >
+                                                <option value="all">Semua Harga</option>
+                                                <option value="under-20k">&lt; Rp 20k (Hemat)</option>
+                                                <option value="20k-40k">Rp 20k – 40k (Mid)</option>
+                                                <option value="above-40k">&gt; Rp 40k (Specialty)</option>
+                                            </select>
+                                            <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#756A63]" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 5. Action Button */}
+                                <div className="flex h-full items-center lg:col-span-2">
                                     <button
                                         type="submit"
-                                        className="mr-1.5 shrink-0 rounded-full bg-[#C8784A] px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[#B5673B] sm:px-5 sm:py-2.5 sm:text-sm"
+                                        className="flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#19120D] text-xs font-bold text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-[#FF5C35] hover:shadow-lg active:scale-95 sm:h-12 sm:text-sm"
                                     >
-                                        Cari
+                                        <Search className="h-4 w-4" />
+                                        <span>Cari Spot</span>
                                     </button>
                                 </div>
                             </form>
-
-                            {/* Quick Mood / Filter Shortcuts */}
-                            <div className="mt-4 flex flex-wrap items-center gap-2 sm:mt-5">
-                                <span className="text-[11px] font-bold uppercase tracking-wider text-white/45">
-                                    Pilihan Cepat:
-                                </span>
-                                {quickMoodOptions.map((mood) => {
-                                    const isSelected = mood.tag
-                                        ? selectedTags.includes(normalizeSlug(mood.tag))
-                                        : selectedPrice === mood.price;
-                                    const href = mood.tag
-                                        ? buildTagHref(effectiveParams, mood.tag)
-                                        : buildFilterHref(effectiveParams, {
-                                            price: isSelected ? "all" : (mood.price as PriceFilterValue),
-                                        });
-
-                                    return (
-                                        <Link
-                                            key={mood.label}
-                                            href={href}
-                                            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 ${isSelected
-                                                    ? "border border-[#F2C38B] bg-[#F2C38B] text-[#201813] shadow-sm"
-                                                    : "border border-white/20 bg-white/[0.08] text-white/85 backdrop-blur hover:border-white/40 hover:bg-white/15 hover:text-white"
-                                                }`}
-                                        >
-                                            {mood.label}
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* Stats pill counter */}
-                        <div className="flex flex-wrap items-center gap-3 lg:flex-col lg:items-end">
-                            <div className="flex gap-2.5">
-                                <div className="rounded-2xl border border-white/12 bg-white/[0.08] px-4 py-3 text-center backdrop-blur sm:min-w-[100px]">
-                                    <p className="font-serif text-2xl font-bold leading-none text-[#F2C38B] sm:text-3xl">
-                                        {places.length}
-                                    </p>
-                                    <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50">
-                                        Tempat
-                                    </p>
-                                </div>
-
-                                <div className="rounded-2xl border border-white/12 bg-white/[0.08] px-4 py-3 text-center backdrop-blur sm:min-w-[100px]">
-                                    <p className="font-serif text-2xl font-bold leading-none text-white sm:text-3xl">
-                                        {activeFilterCount}
-                                    </p>
-                                    <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-white/50">
-                                        Filter Aktif
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                {hasFilter ? (
-                                    <Link
-                                        href="/places/?category=coffee-shop"
-                                        onClick={handleClearSearch}
-                                        className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-bold text-[#201813] transition hover:bg-[#F2C38B]"
-                                    >
-                                        <RotateCcw className="h-3.5 w-3.5" />
-                                        Reset Filter
-                                    </Link>
-                                ) : null}
-
-                                <Link
-                                    href="/"
-                                    className="inline-flex items-center rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-xs font-bold text-white transition hover:bg-white hover:text-[#201813]"
-                                >
-                                    Home
-                                </Link>
-                            </div>
                         </div>
                     </div>
+                </div>
+
+                {/* 2. Feature Highlights Bar (4 Pilar ala Stitch) */}
+                <div className="mb-10">
+                    <HomeFeaturePillars />
                 </div>
 
                 {/* Main Content: Sidebar + Places Grid */}
@@ -531,22 +574,27 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                         </details>
 
                         {/* Desktop Sticky Filter Card */}
-                        <div className="hidden rounded-[28px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-[0_16px_45px_rgba(47,35,25,0.06)] lg:block">
-                            <div className="mb-5 flex items-center justify-between border-b border-[#E7D8C8] pb-4">
+                        <div className="hidden rounded-3xl border border-[#EBE5DC] bg-white p-6 shadow-bento lg:block">
+                            <div className="mb-5 flex items-center justify-between border-b border-[#EBE5DC] pb-4">
                                 <div className="flex items-center gap-2">
-                                    <SlidersHorizontal className="h-4 w-4 text-[#C8784A]" />
-                                    <h2 className="font-serif text-lg font-bold text-[#201813]">
-                                        Filter Pilihan
+                                    <SlidersHorizontal className="h-4 w-4 text-[#FF5C35]" />
+                                    <h2 className="font-sans text-base font-extrabold text-[#19120D]">
+                                        Filter Kurasi
                                     </h2>
+                                    {activeFilterCount > 0 && (
+                                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FFECE5] text-[11px] font-extrabold text-[#D8431F]">
+                                            {activeFilterCount}
+                                        </span>
+                                    )}
                                 </div>
 
                                 {hasFilter ? (
                                     <Link
                                         href="/places/?category=coffee-shop"
                                         onClick={handleClearSearch}
-                                        className="text-xs font-bold text-[#1F5A4A] transition hover:underline"
+                                        className="text-xs font-bold text-[#FF5C35] transition hover:text-[#D8431F]"
                                     >
-                                        Reset
+                                        Reset Semua
                                     </Link>
                                 ) : null}
                             </div>
@@ -574,13 +622,17 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                         {/* Results Count Header */}
                         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                             <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
-                                    Koleksi Terverifikasi
+                                <div className="flex items-center gap-2.5">
+                                    <h2 className="font-sans text-xl font-extrabold tracking-tight text-[#19120D] sm:text-2xl">
+                                        Daftar Tempat Kopi Terkurasi
+                                    </h2>
+                                    <span className="rounded-full bg-[#FFECE5] px-2.5 py-0.5 text-xs font-bold text-[#D8431F]">
+                                        {places.length} Ditampilkan
+                                    </span>
+                                </div>
+                                <p className="mt-0.5 text-xs text-[#756A63]">
+                                    Menampilkan {places.length} dari {livePlacesData.length} Spot Terkurasi di Kota Padang
                                 </p>
-
-                                <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-[#201813] sm:text-3xl">
-                                    {places.length} Coffee Shop Pilihan
-                                </h2>
                             </div>
 
                             <div className="flex flex-wrap items-center gap-2.5">
@@ -594,10 +646,10 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                             ? "Matikan urutan terdekat"
                                             : "Urutkan cafe terdekat dari lokasimu"
                                     }
-                                    className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-black shadow-sm transition active:scale-95 ${
+                                    className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-bold shadow-sm transition active:scale-95 ${
                                         isNearbyActive
-                                            ? "border-[#1F5A4A] bg-[#1F5A4A] text-white hover:bg-[#184639]"
-                                            : "border-[#1F5A4A]/30 bg-[#F0F8F5] text-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
+                                            ? "border-[#19120D] bg-[#19120D] text-white hover:bg-[#FF5C35]"
+                                            : "border-[#EBE5DC] bg-white text-[#19120D] hover:border-[#FF5C35] hover:text-[#FF5C35]"
                                     }`}
                                 >
                                     <Navigation
@@ -605,8 +657,8 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                             isLocating
                                                 ? "animate-spin"
                                                 : isNearbyActive
-                                                ? "text-[#F3C48E]"
-                                                : ""
+                                                ? "text-[#FDBA74]"
+                                                : "text-[#FF5C35]"
                                         }`}
                                     />
                                     <span>
@@ -614,19 +666,19 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                             ? "Mencari Lokasi..."
                                             : isNearbyActive
                                             ? "Terdekat Aktif"
-                                            : "📍 Terdekat"}
+                                            : "📍 Terdekat (GPS)"}
                                     </span>
                                 </button>
 
                                 {/* Toggle View Mode */}
-                                <div className="inline-flex rounded-full border border-[#E7D8C8] bg-white p-1 shadow-sm">
+                                <div className="inline-flex rounded-full border border-[#EBE5DC] bg-white p-1 shadow-xs">
                                     <button
                                         type="button"
                                         onClick={() => setViewMode("grid")}
                                         className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition duration-200 ${
                                             viewMode === "grid"
-                                                ? "bg-[#201813] text-white shadow-sm"
-                                                : "text-[#756A60] hover:text-[#201813] hover:bg-[#F8F1E8]"
+                                                ? "bg-[#19120D] text-white shadow-sm"
+                                                : "text-[#756A63] hover:text-[#19120D] hover:bg-[#FAF7F2]"
                                         }`}
                                     >
                                         <LayoutGrid className="h-3.5 w-3.5" />
@@ -637,8 +689,8 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                         onClick={() => setViewMode("map")}
                                         className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition duration-200 ${
                                             viewMode === "map"
-                                                ? "bg-[#201813] text-white shadow-sm"
-                                                : "text-[#756A60] hover:text-[#201813] hover:bg-[#F8F1E8]"
+                                                ? "bg-[#19120D] text-white shadow-sm"
+                                                : "text-[#756A63] hover:text-[#19120D] hover:bg-[#FAF7F2]"
                                         }`}
                                     >
                                         <MapIcon className="h-3.5 w-3.5" />
@@ -649,7 +701,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                 <button
                                     type="button"
                                     onClick={() => setIsRandomOpen(true)}
-                                    className="inline-flex items-center gap-1.5 rounded-full border border-[#C8784A]/30 bg-[#FFF8EF] px-4 py-2 text-xs font-black text-[#C8784A] shadow-sm transition hover:bg-[#C8784A] hover:text-white active:scale-95"
+                                    className="inline-flex items-center gap-1.5 rounded-full border border-[#FF5C35]/30 bg-[#FFF8EF] px-4 py-2 text-xs font-bold text-[#FF5C35] shadow-xs transition hover:bg-[#FF5C35] hover:text-white active:scale-95"
                                 >
                                     <Dices className="h-4 w-4" />
                                     <span>Pilihin Acak 🎲</span>
@@ -727,37 +779,45 @@ function FilterContent({
         <div className="space-y-6">
             {/* Status Jam Buka Section */}
             <div>
-                <p className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
-                    Jam Buka
+                <p className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-[#FF5C35]">
+                    Status Operasional
                 </p>
 
-                <Link
-                    href={buildFilterHref(params, {
-                        openNow: isOpenNow ? undefined : "true",
-                    })}
-                    className={`flex items-center justify-between rounded-2xl border px-3.5 py-2.5 text-xs font-bold transition duration-200 ${
-                        isOpenNow
-                            ? "border-emerald-700 bg-emerald-800 text-white shadow-sm"
-                            : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-emerald-600/50 hover:bg-[#F8F1E8]"
-                    }`}
-                >
-                    <span className="flex items-center gap-2">
-                        <span className="relative flex h-2 w-2">
-                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                        </span>
-                        <span>Buka Sekarang Saja</span>
-                    </span>
-                    {isOpenNow ? (
-                        <Check className="h-3.5 w-3.5 shrink-0 text-white" />
-                    ) : null}
-                </Link>
+                <div className="flex flex-wrap gap-2">
+                    <Link
+                        href={buildFilterHref(params, {
+                            openNow: undefined,
+                        })}
+                        className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition duration-150 ${
+                            !isOpenNow
+                                ? "bg-[#19120D] text-white shadow-xs"
+                                : "border border-[#EBE5DC] bg-[#FAF7F2] text-[#19120D] hover:border-[#FF5C35]"
+                        }`}
+                    >
+                        Semua
+                    </Link>
+
+                    <Link
+                        href={buildFilterHref(params, {
+                            openNow: isOpenNow ? undefined : "true",
+                        })}
+                        className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition duration-150 ${
+                            isOpenNow
+                                ? "border border-[#FF5C35] bg-[#FFEAE5] text-[#FF5C35] shadow-xs"
+                                : "border border-[#EBE5DC] bg-[#FAF7F2] text-[#19120D] hover:border-[#FF5C35]"
+                        }`}
+                    >
+                        <span className="h-2 w-2 rounded-full bg-[#10B981]" />
+                        <span>Buka Sekarang</span>
+                        {isOpenNow && <Check className="h-3 w-3 shrink-0 text-[#FF5C35]" />}
+                    </Link>
+                </div>
             </div>
 
             {/* Budget Section */}
-            <div>
-                <p className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
-                    Budget / Harga
+            <div className="border-t border-[#EBE5DC]/80 pt-5">
+                <p className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-[#FF5C35]">
+                    Range Budget
                 </p>
 
                 <div className="grid gap-2">
@@ -770,14 +830,15 @@ function FilterContent({
                                 href={buildFilterHref(params, {
                                     price: option.value,
                                 })}
-                                className={`flex items-center justify-between rounded-2xl border px-3.5 py-2.5 text-xs font-bold transition duration-200 ${active
-                                        ? "border-[#1F5A4A] bg-[#1F5A4A] text-white shadow-sm"
-                                        : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A]/40 hover:bg-[#F8F1E8]"
-                                    }`}
+                                className={`flex items-center justify-between rounded-2xl border px-3.5 py-2.5 text-xs font-bold transition duration-200 ${
+                                    active
+                                        ? "border-[#19120D] bg-[#19120D] text-white shadow-sm"
+                                        : "border-[#EBE5DC] bg-white text-[#19120D] hover:border-[#FF5C35]/50 hover:bg-[#FAF7F2]"
+                                }`}
                             >
                                 <span>{option.label}</span>
                                 {active ? (
-                                    <Check className="h-3.5 w-3.5 shrink-0 text-white" />
+                                    <Check className="h-3.5 w-3.5 shrink-0 text-[#FF5C35]" />
                                 ) : null}
                             </Link>
                         );
@@ -787,12 +848,17 @@ function FilterContent({
 
             {/* Filter Groups (Aktivitas, Fasilitas, Vibes) */}
             {placeFilterGroups.map((group) => (
-                <div key={group.title}>
-                    <p className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-[#C8784A]">
-                        {group.title}
-                    </p>
+                <div key={group.title} className="border-t border-[#EBE5DC]/80 pt-5">
+                    <div className="mb-3 flex items-center justify-between">
+                        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#FF5C35]">
+                            {group.title}
+                        </p>
+                        <span className="text-[10px] font-bold text-[#756A63]">
+                            {group.options.length} Tag
+                        </span>
+                    </div>
 
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5">
                         {group.options.map((option) => {
                             const active = selectedTags.includes(option.tag);
 
@@ -800,16 +866,15 @@ function FilterContent({
                                 <Link
                                     key={option.tag}
                                     href={buildTagHref(params, option.tag)}
-                                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition duration-200 ${active
-                                            ? "border-[#1F5A4A] bg-[#1F5A4A] text-white shadow-sm"
-                                            : "border-[#E7D8C8] bg-white text-[#4B4038] hover:border-[#1F5A4A]/40 hover:bg-[#F8F1E8]"
-                                        }`}
+                                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition duration-150 ${
+                                        active
+                                            ? "border-[#FF5C35] bg-[#FFEAE5] text-[#FF5C35] shadow-xs"
+                                            : "border-[#EBE5DC] bg-[#FAF7F2] text-[#19120D] hover:border-[#FF5C35] hover:bg-white"
+                                    }`}
                                 >
                                     {active ? (
-                                        <Check className="h-3 w-3 shrink-0" />
-                                    ) : (
-                                        <span className="text-[#C8784A]">+</span>
-                                    )}
+                                        <Check className="h-3 w-3 shrink-0 text-[#FF5C35]" />
+                                    ) : null}
                                     <span>{option.label}</span>
                                 </Link>
                             );
@@ -818,11 +883,22 @@ function FilterContent({
                 </div>
             ))}
 
+            {/* Curator Note Card */}
+            <div className="mt-4 rounded-2xl border border-[#EBE5DC] bg-[#F4EFEA] p-3.5 text-xs text-[#756A63]">
+                <div className="mb-1 flex items-center gap-1.5 font-bold text-[#19120D]">
+                    <Lightbulb className="h-4 w-4 text-[#FF5C35]" />
+                    <span>Catatan Kurator Saranwak</span>
+                </div>
+                <p className="leading-relaxed">
+                    Kafe bertanda verifikasi Saranwak telah diuji langsung ketersediaan stopkontak per meja, kestabilan WiFi, dan kenyamanan kursinya.
+                </p>
+            </div>
+
             {hasFilter ? (
                 <div className="pt-2">
                     <Link
                         href="/places/?category=coffee-shop"
-                        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-[#201813] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#3A2D25]"
+                        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-[#19120D] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#FF5C35]"
                     >
                         <RotateCcw className="h-3.5 w-3.5" />
                         Reset Semua Filter
@@ -906,11 +982,11 @@ function ActiveFilters({
     if (chips.length === 0) return null;
 
     return (
-        <div className="mb-6 rounded-[24px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_12px_36px_rgba(47,35,25,0.05)]">
+        <div className="mb-6 rounded-[24px] border border-[#EBE5DC] bg-white p-4 shadow-bento">
             <div className="mb-3 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#1F5A4A]" />
-                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#C8784A]">
+                    <span className="h-2 w-2 rounded-full bg-[#FF5C35]" />
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#FF5C35]">
                         Filter Aktif ({chips.length})
                     </p>
                 </div>
@@ -920,7 +996,7 @@ function ActiveFilters({
                     onClick={() => {
                         if (onClearSearch) onClearSearch();
                     }}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-[#1F5A4A] transition hover:underline"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-[#FF5C35] transition hover:text-[#D8431F]"
                 >
                     <RotateCcw className="h-3 w-3" />
                     Reset Semua
@@ -938,10 +1014,10 @@ function ActiveFilters({
                             }
                         }}
                         title={`Hapus filter ${chip.label}`}
-                        className="group inline-flex items-center gap-1.5 rounded-full border border-[#E7D8C8] bg-[#F8F1E8] px-3 py-1.5 text-xs font-bold text-[#4B4038] transition hover:border-[#C8784A] hover:bg-[#F0E6D8]"
+                        className="group inline-flex items-center gap-1.5 rounded-full border border-[#EBE5DC] bg-[#FAF7F2] px-3.5 py-1.5 text-xs font-semibold text-[#19120D] shadow-xs transition hover:border-[#FF5C35] hover:bg-white"
                     >
                         <span>{chip.label}</span>
-                        <X className="h-3.5 w-3.5 text-[#756A60] transition group-hover:text-[#C8784A]" />
+                        <X className="h-3.5 w-3.5 text-[#756A63] transition group-hover:text-[#FF5C35]" />
                     </Link>
                 ))}
             </div>

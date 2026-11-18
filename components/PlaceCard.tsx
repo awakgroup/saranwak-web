@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Star, ArrowUpRight } from "lucide-react";
+import Image from "next/image";
+import { Bookmark, Star } from "lucide-react";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
-import { OpenStatusBadge } from "@/components/OpenStatusBadge";
-import { BookmarkButton } from "@/components/BookmarkButton";
+import { useSavedPlaces, savePlaceToStorage } from "@/lib/saved-places";
+import { getPlaceOpenStatus } from "@/lib/opening-hours";
 
 type PlaceCardProps = {
     place: Place;
@@ -14,252 +15,156 @@ type PlaceCardProps = {
     userDistance?: string | null;
 };
 
-function formatPrice(place: Place) {
-    if (place.price_range) {
-        return place.price_range;
-    }
-
-    if (place.price_min && place.price_max) {
-        return `Rp${place.price_min.toLocaleString(
-            "id-ID"
-        )} - Rp${place.price_max.toLocaleString("id-ID")}`;
-    }
-
-    if (place.price_min) {
-        return `Mulai Rp${place.price_min.toLocaleString("id-ID")}`;
-    }
-
-    if (place.price_max) {
-        return `Sampai Rp${place.price_max.toLocaleString("id-ID")}`;
-    }
-
-    return "Belum ada info";
-}
-
-function getCategoryLabel(place: Place) {
-    if (Array.isArray(place.categories)) {
-        return place.categories[0]?.name || "Tempat";
-    }
-
-    return place.categories?.name || "Tempat";
-}
-
-function getPlaceTags(place: Place) {
-    return (
-        place.place_tags
-            ?.map((item) => {
-                if (Array.isArray(item.tags)) {
-                    return item.tags[0];
-                }
-
-                return item.tags;
-            })
-            .filter(Boolean) || []
-    );
-}
-
-function getMainTags(place: Place, limit = 4) {
-    return getPlaceTags(place).slice(0, limit);
-}
-
-function getPlaceArea(place: Place) {
-    return place.area || place.city || "Padang";
-}
-
-function getImageAlt(place: Place) {
-    const area = getPlaceArea(place);
-    const category = getCategoryLabel(place);
-
-    if (category.toLowerCase().includes("coffee")) {
-        return `${place.name} coffee shop di ${area}`;
-    }
-
-    return `${place.name} tempat rekomendasi di ${area}`;
-}
-
-function getBestForLabels(place: Place) {
-    const tags = getPlaceTags(place);
-
-    const priorityKeywords = [
-        "nugas",
-        "wfc",
-        "nongkrong",
-        "me-time",
-        "me time",
-        "first-date",
-        "first date",
-        "meeting",
-        "live-music",
-        "live music",
-    ];
-
-    const priorityTags = tags.filter((tag) => {
-        const slug = tag?.slug?.toLowerCase() || "";
-        const name = tag?.name?.toLowerCase() || "";
-
-        return priorityKeywords.some(
-            (keyword) => slug.includes(keyword) || name.includes(keyword)
-        );
-    });
-
-    const selected = priorityTags.length > 0 ? priorityTags : tags;
-
-    return selected.slice(0, 3);
-}
-
-export function PlaceCard({
-    place,
-    source: _source = "place_card",
-    position: _position,
-    userDistance,
-}: PlaceCardProps) {
-    const tags = getMainTags(place, 4);
-    const bestForTags = getBestForLabels(place);
-    const area = getPlaceArea(place);
-    const category = getCategoryLabel(place);
+export function PlaceCard({ place, userDistance }: PlaceCardProps) {
+    const { isPlaceSaved } = useSavedPlaces();
+    const isSaved = isPlaceSaved(place.slug);
     const detailHref = `/places/${place.slug}`;
     const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
+    const openStatus = getPlaceOpenStatus(place.opening_hours);
+    const district = getPlaceArea(place);
+    const subtitle = getPlaceSubtitle(place);
+    const priceText = getDisplayPrice(place);
 
     return (
-        <Link
-            href={detailHref}
-            prefetch={false}
-            className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-[#EADCCB] bg-[#FFFDF8] shadow-[0_14px_40px_rgba(47,35,25,0.07)] outline-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 hover:border-[#1F5A4A]/40 hover:shadow-[0_26px_65px_rgba(47,35,25,0.14)] active:scale-[0.985] focus-visible:ring-4 focus-visible:ring-[#1F5A4A]/20"
-        >
-            <div className="relative aspect-[4/3] overflow-hidden bg-[#E3DED4]">
-                <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-[#E7D8C8] via-[#F8F1E8] to-[#E3DED4]" />
+        <article className="group relative flex h-[390px] flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#19120D] p-5 text-white shadow-bento transition-all duration-300 hover:-translate-y-1.5 hover:border-[#FF5C35]/50 hover:shadow-2xl">
+            {/* Cover Photo */}
+            <Image
+                src={imageUrl}
+                alt={place.name}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
+            />
 
-                <img
-                    src={imageUrl}
-                    alt={getImageAlt(place)}
-                    className="relative z-[1] h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 will-change-transform"
-                    loading="lazy"
-                    decoding="async"
-                    referrerPolicy="no-referrer"
-                />
+            {/* Gradient Overlays */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#19120D] via-black/35 to-black/30" />
 
-                <div className="absolute inset-0 z-[2] bg-gradient-to-t from-black/80 via-black/22 to-black/5" />
-
-                <div className="absolute left-4 top-4 z-[3] flex flex-wrap items-center gap-1.5">
+            {/* Top Badges */}
+            <div className="relative z-10 flex items-center justify-between">
+                <div className="flex flex-wrap items-center gap-1.5">
                     {userDistance ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-[#1F5A4A] px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.05em] text-white shadow-md backdrop-blur">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[#FF5C35] px-2.5 py-1 text-[11px] font-black uppercase text-white shadow-sm backdrop-blur">
                             <span>📍</span>
                             <span>{userDistance}</span>
                         </span>
                     ) : null}
 
-                    <OpenStatusBadge openingHours={place.opening_hours} />
+                    <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
+                        <span
+                            className={`h-2 w-2 rounded-full ${
+                                openStatus.isOpen
+                                    ? "animate-ping bg-[#10B981]"
+                                    : "bg-[#80756F]"
+                            }`}
+                        />
+                        <span>
+                            {openStatus.isOpen
+                                ? openStatus.statusLabel || "Buka Sekarang"
+                                : "Tutup"}
+                        </span>
+                    </div>
 
                     {place.is_featured ? (
                         <span
-                            title="Tempat Pilihan (Featured)"
-                            className="grid h-6 w-6 place-items-center rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.18)] transition hover:scale-110"
-                            aria-label="Featured place"
+                            title="Tempat Pilihan"
+                            className="grid h-6 w-6 place-items-center rounded-full bg-white shadow-sm"
                         >
                             <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-500" />
                         </span>
                     ) : null}
-
-                    {/* Badge Verified di-hide sementara */}
-                    {/* {place.is_verified ? (
-                        <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] text-[#1F5A4A] shadow-sm backdrop-blur">
-                            Verified
-                        </span>
-                    ) : null} */}
-
-                    {place.source === "admin_panel" ? (
-                        <span className="rounded-full bg-[#1F5A4A] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-white shadow-sm backdrop-blur">
-                            CMS Added
-                        </span>
-                    ) : null}
                 </div>
 
-                <div className="absolute right-4 top-4 z-[4]">
-                    <BookmarkButton place={place} />
-                </div>
+                <button
+                    type="button"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        savePlaceToStorage(place);
+                    }}
+                    aria-label={`Simpan ${place.name}`}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/15 backdrop-blur-md transition-all active:scale-95 ${
+                        isSaved
+                            ? "bg-[#FF5C35] text-white"
+                            : "bg-black/40 text-white hover:bg-[#FF5C35]"
+                    }`}
+                >
+                    <Bookmark className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} />
+                </button>
+            </div>
 
-                <div className="absolute bottom-4 left-4 right-4 z-[3]">
-                    <div className="mb-2 flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white/85 backdrop-blur">
-                            {area}
+            {/* Bottom Information Link */}
+            <Link
+                href={detailHref}
+                prefetch={false}
+                className="relative z-10 block border-t border-white/15 pt-4 transition-colors"
+            >
+                <div className="flex items-end justify-between">
+                    <div className="min-w-0 flex-1 pr-3">
+                        <span className="block text-[11px] font-bold uppercase tracking-wider text-[#FDBA74]">
+                            {district}
                         </span>
-
-                        <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white/85 backdrop-blur">
-                            {category}
+                        <h3 className="truncate font-sans text-lg font-bold leading-snug text-white transition-colors group-hover:text-[#FDBA74]">
+                            {place.name}
+                        </h3>
+                        <span className="mt-0.5 block truncate text-[11px] text-white/80">
+                            {subtitle}
                         </span>
                     </div>
 
-                    <h3 className="line-clamp-2 font-serif text-[22px] font-bold leading-[1.1] tracking-[-0.02em] text-white drop-shadow-sm">
-                        {place.name}
-                    </h3>
-                </div>
-            </div>
-
-            <div className="flex flex-1 flex-col p-5">
-                <div className="rounded-[22px] border border-[#EADCCB] bg-[#F8F1E8]/80 p-4">
-                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#C8784A]">
-                        Cocok untuk
-                    </p>
-
-                    {bestForTags.length > 0 ? (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                            {bestForTags.map((tag) => (
-                                <span
-                                    key={tag?.id}
-                                    className="rounded-full bg-white px-3 py-1.5 text-xs font-black text-[#201813] ring-1 ring-[#EADCCB]"
-                                >
-                                    {tag?.name}
-                                </span>
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="mt-2 text-sm font-semibold leading-6 text-[#756A60]">
-                            Tempat santai yang bisa kamu cek sesuai kebutuhan hari ini.
-                        </p>
-                    )}
-                </div>
-
-                <p className="mt-4 line-clamp-2 min-h-[48px] text-sm font-medium leading-6 text-[#756A60]">
-                    {place.short_description ||
-                        place.description ||
-                        `Rekomendasi tempat di ${area} yang bisa kamu cek berdasarkan budget, fasilitas, dan vibes.`}
-                </p>
-
-                <div className="mt-5 flex flex-wrap gap-2">
-                    {tags.length > 0 ? (
-                        tags.map((tag) => (
-                            <span
-                                key={tag?.id}
-                                className="rounded-full border border-[#EADCCB] bg-white px-3 py-1.5 text-xs font-bold text-[#756A60]"
-                            >
-                                {tag?.name}
-                            </span>
-                        ))
-                    ) : (
-                        <span className="rounded-full border border-[#EADCCB] bg-white px-3 py-1.5 text-xs font-bold text-[#756A60]">
-                            Explore
+                    <div className="shrink-0 text-right">
+                        <span className="block text-[10px] font-medium uppercase text-white/70">
+                            Mulai
                         </span>
-                    )}
-                </div>
-
-                <div className="mt-auto pt-5">
-                    <div className="flex items-center justify-between gap-4 rounded-[22px] bg-[#201813] px-4 py-3 text-white">
-                        <div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/50">
-                                Budget
-                            </p>
-                            <p className="mt-1 text-sm font-black">
-                                {formatPrice(place)}
-                            </p>
-                        </div>
-
-                        <span className="inline-flex items-center gap-1 shrink-0 rounded-full bg-white px-4 py-2 text-xs font-black text-[#201813] transition-colors duration-200 group-hover:bg-[#F3C48E]">
-                            <span>Lihat</span>
-                            <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        <span className="font-sans text-sm font-extrabold text-[#FDBA74]">
+                            {priceText}
                         </span>
                     </div>
                 </div>
-            </div>
-        </Link>
+            </Link>
+        </article>
     );
+}
+
+function getPlaceArea(place: Place): string {
+    if (place.area) {
+        return place.area;
+    }
+    if (place.address) {
+        const match = place.address.match(/Kec\.?\s*([a-zA-Z\s]+?)(?:,|$)/i);
+        if (match?.[1]) {
+            return match[1].trim();
+        }
+    }
+    return place.city || "Padang";
+}
+
+function getPlaceSubtitle(place: Place): string {
+    if (place.short_description) {
+        return place.short_description.slice(0, 38);
+    }
+    if (place.description) {
+        return place.description.slice(0, 38);
+    }
+    return "Tempat ngopi & ruang kerja santai";
+}
+
+function getDisplayPrice(place: Place): string {
+    if (place.price_range) {
+        if (place.price_range.includes("15k") || place.price_range.includes("18k")) {
+            return "Rp 18k";
+        }
+        if (place.price_range.includes("20k") || place.price_range.includes("22k")) {
+            return "Rp 22k";
+        }
+        if (place.price_range.includes("25k")) {
+            return "Rp 25k";
+        }
+        if (place.price_range.includes("30k") || place.price_range.includes("35k")) {
+            return "Rp 30k";
+        }
+    }
+    if (place.price_min) {
+        return `Rp ${Math.round(place.price_min / 1000)}k`;
+    }
+    return "Rp 20k";
 }
