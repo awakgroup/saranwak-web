@@ -431,26 +431,38 @@ export function PlacesMapView({
                     {/* Floating Preview Card when a Place is Selected */}
                     {selectedPlace && (
                         <div className="pointer-events-auto absolute inset-x-4 bottom-4 z-20 mx-auto max-w-md sm:bottom-6">
-                            <div className="relative flex items-center gap-4 rounded-3xl border border-[#EBE5DC] bg-white/95 p-3.5 shadow-xl backdrop-blur-xl sm:p-4">
+                            <div className="group relative flex cursor-pointer items-center gap-4 rounded-3xl border border-[#EBE5DC] bg-white/95 p-3.5 shadow-xl backdrop-blur-xl sm:p-4 transition hover:border-[#FF5C35]/50">
+                                {/* Stretched Link for the entire preview card */}
+                                <Link
+                                    href={`/places/${selectedPlace.slug}`}
+                                    className="absolute inset-0 z-10"
+                                    aria-label={`Buka detail ${selectedPlace.name}`}
+                                />
+
                                 <button
                                     type="button"
-                                    onClick={() => setSelectedPlace(null)}
-                                    className="absolute -right-2 -top-2 grid h-7 w-7 place-items-center rounded-full bg-[#19120D] text-white shadow-md transition hover:scale-105"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setSelectedPlace(null);
+                                    }}
+                                    className="relative z-20 -right-2 -top-2 ml-auto grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#19120D] text-white shadow-md transition hover:scale-105"
+                                    style={{ position: "absolute", top: "-8px", right: "-8px" }}
                                     aria-label="Tutup preview"
                                 >
                                     <X className="h-3.5 w-3.5" />
                                 </button>
 
-                                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-[#EBE5DC]">
+                                <div className="pointer-events-none relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-[#EBE5DC]">
                                     <img
                                         src={getSafePlaceImageUrl(selectedPlace.image_url || selectedPlace.main_image_url)}
                                         alt={selectedPlace.name}
-                                        className="h-full w-full object-cover"
+                                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                                         loading="lazy"
                                     />
                                 </div>
 
-                                <div className="min-w-0 flex-1 pr-3">
+                                <div className="pointer-events-none min-w-0 flex-1 pr-3">
                                     <div className="flex flex-wrap items-center gap-1 text-[11px] font-bold text-[#756A63]">
                                         <MapPin className="h-3 w-3 text-[#FF5C35]" />
                                         <span>{selectedPlace.area || "Padang"}</span>
@@ -462,28 +474,23 @@ export function PlacesMapView({
                                         )}
                                     </div>
 
-                                    <Link
-                                        href={`/places/${selectedPlace.slug}`}
-                                        className="mt-0.5 block truncate font-sans text-base font-bold text-[#19120D] transition hover:text-[#FF5C35]"
-                                    >
+                                    <h3 className="mt-0.5 block truncate font-sans text-base font-bold text-[#19120D] transition group-hover:text-[#FF5C35]">
                                         {selectedPlace.name}
-                                    </Link>
+                                    </h3>
 
                                     <div className="mt-2.5 flex items-center gap-2">
-                                        <Link
-                                            href={`/places/${selectedPlace.slug}`}
-                                            className="inline-flex items-center gap-1 rounded-xl bg-[#19120D] px-3.5 py-1.5 text-xs font-bold text-white transition hover:bg-[#FF5C35]"
-                                        >
+                                        <span className="inline-flex items-center gap-1 rounded-xl bg-[#19120D] px-3.5 py-1.5 text-xs font-bold text-white transition group-hover:bg-[#FF5C35]">
                                             <span>Detail Lengkap</span>
                                             <ArrowRight className="h-3 w-3" />
-                                        </Link>
+                                        </span>
 
                                         {selectedPlace.google_maps_url && (
                                             <a
                                                 href={selectedPlace.google_maps_url}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="inline-flex items-center gap-1 rounded-xl border border-[#EBE5DC] bg-white px-3 py-1.5 text-xs font-bold text-[#756A63] transition hover:text-[#FF5C35]"
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="pointer-events-auto relative z-20 inline-flex items-center gap-1 rounded-xl border border-[#EBE5DC] bg-white px-3 py-1.5 text-xs font-bold text-[#756A63] transition hover:text-[#FF5C35]"
                                             >
                                                 <Navigation className="h-3 w-3" />
                                                 <span>Rute</span>

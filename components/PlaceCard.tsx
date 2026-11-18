@@ -26,21 +26,29 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
     const priceText = getDisplayPrice(place);
 
     return (
-        <article className="group relative flex h-[390px] flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#19120D] p-5 text-white shadow-bento transition-all duration-300 hover:-translate-y-1.5 hover:border-[#FF5C35]/50 hover:shadow-2xl">
+        <article className="group relative flex h-[390px] cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#19120D] p-5 text-white shadow-bento transition-all duration-300 hover:-translate-y-1.5 hover:border-[#FF5C35]/50 hover:shadow-2xl">
+            {/* Full Card Clickable Link */}
+            <Link
+                href={detailHref}
+                prefetch={false}
+                className="absolute inset-0 z-10"
+                aria-label={`Buka detail ${place.name}`}
+            />
+
             {/* Cover Photo */}
             <Image
                 src={imageUrl}
                 alt={place.name}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
+                className="pointer-events-none object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
             />
 
             {/* Gradient Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#19120D] via-black/35 to-black/30" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#19120D] via-black/35 to-black/30" />
 
             {/* Top Badges */}
-            <div className="relative z-10 flex items-center justify-between">
+            <div className="pointer-events-none relative z-20 flex items-center justify-between">
                 <div className="flex flex-wrap items-center gap-1.5">
                     {userDistance ? (
                         <span className="inline-flex items-center gap-1 rounded-full bg-[#FF5C35] px-2.5 py-1 text-[11px] font-black uppercase text-white shadow-sm backdrop-blur">
@@ -82,7 +90,7 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
                         savePlaceToStorage(place);
                     }}
                     aria-label={`Simpan ${place.name}`}
-                    className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/15 backdrop-blur-md transition-all active:scale-95 ${
+                    className={`pointer-events-auto flex h-8 w-8 items-center justify-center rounded-full border border-white/15 backdrop-blur-md transition-all active:scale-95 ${
                         isSaved
                             ? "bg-[#FF5C35] text-white"
                             : "bg-black/40 text-white hover:bg-[#FF5C35]"
@@ -92,12 +100,8 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
                 </button>
             </div>
 
-            {/* Bottom Information Link */}
-            <Link
-                href={detailHref}
-                prefetch={false}
-                className="relative z-10 block border-t border-white/15 pt-4 transition-colors"
-            >
+            {/* Bottom Information */}
+            <div className="pointer-events-none relative z-20 block border-t border-white/15 pt-4 transition-colors">
                 <div className="flex items-end justify-between">
                     <div className="min-w-0 flex-1 pr-3">
                         <span className="block text-[11px] font-bold uppercase tracking-wider text-[#FDBA74]">
@@ -120,7 +124,7 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
                         </span>
                     </div>
                 </div>
-            </Link>
+            </div>
         </article>
     );
 }
