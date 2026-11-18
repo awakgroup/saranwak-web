@@ -129,13 +129,6 @@ export function HomeHeroSection() {
                                     <span>Mulai Eksplor</span>
                                     <ArrowRight className="h-4 w-4" />
                                 </Link>
-
-                                <Link
-                                    href="/rekomendasi"
-                                    className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-3.5 text-xs font-bold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 sm:text-sm"
-                                >
-                                    <span>Rekomendasi Editor</span>
-                                </Link>
                             </div>
                         </div>
 
@@ -181,12 +174,12 @@ export function HomeHeroSection() {
                                                     Vibe &amp; Kebutuhan
                                                 </span>
                                                 <span className="rounded-full bg-[#FFEAE5] px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-[#FF5C35]">
-                                                    24 Tag
+                                                    3 Aktif
                                                 </span>
                                             </div>
                                             <div className="mt-0.5 flex items-center justify-between">
                                                 <span className="truncate text-xs font-bold text-[#19120D] transition-colors group-hover:text-[#FF5C35] sm:text-sm">
-                                                    Pilih Suasana &amp; Fasilitas
+                                                    24 Tag Kurasi (WFC, Nugas, ...)
                                                 </span>
                                                 <ChevronDown className="h-3.5 w-3.5 text-[#756A63] transition-colors group-hover:text-[#FF5C35]" />
                                             </div>

@@ -109,38 +109,28 @@ export default async function Home() {
       <div className="relative z-10">
         <HomeHeroSection />
 
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 pb-28 sm:gap-14 sm:px-8 sm:pb-20 lg:gap-16 lg:px-12">
-          {/* 4 Pilar Feature Highlights */}
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 pb-20 sm:gap-12 sm:px-8 sm:pb-20 lg:gap-14 lg:px-12">
+          {/* Section 2: 4 Pilar Feature Highlights */}
           <HomeFeaturePillars />
 
-          {/* Promo & Special Offers Bento Grid */}
+          {/* Section 3: Promo & Special Offers Bento Grid */}
           <SectionBlock variant="compact">
             <HomePromoBento />
           </SectionBlock>
 
-          {/* Popular Destinations (Top Places) */}
+          {/* Section 4: Popular Destinations (Top Places) */}
           <SectionBlock>
             <FeaturedPlacesSection places={places} />
           </SectionBlock>
 
-          {/* Why Saranwak Value Props */}
+          {/* Section 5: Curved Owner Promo Banner */}
           <SectionBlock>
-            <WhySaranwak />
-          </SectionBlock>
-
-          {/* Local Community Spirit Banner */}
-          <SectionBlock>
-            <HomeBrandBanner />
-          </SectionBlock>
-
-          {/* Frequently Asked Questions */}
-          <SectionBlock>
-            <HomeFaqSection />
-          </SectionBlock>
-
-          {/* Curved Owner Promo Banner */}
-          <SectionBlock variant="last">
             <OwnerBusinessSection />
+          </SectionBlock>
+
+          {/* Frequently Asked Questions (Maintains 100% SEO & FAQ Structured Data) */}
+          <SectionBlock variant="last">
+            <HomeFaqSection />
           </SectionBlock>
         </div>
       </div>
