@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ArrowUpRight, MapPin } from "lucide-react";
+import { ArrowRight, Bookmark } from "lucide-react";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
+import { useSavedPlaces, savePlaceToStorage } from "@/lib/saved-places";
 import type { Place } from "@/types/database";
 
 type FeaturedPlacesSectionProps = {
@@ -12,147 +12,172 @@ type FeaturedPlacesSectionProps = {
 };
 
 export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-    function scroll(direction: "left" | "right") {
-        if (!scrollContainerRef.current) return;
-        const scrollAmount = 360;
-        scrollContainerRef.current.scrollBy({
-            left: direction === "left" ? -scrollAmount : scrollAmount,
-            behavior: "smooth",
-        });
-    }
+    const { isPlaceSaved } = useSavedPlaces();
 
     if (!places || places.length === 0) {
         return null;
     }
 
+    // Limit to 4 cards to mirror the Stitch 4-column layout perfectly
+    const displayPlaces = places.slice(0, 4);
+
     return (
-        <section className="relative">
-            {/* Header matching ROAMLY mockup */}
-            <div className="mb-6 flex flex-col gap-6 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+        <section className="relative w-full" id="rekomendasi-populer">
+            {/* Header matching Stitch Landing Page */}
+            <div className="mb-6 flex flex-col justify-between gap-4 sm:mb-8 sm:flex-row sm:items-end">
                 <div>
-                    {/* Terracotta Accent Line */}
-                    <div className="mb-3 h-1.5 w-14 rounded-full bg-[#C8784A]" />
+                    <div className="mb-1.5 flex items-center gap-2">
+                        <span className="text-xs font-black uppercase tracking-wider text-[#FF5C35]">
+                            POPULAR DESTINATIONS
+                        </span>
+                        <span>☕</span>
+                    </div>
 
-                    <h2 className="font-serif text-3xl font-bold tracking-[-0.03em] text-[#201813] sm:text-4xl md:text-5xl">
-                        Top Places
+                    <h2 className="font-sans text-2xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl">
+                        Rekomendasi Terpopuler
                     </h2>
-
-                    <p className="mt-2 text-sm font-semibold text-[#756A60] sm:text-base">
-                        Handpicked coffee shops di Padang untuk melengkapi harimu.
+                    <p className="mt-1 text-xs text-[#756A63] sm:text-sm">
+                        Handpicked coffee shops di Padang dengan suasana kondusif dan rasa teruji.
                     </p>
                 </div>
 
-                {/* Slider Navigation Arrow Buttons & "Lihat Semua" Link */}
-                <div className="flex items-center gap-3">
-                    <Link
-                        href="/places?category=coffee-shop"
-                        className="hidden text-xs font-bold uppercase tracking-wider text-[#1F5A4A] transition hover:text-[#C8784A] sm:inline-block sm:mr-3"
-                    >
-                        Lihat Semua →
-                    </Link>
-
-                    {/* Prev Circle Button (Outline) */}
-                    <button
-                        type="button"
-                        onClick={() => scroll("left")}
-                        aria-label="Previous places"
-                        className="grid h-11 w-11 place-items-center rounded-full border border-[#D8C9B7] bg-[#FFFDF8] text-[#201813] shadow-sm transition duration-200 hover:border-[#201813] hover:bg-white active:scale-95"
-                    >
-                        <ArrowLeft className="h-5 w-5" />
-                    </button>
-
-                    {/* Next Circle Button (Dark Green Filled) */}
-                    <button
-                        type="button"
-                        onClick={() => scroll("right")}
-                        aria-label="Next places"
-                        className="grid h-11 w-11 place-items-center rounded-full bg-[#1F5A4A] text-white shadow-md shadow-[#1F5A4A]/25 transition duration-200 hover:bg-[#174639] hover:scale-105 active:scale-95"
-                    >
-                        <ArrowRight className="h-5 w-5" />
-                    </button>
-                </div>
+                <Link
+                    href="/places?category=coffee-shop"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#FF5C35] transition-colors hover:text-[#D8431F] sm:text-sm"
+                >
+                    <span>Lihat Semua</span>
+                    <ArrowRight className="h-4 w-4" />
+                </Link>
             </div>
 
-            {/* Horizontal Scrollable Carousel Container */}
-            <div
-                ref={scrollContainerRef}
-                className="no-scrollbar -mx-4 flex gap-5 overflow-x-auto px-4 pb-4 pt-1 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
-                style={{ scrollSnapType: "x mandatory" }}
-            >
-                {places.map((place) => {
+            {/* 4 Tall Vertical Cards with Overlay Info */}
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {displayPlaces.map((place) => {
                     const imageUrl = getSafePlaceImageUrl(place.image_url);
-                    const locationSubtitle = getPlaceSubtitle(place);
+                    const district = getDistrictName(place);
+                    const subtitle = getVibeSubtitle(place);
+                    const priceLabel = getDisplayPrice(place);
+                    const isSaved = isPlaceSaved(place.slug);
 
                     return (
-                        <div
+                        <article
                             key={place.id}
-                            className="w-[76vw] max-w-[280px] shrink-0 sm:w-[320px] md:w-[360px]"
-                            style={{ scrollSnapAlign: "start" }}
+                            className="group relative flex h-96 flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#19120D] p-5 text-white shadow-md transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[#FF5C35]/50 hover:shadow-2xl sm:h-[420px]"
                         >
-                            <Link
-                                href={`/places/${place.slug}`}
-                                className="group relative block aspect-[3/4] w-full overflow-hidden rounded-[26px] border border-[#E7D8C8]/60 bg-[#1A1614] shadow-[0_10px_30px_rgba(32,24,19,0.12)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 hover:shadow-[0_24px_50px_rgba(32,24,19,0.22)] active:scale-[0.98] sm:rounded-[28px]"
-                            >
-                                {/* Cover Photo */}
-                                <Image
-                                    src={imageUrl}
-                                    alt={place.name}
-                                    fill
-                                    sizes="(max-width: 640px) 280px, (max-width: 1024px) 320px, 360px"
-                                    className="object-cover object-center transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-108"
-                                />
+                            {/* Background Image */}
+                            <Image
+                                src={imageUrl}
+                                alt={place.name}
+                                fill
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                                className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
+                            />
 
-                                {/* Multi-layer gradient overlays for text readability */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
-                                <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent" />
+                            {/* Gradients */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#19120D] via-black/35 to-black/30" />
 
-                                {/* Top-Right Floating Circle Badge with Diagonal Arrow */}
-                                <div className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full border border-white/25 bg-white/30 text-white backdrop-blur-md shadow-sm transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 group-hover:bg-[#C8784A] group-hover:border-[#C8784A] group-hover:shadow-lg">
-                                    <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                            {/* Top Badges */}
+                            <div className="relative z-10 flex items-center justify-between">
+                                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
+                                    <span className="h-2 w-2 animate-ping rounded-full bg-[#10B981]" />
+                                    <span>{getOpeningStatus(place)}</span>
                                 </div>
 
-                                {/* Bottom Place Info */}
-                                <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-                                    <h3 className="font-serif text-xl font-bold tracking-tight text-white transition-colors duration-200 group-hover:text-[#F2C38B] sm:text-2xl">
-                                        {place.name}
-                                    </h3>
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        savePlaceToStorage(place);
+                                    }}
+                                    aria-label={`Simpan ${place.name}`}
+                                    className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/15 backdrop-blur-md transition-all active:scale-95 ${
+                                        isSaved
+                                            ? "bg-[#FF5C35] text-white"
+                                            : "bg-black/40 text-white hover:bg-[#FF5C35]"
+                                    }`}
+                                >
+                                    <Bookmark className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} />
+                                </button>
+                            </div>
 
-                                    <div className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-white/80 sm:text-sm">
-                                        <MapPin className="h-3.5 w-3.5 shrink-0 text-[#E5A86D]" />
-                                        <span className="truncate">{locationSubtitle}</span>
+                            {/* Bottom Information Link */}
+                            <Link
+                                href={`/places/${place.slug}`}
+                                className="relative z-10 block border-t border-white/15 pt-4 transition-colors"
+                            >
+                                <div className="flex items-end justify-between">
+                                    <div className="min-w-0 flex-1 pr-3">
+                                        <span className="block text-[11px] font-bold uppercase tracking-wider text-[#FDBA74]">
+                                            {district}
+                                        </span>
+                                        <h3 className="truncate font-sans text-base font-bold leading-snug text-white transition-colors group-hover:text-[#FDBA74]">
+                                            {place.name}
+                                        </h3>
+                                        <span className="mt-0.5 block truncate text-[11px] text-white/80">
+                                            {subtitle}
+                                        </span>
+                                    </div>
+
+                                    <div className="shrink-0 text-right">
+                                        <span className="block text-[10px] font-medium uppercase text-white/70">
+                                            Mulai
+                                        </span>
+                                        <span className="font-sans text-sm font-extrabold text-[#FDBA74]">
+                                            {priceLabel}
+                                        </span>
                                     </div>
                                 </div>
                             </Link>
-                        </div>
+                        </article>
                     );
                 })}
-            </div>
-
-            {/* Mobile View All button */}
-            <div className="mt-4 sm:hidden">
-                <Link
-                    href="/places?category=coffee-shop"
-                    className="flex w-full items-center justify-center gap-2 rounded-full border border-[#E7D8C8] bg-[#FFFDF8] py-3 text-xs font-bold text-[#201813] shadow-sm transition active:scale-98"
-                >
-                    <span>Lihat Semua Coffee Shop</span>
-                    <ArrowRight className="h-4 w-4" />
-                </Link>
             </div>
         </section>
     );
 }
 
-function getPlaceSubtitle(place: Place): string {
+function getDistrictName(place: Place): string {
     if (place.area) {
-        return `${place.area} • Spot Pilihan`;
+        return place.area;
     }
     if (place.address) {
         const match = place.address.match(/Kec\.?\s*([a-zA-Z\s]+?)(?:,|$)/i);
         if (match?.[1]) {
-            return `${match[1].trim()} • Spot Pilihan`;
+            return match[1].trim();
         }
     }
-    return "Kota Padang • Coffee & Lifestyle";
+    return "Padang Barat";
+}
+
+function getVibeSubtitle(place: Place): string {
+    if (place.short_description) {
+        return place.short_description.slice(0, 34);
+    }
+    return "Co-Working & WFC Santai";
+}
+
+function getOpeningStatus(place: Place): string {
+    if (place.opening_hours) {
+        if (place.opening_hours.toLowerCase().includes("24")) {
+            return "24 Jam Nonstop";
+        }
+        return `Buka • ${place.opening_hours.slice(0, 15)}`;
+    }
+    return "Buka • Hingga 23:00";
+}
+
+function getDisplayPrice(place: Place): string {
+    if (place.price_range) {
+        if (place.price_range.includes("15k") || place.price_range.includes("18k")) {
+            return "Rp 18k";
+        }
+        if (place.price_range.includes("20k") || place.price_range.includes("22k")) {
+            return "Rp 22k";
+        }
+        if (place.price_range.includes("25k")) {
+            return "Rp 25k";
+        }
+    }
+    return "Rp 20k";
 }

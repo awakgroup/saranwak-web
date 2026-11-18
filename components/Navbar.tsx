@@ -12,6 +12,7 @@ import {
     Bookmark,
     Search,
     MessageCircle,
+    Coffee,
 } from "lucide-react";
 import { useSavedPlaces } from "@/lib/saved-places";
 import { SavedPlacesModal } from "@/components/SavedPlacesModal";
@@ -93,26 +94,23 @@ export function Navbar() {
                 <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-20 sm:px-5">
                     {/* Mobile App Bar Layout */}
                     <div className="flex h-full w-full items-center justify-between md:hidden">
-                        <Link href="/" className="flex items-center gap-2.5">
-                            <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#181818] shadow-sm transition active:scale-95">
-                                <Image
-                                    src="/favicon.png"
-                                    alt="Saranwak"
-                                    width={36}
-                                    height={36}
-                                    priority
-                                    className="h-full w-full object-cover"
-                                />
+                        <Link href="/" className="flex items-center gap-2.5 group">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#D8431F] via-[#FF5C35] to-[#FF7E5F] text-white shadow-md shadow-[#FF5C35]/25 transition active:scale-95">
+                                <Coffee className="h-5 w-5" />
                             </div>
 
-                            <div>
-                                <p className="font-serif text-lg font-bold leading-tight tracking-tight text-[#141414]">
-                                    Saranwak
-                                </p>
-                                <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#756A60]">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-[#1F5A4A] animate-pulse" />
-                                    <span>Kota Padang</span>
+                            <div className="flex flex-col">
+                                <div className="flex items-center gap-1.5">
+                                    <span className="font-sans text-lg font-extrabold tracking-tight text-[#19120D]">
+                                        Saranwak
+                                    </span>
+                                    <span className="rounded-full bg-[#FFECE5] px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase text-[#D8431F]">
+                                        Padang
+                                    </span>
                                 </div>
+                                <span className="text-[10px] font-medium text-[#756A63]">
+                                    Curated Coffee Guide
+                                </span>
                             </div>
                         </Link>
 
@@ -120,7 +118,7 @@ export function Navbar() {
                             <Link
                                 href="/places?category=coffee-shop"
                                 aria-label="Cari Coffee Shop"
-                                className="grid h-9 w-9 place-items-center rounded-full border border-[#E7D8C8] bg-[#FFFDF8] text-[#201813] shadow-sm transition duration-150 active:scale-90"
+                                className="grid h-9 w-9 place-items-center rounded-full border border-[#EBE5DC] bg-white text-[#19120D] shadow-sm transition duration-150 active:scale-90 hover:text-[#FF5C35]"
                             >
                                 <Search className="h-4 w-4" />
                             </Link>
@@ -130,7 +128,7 @@ export function Navbar() {
                                 target="_blank"
                                 rel="noreferrer"
                                 aria-label="Hubungi Saranwak via WhatsApp"
-                                className="grid h-9 w-9 place-items-center rounded-full bg-[#181818] text-[#FFFDF8] shadow-sm transition duration-150 active:scale-90"
+                                className="grid h-9 w-9 place-items-center rounded-full bg-[#19120D] text-white shadow-sm transition duration-150 active:scale-90 hover:bg-[#FF5C35]"
                             >
                                 <MessageCircle className="h-4 w-4" />
                             </a>
@@ -140,31 +138,40 @@ export function Navbar() {
                     {/* Desktop Brand Logo */}
                     <Link
                         href="/"
-                        className="group hidden min-w-0 items-center gap-2.5 sm:gap-3 md:flex"
+                        className="group hidden min-w-0 items-center gap-3 md:flex"
                     >
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#181818] shadow-sm transition duration-300 group-hover:-rotate-6 group-hover:scale-105 sm:h-12 sm:w-12">
-                            <Image
-                                src="/favicon.png"
-                                alt="Saranwak"
-                                width={48}
-                                height={48}
-                                priority
-                                className="h-full w-full object-cover"
-                            />
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#D8431F] via-[#FF5C35] to-[#FF7E5F] text-white shadow-md shadow-[#FF5C35]/25 transition duration-300 group-hover:scale-105 group-hover:rotate-3">
+                            <Coffee className="h-6 w-6" />
                         </div>
 
-                        <div className="min-w-0">
-                            <p className="truncate font-serif text-xl font-bold tracking-tight text-[#141414] sm:text-2xl">
-                                Saranwak
-                            </p>
-                            <p className="-mt-1 hidden text-[11px] font-bold text-[#6F6A61] sm:block">
-                                cari tempat yang pas
-                            </p>
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                                <span className="font-sans text-xl font-extrabold tracking-tight text-[#19120D]">
+                                    Saranwak
+                                </span>
+                                <span className="rounded-full bg-[#FFECE5] px-2 py-0.5 text-[11px] font-bold tracking-wide uppercase text-[#D8431F]">
+                                    Padang
+                                </span>
+                            </div>
+                            <span className="text-xs font-medium text-[#756A63]">
+                                Curated Coffee &amp; WFC Guide
+                            </span>
                         </div>
                     </Link>
 
                     {/* Desktop Center Pill Navigation */}
-                    <nav className="hidden items-center gap-1 rounded-full border border-[#E3DED4] bg-[#FFFDF8]/80 p-1 text-sm font-bold shadow-sm md:flex">
+                    <nav className="hidden items-center gap-1 rounded-full bg-[#EAE4DC] px-3 py-1.5 text-xs font-bold shadow-sm md:flex lg:text-sm">
+                        <Link
+                            href="/"
+                            className={[
+                                "rounded-full px-5 py-2 transition-all duration-200",
+                                pathname === "/"
+                                    ? "bg-white text-[#19120D] shadow-sm font-bold"
+                                    : "text-[#756A63] hover:text-[#19120D]",
+                            ].join(" ")}
+                        >
+                            Home
+                        </Link>
                         {desktopNavItems.map((item) => {
                             const isActive = pathname.startsWith(item.match);
 
@@ -173,47 +180,58 @@ export function Navbar() {
                                     key={item.href}
                                     href={item.href}
                                     className={[
-                                        "rounded-full px-4 py-2 transition duration-200",
+                                        "rounded-full px-5 py-2 transition-all duration-200",
                                         isActive
-                                            ? "bg-[#181818] text-[#FFFDF8]"
-                                            : "text-[#4B4741] hover:bg-[#181818] hover:text-[#FFFDF8]",
+                                            ? "bg-white text-[#19120D] shadow-sm font-bold"
+                                            : "text-[#756A63] hover:text-[#19120D]",
                                     ].join(" ")}
                                 >
                                     {item.label}
                                 </Link>
                             );
                         })}
-                    </nav>
 
-                    {/* Desktop Right Action: Bookmark & Contact Us button */}
-                    <div className="hidden items-center gap-2 md:flex">
+                        {/* Tersimpan Pill inside Navigation */}
                         <button
                             type="button"
                             onClick={() => setIsSavedModalOpen(true)}
-                            aria-label={`Lihat ${savedCount} cafe tersimpan`}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-[#E3DED4] bg-[#FFFDF8] px-3 py-2 text-xs font-bold text-[#201813] shadow-sm transition hover:border-[#C8784A] hover:bg-[#FAF4ED] sm:px-4 sm:text-sm"
+                            className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 font-semibold text-[#756A63] transition-all hover:text-[#19120D]"
                         >
-                            <Bookmark
-                                className={`h-4 w-4 transition-transform ${
-                                    savedCount > 0 ? "fill-current text-[#C8784A]" : "text-[#756A60]"
-                                }`}
-                            />
-                            <span className="hidden sm:inline">Tersimpan</span>
+                            <Bookmark className="h-4 w-4 text-[#FF5C35] transition-transform hover:scale-110" />
+                            <span>Tersimpan</span>
                             {savedCount > 0 && (
-                                <span className="grid h-4.5 min-w-4.5 place-items-center rounded-full bg-[#C8784A] px-1.5 text-[10px] font-black text-white">
+                                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF5C35] text-[10px] font-extrabold text-white shadow-sm">
                                     {savedCount}
                                 </span>
                             )}
                         </button>
+                    </nav>
 
+                    {/* Desktop Right Action: Pasang Promo & Bookmark Icon */}
+                    <div className="hidden items-center gap-3 md:flex">
                         <a
                             href={whatsappUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center rounded-full bg-[#181818] px-3.5 py-2 text-xs font-black text-[#FFFDF8] transition duration-300 hover:-translate-y-0.5 hover:bg-[#2A2A2A] hover:shadow-lg sm:px-5 sm:text-sm"
+                            className="inline-flex items-center gap-2 rounded-full bg-[#19120D] px-5 py-2.5 text-xs font-bold text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-[#FF5C35] hover:shadow-lg active:scale-95 lg:text-sm"
                         >
-                            Contact Us
+                            <Sparkles className="h-4 w-4 text-[#FDBA74]" />
+                            <span>Pasang Promo</span>
                         </a>
+
+                        <button
+                            type="button"
+                            onClick={() => setIsSavedModalOpen(true)}
+                            aria-label={`Lihat ${savedCount} cafe tersimpan`}
+                            className="group relative flex h-11 w-11 items-center justify-center rounded-full border border-[#EBE5DC] bg-white text-[#19120D] shadow-sm transition-all hover:border-[#FF5C35]/50 hover:bg-[#FAF4EE] hover:text-[#FF5C35] active:scale-95"
+                        >
+                            <Bookmark className="h-5 w-5 text-[#FF5C35] transition-transform group-hover:scale-110" />
+                            {savedCount > 0 && (
+                                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-[#FF5C35] text-[10px] font-black text-white shadow-sm">
+                                    {savedCount}
+                                </span>
+                            )}
+                        </button>
                     </div>
                 </div>
             </header>
@@ -224,7 +242,7 @@ export function Navbar() {
                     aria-label="Mobile Navigation"
                     className="pointer-events-none fixed inset-x-0 bottom-3 z-50 px-3 pb-[env(safe-area-inset-bottom,0px)] md:hidden"
                 >
-                    <div className="pointer-events-auto mx-auto flex max-w-[390px] items-center justify-around gap-1 rounded-full border border-[#E7D8C8]/90 bg-[#FFFDF8]/94 p-1.5 shadow-[0_16px_40px_rgba(32,24,19,0.18)] backdrop-blur-2xl">
+                    <div className="pointer-events-auto mx-auto flex max-w-[390px] items-center justify-around gap-1 rounded-full border border-[#EBE5DC] bg-white/95 p-1.5 shadow-[0_16px_40px_rgba(25,18,13,0.18)] backdrop-blur-2xl">
                         {mobileBottomNavItems.map((item) => {
                             const active = item.isActive(pathname);
                             const Icon = item.icon;
@@ -236,14 +254,14 @@ export function Navbar() {
                                     className={[
                                         "flex flex-1 flex-col items-center justify-center rounded-full py-1.5 transition-all duration-150 active:scale-90",
                                         active
-                                            ? "bg-[#181818] text-[#FFFDF8] shadow-sm"
-                                            : "text-[#756A60] hover:bg-[#F4F1EA] hover:text-[#201813]",
+                                            ? "bg-[#19120D] text-white shadow-sm"
+                                            : "text-[#756A63] hover:bg-[#FAF7F2] hover:text-[#19120D]",
                                     ].join(" ")}
                                 >
                                     <Icon
                                         className={[
                                             "h-4 w-4 transition-transform duration-200",
-                                            active ? "scale-110 text-[#E59B63]" : "text-[#756A60]",
+                                            active ? "scale-110 text-[#FF5C35]" : "text-[#756A63]",
                                         ].join(" ")}
                                         strokeWidth={active ? 2.5 : 2}
                                     />
@@ -258,11 +276,11 @@ export function Navbar() {
                         <button
                             type="button"
                             onClick={() => setIsSavedModalOpen(true)}
-                            className="relative flex flex-1 flex-col items-center justify-center rounded-full py-1.5 text-[#756A60] transition-all duration-150 hover:bg-[#F4F1EA] hover:text-[#201813] active:scale-90"
+                            className="relative flex flex-1 flex-col items-center justify-center rounded-full py-1.5 text-[#756A63] transition-all duration-150 hover:bg-[#FAF7F2] hover:text-[#19120D] active:scale-90"
                         >
                             <Bookmark
                                 className={`h-4 w-4 transition-transform duration-200 ${
-                                    savedCount > 0 ? "fill-current text-[#C8784A]" : "text-[#756A60]"
+                                    savedCount > 0 ? "fill-current text-[#FF5C35]" : "text-[#756A63]"
                                 }`}
                                 strokeWidth={savedCount > 0 ? 2.5 : 2}
                             />
@@ -270,7 +288,7 @@ export function Navbar() {
                                 Tersimpan
                             </span>
                             {savedCount > 0 && (
-                                <span className="absolute -top-1 right-2 grid h-4 min-w-4 place-items-center rounded-full bg-[#C8784A] px-1 text-[9px] font-black text-white shadow-sm">
+                                <span className="absolute -top-1 right-2 grid h-4 min-w-4 place-items-center rounded-full bg-[#FF5C35] px-1 text-[9px] font-black text-white shadow-sm">
                                     {savedCount}
                                 </span>
                             )}

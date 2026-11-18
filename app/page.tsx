@@ -4,11 +4,12 @@ import path from "path";
 
 import { FeaturedPlacesSection } from "@/components/home/FeaturedPlacesSection";
 import { HomeHeroSection } from "@/components/home/HomeHeroSection";
+import { HomeFeaturePillars } from "@/components/home/HomeFeaturePillars";
+import { HomePromoBento } from "@/components/home/HomePromoBento";
 import { HomeBrandBanner } from "@/components/home/HomeBrandBanner";
 import { HomeFaqSection } from "@/components/home/HomeFaqSection";
 import { HOME_FAQS } from "@/lib/faq-data";
 import { OwnerBusinessSection } from "@/components/home/OwnerBusinessSection";
-import PromoBannerCarousel from "@/components/PromoBannerCarousel";
 import { WhySaranwak } from "@/components/WhySaranwak";
 import { getFeaturedPlaces, type ApiPlace } from "@/lib/api/places";
 import type { Place } from "@/types/database";
@@ -108,27 +109,36 @@ export default async function Home() {
       <div className="relative z-10">
         <HomeHeroSection />
 
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-3 pb-28 sm:gap-14 sm:px-6 sm:pb-20 lg:gap-16 lg:px-8">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 pb-28 sm:gap-14 sm:px-8 sm:pb-20 lg:gap-16 lg:px-12">
+          {/* 4 Pilar Feature Highlights */}
+          <HomeFeaturePillars />
+
+          {/* Promo & Special Offers Bento Grid */}
+          <SectionBlock variant="compact">
+            <HomePromoBento />
+          </SectionBlock>
+
+          {/* Popular Destinations (Top Places) */}
           <SectionBlock>
             <FeaturedPlacesSection places={places} />
           </SectionBlock>
 
-          <SectionBlock variant="compact">
-            <PromoBannerCarousel />
-          </SectionBlock>
-
+          {/* Why Saranwak Value Props */}
           <SectionBlock>
             <WhySaranwak />
           </SectionBlock>
 
-          <SectionBlock>
-            <HomeFaqSection />
-          </SectionBlock>
-
+          {/* Local Community Spirit Banner */}
           <SectionBlock>
             <HomeBrandBanner />
           </SectionBlock>
 
+          {/* Frequently Asked Questions */}
+          <SectionBlock>
+            <HomeFaqSection />
+          </SectionBlock>
+
+          {/* Curved Owner Promo Banner */}
           <SectionBlock variant="last">
             <OwnerBusinessSection />
           </SectionBlock>

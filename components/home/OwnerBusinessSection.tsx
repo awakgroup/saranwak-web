@@ -1,70 +1,46 @@
-import { websiteServiceUrl } from "@/constant/home";
-import Link from "next/link";
+import { Megaphone, ArrowRight } from "lucide-react";
 
-const benefits = ["Featured listing", "Promo banner", "Profil bisnis"];
+const WHATSAPP_NUMBER = "6281932097214";
+const registerCafeUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    "Hi SaranWak, saya pemilik coffee shop di Padang dan tertarik mendaftarkan tempat saya di direktori Saranwak."
+)}`;
 
 export function OwnerBusinessSection() {
     return (
-        <section id="owner-business" className="relative">
-            <div className="relative overflow-hidden rounded-[28px] border border-[#E7D8C8] bg-[#201813] px-5 py-6 text-white shadow-[0_18px_55px_rgba(32,24,19,0.14)] sm:px-7 sm:py-7 lg:px-8">
-                <BackgroundDecor />
+        <section id="owner-business" className="relative w-full">
+            <div className="relative flex flex-col items-center justify-between gap-8 overflow-hidden rounded-[2.5rem] border border-[#FF5C35]/30 bg-gradient-to-r from-[#1E130B] via-[#2A180E] to-[#140D08] p-8 text-white shadow-2xl md:flex-row sm:p-12">
+                {/* Background Ambient Glows */}
+                <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[#FF5C35]/20 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-28 -right-20 h-64 w-64 rounded-full bg-[#FDBA74]/15 blur-3xl" />
 
-                <div className="relative grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
-                    <div className="max-w-3xl">
-                        <div className="inline-flex rounded-full border border-white/10 bg-white/[0.07] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#F2C38B]">
-                            Untuk owner bisnis
-                        </div>
-
-                        <h2 className="mt-3 text-2xl font-black leading-tight tracking-[-0.04em] text-white sm:text-3xl lg:text-4xl">
-                            Biar bisnis kamu lebih gampang ditemukan.
-                        </h2>
-
-                        <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-white/65 sm:text-base">
-                            Tampilkan coffee shop, resto, event, atau spot lokal kamu di
-                            Saranwak lewat listing dan promo placement.
-                        </p>
-
-                        <div className="mt-4 flex flex-wrap gap-2">
-                            {benefits.map((item) => (
-                                <span
-                                    key={item}
-                                    className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-bold text-white/75"
-                                >
-                                    {item}
-                                </span>
-                            ))}
-                        </div>
+                <div className="relative z-10 max-w-xl">
+                    <div className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-[#FF5C35]/40 bg-[#FF5C35]/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#FDBA74]">
+                        <Megaphone className="h-3.5 w-3.5 text-[#FF5C35]" />
+                        <span>KHUSUS PEMILIK KAFE</span>
                     </div>
 
-                    <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-                        <a
-                            href={websiteServiceUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#F2C38B] px-5 py-3 text-sm font-black text-[#201813] shadow-[0_14px_34px_rgba(242,195,139,0.2)] transition duration-300 hover:-translate-y-0.5 hover:bg-white"
-                        >
-                            Konsultasi via WhatsApp →
-                        </a>
+                    <h2 className="font-sans text-2xl font-extrabold leading-tight text-white sm:text-3xl">
+                        Punya Coffee Shop di Padang? Daftarkan Spot Kamu.
+                    </h2>
 
-                        <Link
-                            href="/places?category=coffee-shop"
-                            className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] px-5 py-3 text-sm font-black text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-[#201813]"
-                        >
-                            Lihat contoh listing
-                        </Link>
-                    </div>
+                    <p className="mt-2 text-xs leading-relaxed text-[#D4C9C3] sm:text-sm">
+                        Jangkau ribuan mahasiswa, pegiat remote work, dan penikmat kopi di Sumatera Barat.
+                        Publikasikan menu unggulan, fasilitas, dan suasana kedai Anda bersama direktori Saranwak.
+                    </p>
+                </div>
+
+                <div className="relative z-10 shrink-0">
+                    <a
+                        href={registerCafeUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 rounded-2xl bg-[#FF5C35] px-7 py-3.5 text-xs font-bold text-white shadow-[0_12px_32px_-4px_rgba(255,92,53,0.35)] transition-all duration-300 hover:scale-105 hover:bg-[#D8431F] hover:shadow-2xl active:scale-95 sm:text-sm"
+                    >
+                        <span>Daftarkan Sekarang</span>
+                        <ArrowRight className="h-4 w-4" />
+                    </a>
                 </div>
             </div>
         </section>
-    );
-}
-
-function BackgroundDecor() {
-    return (
-        <>
-            <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[#F2C38B]/18 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-28 -right-20 h-64 w-64 rounded-full bg-[#1F5A4A]/35 blur-3xl" />
-            <div className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,0.14)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.14)_1px,transparent_1px)] [background-size:42px_42px]" />
-        </>
     );
 }
