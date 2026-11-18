@@ -23,7 +23,7 @@ const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappPromoMessag
 
 export function Navbar() {
     const pathname = usePathname();
-    const [isMapView, setIsMapView] = useState(false);
+    const [isViewMapParam, setIsViewMapParam] = useState(false);
     const { savedCount } = useSavedPlaces();
     const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
 
@@ -31,7 +31,7 @@ export function Navbar() {
         if (typeof window !== "undefined") {
             const checkMap = () => {
                 const params = new URLSearchParams(window.location.search);
-                setIsMapView(window.location.pathname === "/places" && params.get("view") === "map");
+                setIsViewMapParam(params.get("view") === "map");
             };
             checkMap();
             window.addEventListener("popstate", checkMap);
@@ -48,7 +48,8 @@ export function Navbar() {
     const isPlaceDetailPage =
         pathname.startsWith("/places/") && pathname.split("/").filter(Boolean).length === 2;
 
-    const isExploreView = pathname === "/places" && !isMapView;
+    const isMapView = pathname === "/map" || (pathname === "/places" && isViewMapParam);
+    const isExploreView = pathname === "/places" && !isViewMapParam;
     const isHome = pathname === "/";
     const isAbout = pathname.startsWith("/about");
 
@@ -67,7 +68,7 @@ export function Navbar() {
         },
         {
             label: "Map",
-            href: "/places?view=map",
+            href: "/map",
             icon: MapPin,
             isActive: isMapView,
         },
@@ -137,7 +138,7 @@ export function Navbar() {
 
                         {/* 3. Map */}
                         <Link
-                            href="/places?view=map"
+                            href="/map"
                             className={[
                                 "rounded-full text-xs lg:text-sm transition-all",
                                 isMapView

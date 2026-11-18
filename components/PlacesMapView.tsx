@@ -107,8 +107,15 @@ export function PlacesMapView({
 
         let isCancelled = false;
 
-        import("leaflet").then((L) => {
+        import("leaflet").then((mod) => {
             if (isCancelled || !mapContainerRef.current || mapInstanceRef.current) return;
+
+            const L = ((mod as any).default ?? mod) as typeof import("leaflet");
+
+            // Pastikan container bersih dari instance sebelumnya (pencegahan Error: Map container is already initialized)
+            if ((mapContainerRef.current as any)?._leaflet_id) {
+                delete (mapContainerRef.current as any)._leaflet_id;
+            }
 
             // Default Padang Center coordinates
             const map = L.map(mapContainerRef.current, {
@@ -137,7 +144,9 @@ export function PlacesMapView({
 
             setTimeout(() => {
                 map.invalidateSize();
-            }, 250);
+            }, 300);
+        }).catch((err) => {
+            console.error("Gagal memuat Leaflet map:", err);
         });
 
         return () => {
@@ -146,6 +155,9 @@ export function PlacesMapView({
                 mapInstanceRef.current.remove();
                 mapInstanceRef.current = null;
             }
+            if (mapContainerRef.current && (mapContainerRef.current as any)?._leaflet_id) {
+                delete (mapContainerRef.current as any)._leaflet_id;
+            }
         };
     }, []);
 
@@ -153,7 +165,8 @@ export function PlacesMapView({
     useEffect(() => {
         if (!isMapReady || !mapInstanceRef.current || !markersLayerRef.current) return;
 
-        import("leaflet").then((L) => {
+        import("leaflet").then((mod) => {
+            const L = ((mod as any).default ?? mod) as typeof import("leaflet");
             const markersLayer = markersLayerRef.current;
             const map = mapInstanceRef.current;
             if (!markersLayer || !map) return;
@@ -202,6 +215,7 @@ export function PlacesMapView({
                 bounds.push([lat, lng]);
 
                 const isSelected = selectedPlace?.id === place.id;
+                const safeName = (place.name || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
                 const customIcon = L.divIcon({
                     className: "saranwak-marker-container",
@@ -209,7 +223,7 @@ export function PlacesMapView({
                         <div class="saranwak-pin-wrapper ${isSelected ? "selected" : ""}">
                             <div class="saranwak-pin ${isSelected ? "!bg-[#FF5C35] !text-white ring-4 ring-[#FF5C35]/30" : ""}">
                                 <span class="saranwak-pin-dot ${isSelected ? "!bg-white" : ""}"></span>
-                                <span class="saranwak-pin-label font-bold">${place.name}</span>
+                                <span class="saranwak-pin-label font-bold">${safeName}</span>
                             </div>
                             <div class="saranwak-pin-pointer ${isSelected ? "!border-t-[#FF5C35]" : ""}"></div>
                         </div>
@@ -236,8 +250,10 @@ export function PlacesMapView({
                     maxZoom: 15,
                 });
             }
+        }).catch((err) => {
+            console.error("Gagal memperbarui markers peta:", err);
         });
-    }, [places, isMapReady, selectedPlace?.id, onSelectPlace, userCoords]);
+    }, [places, isMapReady, userCoords]); // Hapus selectedPlace?.id agar tidak reset bounds saat kafe diklik
 
     const handleFocusPlace = (place: Place) => {
         setSelectedPlace(place);
@@ -254,7 +270,8 @@ export function PlacesMapView({
 
     const handleResetView = () => {
         if (!mapInstanceRef.current || places.length === 0) return;
-        import("leaflet").then((L) => {
+        import("leaflet").then((mod) => {
+            const L = ((mod as any).default ?? mod) as typeof import("leaflet");
             const validCoords = places.map((p) => {
                 const c = getPlaceCoordinates(p);
                 return [c.lat, c.lng] as L.LatLngExpression;
@@ -387,10 +404,10 @@ export function PlacesMapView({
                 </aside>
 
                 {/* KOLOM KANAN (col-span-7): Interactive Map Canvas */}
-                <div className="relative flex h-[500px] flex-col justify-between overflow-hidden rounded-3xl border border-[#EBE5DC] bg-[#EDE8E1] shadow-sm select-none lg:col-span-7 lg:h-full">
+                <div className="relative h-[500px] w-full overflow-hidden rounded-3xl border border-[#EBE5DC] bg-[#EDE8E1] shadow-sm select-none lg:col-span-7 lg:h-full">
                     <div
                         ref={mapContainerRef}
-                        className="h-full w-full z-0"
+                        className="absolute inset-0 h-full w-full z-0"
                     />
 
                     {/* Top Overlay Badge & Reset Button */}
