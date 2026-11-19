@@ -16,8 +16,8 @@ export function HomePromoBento() {
     return (
         <section className="relative w-full">
             {/* Mobile Bento Banner - Exact match to Stitch Screen 3f54a1c6760d4badb78d709f20d14900 */}
-            <div className="block sm:hidden w-full px-5 mt-6">
-                <div className="relative rounded-2xl overflow-hidden bg-[#291c14] p-5 text-white shadow-[0_12px_32px_-4px_rgba(41,28,20,0.2)] border border-[#e4e2de]/20 flex flex-col min-h-[168px] justify-between group">
+            <div className="block sm:hidden w-full px-4 mt-5">
+                <div className="relative rounded-2xl overflow-hidden bg-[#291c14] p-4 text-white shadow-md border border-white/10 flex flex-col justify-between group">
                     <div
                         className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-overlay group-hover:scale-105 transition-transform duration-500"
                         style={{
@@ -29,51 +29,51 @@ export function HomePromoBento() {
                     <div className="absolute top-2 right-16 text-[#ffdbd1]/30 select-none pointer-events-none font-bold text-[18px]">✦</div>
                     <div className="absolute bottom-8 right-24 text-[#ffddb8]/30 select-none pointer-events-none font-bold text-[12px]">✦</div>
 
-                    <div className="relative z-10 flex items-start justify-between gap-3 mb-2.5">
+                    <div className="relative z-10 flex items-start justify-between gap-2.5 mb-2">
                         <div className="flex flex-col items-start flex-1 min-w-0">
-                            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#ac3311]/30 backdrop-blur-sm border border-[#ffdbd1]/30 text-[#ffddb8] text-[10px] font-bold tracking-wider uppercase mb-2">
-                                <Sparkles className="h-3 w-3 text-[#ffddb8]" />
+                            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#ac3311]/30 backdrop-blur-sm border border-[#ffdbd1]/30 text-[#ffddb8] text-[9.5px] font-bold tracking-wider uppercase mb-1.5">
+                                <Sparkles className="h-2.5 w-2.5 text-[#ffddb8]" />
                                 <span>SLOT PROMOSI • MITRA KEDAI</span>
                             </div>
-                            <h3 className="text-[17px] font-extrabold text-white tracking-tight leading-tight">
-                                Punya Promo atau Agenda Event? <span className="text-[15px]">✨</span>
+                            <h3 className="text-[15px] font-extrabold text-white tracking-tight leading-snug">
+                                Punya Promo atau Agenda Event? <span className="text-[13px]">✨</span>
                             </h3>
-                            <p className="text-[12px] text-white/95 mt-1 leading-snug max-w-[230px]">
-                                Tampilkan diskon nugas, workshop, atau cupping session kedaimu langsung di etalase Saranwak.
+                            <p className="text-[11.5px] text-white/90 mt-0.5 leading-snug max-w-[220px]">
+                                Tampilkan diskon nugas, workshop, atau cupping session kedaimu di etalase Saranwak.
                             </p>
                         </div>
 
                         <div className="shrink-0 relative flex flex-col items-center justify-center">
-                            <div className="w-16 h-16 rounded-2xl bg-[#ac3311]/25 backdrop-blur-md border border-dashed border-[#ffdbd1]/60 flex flex-col items-center justify-center p-1 text-center shadow-inner group-hover:scale-105 transition-transform">
-                                <Flame className="h-4 w-4 text-[#ffdbd1] mb-0.5" />
-                                <span className="text-[8px] font-extrabold uppercase text-[#ffdbd1] tracking-wider leading-none">
-                                    SLOT DIBUKA
+                            <div className="w-14 h-14 rounded-xl bg-[#ac3311]/25 backdrop-blur-md border border-dashed border-[#ffdbd1]/60 flex flex-col items-center justify-center p-1 text-center shadow-inner group-hover:scale-105 transition-transform">
+                                <Flame className="h-3.5 w-3.5 text-[#ffdbd1] mb-0.5" />
+                                <span className="text-[7.5px] font-extrabold uppercase text-[#ffdbd1] tracking-wider leading-none">
+                                    DIBUKA
                                 </span>
-                                <span className="text-[8px] text-[#ffddb8] leading-none mt-1">Mulai 50rb</span>
+                                <span className="text-[7.5px] text-[#ffddb8] leading-none mt-0.5">Mulai 50rb</span>
                             </div>
-                            <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full bg-[#ffdbd1] flex items-center justify-center text-[#3c0800] text-[9px] font-bold shadow-sm">
+                            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[#ffdbd1] flex items-center justify-center text-[#3c0800] text-[8px] font-bold shadow-xs">
                                 ★
                             </span>
                         </div>
                     </div>
 
-                    <div className="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-3.5 mt-3 border-t border-[#e4e2de]/20">
+                    <div className="relative z-10 flex items-center gap-2 pt-2.5 mt-1 border-t border-white/10">
                         <a
                             href={eventWaUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-[#ac3311] hover:bg-[#881f00] text-white text-[13px] font-bold shadow-[0_4px_16px_rgba(172,51,17,0.35)] transition-all active:scale-[0.98] group/btn"
+                            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-full bg-[#ac3311] hover:bg-[#881f00] text-white text-[12px] font-bold shadow-xs transition-all active:scale-[0.98] group/btn"
                         >
                             <span className="truncate">Daftarkan Event / Promo</span>
-                            <ArrowRight className="h-4 w-4 text-white font-bold transition-transform group-hover/btn:translate-x-0.5" />
+                            <ArrowRight className="h-3.5 w-3.5 text-white font-bold transition-transform group-hover/btn:translate-x-0.5" />
                         </a>
                         <a
                             href={spotlightWaUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white text-[12px] font-semibold transition-all active:scale-[0.98] backdrop-blur-sm"
+                            className="inline-flex items-center justify-center gap-1 px-3 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-[11px] font-semibold transition-all active:scale-[0.98] backdrop-blur-sm shrink-0"
                         >
-                            <span className="w-2 h-2 rounded-full bg-[#ffdbd1] animate-pulse shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#ffdbd1] animate-pulse shrink-0" />
                             <span className="truncate">Hubungi Admin</span>
                         </a>
                     </div>

@@ -25,18 +25,18 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
     const displayPlaces = places.slice(0, 4);
 
     return (
-        <section className="relative w-full mt-7 sm:mt-0" id="rekomendasi-populer">
+        <section className="relative w-full mt-6 sm:mt-0" id="rekomendasi-populer">
             {/* Header matching Stitch Landing Page & Mobile */}
-            <div className="px-5 sm:px-0 mb-3.5 flex items-center justify-between sm:mb-8 sm:items-end">
+            <div className="px-4 sm:px-0 mb-3 flex items-center justify-between sm:mb-8 sm:items-end">
                 <div>
-                    <div className="mb-1 hidden sm:flex items-center gap-2">
-                        <span className="text-xs font-black uppercase tracking-wider text-[#FF5C35]">
+                    <div className="mb-1 flex items-center gap-1.5 sm:gap-2">
+                        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
                             POPULAR DESTINATIONS
                         </span>
                         <span className="text-xs">☕</span>
                     </div>
 
-                    <h2 className="font-sans text-[18px] sm:text-3xl font-extrabold tracking-tight text-[#0d0401] sm:text-[#19120D]">
+                    <h2 className="font-sans text-[20px] sm:text-3xl font-extrabold tracking-tight text-[#0d0401] sm:text-[#19120D]">
                         Rekomendasi
                     </h2>
                     <p className="mt-0.5 hidden sm:block text-xs text-[#756A63] sm:text-sm">
@@ -46,17 +46,17 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
 
                 <Link
                     href="/places?category=coffee-shop"
-                    className="inline-flex items-center gap-1 text-[13px] sm:text-sm font-semibold text-[#ac3311] sm:text-[#FF5C35] hover:underline shrink-0"
+                    className="inline-flex items-center gap-1 text-[12px] sm:text-sm font-semibold text-[#ac3311] sm:text-[#FF5C35] hover:underline shrink-0"
                 >
-                    <span>Lihat semua</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <span>Lihat Semua</span>
+                    <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Link>
             </div>
 
-            {/* 4 Cards: Mobile Horizontal Snap Carousel (160x220 rounded-2xl), Desktop 4-Column Grid */}
+            {/* 4 Cards: Mobile Horizontal Snap Carousel (155x215 rounded-2xl), Desktop 4-Column Grid */}
             <div
-                className="no-scrollbar flex gap-3.5 overflow-x-auto px-5 pb-2 snap-x snap-mandatory overscroll-x-contain sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4"
-                style={{ scrollPaddingLeft: "1.25rem" }}
+                className="no-scrollbar flex gap-3 overflow-x-auto px-4 pb-1.5 snap-x snap-mandatory overscroll-x-contain sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4"
+                style={{ scrollPaddingLeft: "1rem" }}
             >
                 {displayPlaces.map((place) => {
                     const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
@@ -69,7 +69,7 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                         <article
                             key={place.id}
                             onClick={() => router.push(`/places/${place.slug}`)}
-                            className="group relative flex h-[220px] w-[160px] shrink-0 snap-start cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#0d0401] p-3 text-white shadow-sm transition-all duration-300 hover:border-[#FF5C35]/50 active:scale-[0.98] sm:h-96 sm:w-auto sm:rounded-3xl sm:p-5 sm:shadow-bento"
+                            className="group relative flex h-[215px] w-[155px] shrink-0 snap-start cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#0d0401] p-3 text-white shadow-sm transition-all duration-300 hover:border-[#FF5C35]/50 active:scale-[0.98] sm:h-96 sm:w-auto sm:rounded-3xl sm:p-5 sm:shadow-bento"
                         >
                             {/* Accessible Link overlay for crawlers & keyboard navigation */}
                             <Link
@@ -93,7 +93,12 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                             {/* Top Badges */}
                             <div className="pointer-events-none relative z-20 flex items-center justify-between w-full">
                                 <div className="flex items-center gap-1.5">
-                                    <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
+                                    <div className="block sm:hidden">
+                                        <OpenStatusBadge openingHours={place.opening_hours} mode="minimal" />
+                                    </div>
+                                    <div className="hidden sm:block">
+                                        <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
+                                    </div>
 
                                     {place.is_featured ? (
                                         <span
@@ -116,7 +121,7 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                                     className={`pointer-events-auto relative z-30 flex h-7 w-7 items-center justify-center rounded-full backdrop-blur-md transition-all active:scale-95 sm:h-8 sm:w-8 ${
                                         isSaved
                                             ? "bg-[#ac3311] text-white"
-                                            : "bg-white/30 text-white hover:text-[#ffdbd1]"
+                                            : "bg-black/40 text-white hover:text-[#ffdbd1] border border-white/20"
                                     }`}
                                 >
                                     <Bookmark className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isSaved ? "fill-current text-white" : ""}`} />
@@ -125,13 +130,13 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
 
                             {/* Bottom Information */}
                             <div className="pointer-events-none relative z-20 flex flex-col text-white">
-                                <h3 className="truncate font-sans text-[15px] sm:text-base font-bold leading-tight text-white transition-colors group-hover:text-[#FDBA74]">
+                                <span className="truncate text-[10px] font-bold uppercase tracking-wider text-[#ffdbd1]">
+                                    {district}
+                                </span>
+                                <h3 className="truncate font-sans text-[14px] sm:text-base font-bold leading-tight text-white transition-colors group-hover:text-[#FDBA74]">
                                     {place.name}
                                 </h3>
-                                <p className="truncate text-[11px] text-white/80 uppercase mt-0.5 sm:mt-1">
-                                    {district}
-                                </p>
-                                <span className="font-sans text-[12px] sm:text-sm font-bold text-[#ffddb8] mt-1">
+                                <span className="font-sans text-[12px] sm:text-sm font-bold text-[#ffddb8] mt-0.5">
                                     {priceLabel}
                                 </span>
                             </div>

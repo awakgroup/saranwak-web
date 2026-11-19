@@ -110,7 +110,7 @@ export default async function Home() {
       <div className="relative z-10">
         <HomeHeroSection />
 
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-0 sm:gap-12 px-0 sm:px-8 pb-24 sm:pb-20 lg:gap-14 lg:px-12">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-0 sm:gap-12 px-0 sm:px-8 pb-32 sm:pb-20 lg:gap-14 lg:px-12">
           {/* Section 2: 4 Pilar Feature Highlights (Desktop) */}
           <div className="hidden sm:block">
             <HomeFeaturePillars />
@@ -140,15 +140,15 @@ export default async function Home() {
             </SectionBlock>
           </div>
 
-          {/* Section 6: Mobile Compact Editorial Footer matching Stitch 3f54a1c6760d4badb78d709f20d14900 */}
-          <div className="block sm:hidden px-5 mt-8 pt-5 border-t border-[#e4e2de]/60 flex flex-col items-center text-center relative">
+          {/* Section 6: Mobile Compact Editorial Footer */}
+          <div className="block sm:hidden px-4 mt-6 pt-5 pb-4 border-t border-[#e4e2de]/70 flex flex-col items-center text-center relative">
             <div className="flex items-center gap-1.5 mb-1.5">
               <div className="w-5 h-5 rounded-md bg-[#0d0401] flex items-center justify-center text-[#ff6e48]">
                 <Coffee className="h-3.5 w-3.5 text-[#ff6e48]" />
               </div>
-              <span className="text-[14px] text-[#0d0401] font-bold">Saranwak</span>
+              <span className="text-[13px] text-[#0d0401] font-bold">Saranwak</span>
             </div>
-            <p className="text-[11px] text-[#4e4540] max-w-xs mb-2 leading-relaxed">
+            <p className="text-[11px] text-[#4e4540] max-w-xs mb-1.5 leading-relaxed">
               Kurasi independen kopi &amp; spot WFC Kota Padang. Dibuat dengan kecintaan pada seduhan jujur.
             </p>
             <span className="text-[10px] text-[#80756f] leading-tight">

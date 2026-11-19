@@ -209,106 +209,76 @@ export function Navbar() {
                 </div>
             </header>
 
-            {/* Floating Install App Pill matching Stitch 3f54a1c6760d4badb78d709f20d14900 */}
-            {!isPlaceDetailPage && (
-                <div className="fixed right-4 z-40 block md:hidden" style={{ bottom: "5.5rem" }}>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            if (typeof window !== "undefined") {
-                                window.dispatchEvent(new CustomEvent("saranwak:install-pwa"));
-                            }
-                        }}
-                        aria-label="Pasang Aplikasi"
-                        className="relative inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#291c14] hover:bg-[#0d0401] text-[#ffdbd1] shadow-[0_12px_32px_-4px_rgba(41,28,20,0.25)] border border-[#ffdbd1]/40 transition-all duration-200 active:scale-95 group cursor-pointer"
-                    >
-                        <span className="material-symbols-outlined text-[18px] text-[#ffdbd1] group-hover:scale-110 transition-transform">
-                            install_mobile
-                        </span>
-                        <span className="text-[12px] font-semibold text-[#ffdbd1] tracking-wide whitespace-nowrap">
-                            Install App
-                        </span>
-                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#ac3311] border-2 border-[#fbf9f5] animate-pulse" />
-                    </button>
-                </div>
-            )}
-
-            {/* Mobile Bottom Floating Navigation Dock - Sleek Mobile App Tab Bar matching Stitch */}
+            {/* Mobile Bottom Fixed Navigation Dock - Grounded firmly to bottom */}
             {!isPlaceDetailPage && (
                 <nav
                     aria-label="Mobile Navigation"
-                    className="fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-[#e4e2de]/60 rounded-t-[28px] shadow-[0_-4px_20px_rgba(41,28,20,0.08)] px-4 pt-2 pb-[calc(0.6rem+env(safe-area-inset-bottom,0px))] md:hidden"
+                    className="fixed bottom-0 inset-x-0 z-50 bg-[#FAF7F2]/98 backdrop-blur-xl border-t border-[#E5DFD5] pb-[env(safe-area-inset-bottom,0px)] md:hidden shadow-[0_-1px_3px_rgba(0,0,0,0.03)]"
                 >
-                    <div className="max-w-md mx-auto flex items-center justify-between px-1">
+                    <div className="mx-auto flex h-14 max-w-md items-center justify-around px-2">
                         {/* 1. Home */}
                         <Link
                             href="/"
-                            className={`flex min-w-[50px] flex-col items-center justify-center py-1 transition-colors active:scale-90 ${
-                                isHome ? "text-[#ac3311] font-semibold" : "text-[#756A63] hover:text-[#19120D]"
+                            className={`flex min-w-[50px] flex-col items-center justify-center py-1 transition-colors active:scale-95 ${
+                                isHome ? "text-[#ac3311] font-bold" : "text-[#756A63] hover:text-[#19120D]"
                             }`}
                         >
-                            <div className="flex h-7 w-8 items-center justify-center rounded-full transition-colors">
-                                <Home className="h-5 w-5" strokeWidth={isHome ? 2.5 : 2} />
-                            </div>
-                            <span className="text-[10px] mt-0.5">Home</span>
+                            <Home className="h-5 w-5" strokeWidth={isHome ? 2.5 : 2} />
+                            <span className="text-[10px] mt-0.5 font-semibold">Home</span>
                         </Link>
 
                         {/* 2. Explore */}
                         <Link
                             href="/places?category=coffee-shop"
-                            className={`flex min-w-[50px] flex-col items-center justify-center py-1 transition-colors active:scale-90 ${
-                                isExploreView ? "text-[#ac3311] font-semibold" : "text-[#756A63] hover:text-[#19120D]"
+                            className={`flex min-w-[50px] flex-col items-center justify-center py-1 transition-colors active:scale-95 ${
+                                isExploreView ? "text-[#ac3311] font-bold" : "text-[#756A63] hover:text-[#19120D]"
                             }`}
                         >
-                            <div className="flex h-7 w-8 items-center justify-center rounded-full transition-colors">
-                                <Compass className="h-5 w-5" strokeWidth={isExploreView ? 2.5 : 2} />
-                            </div>
-                            <span className="text-[10px] mt-0.5">Explore</span>
+                            <Compass className="h-5 w-5" strokeWidth={isExploreView ? 2.5 : 2} />
+                            <span className="text-[10px] mt-0.5 font-semibold">Explore</span>
                         </Link>
 
                         {/* 3. Center Elevated Floating MAP Button */}
                         <Link
                             href="/map"
                             aria-label="Peta Spot Ngopi Padang"
-                            className="relative -top-3.5 px-1 group transition-transform active:scale-95 flex items-center justify-center"
+                            className="relative -top-2.5 px-1 group transition-transform active:scale-95 flex items-center justify-center"
                         >
-                            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#ac3311] text-white ring-4 ring-[#fbf9f5] shadow-[0_6px_18px_rgba(172,51,17,0.35)] transition-all duration-300 ease-out group-hover:scale-105 active:scale-95">
-                                <MapPin className="h-6 w-6 text-white" strokeWidth={2.5} />
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#ac3311] text-white ring-4 ring-[#FAF7F2] shadow-md transition-all group-hover:scale-105">
+                                <MapPin className="h-5 w-5 text-white" strokeWidth={2.5} />
                             </div>
                         </Link>
 
                         {/* 4. Tersimpan */}
                         <Link
                             href="/saved"
-                            className={`relative flex min-w-[50px] flex-col items-center justify-center py-1 transition-colors active:scale-90 ${
-                                isSavedView ? "text-[#ac3311] font-semibold" : "text-[#756A63] hover:text-[#19120D]"
+                            className={`relative flex min-w-[50px] flex-col items-center justify-center py-1 transition-colors active:scale-95 ${
+                                isSavedView ? "text-[#ac3311] font-bold" : "text-[#756A63] hover:text-[#19120D]"
                             }`}
                         >
-                            <div className="relative flex h-7 w-8 items-center justify-center rounded-full transition-colors">
+                            <div className="relative flex items-center justify-center">
                                 <Bookmark
                                     className={`h-5 w-5 ${savedCount > 0 ? "fill-current text-[#ac3311]" : ""}`}
                                     strokeWidth={isSavedView ? 2.5 : 2}
                                 />
                                 {savedCount > 0 && (
-                                    <span className="absolute top-0 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#ac3311] text-[9px] font-bold text-white shadow-xs">
+                                    <span className="absolute -top-1 -right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#ac3311] text-[8px] font-bold text-white shadow-xs">
                                         {savedCount}
                                     </span>
                                 )}
                             </div>
-                            <span className="text-[10px] mt-0.5">Tersimpan</span>
+                            <span className="text-[10px] mt-0.5 font-semibold">Tersimpan</span>
                         </Link>
 
                         {/* 5. Tentang */}
                         <Link
                             href="/about"
-                            className={`flex min-w-[50px] flex-col items-center justify-center py-1 transition-colors active:scale-90 ${
-                                isAbout ? "text-[#ac3311] font-semibold" : "text-[#756A63] hover:text-[#19120D]"
+                            className={`flex min-w-[50px] flex-col items-center justify-center py-1 transition-colors active:scale-95 ${
+                                isAbout ? "text-[#ac3311] font-bold" : "text-[#756A63] hover:text-[#19120D]"
                             }`}
                         >
-                            <div className="flex h-7 w-8 items-center justify-center rounded-full transition-colors">
-                                <Info className="h-5 w-5" strokeWidth={isAbout ? 2.5 : 2} />
-                            </div>
-                            <span className="text-[10px] mt-0.5">Tentang</span>
+                            <Info className="h-5 w-5" strokeWidth={isAbout ? 2.5 : 2} />
+                            <span className="text-[10px] mt-0.5 font-semibold">Tentang</span>
                         </Link>
                     </div>
                 </nav>

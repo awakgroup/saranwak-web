@@ -5,7 +5,7 @@ import { getPlaceOpenStatus, type PlaceOpenStatus } from "@/lib/opening-hours";
 
 type OpenStatusBadgeProps = {
     openingHours?: string | null;
-    mode?: "compact" | "detail";
+    mode?: "compact" | "detail" | "minimal";
     className?: string;
 };
 
@@ -31,6 +31,48 @@ export function OpenStatusBadge({
 
     if (!openingHours || !openingHours.trim()) {
         return null;
+    }
+
+    if (mode === "minimal") {
+        if (status.variant === "24hours") {
+            return (
+                <span
+                    className={[
+                        "inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-md shadow-xs shrink-0",
+                        className,
+                    ].join(" ")}
+                >
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />
+                    <span>24 Jam</span>
+                </span>
+            );
+        }
+
+        if (status.isOpen) {
+            return (
+                <span
+                    className={[
+                        "inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-md shadow-xs shrink-0",
+                        className,
+                    ].join(" ")}
+                >
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <span>Buka</span>
+                </span>
+            );
+        }
+
+        return (
+            <span
+                className={[
+                    "inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-semibold text-white/80 backdrop-blur-md shadow-xs shrink-0",
+                    className,
+                ].join(" ")}
+            >
+                <span className="h-1.5 w-1.5 rounded-full bg-neutral-400 shrink-0" />
+                <span>Tutup</span>
+            </span>
+        );
     }
 
     if (mode === "detail") {
