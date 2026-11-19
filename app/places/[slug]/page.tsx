@@ -27,6 +27,7 @@ import { PlaceDetailTracker } from "@/components/PlaceDetailTracker";
 import { TrackedExternalLink } from "@/components/TrackedExternalLink";
 import { OpenStatusBadge } from "@/components/OpenStatusBadge";
 import { BookmarkButton } from "@/components/BookmarkButton";
+import { MobilePlaceDetailView } from "@/components/MobilePlaceDetailView";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import {
     getPlaceBySlug as getPlaceBySlugFromApi,
@@ -195,7 +196,7 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
     const jsonLd = makePlaceJsonLd(place, tags, category, galleryImages);
 
     return (
-        <main className="min-h-screen bg-[#FAF7F2] px-3.5 pb-24 pt-3 text-[#19120D] sm:px-5 sm:pb-16 sm:pt-8 md:pb-16 lg:px-8">
+        <main className="min-h-screen bg-[#FAF7F2] text-[#19120D]">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
@@ -214,90 +215,94 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
                 }}
             />
 
-            <section className="mx-auto max-w-7xl">
-                {/* Editorial Breadcrumbs */}
-                <nav className="mb-5 flex flex-wrap items-center gap-2 text-xs font-semibold text-[#756A63]">
-                    <Link
-                        href="/"
-                        className="transition hover:text-[#19120D]"
-                    >
-                        Home
-                    </Link>
-                    <span>/</span>
-                    <Link
-                        href="/places?category=coffee-shop"
-                        className="transition hover:text-[#19120D]"
-                    >
-                        Explore
-                    </Link>
-                    {place.area ? (
-                        <>
-                            <span>/</span>
-                            <Link
-                                href={`/places?category=coffee-shop&area=${encodeURIComponent(place.area)}`}
-                                className="transition hover:text-[#19120D]"
-                            >
-                                {place.area}
-                            </Link>
-                        </>
-                    ) : null}
-                    <span>/</span>
-                    <span className="truncate font-bold text-[#19120D]">{place.name}</span>
-                </nav>
-
-                <HeroSection
+            {/* Mobile View - Aligned 100% with Stitch design 9618eb0c068645cdb436c263d4ef2a0b */}
+            <div className="block md:hidden">
+                <MobilePlaceDetailView
                     place={place}
                     category={category}
                     tags={tags}
+                    characteristics={characteristics}
+                    galleryImages={galleryImages}
+                    relatedPlaces={relatedPlaces}
                     mainImageUrl={mainImageUrl}
                     whatsappShareUrl={whatsappShareUrl}
                 />
+            </div>
 
-                <div className="mt-5 grid gap-5 sm:mt-8 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
-                    <article className="min-w-0 space-y-4 sm:space-y-6">
-                        <QuickSummarySection summary={quickSummary} />
-
-                        {characteristics.length > 0 ? (
-                            <CharacteristicsSection characteristics={characteristics} />
+            {/* Desktop View */}
+            <div className="hidden md:block px-5 pb-16 pt-8 lg:px-8">
+                <section className="mx-auto max-w-7xl">
+                    {/* Editorial Breadcrumbs */}
+                    <nav className="mb-5 flex flex-wrap items-center gap-2 text-xs font-semibold text-[#756A63]">
+                        <Link
+                            href="/"
+                            className="transition hover:text-[#19120D]"
+                        >
+                            Home
+                        </Link>
+                        <span>/</span>
+                        <Link
+                            href="/places?category=coffee-shop"
+                            className="transition hover:text-[#19120D]"
+                        >
+                            Explore
+                        </Link>
+                        {place.area ? (
+                            <>
+                                <span>/</span>
+                                <Link
+                                    href={`/places?category=coffee-shop&area=${encodeURIComponent(place.area)}`}
+                                    className="transition hover:text-[#19120D]"
+                                >
+                                    {place.area}
+                                </Link>
+                            </>
                         ) : null}
+                        <span>/</span>
+                        <span className="truncate font-bold text-[#19120D]">{place.name}</span>
+                    </nav>
 
-                        {place.description ? (
-                            <DescriptionSection description={place.description} />
-                        ) : null}
-
-                        {galleryImages.length > 0 ? (
-                            <GallerySection images={galleryImages} placeName={place.name} />
-                        ) : null}
-
-                        {groupedTags.length > 0 ? (
-                            <TagGroupsSection groupedTags={groupedTags} />
-                        ) : null}
-                    </article>
-
-                    <PlaceSidebar
+                    <HeroSection
                         place={place}
                         category={category}
+                        tags={tags}
+                        mainImageUrl={mainImageUrl}
                         whatsappShareUrl={whatsappShareUrl}
                     />
-                </div>
 
-                {relatedPlaces.length > 0 ? (
-                    <RelatedPlacesSection places={relatedPlaces} />
-                ) : null}
-            </section>
+                    <div className="mt-5 grid gap-5 sm:mt-8 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
+                        <article className="min-w-0 space-y-4 sm:space-y-6">
+                            <QuickSummarySection summary={quickSummary} />
 
-            <MobileStickyActions
-                place={place}
-                mapsUrl={place.google_maps_url}
-                instagramUrl={place.instagram_url}
-                whatsappShareUrl={whatsappShareUrl}
-                placeId={place.id}
-                placeName={place.name}
-                placeSlug={place.slug}
-                area={place.area}
-                city={place.city}
-                categorySlug={category?.slug ?? null}
-            />
+                            {characteristics.length > 0 ? (
+                                <CharacteristicsSection characteristics={characteristics} />
+                            ) : null}
+
+                            {place.description ? (
+                                <DescriptionSection description={place.description} />
+                            ) : null}
+
+                            {galleryImages.length > 0 ? (
+                                <GallerySection images={galleryImages} placeName={place.name} />
+                            ) : null}
+
+                            {groupedTags.length > 0 ? (
+                                <TagGroupsSection groupedTags={groupedTags} />
+                            ) : null}
+                        </article>
+
+                        <PlaceSidebar
+                            place={place}
+                            category={category}
+                            whatsappShareUrl={whatsappShareUrl}
+                        />
+                    </div>
+
+                    {relatedPlaces.length > 0 ? (
+                        <RelatedPlacesSection places={relatedPlaces} />
+                    ) : null}
+                </section>
+            </div>
         </main>
     );
 }

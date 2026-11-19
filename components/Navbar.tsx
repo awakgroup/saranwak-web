@@ -93,7 +93,7 @@ export function Navbar() {
     return (
         <>
             {/* Top Header Navbar - Aligned with Stitch Landing Page & Mobile 3f54a1c6760d4badb78d709f20d14900 */}
-            <header className="sticky top-0 z-50 w-full border-b border-[#EBE5DC] bg-[#FAF7F2]/90 backdrop-blur-xl transition-all duration-300">
+            <header className={`sticky top-0 z-50 w-full border-b border-[#EBE5DC] bg-[#FAF7F2]/90 backdrop-blur-xl transition-all duration-300 ${isPlaceDetailPage ? "hidden md:block" : ""}`}>
                 <div className="mx-auto flex h-14 sm:h-20 max-w-7xl items-center justify-between gap-3 sm:gap-4 px-4 sm:px-8 lg:px-12">
                     {/* Brand & Location Pill */}
                     <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
