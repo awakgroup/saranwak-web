@@ -20,28 +20,31 @@ import { FilterModal } from "@/components/home/FilterModal";
 
 const AREA_OPTIONS = [
     { label: "Semua Area Kota", value: "" },
-    { label: "Padang Barat (Pantai/Pusat)", value: "Padang Barat" },
-    { label: "Padang Timur (Jati)", value: "Padang Timur" },
-    { label: "Padang Utara (Khatib/UNP)", value: "Padang Utara" },
-    { label: "Padang Selatan (Batang Arau)", value: "Padang Selatan" },
-    { label: "Koto Tangah / Kuranji", value: "Koto Tangah" },
+    { label: "Padang Barat", value: "Padang Barat" },
+    { label: "Padang Timur", value: "Padang Timur" },
+    { label: "Padang Utara", value: "Padang Utara" },
+    { label: "Padang Selatan", value: "Padang Selatan" },
+    { label: "Koto Tangah", value: "Koto Tangah" },
+    { label: "Nanggalo", value: "Nanggalo" },
+    { label: "Kuranji", value: "Kuranji" },
+    { label: "Pauh", value: "Pauh" },
 ];
 
 const BUDGET_OPTIONS = [
     { label: "Semua Range Harga", value: "" },
-    { label: "< Rp 20.000 (Hemat)", value: "tier_1" },
-    { label: "Rp 20.000 – Rp 35.000 (Reguler)", value: "tier_2" },
-    { label: "> Rp 35.000 (Specialty)", value: "tier_3" },
+    { label: "< Rp 20.000 (Hemat)", value: "under-20k" },
+    { label: "Rp 20.000 – Rp 40.000 (Reguler)", value: "20k-40k" },
+    { label: "> Rp 40.000 (Specialty)", value: "above-40k" },
 ];
 
 const MOBILE_QUICK_CHIPS = [
     { label: "💻 WFC & Nugas", param: "tags=wfc" },
-    { label: "☕ Specialty", param: "category=coffee-shop" },
+    { label: "☕ Semua Spot", param: "category=coffee-shop" },
     { label: "🌿 Outdoor", param: "tags=outdoor" },
     { label: "✨ Date & Aesthetic", param: "tags=nge-date" },
-    { label: "📍 Padang Barat", param: "q=Padang+Barat" },
-    { label: "📍 Padang Selatan", param: "q=Padang+Selatan" },
-    { label: "💰 < 20rb", param: "price=tier_1" },
+    { label: "📍 Padang Barat", param: "area=Padang+Barat" },
+    { label: "📍 Padang Timur", param: "area=Padang+Timur" },
+    { label: "💰 < 20rb", param: "price=under-20k" },
 ];
 
 export function HomeHeroSection() {
@@ -57,7 +60,7 @@ export function HomeHeroSection() {
         params.set("category", "coffee-shop");
 
         if (selectedArea) {
-            params.set("q", selectedArea);
+            params.set("area", selectedArea);
         }
         if (selectedBudget) {
             params.set("price", selectedBudget);
@@ -298,12 +301,12 @@ export function HomeHeroSection() {
                                                     Vibe &amp; Kebutuhan
                                                 </span>
                                                 <span className="rounded-full bg-[#FFEAE5] px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-[#FF5C35]">
-                                                    3 Aktif
+                                                    Filter
                                                 </span>
                                             </div>
                                             <div className="mt-0.5 flex items-center justify-between">
                                                 <span className="truncate text-xs font-bold text-[#19120D] transition-colors group-hover:text-[#FF5C35] sm:text-sm">
-                                                    24 Tag Kurasi (WFC, Nugas, ...)
+                                                    Pilih Fasilitas &amp; Suasana
                                                 </span>
                                                 <ChevronDown className="h-3.5 w-3.5 text-[#756A63] transition-colors group-hover:text-[#FF5C35]" />
                                             </div>
@@ -392,13 +395,13 @@ export function HomeHeroSection() {
                                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F3EDE2] text-[#8C6D53] shadow-xs transition-transform active:scale-90 group-hover:scale-105">
                                                 <Coffee className="h-5 w-5" />
                                             </div>
-                                            <span className="mt-1 text-[11px] font-bold text-[#19120D]">Specialty</span>
+                                            <span className="mt-1 text-[11px] font-bold text-[#19120D]">Semua Spot</span>
                                         </Link>
-                                        <Link href="/places?tags=24-jam" className="flex flex-col items-center group">
+                                        <Link href="/places?openNow=true" className="flex flex-col items-center group">
                                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EDE8FC] text-[#6B46C1] shadow-xs transition-transform active:scale-90 group-hover:scale-105">
                                                 <Moon className="h-5 w-5" />
                                             </div>
-                                            <span className="mt-1 text-[11px] font-bold text-[#19120D]">24 Jam</span>
+                                            <span className="mt-1 text-[11px] font-bold text-[#19120D]">Buka Sekarang</span>
                                         </Link>
                                         <Link href="/places?tags=outdoor" className="flex flex-col items-center group">
                                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#E6F4EA] text-[#1E7E34] shadow-xs transition-transform active:scale-90 group-hover:scale-105">

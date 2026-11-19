@@ -8,65 +8,90 @@ export type FilterModalProps = {
     isOpen: boolean;
     onClose: () => void;
     initialTags?: string[];
+    initialOpenNow?: boolean;
+    initialPrice?: string;
 };
 
-type TagCategory = {
+type FilterItem = {
+    id: string;
+    label: string;
+    type: "tag" | "status" | "price";
+};
+
+type FilterCategory = {
     title: string;
-    description?: string;
-    items: {
-        id: string;
-        label: string;
-        paramType: "tag" | "status" | "menu";
-    }[];
+    items: FilterItem[];
 };
 
-const FILTER_CATEGORIES: TagCategory[] = [
+// Seluruh tag disesuaikan 100% dengan seed database tags & places.json Saranwak
+const FILTER_CATEGORIES: FilterCategory[] = [
     {
         title: "Status Operasional",
         items: [
-            { id: "buka", label: "Sedang Buka", paramType: "status" },
-            { id: "24-jam", label: "24 Jam Nonstop", paramType: "tag" },
+            { id: "open-now", label: "Sedang Buka", type: "status" },
         ],
     },
     {
-        title: "Suasana & Vibe",
+        title: "Aktivitas & Kebutuhan",
         items: [
-            { id: "wfc", label: "WFC & Nugas", paramType: "tag" },
-            { id: "tenang", label: "Tenang / Me-time", paramType: "tag" },
-            { id: "nongkrong", label: "Nongkrong Santai", paramType: "tag" },
-            { id: "nge-date", label: "Aesthetic & Date", paramType: "tag" },
-            { id: "sunset", label: "Sunset View", paramType: "tag" },
-            { id: "heritage", label: "Riverside & Heritage", paramType: "tag" },
-            { id: "rooftop", label: "Rooftop & Views", paramType: "tag" },
+            { id: "wfc", label: "WFC", type: "tag" },
+            { id: "nugas", label: "Nugas", type: "tag" },
+            { id: "nongkrong", label: "Nongkrong", type: "tag" },
+            { id: "nge-date", label: "Nge-date", type: "tag" },
+            { id: "me-time", label: "Me-time", type: "tag" },
+            { id: "meeting", label: "Meeting", type: "tag" },
+            { id: "live-musik", label: "Live Musik", type: "tag" },
         ],
     },
     {
         title: "Fasilitas Utama",
         items: [
-            { id: "colokan", label: "Stopkontak Banyak", paramType: "tag" },
-            { id: "wifi", label: "Wi-Fi Kencang (>30Mbps)", paramType: "tag" },
-            { id: "ac", label: "Ruang Ber-AC (Indoor)", paramType: "tag" },
-            { id: "outdoor", label: "Area Outdoor Luas", paramType: "tag" },
-            { id: "musholla", label: "Musholla Bersih", paramType: "tag" },
-            { id: "meeting-room", label: "Private/Meeting Room", paramType: "tag" },
-            { id: "parkir-mobil", label: "Parkir Mobil Mudah", paramType: "tag" },
+            { id: "wifi", label: "WiFi", type: "tag" },
+            { id: "colokan", label: "Colokan", type: "tag" },
+            { id: "ac", label: "AC", type: "tag" },
+            { id: "outdoor", label: "Outdoor", type: "tag" },
+            { id: "indoor", label: "Indoor", type: "tag" },
+            { id: "musholla", label: "Musholla", type: "tag" },
+            { id: "smoking-area", label: "Smoking Area", type: "tag" },
+            { id: "indoor-smoking", label: "Indoor Smoking", type: "tag" },
+            { id: "toilet", label: "Toilet", type: "tag" },
+            { id: "photobox", label: "Photobox", type: "tag" },
+            { id: "board-game", label: "Board Game", type: "tag" },
         ],
     },
     {
-        title: "Pilihan Menu & Kopi",
+        title: "Suasana & Vibes",
         items: [
-            { id: "specialty", label: "Specialty Manual Brew", paramType: "tag" },
-            { id: "espresso", label: "Espresso Based", paramType: "tag" },
-            { id: "makanan-berat", label: "Makanan Berat / Rice Bowl", paramType: "tag" },
-            { id: "pastry", label: "Pastry & Croissant", paramType: "tag" },
-            { id: "non-coffee", label: "Mocktail / Non-Coffee", paramType: "tag" },
+            { id: "tenang", label: "Tenang", type: "tag" },
+            { id: "cozy", label: "Cozy", type: "tag" },
+            { id: "aesthetic", label: "Aesthetic", type: "tag" },
+            { id: "minimalis", label: "Minimalis", type: "tag" },
+            { id: "industrial", label: "Industrial", type: "tag" },
+            { id: "rame", label: "Rame", type: "tag" },
+            { id: "healing", label: "Healing", type: "tag" },
+        ],
+    },
+    {
+        title: "Kisaran Budget",
+        items: [
+            { id: "under-20k", label: "< Rp 20.000", type: "price" },
+            { id: "20k-40k", label: "Rp 20.000 – Rp 40.000", type: "price" },
+            { id: "above-40k", label: "> Rp 40.000", type: "price" },
         ],
     },
 ];
 
-export function FilterModal({ isOpen, onClose, initialTags = [] }: FilterModalProps) {
+export function FilterModal({
+    isOpen,
+    onClose,
+    initialTags = [],
+    initialOpenNow = false,
+    initialPrice = "",
+}: FilterModalProps) {
     const router = useRouter();
     const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
+    const [isOpenNowSelected, setIsOpenNowSelected] = useState<boolean>(initialOpenNow);
+    const [selectedPrice, setSelectedPrice] = useState<string>(initialPrice);
 
     useEffect(() => {
         if (isOpen) {
@@ -81,19 +106,37 @@ export function FilterModal({ isOpen, onClose, initialTags = [] }: FilterModalPr
 
     if (!isOpen) return null;
 
-    function toggleTag(id: string) {
-        setSelectedTags((prev) =>
-            prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
-        );
+    function handleToggleItem(item: FilterItem) {
+        if (item.type === "status") {
+            setIsOpenNowSelected((prev) => !prev);
+        } else if (item.type === "price") {
+            setSelectedPrice((prev) => (prev === item.id ? "" : item.id));
+        } else {
+            setSelectedTags((prev) =>
+                prev.includes(item.id)
+                    ? prev.filter((t) => t !== item.id)
+                    : [...prev, item.id]
+            );
+        }
     }
 
     function resetFilters() {
         setSelectedTags([]);
+        setIsOpenNowSelected(false);
+        setSelectedPrice("");
     }
 
     function applyFilters() {
         const params = new URLSearchParams();
         params.set("category", "coffee-shop");
+
+        if (isOpenNowSelected) {
+            params.set("openNow", "true");
+        }
+
+        if (selectedPrice) {
+            params.set("price", selectedPrice);
+        }
 
         if (selectedTags.length > 0) {
             params.set("tags", selectedTags.join(","));
@@ -103,7 +146,10 @@ export function FilterModal({ isOpen, onClose, initialTags = [] }: FilterModalPr
         router.push(`/places?${params.toString()}`);
     }
 
-    const totalActive = selectedTags.length;
+    const totalActive =
+        selectedTags.length +
+        (isOpenNowSelected ? 1 : 0) +
+        (selectedPrice ? 1 : 0);
 
     return (
         <div
@@ -119,9 +165,9 @@ export function FilterModal({ isOpen, onClose, initialTags = [] }: FilterModalPr
             />
 
             {/* Modal Container Card */}
-            <div className="relative z-10 flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-[2rem] border border-[#EBE5DC] bg-[#FAF7F2] shadow-2xl transition-all">
+            <div className="relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-[2rem] border border-[#EBE5DC] bg-[#FAF7F2] shadow-2xl transition-all">
                 {/* Modal Header */}
-                <div className="flex shrink-0 items-center justify-between border-b border-[#EBE5DC] bg-white px-6 py-5">
+                <div className="flex shrink-0 items-center justify-between border-b border-[#EBE5DC] bg-white px-6 py-4.5">
                     <div>
                         <div className="mb-1 flex items-center gap-2.5">
                             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#FFEAE5] text-[#FF5C35]">
@@ -140,7 +186,7 @@ export function FilterModal({ isOpen, onClose, initialTags = [] }: FilterModalPr
                             )}
                         </div>
                         <p className="text-xs text-[#756A63]">
-                            Saring kedai kopi di Padang berdasarkan 24 parameter spesifik
+                            Saring spot ngopi berdasarkan tag kurasi, fasilitas, suasana &amp; budget
                         </p>
                     </div>
 
@@ -149,7 +195,7 @@ export function FilterModal({ isOpen, onClose, initialTags = [] }: FilterModalPr
                             <button
                                 type="button"
                                 onClick={resetFilters}
-                                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-[#756A63] transition-colors hover:text-[#FF5C35]"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-[#756A63] transition-colors hover:text-[#FF5C35]"
                             >
                                 <RotateCcw className="h-3.5 w-3.5" />
                                 <span>Reset</span>
@@ -166,21 +212,29 @@ export function FilterModal({ isOpen, onClose, initialTags = [] }: FilterModalPr
                     </div>
                 </div>
 
-                {/* Modal Body (Scrollable with 24 Tags & Categories) */}
-                <div className="no-scrollbar flex-1 divide-y divide-[#EBE5DC]/60 overflow-y-auto px-6 py-5 sm:px-7 space-y-6 text-[#19120D]">
+                {/* Modal Body (Scrollable with Official Tags & Categories) */}
+                <div className="no-scrollbar flex-1 divide-y divide-[#EBE5DC]/60 overflow-y-auto px-6 py-5 sm:px-7 space-y-5 text-[#19120D]">
                     {FILTER_CATEGORIES.map((category) => (
                         <div key={category.title} className="pt-4 first:pt-0">
-                            <span className="mb-3 block text-[11px] font-black uppercase tracking-wider text-[#756A63]">
+                            <span className="mb-2.5 block text-[11px] font-black uppercase tracking-wider text-[#756A63]">
                                 {category.title}
                             </span>
                             <div className="flex flex-wrap gap-2">
                                 {category.items.map((item) => {
-                                    const isSelected = selectedTags.includes(item.id);
+                                    let isSelected = false;
+                                    if (item.type === "status") {
+                                        isSelected = isOpenNowSelected;
+                                    } else if (item.type === "price") {
+                                        isSelected = selectedPrice === item.id;
+                                    } else {
+                                        isSelected = selectedTags.includes(item.id);
+                                    }
+
                                     return (
                                         <button
                                             key={item.id}
                                             type="button"
-                                            onClick={() => toggleTag(item.id)}
+                                            onClick={() => handleToggleItem(item)}
                                             className={[
                                                 "inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-bold transition-all duration-150 active:scale-95",
                                                 isSelected
