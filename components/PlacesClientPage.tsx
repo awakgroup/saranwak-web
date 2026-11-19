@@ -433,7 +433,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                         </form>
 
                         {/* Horizontal Filter Chips */}
-                        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                        <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto py-0.5 overscroll-x-contain">
                             <Link
                                 href="/places/?category=coffee-shop"
                                 className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] transition-all font-semibold shadow-xs ${

@@ -54,7 +54,7 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
             </div>
 
             {/* 4 Cards: Mobile Horizontal Snap Carousel (155x215), Desktop 4-Column Grid */}
-            <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-1.5 snap-x snap-mandatory sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
+            <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-1.5 snap-x snap-mandatory overscroll-x-contain sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
                 {displayPlaces.map((place) => {
                     const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
                     const district = getDistrictName(place);

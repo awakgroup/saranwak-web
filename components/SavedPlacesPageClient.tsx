@@ -109,7 +109,7 @@ export function SavedPlacesPageClient() {
 
                 {/* Filter Pills */}
                 {savedPlaces.length > 0 && (
-                    <div className="no-scrollbar mb-4 flex items-center gap-1.5 overflow-x-auto pb-1 sm:mb-6 sm:gap-2">
+                    <div className="no-scrollbar mb-4 flex items-center gap-1.5 overflow-x-auto pb-1 overscroll-x-contain sm:mb-6 sm:gap-2">
                         <button
                             type="button"
                             onClick={() => setActiveFilter("all")}

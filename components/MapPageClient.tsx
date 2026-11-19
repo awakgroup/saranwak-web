@@ -150,7 +150,7 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                         </div>
 
                         {/* Horizontal Filter Chips */}
-                        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
+                        <div className="no-scrollbar flex items-center gap-1 overflow-x-auto py-0.5 overscroll-x-contain">
                             <button
                                 type="button"
                                 onClick={() => setSelectedArea("all")}

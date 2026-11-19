@@ -429,7 +429,7 @@ export function PlacesMapView({
                     </div>
 
                     {/* Scrollable Cards Stream */}
-                    <div className="custom-scroll flex-1 space-y-3 overflow-y-auto pr-1 pt-3.5">
+                    <div className="custom-scroll flex-1 space-y-3 overflow-y-auto pr-1 pt-3.5 overscroll-y-contain">
                         {filteredPlaces.slice(0, 30).map((place, index) => {
                             const isSelected = selectedPlace?.id === place.id;
                             const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
@@ -625,7 +625,7 @@ export function PlacesMapView({
                     </span>
                 </div>
 
-                <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-3 pt-1 snap-x snap-mandatory">
+                <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-3 pt-1 snap-x snap-mandatory overscroll-x-contain">
                     {filteredPlaces.map((place) => {
                         const isSelected = selectedPlace?.id === place.id;
                         const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);

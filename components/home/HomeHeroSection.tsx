@@ -412,7 +412,7 @@ export function HomeHeroSection() {
                                     </div>
 
                                     {/* Mobile Quick Tap Chips */}
-                                    <div className="no-scrollbar mt-3 flex items-center gap-2 overflow-x-auto pb-0.5 border-t border-[#EBE5DC]/40 pt-2.5">
+                                    <div className="no-scrollbar mt-3 flex items-center gap-2 overflow-x-auto pb-0.5 border-t border-[#EBE5DC]/40 pt-2.5 overscroll-x-contain">
                                         {MOBILE_QUICK_CHIPS.map((chip) => (
                                             <Link
                                                 key={chip.label}

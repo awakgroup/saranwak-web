@@ -213,7 +213,7 @@ export function FilterModal({
                 </div>
 
                 {/* Modal Body (Scrollable with Official Tags & Categories) */}
-                <div className="no-scrollbar flex-1 divide-y divide-[#EBE5DC]/60 overflow-y-auto px-6 py-5 sm:px-7 space-y-5 text-[#19120D]">
+                <div className="custom-scroll flex-1 divide-y divide-[#EBE5DC]/60 overflow-y-auto px-6 py-5 sm:px-7 space-y-5 text-[#19120D] overscroll-y-contain">
                     {FILTER_CATEGORIES.map((category) => (
                         <div key={category.title} className="pt-4 first:pt-0">
                             <span className="mb-2.5 block text-[11px] font-black uppercase tracking-wider text-[#756A63]">

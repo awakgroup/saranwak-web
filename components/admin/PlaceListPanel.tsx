@@ -155,7 +155,7 @@ export function PlaceListPanel({
                         Tidak ada tempat yang cocok dengan filter ini.
                     </div>
                 ) : (
-                    <div className="space-y-3 overflow-y-auto pr-1 xl:max-h-[calc(100vh-360px)]">
+                    <div className="custom-scroll space-y-3 overflow-y-auto pr-1 xl:max-h-[calc(100vh-360px)]">
                         {filteredPlaces.map((place) => (
                             <PlaceListItem
                                 key={place.id}

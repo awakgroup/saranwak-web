@@ -120,7 +120,7 @@ export function SavedPlacesModal({ isOpen, onClose }: SavedPlacesModalProps) {
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto p-5 sm:p-6">
+                <div className="custom-scroll flex-1 overflow-y-auto p-5 overscroll-y-contain sm:p-6">
                     {savedPlaces.length === 0 ? (
                         <div className="my-8 flex flex-col items-center text-center">
                             <div className="grid h-20 w-20 place-items-center rounded-full bg-[#F8F1E8] text-[#C8784A]">

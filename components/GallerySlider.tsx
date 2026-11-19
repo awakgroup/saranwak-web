@@ -213,7 +213,7 @@ export function GallerySlider({ photos, placeName }: GallerySliderProps) {
             </div>
 
             {hasMultiplePhotos ? (
-                <div className="mt-4 flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="no-scrollbar mt-4 flex gap-3 overflow-x-auto pb-2 overscroll-x-contain">
                     {sortedPhotos.map((photo, index) => {
                         const active = index === safeActiveIndex;
                         const thumbnailUrl = getSafePlaceImageUrl(photo.image_url);

@@ -194,7 +194,7 @@ export function RandomPlaceModal({
             />
 
             {/* Modal Card */}
-            <div className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-2xl sm:p-7 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]">
+            <div className="custom-scroll relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-2xl overscroll-y-contain sm:p-7 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]">
                 {/* Header Modal */}
                 <div className="flex items-center justify-between border-b border-[#E7D8C8] pb-4">
                     <div className="flex items-center gap-2.5">
