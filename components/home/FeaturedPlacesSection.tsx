@@ -93,12 +93,7 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                             {/* Top Badges */}
                             <div className="pointer-events-none relative z-20 flex items-center justify-between w-full">
                                 <div className="flex items-center gap-1.5">
-                                    <div className="block sm:hidden">
-                                        <OpenStatusBadge openingHours={place.opening_hours} mode="minimal" />
-                                    </div>
-                                    <div className="hidden sm:block">
-                                        <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
-                                    </div>
+                                    <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
 
                                     {place.is_featured ? (
                                         <span
