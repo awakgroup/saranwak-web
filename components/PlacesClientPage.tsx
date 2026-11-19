@@ -25,6 +25,7 @@ import {
 import { PlaceCard } from "@/components/PlaceCard";
 import { RandomPlaceModal } from "@/components/RandomPlaceModal";
 import { HomeFeaturePillars } from "@/components/home/HomeFeaturePillars";
+import { FilterModal } from "@/components/home/FilterModal";
 
 const PlacesMapView = dynamic(
     () => import("@/components/PlacesMapView").then((mod) => mod.PlacesMapView),
@@ -123,6 +124,8 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const [searchQuery, setSearchQuery] = useState(params.q || "");
     const [livePlacesData, setLivePlacesData] = useState<Place[]>(placesData);
     const [isRandomOpen, setIsRandomOpen] = useState(false);
+    const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+    const [visibleCount, setVisibleCount] = useState(8);
     const [viewMode, setViewMode] = useState<"grid" | "map">(
         searchParams?.get("view") === "map" ? "map" : "grid"
     );
@@ -267,6 +270,11 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const selectedPrice = getSelectedPrice(effectiveParams.price);
     const selectedTagsKey = selectedTags.join(",");
 
+    // Reset pagination ketika filter atau query berubah
+    useEffect(() => {
+        setVisibleCount(8);
+    }, [currentQ, effectiveParams.area, effectiveParams.category, effectiveParams.openNow, selectedPrice, selectedTagsKey]);
+
     const places = useMemo(() => {
         const filtered = livePlacesData
             .filter((place) => matchKeyword(place, currentQ))
@@ -378,40 +386,41 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const { prefix: titlePrefix, suffix: titleSuffix } = makeTitleParts(effectiveParams);
 
     return (
-        <main className="min-h-screen bg-[#F4F1EA] px-3.5 pb-24 pt-2 text-[#201813] sm:px-6 sm:pb-16 sm:pt-6 lg:px-8 lg:pb-20 lg:pt-8">
+        <main className="min-h-screen bg-[#F4F1EA] px-0 pb-28 text-[#201813] sm:px-6 sm:pb-16 sm:pt-6 lg:px-8 lg:pb-20 lg:pt-8">
             <section className="mx-auto max-w-7xl">
-                {/* Mobile Page Header - Compact Mobile App Header */}
-                <div className="block sm:hidden w-full mb-1.5">
-                    <section className="px-0.5 pt-0.5 pb-1">
+                {/* Mobile Page Header - Stitch cc723c2f64fa4f15a1e83985ce597c47 */}
+                <div className="block sm:hidden w-full">
+                    {/* Page Intro */}
+                    <section className="px-5 pt-4 pb-2">
                         <p
-                            className="text-[#ac3311] text-[15px] leading-tight font-bold tracking-wide"
+                            className="text-[#ac3311] text-[20px] leading-tight font-bold tracking-wide"
                             style={{ fontFamily: "var(--font-caveat), 'Caveat', cursive" }}
                         >
                             Jelajahi Kota Padang
                         </p>
-                        <h1 className="text-[#0d0401] text-[20px] leading-[24px] font-extrabold tracking-tight mt-0.5 mb-1">
-                            Spot Kopi &amp; Ruang WFC
+                        <h1 className="text-[#0d0401] text-[28px] leading-[34px] font-extrabold tracking-tight mt-0.5 mb-1.5">
+                            Spot Kopi &amp; Ruang WFC Pilihan
                         </h1>
-                        <p className="text-[#4e4540] text-[11.5px] leading-relaxed max-w-sm">
+                        <p className="text-[#4e4540] text-[13px] leading-relaxed max-w-sm">
                             Temukan tempat kerja kondusif, kopi berkualitas, dan suasana senja santai di seantero Padang.
                         </p>
                     </section>
 
                     {/* Sticky Mobile Search & Filter Chips Bar */}
-                    <div className="sticky top-0 z-30 bg-[#F4F1EA]/95 backdrop-blur-md pt-1 pb-1.5 flex flex-col gap-1.5">
+                    <div className="sticky top-14 z-30 bg-[#F4F1EA]/95 backdrop-blur-md pt-2 pb-3 px-5 shadow-[0_4px_16px_rgba(41,28,20,0.03)] flex flex-col gap-3">
                         {/* Search Bar Pill */}
                         <form
                             onSubmit={handleSearchSubmit}
-                            className="w-full bg-white shadow-[0_2px_10px_rgba(41,28,20,0.05)] border border-[#e4e2de]/70 rounded-full h-9.5 p-1 pl-3 flex items-center justify-between transition-all focus-within:ring-2 focus-within:ring-[#ac3311]/30"
+                            className="w-full bg-white shadow-[0_4px_20px_rgba(41,28,20,0.08)] border border-[#e4e2de]/40 rounded-full p-1.5 pl-4 flex items-center justify-between transition-all focus-within:ring-2 focus-within:ring-[#ac3311]/30"
                         >
-                            <div className="flex items-center gap-2 flex-1 min-w-0 mr-1">
-                                <Search className="h-3.5 w-3.5 text-[#80756f] shrink-0" />
+                            <div className="flex items-center gap-2.5 flex-1 min-w-0 mr-2">
+                                <Search className="h-5 w-5 text-[#80756f] shrink-0" />
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Cari spot ngopi, area, vibe..."
-                                    className="w-full bg-transparent text-[#0d0401] placeholder-[#80756f]/70 text-[11.5px] font-medium outline-none"
+                                    className="w-full bg-transparent text-[#0d0401] placeholder-[#80756f]/70 text-[13px] font-medium outline-none"
                                 />
                             </div>
                             {searchQuery ? (
@@ -420,25 +429,25 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                     onClick={handleClearSearch}
                                     className="mr-1 text-[#80756f] hover:text-[#0d0401]"
                                 >
-                                    <X className="h-3.5 w-3.5" />
+                                    <X className="h-4 w-4" />
                                 </button>
                             ) : null}
                             <button
                                 type="submit"
                                 aria-label="Cari"
-                                className="w-7.5 h-7.5 rounded-full bg-[#ac3311] hover:bg-[#881f00] text-white flex items-center justify-center shadow-xs active:scale-95 shrink-0 cursor-pointer"
+                                className="w-10 h-10 rounded-full bg-[#ac3311] hover:bg-[#881f00] text-white flex items-center justify-center shadow-sm active:scale-95 shrink-0 cursor-pointer"
                             >
-                                <Search className="h-3 w-3" />
+                                <Search className="h-4.5 w-4.5" />
                             </button>
                         </form>
 
                         {/* Horizontal Filter Chips */}
-                        <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto py-0.5 overscroll-x-contain">
+                        <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-0.5 overscroll-x-contain">
                             <Link
-                                href="/places/?category=coffee-shop"
-                                className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] transition-all font-semibold shadow-xs ${
+                                href="/places?category=coffee-shop"
+                                className={`chip-filter whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
                                     selectedTags.length === 0 && !effectiveParams.area && !effectiveParams.price
-                                        ? "bg-[#ac3311] text-white"
+                                        ? "bg-[#ac3311] text-white shadow-sm"
                                         : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
                                 }`}
                             >
@@ -448,9 +457,9 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                 href={buildFilterHref(effectiveParams, {
                                     tag: selectedTags.includes("wfc") ? undefined : "wfc",
                                 })}
-                                className={`whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] transition-all font-semibold shadow-xs ${
+                                className={`chip-filter whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
                                     selectedTags.includes("wfc")
-                                        ? "bg-[#ac3311] text-white"
+                                        ? "bg-[#ac3311] text-white shadow-sm"
                                         : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
                                 }`}
                             >
@@ -460,9 +469,9 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                 href={buildFilterHref(effectiveParams, {
                                     tag: selectedTags.includes("specialty-coffee") ? undefined : "specialty-coffee",
                                 })}
-                                className={`whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] transition-all font-semibold shadow-xs ${
+                                className={`chip-filter whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
                                     selectedTags.includes("specialty-coffee")
-                                        ? "bg-[#ac3311] text-white"
+                                        ? "bg-[#ac3311] text-white shadow-sm"
                                         : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
                                 }`}
                             >
@@ -472,9 +481,9 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                 href={buildFilterHref(effectiveParams, {
                                     tag: selectedTags.includes("24-jam") ? undefined : "24-jam",
                                 })}
-                                className={`whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] transition-all font-semibold shadow-xs ${
+                                className={`chip-filter whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
                                     selectedTags.includes("24-jam")
-                                        ? "bg-[#ac3311] text-white"
+                                        ? "bg-[#ac3311] text-white shadow-sm"
                                         : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
                                 }`}
                             >
@@ -484,9 +493,9 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                 href={buildFilterHref(effectiveParams, {
                                     tag: selectedTags.includes("outdoor") ? undefined : "outdoor",
                                 })}
-                                className={`whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] transition-all font-semibold shadow-xs ${
+                                className={`chip-filter whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
                                     selectedTags.includes("outdoor")
-                                        ? "bg-[#ac3311] text-white"
+                                        ? "bg-[#ac3311] text-white shadow-sm"
                                         : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
                                 }`}
                             >
@@ -494,14 +503,27 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             </Link>
                         </div>
 
-                        {/* Count Summary */}
+                        {/* Count & Action summary */}
                         <div className="flex items-center justify-between pt-0.5 px-0.5">
                             <div className="flex items-center gap-1.5 text-[#4e4540]">
-                                <Compass className="h-3.5 w-3.5 text-[#ac3311]" />
-                                <span className="text-[11px] font-medium text-[#0d0401]">
+                                <Compass className="h-4 w-4 text-[#ac3311]" />
+                                <span className="text-[12px] font-medium text-[#0d0401]">
                                     Menampilkan <strong className="font-bold">{places.length} Tempat Kopi</strong>
                                 </span>
                             </div>
+                            <button
+                                type="button"
+                                onClick={() => setIsFilterModalOpen(true)}
+                                className="flex items-center gap-1 px-3 py-1 rounded-full bg-[#eae8e4] text-[#0d0401] hover:bg-[#e4e2de] transition-colors active:scale-95 text-[11px] font-semibold cursor-pointer"
+                            >
+                                <SlidersHorizontal className="h-3.5 w-3.5 text-[#0d0401]" />
+                                <span>Filter</span>
+                                {activeFilterCount > 0 && (
+                                    <span className="ml-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#ac3311] text-[9px] font-extrabold text-white">
+                                        {activeFilterCount}
+                                    </span>
+                                )}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -704,13 +726,13 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                     </div>
                 </div>
 
-                {/* 2. Feature Highlights Bar (4 Pilar ala Stitch) */}
-                <div className="mb-10">
+                {/* 2. Feature Highlights Bar (Desktop) */}
+                <div className="hidden sm:block mb-10">
                     <HomeFeaturePillars />
                 </div>
 
-                {/* Top View Controls & Toolbar */}
-                <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                {/* Top View Controls & Toolbar (Desktop) */}
+                <div className="hidden sm:flex mb-6 flex-col gap-3 rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <div className="flex items-center gap-2.5">
                             <h2 className="font-sans text-lg font-extrabold tracking-tight text-[#19120D] sm:text-xl">
@@ -911,21 +933,97 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
 
                             {/* Places Grid or Empty State */}
                             {places.length === 0 ? (
-                                <EmptyPlacesState
-                                    params={effectiveParams}
-                                    onClearSearch={handleClearSearch}
-                                />
+                                <div className="px-5 sm:px-0">
+                                    <EmptyPlacesState
+                                        params={effectiveParams}
+                                        onClearSearch={handleClearSearch}
+                                    />
+                                </div>
                             ) : (
-                                <div className="grid gap-3 sm:gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                                    {places.map((place, index) => (
-                                        <PlaceCard
-                                            key={place.id}
-                                            place={place}
-                                            source="places_list"
-                                            position={index + 1}
-                                            userDistance={userCoords ? distanceMap[place.slug] : undefined}
-                                        />
-                                    ))}
+                                <div className="px-5 sm:px-0">
+                                    <div className="flex flex-col gap-5 sm:grid sm:gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                                        {places.map((place, index) => (
+                                            <div
+                                                key={place.id}
+                                                className={index >= visibleCount ? "hidden sm:block" : ""}
+                                            >
+                                                <PlaceCard
+                                                    place={place}
+                                                    source="places_list"
+                                                    position={index + 1}
+                                                    userDistance={userCoords ? distanceMap[place.slug] : undefined}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Load More Button / All Loaded State on Mobile */}
+                                    {places.length > 8 && (
+                                        <div className="pt-6 pb-2 flex flex-col items-center sm:hidden">
+                                            {visibleCount < places.length ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setVisibleCount((prev) => prev + 8)}
+                                                    className="w-full h-12 rounded-full bg-[#efeeea] text-[#0d0401] text-[13px] font-bold hover:bg-[#eae8e4] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-[#e4e2de]/60 shadow-xs cursor-pointer"
+                                                >
+                                                    <ChevronDown className="h-4.5 w-4.5 text-[#ac3311]" />
+                                                    <span>Muat Lebih Banyak Kafe ({Math.min(8, places.length - visibleCount)} Lagi)</span>
+                                                </button>
+                                            ) : (
+                                                <div className="w-full h-11 rounded-full bg-[#efeeea]/80 text-[#80756f] text-[12px] font-semibold flex items-center justify-center gap-2 border border-[#e4e2de]/40">
+                                                    <Check className="h-4 w-4 text-emerald-600" />
+                                                    <span>Semua Kafe Ditampilkan</span>
+                                                </div>
+                                            )}
+                                            <p className="text-[11px] text-[#80756f] mt-2 text-center">
+                                                Menampilkan {Math.min(visibleCount, places.length)} dari {places.length} tempat kopi terkurasi di Padang
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {/* Curated Map Banner on Mobile */}
+                                    <div className="pt-4 pb-2 sm:hidden">
+                                        <div
+                                            onClick={() => handleSetViewMode("map")}
+                                            className="relative overflow-hidden rounded-2xl bg-[#291c14] p-5 text-white shadow-[0_12px_32px_-4px_rgba(41,28,20,0.2)] border border-[#e4e2de]/20 flex items-center justify-between cursor-pointer group active:scale-[0.99] transition-transform"
+                                        >
+                                            <div className="flex flex-col gap-1 z-10 max-w-[210px]">
+                                                <span className="text-[10px] uppercase tracking-wider text-[#ffdbd1] opacity-90 font-bold">
+                                                    Mode Peta WFC
+                                                </span>
+                                                <h3 className="text-[16px] font-bold text-white group-hover:text-[#ffdbd1] transition-colors">
+                                                    Cari Kafe di Sekitarmu?
+                                                </h3>
+                                                <p className="text-[12px] text-[#e4e2de]/90 leading-snug">
+                                                    Lihat persebaran spot nugas dengan colokan terdekat di Padang.
+                                                </p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                aria-label="Buka Peta"
+                                                className="w-12 h-12 rounded-2xl bg-[#ac3311] text-white flex items-center justify-center shrink-0 z-10 shadow-md group-hover:scale-105 active:scale-95 transition-transform"
+                                            >
+                                                <Navigation className="h-6 w-6" />
+                                            </button>
+                                            <div className="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-[#ff6e48]/20 blur-xl pointer-events-none" />
+                                        </div>
+                                    </div>
+
+                                    {/* Mobile Editorial Footer (SCREEN_10 style) */}
+                                    <div className="mt-8 pt-6 pb-6 border-t border-[#e4e2de]/60 flex flex-col items-center text-center sm:hidden">
+                                        <div className="flex items-center gap-1.5 mb-1.5">
+                                            <div className="w-6 h-6 rounded-md bg-[#0d0401] flex items-center justify-center text-[#ff6e48] shadow-xs">
+                                                <Coffee className="h-3.5 w-3.5 text-white" />
+                                            </div>
+                                            <span className="text-[14px] text-[#0d0401] font-bold">Saranwak</span>
+                                        </div>
+                                        <p className="text-[11px] text-[#4e4540] max-w-xs mb-2 leading-relaxed">
+                                            Kurasi independen kopi &amp; spot WFC Kota Padang. Dibuat dengan kecintaan pada seduhan jujur.
+                                        </p>
+                                        <span className="text-[10px] text-[#80756f] leading-tight">
+                                            © 2025 Saranwak Padang. Seluruh hak cipta dilindungi.
+                                        </span>
+                                    </div>
                                 </div>
                             )}
                         </section>
@@ -937,6 +1035,14 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                 isOpen={isRandomOpen}
                 onClose={() => setIsRandomOpen(false)}
                 placesData={livePlacesData}
+            />
+
+            <FilterModal
+                isOpen={isFilterModalOpen}
+                onClose={() => setIsFilterModalOpen(false)}
+                initialTags={selectedTags}
+                initialOpenNow={effectiveParams.openNow === "true"}
+                initialPrice={effectiveParams.price}
             />
         </main>
     );
