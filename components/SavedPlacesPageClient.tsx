@@ -3,52 +3,86 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
     Bookmark,
-    Compass,
+    BookmarkPlus,
     Share2,
     Trash2,
     MapPin,
-    ExternalLink,
     Coffee,
     ArrowRight,
-    Navigation,
-    Sparkles,
+    Wifi,
+    Zap,
+    VolumeX,
+    Sun,
+    Waves,
+    Clock,
+    Compass,
 } from "lucide-react";
-import { useSavedPlaces, removeSavedPlace, clearAllSavedPlaces } from "@/lib/saved-places";
+import {
+    useSavedPlaces,
+    removeSavedPlace,
+    clearAllSavedPlaces,
+    type SavedPlaceItem,
+} from "@/lib/saved-places";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import { OpenStatusBadge } from "@/components/OpenStatusBadge";
 
 export function SavedPlacesPageClient() {
+    const router = useRouter();
     const { savedPlaces, isLoaded, savedCount } = useSavedPlaces();
     const [activeFilter, setActiveFilter] = useState<"all" | "wfc" | "sunset">("all");
 
-    // Filter places based on activeFilter
+    // Filter categories
+    const wfcPlaces = useMemo(
+        () =>
+            savedPlaces.filter((p) => {
+                const text = `${p.name} ${p.area || ""}`.toLowerCase();
+                return (
+                    text.includes("wfc") ||
+                    text.includes("nugas") ||
+                    text.includes("timur") ||
+                    text.includes("tenang") ||
+                    text.includes("colokan") ||
+                    text.includes("endorphins") ||
+                    text.includes("hq")
+                );
+            }),
+        [savedPlaces]
+    );
+
+    const sunsetPlaces = useMemo(
+        () =>
+            savedPlaces.filter((p) => {
+                const text = `${p.name} ${p.area || ""}`.toLowerCase();
+                return (
+                    text.includes("barat") ||
+                    text.includes("selatan") ||
+                    text.includes("sunset") ||
+                    text.includes("senja") ||
+                    text.includes("outdoor") ||
+                    text.includes("laut") ||
+                    text.includes("pantai") ||
+                    text.includes("jiwani")
+                );
+            }),
+        [savedPlaces]
+    );
+
     const filteredPlaces = useMemo(() => {
-        if (activeFilter === "all") return savedPlaces;
-        if (activeFilter === "wfc") {
-            return savedPlaces.filter(
-                (p) =>
-                    p.area?.toLowerCase().includes("timur") ||
-                    p.name.toLowerCase().includes("hq") ||
-                    p.name.toLowerCase().includes("endorphins")
-            );
-        }
-        if (activeFilter === "sunset") {
-            return savedPlaces.filter(
-                (p) =>
-                    p.area?.toLowerCase().includes("barat") ||
-                    p.area?.toLowerCase().includes("selatan") ||
-                    p.name.toLowerCase().includes("jiwani")
-            );
-        }
+        if (activeFilter === "wfc") return wfcPlaces;
+        if (activeFilter === "sunset") return sunsetPlaces;
         return savedPlaces;
-    }, [savedPlaces, activeFilter]);
+    }, [activeFilter, wfcPlaces, sunsetPlaces, savedPlaces]);
 
     function handleShareWhatsApp() {
         if (savedPlaces.length === 0) return;
         const listText = savedPlaces
-            .map((p, i) => `${i + 1}. *${p.name}* (${p.area || "Padang"}) - https://saranwak.com/places/${p.slug}`)
+            .map(
+                (p, i) =>
+                    `${i + 1}. *${p.name}* (${p.area || "Padang"}) - https://saranwak.com/places/${p.slug}`
+            )
             .join("\n");
         const message = encodeURIComponent(
             `Halo! Ini daftar coffee shop favorit yang aku simpan di Saranwak Padang:\n\n${listText}\n\nYuk ngopi bareng!`
@@ -57,25 +91,20 @@ export function SavedPlacesPageClient() {
     }
 
     return (
-        <main className="min-h-screen bg-[#FAF7F2] px-3.5 pb-24 pt-3 text-[#19120D] sm:px-6 sm:pb-20 sm:pt-6 lg:px-12 lg:pt-8">
+        <main className="min-h-screen bg-[#fbf9f5] px-4 pb-28 pt-4 text-[#1b1c1a] sm:px-6 sm:pb-20 sm:pt-6 lg:px-12 lg:pt-8 font-sans">
             <div className="mx-auto max-w-7xl">
-                {/* Header Section matching Stitch 5802802fb7f84fa2a44fec11c12b872b & 3e1e47bf28a6433fb552b27f81be35f5 */}
-                <div className="mb-4 flex flex-col justify-between gap-3 border-b border-[#EBE5DC] pb-4 sm:mb-8 sm:flex-row sm:items-end sm:pb-6">
+                {/* 1. TITLE & EYEBROW SECTION (Stitch 3e1e47bf28a6433fb552b27f81be35f5) */}
+                <div className="mb-4 flex flex-col justify-between gap-3 border-b border-[#e4e2de]/60 pb-4 sm:mb-8 sm:flex-row sm:items-end sm:pb-6">
                     <div>
-                        <div className="mb-2 flex items-center gap-2">
-                            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ffdbd1] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#ac3311]">
-                                <Bookmark className="h-3 w-3 fill-current" />
-                                <span>KOLEKSI PRIBADI</span>
-                            </span>
-                            <span className="rounded-full bg-[#FAF0E6] px-2.5 py-0.5 text-xs font-bold text-[#8C6D53]">
-                                {savedCount} Tempat
-                            </span>
+                        <div className="inline-flex items-center gap-1.5 self-start px-2.5 py-0.5 rounded-full bg-[#ffdbd1] text-[#3c0800] text-[10px] font-bold tracking-wider uppercase mb-2">
+                            <Bookmark className="h-3.5 w-3.5 text-[#ac3311] fill-current" />
+                            <span>KOLEKSI PRIBADI</span>
                         </div>
 
-                        <h1 className="font-sans text-xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl lg:text-4xl">
+                        <h1 className="text-[28px] sm:text-3xl lg:text-4xl leading-[34px] font-extrabold tracking-tight text-[#0d0401] mb-1">
                             Tempat Tersimpan
                         </h1>
-                        <p className="mt-0.5 max-w-2xl text-[11.5px] text-[#756A63] sm:text-sm">
+                        <p className="text-[13px] text-[#4e4540] max-w-sm sm:max-w-xl leading-relaxed">
                             {savedCount} kedai kopi &amp; ruang kerja favorit kamu di Padang.
                         </p>
                     </div>
@@ -85,9 +114,9 @@ export function SavedPlacesPageClient() {
                             <button
                                 type="button"
                                 onClick={handleShareWhatsApp}
-                                className="inline-flex items-center gap-1.5 rounded-full border border-[#EBE5DC] bg-white px-3.5 py-1.5 text-[11px] font-bold text-[#19120D] shadow-xs transition hover:border-[#FF5C35] hover:text-[#FF5C35] active:scale-95 sm:px-4 sm:py-2 sm:text-xs"
+                                className="inline-flex items-center gap-1.5 rounded-full border border-[#e4e2de] bg-white px-3.5 py-1.5 text-[11px] font-bold text-[#0d0401] shadow-xs transition hover:border-[#ac3311] hover:text-[#ac3311] active:scale-95 sm:px-4 sm:py-2 sm:text-xs cursor-pointer"
                             >
-                                <Share2 className="h-3.5 w-3.5 text-[#FF5C35]" />
+                                <Share2 className="h-3.5 w-3.5 text-[#ac3311]" />
                                 <span>Bagikan Daftar</span>
                             </button>
 
@@ -98,7 +127,7 @@ export function SavedPlacesPageClient() {
                                         clearAllSavedPlaces();
                                     }
                                 }}
-                                className="inline-flex items-center gap-1.5 rounded-full border border-transparent px-2.5 py-1.5 text-[11px] font-bold text-[#9E3922] transition hover:bg-[#FFEAE5] active:scale-95 sm:px-3 sm:py-2 sm:text-xs"
+                                className="inline-flex items-center gap-1.5 rounded-full border border-transparent px-2.5 py-1.5 text-[11px] font-bold text-[#881f00] transition hover:bg-[#ffdbd1]/50 active:scale-95 sm:px-3 sm:py-2 sm:text-xs cursor-pointer"
                             >
                                 <Trash2 className="h-3.5 w-3.5" />
                                 <span>Hapus Semua</span>
@@ -107,72 +136,74 @@ export function SavedPlacesPageClient() {
                     )}
                 </div>
 
-                {/* Filter Pills */}
+                {/* 2. QUICK TABS / FILTER PILLS (Stitch 3e1e47bf28a6433fb552b27f81be35f5) */}
                 {savedPlaces.length > 0 && (
-                    <div className="no-scrollbar mb-4 flex items-center gap-1.5 overflow-x-auto pb-1 overscroll-x-contain sm:mb-6 sm:gap-2">
-                        <button
-                            type="button"
-                            onClick={() => setActiveFilter("all")}
-                            className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all sm:px-4 sm:py-1.5 sm:text-xs ${
-                                activeFilter === "all"
-                                    ? "bg-[#19120D] text-white shadow-xs"
-                                    : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
-                            }`}
-                        >
-                            Semua ({savedPlaces.length})
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setActiveFilter("wfc")}
-                            className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all sm:px-4 sm:py-1.5 sm:text-xs ${
-                                activeFilter === "wfc"
-                                    ? "bg-[#19120D] text-white shadow-xs"
-                                    : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
-                            }`}
-                        >
-                            💻 Siap WFC
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setActiveFilter("sunset")}
-                            className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all sm:px-4 sm:py-1.5 sm:text-xs ${
-                                activeFilter === "sunset"
-                                    ? "bg-[#19120D] text-white shadow-xs"
-                                    : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
-                            }`}
-                        >
-                            🌅 Nongkrong &amp; Sunset
-                        </button>
+                    <div className="mb-4 sm:mb-6 overflow-x-auto no-scrollbar">
+                        <div className="flex items-center gap-2 pb-1">
+                            <button
+                                type="button"
+                                onClick={() => setActiveFilter("all")}
+                                className={`shrink-0 px-4 py-2 rounded-full text-[12px] transition-all active:scale-95 cursor-pointer ${
+                                    activeFilter === "all"
+                                        ? "bg-[#0d0401] text-white font-semibold shadow-xs"
+                                        : "bg-[#eae8e4] text-[#4e4540] hover:text-[#0d0401] font-medium"
+                                }`}
+                            >
+                                Semua ({savedPlaces.length})
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setActiveFilter("wfc")}
+                                className={`shrink-0 px-4 py-2 rounded-full text-[12px] transition-all active:scale-95 cursor-pointer ${
+                                    activeFilter === "wfc"
+                                        ? "bg-[#0d0401] text-white font-semibold shadow-xs"
+                                        : "bg-[#eae8e4] text-[#4e4540] hover:text-[#0d0401] font-medium"
+                                }`}
+                            >
+                                Siap WFC ({wfcPlaces.length})
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setActiveFilter("sunset")}
+                                className={`shrink-0 px-4 py-2 rounded-full text-[12px] transition-all active:scale-95 cursor-pointer ${
+                                    activeFilter === "sunset"
+                                        ? "bg-[#0d0401] text-white font-semibold shadow-xs"
+                                        : "bg-[#eae8e4] text-[#4e4540] hover:text-[#0d0401] font-medium"
+                                }`}
+                            >
+                                Nongkrong Senja ({sunsetPlaces.length})
+                            </button>
+                        </div>
                     </div>
                 )}
 
-                {/* Loading State */}
+                {/* Loading Skeleton */}
                 {!isLoaded && (
-                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {[1, 2, 3].map((n) => (
                             <div
                                 key={n}
-                                className="h-72 animate-pulse rounded-3xl border border-[#EBE5DC] bg-[#EAE4DC]/50"
+                                className="h-80 animate-pulse rounded-2xl border border-[#e4e2de] bg-[#eae8e4]/60"
                             />
                         ))}
                     </div>
                 )}
 
-                {/* Empty State matching Stitch */}
+                {/* Empty State */}
                 {isLoaded && savedPlaces.length === 0 && (
-                    <div className="my-8 flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#D9CEBF] bg-white/70 p-8 text-center sm:my-14 sm:p-14">
-                        <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-tr from-[#FFEAE5] to-[#FFF5ED] text-[#FF5C35] shadow-inner sm:h-20 sm:w-20">
-                            <Bookmark className="h-8 w-8 text-[#FF5C35]" strokeWidth={1.75} />
+                    <div className="my-8 flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#e4e2de] bg-white p-8 text-center sm:my-14 sm:p-14 shadow-xs">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-tr from-[#ffdbd1] to-[#ffddb8] text-[#ac3311] shadow-inner sm:h-20 sm:w-20">
+                            <Bookmark className="h-8 w-8 text-[#ac3311]" strokeWidth={1.75} />
                         </div>
-                        <h2 className="mt-5 font-sans text-xl font-extrabold text-[#19120D] sm:text-2xl">
+                        <h2 className="mt-5 text-xl sm:text-2xl font-extrabold text-[#0d0401]">
                             Koleksi Masih Kosong
                         </h2>
-                        <p className="mt-2 max-w-md text-xs text-[#756A63] sm:text-sm">
+                        <p className="mt-2 max-w-md text-xs sm:text-sm text-[#4e4540]">
                             Belum ada kedai kopi yang kamu simpan. Tekan ikon penanda (*bookmark*) pada kartu kafe mana pun saat menjelajah untuk menyimpannya di sini.
                         </p>
                         <Link
                             href="/places?category=coffee-shop"
-                            className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#19120D] px-6 py-3 text-xs font-bold text-white shadow-md transition duration-200 hover:bg-[#FF5C35] active:scale-95 sm:text-sm"
+                            className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#0d0401] px-6 py-3 text-xs sm:text-sm font-bold text-white shadow-md transition duration-200 hover:bg-[#ac3311] active:scale-95"
                         >
                             <Compass className="h-4 w-4" />
                             <span>Jelajahi Coffee Shop Sekarang</span>
@@ -181,118 +212,90 @@ export function SavedPlacesPageClient() {
                     </div>
                 )}
 
-                {/* Saved Places Grid */}
+                {/* 3. DAFTAR KARTU KAFE TERSIMPAN (Stitch 3e1e47bf28a6433fb552b27f81be35f5) */}
                 {isLoaded && filteredPlaces.length > 0 && (
-                    <div className="grid grid-cols-1 gap-3 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="flex flex-col gap-4 sm:grid sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
                         {filteredPlaces.map((place) => {
                             const imageUrl = getSafePlaceImageUrl(place.image_url);
+                            const displayPrice = place.price_range || "Rp 20k";
+                            const tags = getSavedPlaceTags(place);
 
                             return (
                                 <article
                                     key={place.id}
-                                    className="group relative flex h-[195px] sm:h-auto cursor-pointer flex-col justify-between overflow-hidden rounded-xl sm:rounded-3xl border border-[#EBE5DC] bg-white sm:p-4 shadow-xs transition-all duration-300 hover:border-[#FF5C35]/40 hover:shadow-xl"
+                                    onClick={() => router.push(`/places/${place.slug}`)}
+                                    className="relative w-full h-80 rounded-2xl overflow-hidden shadow-md group cursor-pointer transition-transform active:scale-[0.99] border border-white/10"
                                 >
-                                    {/* Mobile Full-Bleed Image / Desktop Header Photo */}
-                                    <div className="relative h-full w-full overflow-hidden bg-[#0d0401] sm:h-52 sm:rounded-2xl">
-                                        <Image
-                                            src={imageUrl}
-                                            alt={place.name}
-                                            fill
-                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent sm:from-black/70 sm:via-black/20" />
+                                    {/* Cover Image */}
+                                    <Image
+                                        src={imageUrl}
+                                        alt={place.name}
+                                        fill
+                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                        className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent pointer-events-none" />
 
-                                        {/* Top Badges */}
-                                        <div className="absolute inset-x-3 top-2.5 z-10 flex items-center justify-between">
-                                            <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
-                                            <button
-                                                type="button"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    removeSavedPlace(place.slug);
-                                                }}
-                                                title="Hapus dari tersimpan"
-                                                aria-label={`Hapus ${place.name}`}
-                                                className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/90 sm:bg-black/40 text-[#ac3311] sm:text-white backdrop-blur-md transition hover:bg-[#FF5C35] hover:text-white active:scale-90 shadow-xs"
-                                            >
-                                                <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                            </button>
-                                        </div>
+                                    {/* Top Badges */}
+                                    <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
+                                        <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
 
-                                        {/* Mobile Bottom Content Overlay (sm:hidden) */}
-                                        <div className="absolute inset-x-3.5 bottom-3 z-10 block sm:hidden text-white">
-                                            <span className="block text-[9px] font-bold uppercase tracking-wider text-[#ffdbd1] mb-0.5">
-                                                {place.area || "Padang"}
-                                            </span>
-                                            <Link href={`/places/${place.slug}`}>
-                                                <h3 className="font-sans text-[14.5px] font-bold leading-tight text-white hover:text-[#ffddb8] transition-colors">
-                                                    {place.name}
-                                                </h3>
-                                            </Link>
-                                            <p className="mt-0.5 text-[10.5px] text-white/80 line-clamp-1">
-                                                {place.opening_hours ? `🕒 ${place.opening_hours}` : "Tempat ngopi & ruang kerja santai"}
-                                            </p>
-                                            <div className="mt-2 flex items-center justify-between border-t border-white/20 pt-1.5">
-                                                <span className="text-[11px] font-bold text-[#ffddb8]">
-                                                    {place.price_range || "Mulai Rp 20k"}
-                                                </span>
-                                                <Link
-                                                    href={`/places/${place.slug}`}
-                                                    className="inline-flex items-center gap-1 text-[11px] font-bold text-white hover:underline"
-                                                >
-                                                    <span>Lihat Detail</span>
-                                                    <ArrowRight className="h-3 w-3 text-[#ffddb8]" />
-                                                </Link>
-                                            </div>
-                                        </div>
-
-                                        {/* Desktop Bottom Overlay Label (hidden sm:flex) */}
-                                        <div className="hidden sm:flex absolute inset-x-3 bottom-3 items-end justify-between text-white">
-                                            <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md">
-                                                {place.area || "Padang"}
-                                            </span>
-                                            {place.price_range && (
-                                                <span className="text-xs font-black text-[#FDBA74]">
-                                                    {place.price_range}
-                                                </span>
-                                            )}
-                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                removeSavedPlace(place.slug);
+                                            }}
+                                            aria-label={`Hapus ${place.name} dari tersimpan`}
+                                            title="Hapus dari tersimpan"
+                                            className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-[#ac3311] shadow-xs transition-transform active:scale-75 hover:bg-white"
+                                        >
+                                            <Bookmark className="h-5 w-5 fill-current text-[#ac3311]" />
+                                        </button>
                                     </div>
 
-                                    {/* Desktop Place Info & Actions (hidden sm:flex) */}
-                                    <div className="mt-4 hidden sm:flex flex-1 flex-col justify-between">
-                                        <div>
-                                            <Link href={`/places/${place.slug}`}>
-                                                <h3 className="font-sans text-lg font-bold text-[#19120D] transition-colors hover:text-[#FF5C35]">
-                                                    {place.name}
-                                                </h3>
-                                            </Link>
-                                            {place.opening_hours && (
-                                                <p className="mt-1 text-xs text-[#756A63]">
-                                                    🕒 {place.opening_hours}
-                                                </p>
-                                            )}
+                                    {/* Bottom Content */}
+                                    <div className="absolute bottom-0 inset-x-0 p-5 text-white z-10 flex flex-col gap-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[11px] font-bold tracking-wider uppercase text-[#ff6e48]">
+                                                {place.area || "Padang"}
+                                            </span>
+                                            <span className="text-[12px] font-bold text-[#ffddb8] bg-black/50 backdrop-blur-sm px-2.5 py-0.5 rounded-full">
+                                                MULAI {displayPrice}
+                                            </span>
                                         </div>
 
-                                        <div className="mt-4 flex items-center gap-2 border-t border-[#EBE5DC] pt-3">
+                                        <h2 className="text-xl font-bold text-white tracking-tight leading-tight group-hover:text-[#ffddb8] transition-colors">
+                                            {place.name}
+                                        </h2>
+
+                                        {/* Tags Row */}
+                                        <div className="flex flex-wrap items-center gap-1.5 py-0.5">
+                                            {tags.map((t, idx) => (
+                                                <span
+                                                    key={idx}
+                                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-sm text-[10px] font-medium text-white/90"
+                                                >
+                                                    {t.icon}
+                                                    <span>{t.label}</span>
+                                                </span>
+                                            ))}
+                                        </div>
+
+                                        {/* Bottom Action Row */}
+                                        <div className="flex items-center justify-between pt-1 border-t border-white/10">
+                                            <div className="flex items-center gap-1 text-[12px] text-white/80">
+                                                <MapPin className="h-3.5 w-3.5 text-[#ff6e48]" />
+                                                <span>{place.area ? `${place.area}, Padang` : "Kota Padang"}</span>
+                                            </div>
+
                                             <Link
                                                 href={`/places/${place.slug}`}
-                                                className="flex-1 rounded-xl bg-[#FAF7F2] py-2 text-center text-xs font-bold text-[#19120D] transition hover:bg-[#FFECE5] hover:text-[#D8431F]"
+                                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#ac3311] hover:bg-[#881f00] text-white text-[12px] font-semibold transition-colors shadow-xs active:scale-95"
                                             >
-                                                Lihat Detail
+                                                <span>Detail</span>
+                                                <ArrowRight className="h-3.5 w-3.5" />
                                             </Link>
-                                            {place.google_maps_url ? (
-                                                <a
-                                                    href={place.google_maps_url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-1 rounded-xl bg-[#19120D] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#FF5C35]"
-                                                >
-                                                    <Navigation className="h-3.5 w-3.5" />
-                                                    <span>Rute</span>
-                                                </a>
-                                            ) : null}
                                         </div>
                                     </div>
                                 </article>
@@ -300,7 +303,115 @@ export function SavedPlacesPageClient() {
                         })}
                     </div>
                 )}
+
+                {/* 4. DELIGHT TIPS BOX (Stitch 3e1e47bf28a6433fb552b27f81be35f5) */}
+                <section className="mt-6 p-5 rounded-2xl bg-[#f5f3ef] border border-[#e4e2de]/60 flex flex-col items-center text-center relative overflow-hidden shadow-xs">
+                    <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-[#ffdbd1]/30 pointer-events-none" />
+                    <div className="absolute -left-4 -top-4 w-16 h-16 rounded-full bg-[#ffddb8]/30 pointer-events-none" />
+
+                    <div className="w-11 h-11 rounded-2xl bg-white shadow-xs flex items-center justify-center text-[#ac3311] mb-2.5 relative z-10 border border-[#e4e2de]/50">
+                        <BookmarkPlus className="h-6 w-6" />
+                    </div>
+
+                    <h3 className="text-[16px] font-bold text-[#0d0401] mb-1 relative z-10">
+                        Punya Rekomendasi Lain?
+                    </h3>
+                    <p className="text-[12px] text-[#4e4540] max-w-xs leading-relaxed relative z-10">
+                        Menemukan spot baru saat jalan-jalan di Padang? Tekan ikon bookmark pada kartu mana pun untuk menyimpannya di sini!
+                    </p>
+                    <Link
+                        href="/map"
+                        className="mt-3.5 inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0d0401] hover:bg-[#291c14] text-white text-[12px] font-semibold transition-all active:scale-95 relative z-10 shadow-xs"
+                    >
+                        <span>Jelajahi Peta WFC</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                </section>
+
+                {/* 5. FOOTER BRANDING (Stitch 3e1e47bf28a6433fb552b27f81be35f5) */}
+                <div className="mt-8 pt-5 border-t border-[#e4e2de]/60 flex flex-col items-center text-center relative sm:hidden">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                        <div className="w-5 h-5 rounded-md bg-[#0d0401] flex items-center justify-center text-[#ff6e48]">
+                            <Coffee className="h-3 w-3 text-white" />
+                        </div>
+                        <span className="text-[14px] text-[#0d0401] font-bold">Saranwak</span>
+                    </div>
+                    <p className="text-[11px] text-[#4e4540] max-w-xs mb-2 leading-relaxed">
+                        Kurasi independen kopi &amp; spot WFC Kota Padang. Dibuat dengan kecintaan pada seduhan jujur.
+                    </p>
+                    <span className="text-[10px] text-[#80756f] leading-tight">
+                        © 2025 Saranwak Padang. Seluruh hak cipta dilindungi.
+                    </span>
+                </div>
             </div>
         </main>
     );
+}
+
+function getSavedPlaceTags(place: SavedPlaceItem) {
+    const text = [
+        place.name,
+        place.area || "",
+        place.price_range || "",
+    ]
+        .join(" ")
+        .toLowerCase();
+
+    const pills: Array<{ label: string; icon: React.ReactNode }> = [];
+
+    if (text.includes("wifi") || text.includes("internet") || text.includes("wfc") || text.includes("endorphins")) {
+        pills.push({
+            label: "Wi-Fi",
+            icon: <Wifi className="h-3.5 w-3.5 text-emerald-400" />,
+        });
+    }
+    if (text.includes("colokan") || text.includes("stopkontak") || text.includes("wfc") || text.includes("endorphins") || text.includes("hq")) {
+        pills.push({
+            label: "Stopkontak Meja",
+            icon: <Zap className="h-3.5 w-3.5 text-amber-400" />,
+        });
+    }
+    if (text.includes("tenang") || text.includes("fokus") || text.includes("nugas") || text.includes("endorphins")) {
+        pills.push({
+            label: "Tenang",
+            icon: <VolumeX className="h-3.5 w-3.5 text-[#ffddb8]" />,
+        });
+    }
+    if (text.includes("sunset") || text.includes("senja") || text.includes("jiwani") || text.includes("barat")) {
+        pills.push({
+            label: "Sunset Point",
+            icon: <Sun className="h-3.5 w-3.5 text-amber-400" />,
+        });
+    }
+    if (text.includes("outdoor") || text.includes("taman") || text.includes("jiwani") || text.includes("rooftop")) {
+        pills.push({
+            label: "Outdoor Seating",
+            icon: <Sun className="h-3.5 w-3.5 text-[#ffddb8]" />,
+        });
+    }
+    if (text.includes("laut") || text.includes("pantai") || text.includes("jiwani") || text.includes("batang arau") || text.includes("selatan")) {
+        pills.push({
+            label: "Tepi Laut",
+            icon: <Waves className="h-3.5 w-3.5 text-teal-300" />,
+        });
+    }
+    if (text.includes("24 jam") || text.includes("batang arau") || (place.opening_hours && place.opening_hours.toLowerCase().includes("24 jam"))) {
+        pills.push({
+            label: "24 Jam",
+            icon: <Clock className="h-3.5 w-3.5 text-amber-400" />,
+        });
+    }
+
+    if (pills.length === 0) {
+        pills.push({
+            label: "Wi-Fi",
+            icon: <Wifi className="h-3.5 w-3.5 text-emerald-400" />,
+        });
+        pills.push({
+            label: "Spot Nyaman",
+            icon: <Coffee className="h-3.5 w-3.5 text-[#ffddb8]" />,
+        });
+    }
+
+    return pills.slice(0, 3);
 }
