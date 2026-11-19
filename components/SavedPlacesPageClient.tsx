@@ -63,9 +63,9 @@ export function SavedPlacesPageClient() {
                 <div className="mb-6 flex flex-col justify-between gap-4 border-b border-[#EBE5DC] pb-6 sm:mb-8 sm:flex-row sm:items-end">
                     <div>
                         <div className="mb-2 flex items-center gap-2">
-                            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFECE5] px-3 py-1 text-[11px] font-black uppercase tracking-wider text-[#D8431F]">
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ffdbd1] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#ac3311]">
                                 <Bookmark className="h-3 w-3 fill-current" />
-                                <span>KOLEKSI TERSIMPAN</span>
+                                <span>KOLEKSI PRIBADI</span>
                             </span>
                             <span className="rounded-full bg-[#FAF0E6] px-2.5 py-0.5 text-xs font-bold text-[#8C6D53]">
                                 {savedCount} Tempat
@@ -73,10 +73,10 @@ export function SavedPlacesPageClient() {
                         </div>
 
                         <h1 className="font-sans text-2xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl lg:text-4xl">
-                            Koleksi Tersimpan, Spot Favoritmu di Padang
+                            Tempat Tersimpan
                         </h1>
-                        <p className="mt-1.5 max-w-2xl text-xs text-[#756A63] sm:text-sm">
-                            Kumpulan spot ngopi dan tempat WFC yang sudah kamu tandai. Akses cepat rute navigasi dan jadwal buka setiap saat.
+                        <p className="mt-1 max-w-2xl text-xs text-[#756A63] sm:text-sm">
+                            {savedCount} kedai kopi &amp; ruang kerja favorit kamu di Padang.
                         </p>
                     </div>
 
@@ -190,10 +190,10 @@ export function SavedPlacesPageClient() {
                             return (
                                 <article
                                     key={place.id}
-                                    className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-[#EBE5DC] bg-white p-4 shadow-sm transition-all duration-300 hover:border-[#FF5C35]/40 hover:shadow-xl"
+                                    className="group relative flex h-80 sm:h-auto cursor-pointer flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl border border-[#EBE5DC] bg-white sm:p-4 shadow-sm transition-all duration-300 hover:border-[#FF5C35]/40 hover:shadow-xl"
                                 >
-                                    {/* Cover Image */}
-                                    <div className="relative h-48 w-full overflow-hidden rounded-2xl bg-[#19120D] sm:h-52">
+                                    {/* Mobile Full-Bleed Image / Desktop Header Photo */}
+                                    <div className="relative h-full w-full overflow-hidden bg-[#0d0401] sm:h-52 sm:rounded-2xl">
                                         <Image
                                             src={imageUrl}
                                             alt={place.name}
@@ -201,24 +201,54 @@ export function SavedPlacesPageClient() {
                                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                             className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent sm:from-black/70 sm:via-black/20" />
 
                                         {/* Top Badges */}
-                                        <div className="absolute inset-x-3 top-3 flex items-center justify-between">
+                                        <div className="absolute inset-x-3 top-3 z-10 flex items-center justify-between">
                                             <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
                                             <button
                                                 type="button"
-                                                onClick={() => removeSavedPlace(place.slug)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    removeSavedPlace(place.slug);
+                                                }}
                                                 title="Hapus dari tersimpan"
                                                 aria-label={`Hapus ${place.name}`}
-                                                className="flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition hover:bg-[#FF5C35] active:scale-90"
+                                                className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/90 sm:bg-black/40 text-[#ac3311] sm:text-white backdrop-blur-md transition hover:bg-[#FF5C35] hover:text-white active:scale-90 shadow-sm"
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </button>
                                         </div>
 
-                                        {/* Bottom Overlay Label */}
-                                        <div className="absolute inset-x-3 bottom-3 flex items-end justify-between text-white">
+                                        {/* Mobile Bottom Content Overlay (sm:hidden) */}
+                                        <div className="absolute inset-x-4 bottom-4 z-10 block sm:hidden text-white">
+                                            <span className="block text-[10px] font-bold uppercase tracking-wider text-[#ffdbd1] mb-1">
+                                                {place.area || "Padang"}
+                                            </span>
+                                            <Link href={`/places/${place.slug}`}>
+                                                <h3 className="font-sans text-xl font-bold leading-tight text-white hover:text-[#ffddb8] transition-colors">
+                                                    {place.name}
+                                                </h3>
+                                            </Link>
+                                            <p className="mt-1 text-xs text-white/80 line-clamp-1">
+                                                {place.opening_hours ? `🕒 ${place.opening_hours}` : "Tempat ngopi & ruang kerja santai"}
+                                            </p>
+                                            <div className="mt-3 flex items-center justify-between border-t border-white/20 pt-2.5">
+                                                <span className="text-xs font-bold text-[#ffddb8]">
+                                                    {place.price_range || "Mulai Rp 20k"}
+                                                </span>
+                                                <Link
+                                                    href={`/places/${place.slug}`}
+                                                    className="inline-flex items-center gap-1 text-xs font-bold text-white hover:underline"
+                                                >
+                                                    <span>Lihat Detail</span>
+                                                    <ArrowRight className="h-3.5 w-3.5 text-[#ffddb8]" />
+                                                </Link>
+                                            </div>
+                                        </div>
+
+                                        {/* Desktop Bottom Overlay Label (hidden sm:flex) */}
+                                        <div className="hidden sm:flex absolute inset-x-3 bottom-3 items-end justify-between text-white">
                                             <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md">
                                                 {place.area || "Padang"}
                                             </span>
@@ -230,8 +260,8 @@ export function SavedPlacesPageClient() {
                                         </div>
                                     </div>
 
-                                    {/* Place Info & Actions */}
-                                    <div className="mt-4 flex flex-1 flex-col justify-between">
+                                    {/* Desktop Place Info & Actions (hidden sm:flex) */}
+                                    <div className="mt-4 hidden sm:flex flex-1 flex-col justify-between">
                                         <div>
                                             <Link href={`/places/${place.slug}`}>
                                                 <h3 className="font-sans text-lg font-bold text-[#19120D] transition-colors hover:text-[#FF5C35]">

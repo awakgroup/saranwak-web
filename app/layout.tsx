@@ -1,9 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { Caveat, Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PwaRegister } from "@/components/PwaRegister";
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-caveat",
+  display: "swap",
+});
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -170,7 +176,7 @@ export default function RootLayout({
     <html
       lang="id"
       data-scroll-behavior="smooth"
-      className={`${fraunces.variable} ${plusJakartaSans.variable}`}
+      className={`${fraunces.variable} ${plusJakartaSans.variable} ${caveat.variable}`}
     >
       <body className="font-sans antialiased text-[#141414]">
         <Navbar />

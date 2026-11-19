@@ -380,8 +380,134 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     return (
         <main className="min-h-screen bg-[#F4F1EA] px-3 pb-28 pt-3 text-[#201813] sm:px-6 sm:pb-16 sm:pt-6 lg:px-8 lg:pb-20 lg:pt-8">
             <section className="mx-auto max-w-7xl">
-                {/* 1. EDITORIAL HERO SECTION WITH CURVED WARM BACKDROP & EMBEDDED FILTER BAR */}
-                <div className="relative mb-8 flex min-h-[440px] flex-col justify-between overflow-hidden rounded-[2.5rem] border border-[#2A1D15] bg-[#19120D] text-white shadow-2xl lg:min-h-[480px]">
+                {/* Mobile Page Header - Exact match to Stitch Screen cc723c2f64fa4f15a1e83985ce597c47 */}
+                <div className="block sm:hidden w-full mb-3">
+                    <section className="px-2 pt-2 pb-2">
+                        <p
+                            className="text-[#ac3311] text-[20px] leading-tight font-bold tracking-wide"
+                            style={{ fontFamily: "var(--font-caveat), 'Caveat', cursive" }}
+                        >
+                            Jelajahi Kota Padang
+                        </p>
+                        <h1 className="text-[#0d0401] text-[28px] leading-[34px] font-extrabold tracking-tight mt-0.5 mb-1.5">
+                            Spot Kopi &amp; Ruang WFC Pilihan
+                        </h1>
+                        <p className="text-[#4e4540] text-[13px] leading-relaxed max-w-sm">
+                            Temukan tempat kerja kondusif, kopi berkualitas, dan suasana senja santai di seantero Padang.
+                        </p>
+                    </section>
+
+                    {/* Sticky Mobile Search & Filter Chips Bar */}
+                    <div className="sticky top-0 z-30 bg-[#F4F1EA]/95 backdrop-blur-md pt-2 pb-3 px-1 flex flex-col gap-2.5">
+                        {/* Search Bar Pill */}
+                        <form
+                            onSubmit={handleSearchSubmit}
+                            className="w-full bg-white shadow-[0_4px_20px_rgba(41,28,20,0.08)] border border-[#e4e2de]/60 rounded-full p-1.5 pl-4 flex items-center justify-between transition-all focus-within:ring-2 focus-within:ring-[#ac3311]/30"
+                        >
+                            <div className="flex items-center gap-2 flex-1 min-w-0 mr-2">
+                                <Search className="h-4 w-4 text-[#80756f] shrink-0" />
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Cari spot ngopi, area, vibe..."
+                                    className="w-full bg-transparent text-[#0d0401] placeholder-[#80756f]/70 text-[13px] font-medium outline-none"
+                                />
+                            </div>
+                            {searchQuery ? (
+                                <button
+                                    type="button"
+                                    onClick={handleClearSearch}
+                                    className="mr-1 text-[#80756f] hover:text-[#0d0401]"
+                                >
+                                    <X className="h-3.5 w-3.5" />
+                                </button>
+                            ) : null}
+                            <button
+                                type="submit"
+                                aria-label="Cari"
+                                className="w-10 h-10 rounded-full bg-[#ac3311] hover:bg-[#881f00] text-white flex items-center justify-center shadow-sm active:scale-95 shrink-0 cursor-pointer"
+                            >
+                                <Search className="h-4 w-4" />
+                            </button>
+                        </form>
+
+                        {/* Horizontal Filter Chips */}
+                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+                            <Link
+                                href="/places/?category=coffee-shop"
+                                className={`whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
+                                    selectedTags.length === 0 && !effectiveParams.area && !effectiveParams.price
+                                        ? "bg-[#ac3311] text-white"
+                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
+                                }`}
+                            >
+                                Semua ({livePlacesData.length})
+                            </Link>
+                            <Link
+                                href={buildFilterHref(effectiveParams, {
+                                    tag: selectedTags.includes("wfc") ? undefined : "wfc",
+                                })}
+                                className={`whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
+                                    selectedTags.includes("wfc")
+                                        ? "bg-[#ac3311] text-white"
+                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
+                                }`}
+                            >
+                                WFC &amp; Nugas
+                            </Link>
+                            <Link
+                                href={buildFilterHref(effectiveParams, {
+                                    tag: selectedTags.includes("specialty-coffee") ? undefined : "specialty-coffee",
+                                })}
+                                className={`whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
+                                    selectedTags.includes("specialty-coffee")
+                                        ? "bg-[#ac3311] text-white"
+                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
+                                }`}
+                            >
+                                Specialty
+                            </Link>
+                            <Link
+                                href={buildFilterHref(effectiveParams, {
+                                    tag: selectedTags.includes("24-jam") ? undefined : "24-jam",
+                                })}
+                                className={`whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
+                                    selectedTags.includes("24-jam")
+                                        ? "bg-[#ac3311] text-white"
+                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
+                                }`}
+                            >
+                                24 Jam
+                            </Link>
+                            <Link
+                                href={buildFilterHref(effectiveParams, {
+                                    tag: selectedTags.includes("outdoor") ? undefined : "outdoor",
+                                })}
+                                className={`whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
+                                    selectedTags.includes("outdoor")
+                                        ? "bg-[#ac3311] text-white"
+                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
+                                }`}
+                            >
+                                Outdoor
+                            </Link>
+                        </div>
+
+                        {/* Count Summary */}
+                        <div className="flex items-center justify-between pt-0.5 px-1">
+                            <div className="flex items-center gap-1.5 text-[#4e4540]">
+                                <Compass className="h-4 w-4 text-[#ac3311]" />
+                                <span className="text-[12px] font-medium text-[#0d0401]">
+                                    Menampilkan <strong className="font-bold">{places.length} Tempat Kopi</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 1. EDITORIAL HERO SECTION WITH CURVED WARM BACKDROP & EMBEDDED FILTER BAR (DESKTOP) */}
+                <div className="hidden sm:flex relative mb-8 min-h-[440px] flex-col justify-between overflow-hidden rounded-[2.5rem] border border-[#2A1D15] bg-[#19120D] text-white shadow-2xl lg:min-h-[480px]">
                     {/* Background Cover Image with Atmospheric Soft Overlay */}
                     <div className="pointer-events-none absolute inset-0">
                         <Image
@@ -703,68 +829,6 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                 ) : (
                     <div className="grid gap-6 lg:grid-cols-[300px_1fr] lg:items-start xl:grid-cols-[320px_1fr]">
                         <aside className="lg:sticky lg:top-24">
-                            {/* Mobile Horizontal Quick Filter Chips matching Stitch cc723c2f64fa4f15a1e83985ce597c47 */}
-                            <div className="no-scrollbar -mx-3 mb-3 flex items-center gap-2 overflow-x-auto px-3 pb-1 lg:hidden">
-                                <Link
-                                    href="/places/?category=coffee-shop"
-                                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
-                                        selectedTags.length === 0 && !effectiveParams.area && !effectiveParams.price
-                                            ? "bg-[#19120D] text-white shadow-sm"
-                                            : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
-                                    }`}
-                                >
-                                    Semua ({livePlacesData.length})
-                                </Link>
-                                <Link
-                                    href={buildFilterHref(effectiveParams, {
-                                        tag: selectedTags.includes("wfc") ? undefined : "wfc",
-                                    })}
-                                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
-                                        selectedTags.includes("wfc")
-                                            ? "bg-[#19120D] text-white shadow-sm"
-                                            : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
-                                    }`}
-                                >
-                                    💻 WFC &amp; Nugas
-                                </Link>
-                                <Link
-                                    href={buildFilterHref(effectiveParams, {
-                                        tag: selectedTags.includes("specialty-coffee") ? undefined : "specialty-coffee",
-                                    })}
-                                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
-                                        selectedTags.includes("specialty-coffee")
-                                            ? "bg-[#19120D] text-white shadow-sm"
-                                            : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
-                                    }`}
-                                >
-                                    ☕ Specialty
-                                </Link>
-                                <Link
-                                    href={buildFilterHref(effectiveParams, {
-                                        tag: selectedTags.includes("outdoor") ? undefined : "outdoor",
-                                    })}
-                                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
-                                        selectedTags.includes("outdoor")
-                                            ? "bg-[#19120D] text-white shadow-sm"
-                                            : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
-                                    }`}
-                                >
-                                    🌿 Outdoor
-                                </Link>
-                                <Link
-                                    href={buildFilterHref(effectiveParams, {
-                                        openNow: effectiveParams.openNow === "true" ? undefined : "true",
-                                    })}
-                                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
-                                        effectiveParams.openNow === "true"
-                                            ? "bg-[#10B981] text-white shadow-sm"
-                                            : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
-                                    }`}
-                                >
-                                    🟢 Buka Sekarang
-                                </Link>
-                            </div>
-
                             {/* Mobile Collapsible Filter Drawer */}
                             <details className="group rounded-[26px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_14px_45px_rgba(47,35,25,0.06)] lg:hidden">
                                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3">

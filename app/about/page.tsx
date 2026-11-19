@@ -122,8 +122,61 @@ export default function AboutPage() {
                 }}
             />
 
-            {/* 1. Hero Story Section - Aligned with Stitch 5e380a33d20e4572b25e089a4b05f834 */}
-            <section className="relative w-full overflow-hidden border-b border-[#EBE5DC] pb-16 pt-10 lg:pb-20">
+            {/* Mobile About Hero - Exact Match to Stitch Screen fac1082d1e264cb6a4139ff81bd297a0 */}
+            <div className="block sm:hidden px-4 pt-3 pb-4">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffdbd1]/50 text-[#ac3311] text-[10px] uppercase tracking-wider font-bold mb-3 w-fit">
+                    <Sparkles className="h-3.5 w-3.5 text-[#ac3311]" />
+                    <span>CERITA &amp; MISI</span>
+                </div>
+                <h1 className="text-[#0d0401] text-[24px] leading-[30px] font-extrabold tracking-tight mb-3">
+                    Berawal dari Keresahan Mencari Ruang Kerja yang Jujur.
+                </h1>
+
+                {/* Editorial Warm Image Banner */}
+                <div className="relative w-full h-48 rounded-2xl overflow-hidden shadow-sm mb-4 bg-[#291c14]">
+                    <Image
+                        src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80"
+                        alt="Suasana kedai kopi artisanal specialty di Padang"
+                        fill
+                        className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d0401]/90 via-[#0d0401]/30 to-transparent flex items-end p-4">
+                        <div className="flex items-center gap-2 text-white">
+                            <ShieldCheck className="h-4 w-4 text-[#ff6e48]" />
+                            <span className="text-[12px] font-bold">Kurasi Independen Ranah Minang</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Story Description Card */}
+                <div className="bg-white p-4 rounded-2xl border border-[#e4e2de]/60 shadow-xs space-y-2.5 mb-4">
+                    <p className="text-[13px] text-[#0d0401] leading-relaxed">
+                        <strong className="text-[#ac3311] font-bold">Saranwak</strong> lahir dari rutinitas harian kami yang kerap kali diuji oleh realitas: janji <span className="italic font-semibold">&ldquo;cocok untuk kerja&rdquo;</span> yang berujung colokan minim, Wi-Fi lambat, atau musik yang terlalu hingar-bingar di sudut Kota Padang.
+                    </p>
+                    <p className="text-[13px] text-[#4e4540] leading-relaxed">
+                        Kami percaya setiap perantau, pegiat lepas, dan mahasiswa berhak mendapatkan ruang jujur tanpa rasa takut &lsquo;zonk&rsquo;—tempat di mana aroma seduhan kopi lokal berpadu serasi dengan ketenangan menuntaskan karya.
+                    </p>
+                </div>
+
+                {/* 3 Quick Stats Cards */}
+                <div className="grid grid-cols-3 gap-2">
+                    <div className="bg-white border border-[#e4e2de]/60 p-3 rounded-xl text-center shadow-xs">
+                        <span className="block text-[18px] font-extrabold text-[#ac3311]">45+</span>
+                        <span className="text-[10px] text-[#4e4540] font-medium">Spot Teruji</span>
+                    </div>
+                    <div className="bg-white border border-[#e4e2de]/60 p-3 rounded-xl text-center shadow-xs">
+                        <span className="block text-[18px] font-extrabold text-[#0d0401]">100%</span>
+                        <span className="text-[10px] text-[#4e4540] font-medium">Bebas Titipan</span>
+                    </div>
+                    <div className="bg-white border border-[#e4e2de]/60 p-3 rounded-xl text-center shadow-xs">
+                        <span className="block text-[18px] font-extrabold text-[#ac3311]">4</span>
+                        <span className="text-[10px] text-[#4e4540] font-medium">Kolektif</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* 1. Hero Story Section - Aligned with Stitch 5e380a33d20e4572b25e089a4b05f834 (Desktop) */}
+            <section className="hidden sm:block relative w-full overflow-hidden border-b border-[#EBE5DC] pb-16 pt-10 lg:pb-20">
                 <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
                     {/* Category Badge & Breadcrumb */}
                     <div className="mb-6 flex flex-wrap items-center gap-2">

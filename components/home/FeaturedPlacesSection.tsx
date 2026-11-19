@@ -53,8 +53,8 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                 </Link>
             </div>
 
-            {/* 4 Cards: Mobile Horizontal Snap Carousel, Desktop 4-Column Grid - Aligned with Stitch 3f54a1c6760d4badb78d709f20d14900 & dec9997f853d48fb839362e5da60ed89 */}
-            <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-4 snap-x snap-mandatory sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
+            {/* 4 Cards: Mobile Horizontal Snap Carousel (160x220), Desktop 4-Column Grid - Aligned with Stitch 3f54a1c6760d4badb78d709f20d14900 & dec9997f853d48fb839362e5da60ed89 */}
+            <div className="no-scrollbar -mx-4 flex gap-3.5 overflow-x-auto px-5 pb-2 snap-x snap-mandatory sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
                 {displayPlaces.map((place) => {
                     const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
                     const district = getDistrictName(place);
@@ -66,7 +66,7 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                         <article
                             key={place.id}
                             onClick={() => router.push(`/places/${place.slug}`)}
-                            className="group relative flex h-96 w-[280px] shrink-0 snap-start cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#19120D] p-5 text-white shadow-bento transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[#FF5C35]/50 hover:shadow-2xl active:scale-[0.99] sm:w-auto"
+                            className="group relative flex h-[220px] w-[160px] shrink-0 snap-start cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#0d0401] p-3 text-white shadow-sm transition-all duration-300 hover:border-[#FF5C35]/50 active:scale-[0.98] sm:h-96 sm:w-auto sm:rounded-3xl sm:p-5 sm:shadow-bento"
                         >
                             {/* Accessible Link overlay for crawlers & keyboard navigation */}
                             <Link
@@ -80,12 +80,12 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                                 src={imageUrl}
                                 alt={place.name}
                                 fill
-                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                                sizes="(max-width: 640px) 160px, (max-width: 1024px) 50vw, 25vw"
                                 className="pointer-events-none object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
                             />
 
                             {/* Gradients */}
-                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#19120D] via-black/35 to-black/30" />
+                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0d0401] via-black/40 to-transparent" />
 
                             {/* Top Badges */}
                             <div className="pointer-events-none relative z-20 flex items-center justify-between">
@@ -95,9 +95,9 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                                     {place.is_featured ? (
                                         <span
                                             title="Tempat Pilihan"
-                                            className="grid h-6 w-6 place-items-center rounded-full bg-white shadow-sm"
+                                            className="grid h-5 w-5 place-items-center rounded-full bg-white shadow-sm sm:h-6 sm:w-6"
                                         >
-                                            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-500" />
+                                            <Star className="h-3 w-3 fill-amber-400 text-amber-500 sm:h-3.5 sm:w-3.5" />
                                         </span>
                                     ) : null}
                                 </div>
@@ -110,36 +110,36 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                                         savePlaceToStorage(place);
                                     }}
                                     aria-label={`Simpan ${place.name}`}
-                                    className={`pointer-events-auto relative z-30 flex h-8 w-8 items-center justify-center rounded-full border border-white/15 backdrop-blur-md transition-all active:scale-95 ${
+                                    className={`pointer-events-auto relative z-30 flex h-7 w-7 items-center justify-center rounded-full border border-white/20 backdrop-blur-md transition-all active:scale-95 sm:h-8 sm:w-8 ${
                                         isSaved
                                             ? "bg-[#FF5C35] text-white"
                                             : "bg-black/40 text-white hover:bg-[#FF5C35]"
                                     }`}
                                 >
-                                    <Bookmark className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} />
+                                    <Bookmark className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isSaved ? "fill-current" : ""}`} />
                                 </button>
                             </div>
 
-                            {/* Bottom Information Link */}
-                            <div className="pointer-events-none relative z-20 block border-t border-white/15 pt-4 transition-colors">
-                                <div className="flex items-end justify-between">
-                                    <div className="min-w-0 flex-1 pr-3">
-                                        <span className="block text-[11px] font-bold uppercase tracking-wider text-[#FDBA74]">
+                            {/* Bottom Information */}
+                            <div className="pointer-events-none relative z-20 block border-t border-white/15 pt-2 sm:pt-4 transition-colors">
+                                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between">
+                                    <div className="min-w-0 flex-1 sm:pr-3">
+                                        <span className="block text-[9px] font-bold uppercase tracking-wider text-[#ffdbd1] sm:text-[11px] sm:text-[#FDBA74]">
                                             {district}
                                         </span>
-                                        <h3 className="truncate font-sans text-base font-bold leading-snug text-white transition-colors group-hover:text-[#FDBA74]">
+                                        <h3 className="truncate font-sans text-sm font-bold leading-tight text-white transition-colors group-hover:text-[#FDBA74] sm:text-base">
                                             {place.name}
                                         </h3>
-                                        <span className="mt-0.5 block truncate text-[11px] text-white/80">
+                                        <span className="mt-0.5 hidden truncate text-[11px] text-white/80 sm:block">
                                             {subtitle}
                                         </span>
                                     </div>
 
-                                    <div className="shrink-0 text-right">
-                                        <span className="block text-[10px] font-medium uppercase text-white/70">
+                                    <div className="mt-1 shrink-0 text-left sm:mt-0 sm:text-right">
+                                        <span className="hidden text-[10px] font-medium uppercase text-white/70 sm:block">
                                             Mulai
                                         </span>
-                                        <span className="font-sans text-sm font-extrabold text-[#FDBA74]">
+                                        <span className="font-sans text-xs font-extrabold text-[#ffddb8] sm:text-sm sm:text-[#FDBA74]">
                                             {priceLabel}
                                         </span>
                                     </div>
@@ -148,6 +148,14 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                         </article>
                     );
                 })}
+            </div>
+
+            {/* Mobile Carousel Indicator Dots matching Stitch 3f54a1c6760d4badb78d709f20d14900 */}
+            <div className="flex items-center justify-center gap-1.5 mt-3 mb-2 sm:hidden">
+                <span className="w-5 h-1.5 rounded-full bg-[#ac3311] transition-all" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#e4e2de] transition-all" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#e4e2de] transition-all" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#e4e2de] transition-all" />
             </div>
         </section>
     );

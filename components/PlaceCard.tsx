@@ -29,7 +29,7 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
     return (
         <article
             onClick={() => router.push(detailHref)}
-            className="group relative flex h-[390px] cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#19120D] p-5 text-white shadow-bento transition-all duration-300 hover:-translate-y-1.5 hover:border-[#FF5C35]/50 hover:shadow-2xl active:scale-[0.99]"
+            className="group relative flex h-[270px] sm:h-[390px] cursor-pointer flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 bg-[#0d0401] p-4 sm:p-5 text-white shadow-sm sm:shadow-bento transition-all duration-300 hover:-translate-y-1 hover:border-[#FF5C35]/50 hover:shadow-xl active:scale-[0.99]"
         >
             {/* Full Card Clickable Link */}
             <Link
@@ -49,13 +49,13 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
             />
 
             {/* Gradient Overlays */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#19120D] via-black/35 to-black/30" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0d0401] via-black/40 to-transparent" />
 
             {/* Top Badges */}
             <div className="pointer-events-none relative z-20 flex items-center justify-between">
                 <div className="flex flex-wrap items-center gap-1.5">
                     {userDistance ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-[#FF5C35] px-2.5 py-1 text-[11px] font-black uppercase text-white shadow-sm backdrop-blur">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[#FF5C35] px-2 py-0.5 text-[10px] sm:px-2.5 sm:py-1 sm:text-[11px] font-black uppercase text-white shadow-sm backdrop-blur">
                             <span>📍</span>
                             <span>{userDistance}</span>
                         </span>
@@ -66,9 +66,9 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
                     {place.is_featured ? (
                         <span
                             title="Tempat Pilihan"
-                            className="grid h-6 w-6 place-items-center rounded-full bg-white shadow-sm"
+                            className="grid h-5 w-5 place-items-center rounded-full bg-white shadow-sm sm:h-6 sm:w-6"
                         >
-                            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-500" />
+                            <Star className="h-3 w-3 fill-amber-400 text-amber-500 sm:h-3.5 sm:w-3.5" />
                         </span>
                     ) : null}
                 </div>
@@ -81,24 +81,24 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
                         savePlaceToStorage(place);
                     }}
                     aria-label={`Simpan ${place.name}`}
-                    className={`pointer-events-auto flex h-8 w-8 items-center justify-center rounded-full border border-white/15 backdrop-blur-md transition-all active:scale-95 ${
+                    className={`pointer-events-auto flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-white/20 backdrop-blur-md transition-all active:scale-95 ${
                         isSaved
                             ? "bg-[#FF5C35] text-white"
                             : "bg-black/40 text-white hover:bg-[#FF5C35]"
                     }`}
                 >
-                    <Bookmark className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} />
+                    <Bookmark className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isSaved ? "fill-current" : ""}`} />
                 </button>
             </div>
 
             {/* Bottom Information */}
-            <div className="pointer-events-none relative z-20 block border-t border-white/15 pt-4 transition-colors">
+            <div className="pointer-events-none relative z-20 block border-t border-white/15 pt-3 sm:pt-4 transition-colors">
                 <div className="flex items-end justify-between">
-                    <div className="min-w-0 flex-1 pr-3">
-                        <span className="block text-[11px] font-bold uppercase tracking-wider text-[#FDBA74]">
+                    <div className="min-w-0 flex-1 pr-2 sm:pr-3">
+                        <span className="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#ffdbd1] sm:text-[#FDBA74]">
                             {district}
                         </span>
-                        <h3 className="truncate font-sans text-lg font-bold leading-snug text-white transition-colors group-hover:text-[#FDBA74]">
+                        <h3 className="truncate font-sans text-[16px] sm:text-lg font-bold leading-snug text-white transition-colors group-hover:text-[#FDBA74]">
                             {place.name}
                         </h3>
                         <span className="mt-0.5 block truncate text-[11px] text-white/80">
@@ -107,10 +107,10 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
                     </div>
 
                     <div className="shrink-0 text-right">
-                        <span className="block text-[10px] font-medium uppercase text-white/70">
+                        <span className="block text-[9px] sm:text-[10px] font-medium uppercase text-white/70">
                             Mulai
                         </span>
-                        <span className="font-sans text-sm font-extrabold text-[#FDBA74]">
+                        <span className="font-sans text-[13px] sm:text-sm font-extrabold text-[#ffddb8] sm:text-[#FDBA74]">
                             {priceText}
                         </span>
                     </div>
