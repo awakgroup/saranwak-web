@@ -73,6 +73,30 @@ const registerCafeUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURICompon
     "Hi SaranWak, saya pemilik coffee shop di Padang dan tertarik mendaftarkan tempat saya di direktori Saranwak."
 )}`;
 
+function createPinIcon(L: typeof import("leaflet"), place: Place, isSelected: boolean) {
+    const safeName = (place.name || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return L.divIcon({
+        className: "saranwak-marker-container",
+        html: `
+            <div class="saranwak-pin-wrapper ${isSelected ? "selected" : ""}">
+                <div class="saranwak-pin ${
+                    isSelected
+                        ? "!bg-[#FF5C35] !text-white ring-4 ring-[#FF5C35]/35 !scale-110 !border-[#FF5C35] shadow-lg"
+                        : ""
+                }">
+                    <span class="saranwak-pin-dot ${isSelected ? "!bg-white" : ""}"></span>
+                    <span class="saranwak-pin-label font-bold">${safeName}</span>
+                </div>
+                <div class="saranwak-pin-pointer ${
+                    isSelected ? "!border-t-[#FF5C35] !bg-[#FF5C35]" : ""
+                }"></div>
+            </div>
+        `,
+        iconSize: [0, 0],
+        iconAnchor: [0, 0],
+    });
+}
+
 export function PlacesMapView({
     places,
     userCoords,
@@ -228,25 +252,31 @@ export function PlacesMapView({
 
                 const isSelected = selectedPlace?.id === place.id;
                 const safeName = (place.name || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-                const customIcon = L.divIcon({
-                    className: "saranwak-marker-container",
-                    html: `
-                        <div class="saranwak-pin-wrapper ${isSelected ? "selected" : ""}">
-                            <div class="saranwak-pin ${isSelected ? "!bg-[#FF5C35] !text-white ring-4 ring-[#FF5C35]/30" : ""}">
-                                <span class="saranwak-pin-dot ${isSelected ? "!bg-white" : ""}"></span>
-                                <span class="saranwak-pin-label font-bold">${safeName}</span>
-                            </div>
-                            <div class="saranwak-pin-pointer ${isSelected ? "!border-t-[#FF5C35]" : ""}"></div>
-                        </div>
-                    `,
-                    iconSize: [0, 0],
-                    iconAnchor: [0, 0],
-                });
+                const customIcon = createPinIcon(L, place, isSelected);
 
                 const marker = L.marker([lat, lng], {
                     icon: customIcon,
                     zIndexOffset: isSelected ? 1000 : 0,
+                });
+
+                const popupHtml = `
+                    <div style="font-family: inherit; min-width: 170px; padding: 2px;">
+                        <div style="font-weight: 800; font-size: 13px; color: #19120D; line-height: 1.25; margin-bottom: 3px;">
+                            ${safeName}
+                        </div>
+                        <div style="font-size: 11px; font-weight: 600; color: #756A63; margin-bottom: 8px;">
+                            📍 ${place.area || "Padang"} • <span style="color: #FF5C35; font-weight: 700;">${place.price_range || "Mulai Rp 18k"}</span>
+                        </div>
+                        <a href="/places/${place.slug}" style="display: block; text-align: center; background: #FF5C35; color: #ffffff; padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; text-decoration: none;">
+                            Lihat Detail Spot →
+                        </a>
+                    </div>
+                `;
+
+                marker.bindPopup(popupHtml, {
+                    offset: [0, -28],
+                    closeButton: true,
+                    autoPan: true,
                 });
 
                 marker.on("click", () => {
@@ -273,53 +303,34 @@ export function PlacesMapView({
         setSelectedPlace(place);
         if (onSelectPlace) onSelectPlace(place);
 
-        if (mapInstanceRef.current) {
-            const coords = getPlaceCoordinates(place);
-            // Smoothly fly to the marker at zoom 16
-            mapInstanceRef.current.flyTo([coords.lat, coords.lng], 16, {
-                animate: true,
-                duration: 0.8,
-            });
+        const targetCoords = getPlaceCoordinates(place);
 
-            // Update DOM classes and z-index for all markers
-            markersRef.current.forEach((marker, id) => {
-                const isCurrent = id === place.id;
-                marker.setZIndexOffset(isCurrent ? 1000 : 0);
-                const el = marker.getElement();
-                if (el) {
-                    const pinWrapper = el.querySelector(".saranwak-pin-wrapper");
-                    const pin = el.querySelector(".saranwak-pin");
-                    const pinDot = el.querySelector(".saranwak-pin-dot");
-                    const pinPointer = el.querySelector(".saranwak-pin-pointer");
-                    if (pinWrapper) {
-                        if (isCurrent) {
-                            pinWrapper.classList.add("selected");
-                        } else {
-                            pinWrapper.classList.remove("selected");
-                        }
+        if (mapInstanceRef.current) {
+            const map = mapInstanceRef.current;
+            // Immediate animated pan and zoom to target cafe coords
+            map.setView([targetCoords.lat, targetCoords.lng], 16, { animate: true });
+
+            import("leaflet").then((mod) => {
+                const L = ((mod as any).default ?? mod) as typeof import("leaflet");
+
+                // Update all marker icons using Leaflet's official setIcon and open active popup
+                markersRef.current.forEach((marker, id) => {
+                    const isCurrent = id === place.id;
+                    marker.setZIndexOffset(isCurrent ? 1000 : 0);
+
+                    const targetPlace = places.find((p) => p.id === id);
+                    if (targetPlace) {
+                        marker.setIcon(createPinIcon(L, targetPlace, isCurrent));
                     }
-                    if (pin) {
-                        if (isCurrent) {
-                            pin.classList.add("!bg-[#FF5C35]", "!text-white", "ring-4", "ring-[#FF5C35]/30");
-                        } else {
-                            pin.classList.remove("!bg-[#FF5C35]", "!text-white", "ring-4", "ring-[#FF5C35]/30");
-                        }
+
+                    if (isCurrent) {
+                        setTimeout(() => {
+                            marker.openPopup();
+                        }, 200);
+                    } else {
+                        marker.closePopup();
                     }
-                    if (pinDot) {
-                        if (isCurrent) {
-                            pinDot.classList.add("!bg-white");
-                        } else {
-                            pinDot.classList.remove("!bg-white");
-                        }
-                    }
-                    if (pinPointer) {
-                        if (isCurrent) {
-                            pinPointer.classList.add("!border-t-[#FF5C35]", "!bg-[#FF5C35]");
-                        } else {
-                            pinPointer.classList.remove("!border-t-[#FF5C35]", "!bg-[#FF5C35]");
-                        }
-                    }
-                }
+                });
             });
         }
 
@@ -335,11 +346,11 @@ export function PlacesMapView({
             }
         }
 
-        // On mobile, smoothly scroll map into view if it's out of viewport
+        // On mobile, smoothly scroll map into view if it's completely out of viewport
         if (typeof window !== "undefined" && window.innerWidth < 1024 && mapContainerRef.current) {
             const rect = mapContainerRef.current.getBoundingClientRect();
-            if (rect.top < 50 || rect.bottom > window.innerHeight) {
-                mapContainerRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+            if (rect.top < -60 || rect.bottom > window.innerHeight + 120) {
+                mapContainerRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
             }
         }
     };

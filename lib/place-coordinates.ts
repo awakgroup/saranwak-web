@@ -2,6 +2,22 @@ import type { Place } from "@/types/database";
 
 // Koordinat presisi untuk seluruh spot cafe di Padang
 export const PADANG_PLACE_COORDINATES: Record<string, { lat: number; lng: number }> = {
+    "bat-and-arrow": {
+        "lat": -0.9628,
+        "lng": 100.3635
+    },
+    "kamtumi-coffee": {
+        "lat": -0.9438,
+        "lng": 100.3545
+    },
+    "lalito-coffee": {
+        "lat": -0.9452,
+        "lng": 100.3568
+    },
+    "kubik-koffie": {
+        "lat": -0.9429,
+        "lng": 100.3552
+    },
     "kopkit-fabriek-bloc": {
         "lat": -0.8653,
         "lng": 100.3491
@@ -15,8 +31,8 @@ export const PADANG_PLACE_COORDINATES: Record<string, { lat: number; lng: number
         "lng": 100.3887
     },
     "menza-coffee-barber": {
-        "lat": -0.9471,
-        "lng": 100.4172
+        "lat": -0.9553,
+        "lng": 100.3908
     },
     "kopkit-gunung-pangilun": {
         "lat": -0.9082,
@@ -43,8 +59,8 @@ export const PADANG_PLACE_COORDINATES: Record<string, { lat: number; lng: number
         "lng": 100.3541
     },
     "folks-coffe-club": {
-        "lat": -0.9471,
-        "lng": 100.4172
+        "lat": -0.9056,
+        "lng": 100.3622
     },
     "show-koffie": {
         "lat": -0.9368433,
@@ -55,16 +71,16 @@ export const PADANG_PLACE_COORDINATES: Record<string, { lat: number; lng: number
         "lng": 100.363108
     },
     "kopkit-ulak-karang": {
-        "lat": -0.9471,
-        "lng": 100.4172
+        "lat": -0.8985,
+        "lng": 100.3521
     },
     "menyala-coffee": {
         "lat": -0.9413196,
         "lng": 100.3566847
     },
     "hom-id": {
-        "lat": -0.9471,
-        "lng": 100.4172
+        "lat": -0.9512,
+        "lng": 100.3556
     },
     "jiwani-coffee": {
         "lat": -0.944032,
@@ -91,16 +107,16 @@ export const PADANG_PLACE_COORDINATES: Record<string, { lat: number; lng: number
         "lng": 100.3562702
     },
     "fore-pattimura": {
-        "lat": -0.9471,
-        "lng": 100.4172
+        "lat": -0.9465,
+        "lng": 100.3579
     },
     "toko-kopi-rasa-raden-saleh": {
         "lat": -0.926939,
         "lng": 100.3559071
     },
     "dupin-flamboyan": {
-        "lat": -0.9471,
-        "lng": 100.4172
+        "lat": -0.9348,
+        "lng": 100.3571
     },
     "geos-coffee-eatery": {
         "lat": -0.9258599,
@@ -115,8 +131,8 @@ export const PADANG_PLACE_COORDINATES: Record<string, { lat: number; lng: number
         "lng": 100.3512
     },
     "kopkit-x-savey": {
-        "lat": -0.9471,
-        "lng": 100.4172
+        "lat": -0.9492,
+        "lng": 100.3712
     },
     "cafe-merjer": {
         "lat": -0.9347677,
@@ -127,16 +143,24 @@ export const PADANG_PLACE_COORDINATES: Record<string, { lat: number; lng: number
         "lng": 100.3588516
     },
     "kopkit-veteran": {
-        "lat": -0.9471,
-        "lng": 100.4172
+        "lat": -0.9381,
+        "lng": 100.3551
     },
     "hanghouse-coffee-and-eatery": {
         "lat": -0.9572,
         "lng": 100.3542
     },
     "kopkit-jati": {
-        "lat": -0.9471,
-        "lng": 100.4172
+        "lat": -0.9392,
+        "lng": 100.3705
+    },
+    "endorphins-space": {
+        "lat": -0.9412,
+        "lng": 100.3548
+    },
+    "kopkit-pondok": {
+        "lat": -0.9610,
+        "lng": 100.3615
     }
 };
 
