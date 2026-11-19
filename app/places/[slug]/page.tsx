@@ -287,6 +287,7 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
             </section>
 
             <MobileStickyActions
+                place={place}
                 mapsUrl={place.google_maps_url}
                 instagramUrl={place.instagram_url}
                 whatsappShareUrl={whatsappShareUrl}
@@ -967,6 +968,7 @@ function InstagramIcon({ className = "h-4 w-4" }: { className?: string }) {
 }
 
 function MobileStickyActions({
+    place,
     mapsUrl,
     instagramUrl,
     whatsappShareUrl,
@@ -977,6 +979,7 @@ function MobileStickyActions({
     city,
     categorySlug,
 }: {
+    place: PlaceDetail;
     mapsUrl?: string | null;
     instagramUrl?: string | null;
     whatsappShareUrl: string;
@@ -990,6 +993,8 @@ function MobileStickyActions({
     return (
         <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[#EBE5DC] bg-white/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-16px_40px_rgba(25,18,13,0.14)] backdrop-blur-md md:hidden">
             <div className="mx-auto flex max-w-md items-center gap-2">
+                <BookmarkButton place={place as unknown as Place} />
+
                 {mapsUrl ? (
                     <TrackedExternalLink
                         href={mapsUrl}

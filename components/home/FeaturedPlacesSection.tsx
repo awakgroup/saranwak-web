@@ -53,8 +53,8 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                 </Link>
             </div>
 
-            {/* 4 Tall Vertical Cards with Overlay Info - Aligned with Stitch dec9997f853d48fb839362e5da60ed89 */}
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {/* 4 Cards: Mobile Horizontal Snap Carousel, Desktop 4-Column Grid - Aligned with Stitch 3f54a1c6760d4badb78d709f20d14900 & dec9997f853d48fb839362e5da60ed89 */}
+            <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-4 snap-x snap-mandatory sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
                 {displayPlaces.map((place) => {
                     const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
                     const district = getDistrictName(place);
@@ -66,7 +66,7 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                         <article
                             key={place.id}
                             onClick={() => router.push(`/places/${place.slug}`)}
-                            className="group relative flex h-96 cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#19120D] p-5 text-white shadow-bento transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[#FF5C35]/50 hover:shadow-2xl active:scale-[0.99]"
+                            className="group relative flex h-96 w-[280px] shrink-0 snap-start cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-[#19120D] p-5 text-white shadow-bento transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[#FF5C35]/50 hover:shadow-2xl active:scale-[0.99] sm:w-auto"
                         >
                             {/* Accessible Link overlay for crawlers & keyboard navigation */}
                             <Link

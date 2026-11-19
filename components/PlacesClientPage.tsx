@@ -703,6 +703,68 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                 ) : (
                     <div className="grid gap-6 lg:grid-cols-[300px_1fr] lg:items-start xl:grid-cols-[320px_1fr]">
                         <aside className="lg:sticky lg:top-24">
+                            {/* Mobile Horizontal Quick Filter Chips matching Stitch cc723c2f64fa4f15a1e83985ce597c47 */}
+                            <div className="no-scrollbar -mx-3 mb-3 flex items-center gap-2 overflow-x-auto px-3 pb-1 lg:hidden">
+                                <Link
+                                    href="/places/?category=coffee-shop"
+                                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
+                                        selectedTags.length === 0 && !effectiveParams.area && !effectiveParams.price
+                                            ? "bg-[#19120D] text-white shadow-sm"
+                                            : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
+                                    }`}
+                                >
+                                    Semua ({livePlacesData.length})
+                                </Link>
+                                <Link
+                                    href={buildFilterHref(effectiveParams, {
+                                        tag: selectedTags.includes("wfc") ? undefined : "wfc",
+                                    })}
+                                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
+                                        selectedTags.includes("wfc")
+                                            ? "bg-[#19120D] text-white shadow-sm"
+                                            : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
+                                    }`}
+                                >
+                                    💻 WFC &amp; Nugas
+                                </Link>
+                                <Link
+                                    href={buildFilterHref(effectiveParams, {
+                                        tag: selectedTags.includes("specialty-coffee") ? undefined : "specialty-coffee",
+                                    })}
+                                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
+                                        selectedTags.includes("specialty-coffee")
+                                            ? "bg-[#19120D] text-white shadow-sm"
+                                            : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
+                                    }`}
+                                >
+                                    ☕ Specialty
+                                </Link>
+                                <Link
+                                    href={buildFilterHref(effectiveParams, {
+                                        tag: selectedTags.includes("outdoor") ? undefined : "outdoor",
+                                    })}
+                                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
+                                        selectedTags.includes("outdoor")
+                                            ? "bg-[#19120D] text-white shadow-sm"
+                                            : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
+                                    }`}
+                                >
+                                    🌿 Outdoor
+                                </Link>
+                                <Link
+                                    href={buildFilterHref(effectiveParams, {
+                                        openNow: effectiveParams.openNow === "true" ? undefined : "true",
+                                    })}
+                                    className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
+                                        effectiveParams.openNow === "true"
+                                            ? "bg-[#10B981] text-white shadow-sm"
+                                            : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
+                                    }`}
+                                >
+                                    🟢 Buka Sekarang
+                                </Link>
+                            </div>
+
                             {/* Mobile Collapsible Filter Drawer */}
                             <details className="group rounded-[26px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_14px_45px_rgba(47,35,25,0.06)] lg:hidden">
                                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3">

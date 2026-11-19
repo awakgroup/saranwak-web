@@ -11,6 +11,10 @@ import {
     ArrowRight,
     SlidersHorizontal,
     ChevronDown,
+    Laptop,
+    Coffee,
+    Moon,
+    Trees,
 } from "lucide-react";
 import { FilterModal } from "@/components/home/FilterModal";
 
@@ -256,8 +260,36 @@ export function HomeHeroSection() {
                                         </button>
                                     </form>
 
+                                    {/* Mobile 4 Circular Quick Categories matching Stitch 3f54a1c6760d4badb78d709f20d14900 */}
+                                    <div className="mt-3.5 grid grid-cols-4 gap-2 text-center border-t border-[#EBE5DC]/60 pt-3">
+                                        <Link href="/places?tags=wfc" className="flex flex-col items-center group">
+                                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFEAE5] text-[#D8431F] shadow-xs transition-transform active:scale-90 group-hover:scale-105">
+                                                <Laptop className="h-5 w-5" />
+                                            </div>
+                                            <span className="mt-1 text-[11px] font-bold text-[#19120D]">WFC &amp; Nugas</span>
+                                        </Link>
+                                        <Link href="/places?category=coffee-shop" className="flex flex-col items-center group">
+                                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F3EDE2] text-[#8C6D53] shadow-xs transition-transform active:scale-90 group-hover:scale-105">
+                                                <Coffee className="h-5 w-5" />
+                                            </div>
+                                            <span className="mt-1 text-[11px] font-bold text-[#19120D]">Specialty</span>
+                                        </Link>
+                                        <Link href="/places?tags=24-jam" className="flex flex-col items-center group">
+                                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EDE8FC] text-[#6B46C1] shadow-xs transition-transform active:scale-90 group-hover:scale-105">
+                                                <Moon className="h-5 w-5" />
+                                            </div>
+                                            <span className="mt-1 text-[11px] font-bold text-[#19120D]">24 Jam</span>
+                                        </Link>
+                                        <Link href="/places?tags=outdoor" className="flex flex-col items-center group">
+                                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#E6F4EA] text-[#1E7E34] shadow-xs transition-transform active:scale-90 group-hover:scale-105">
+                                                <Trees className="h-5 w-5" />
+                                            </div>
+                                            <span className="mt-1 text-[11px] font-bold text-[#19120D]">Outdoor</span>
+                                        </Link>
+                                    </div>
+
                                     {/* Mobile Quick Tap Chips */}
-                                    <div className="no-scrollbar mt-2.5 flex items-center gap-2 overflow-x-auto pb-0.5">
+                                    <div className="no-scrollbar mt-3 flex items-center gap-2 overflow-x-auto pb-0.5 border-t border-[#EBE5DC]/40 pt-2.5">
                                         {MOBILE_QUICK_CHIPS.map((chip) => (
                                             <Link
                                                 key={chip.label}
