@@ -320,8 +320,8 @@ function HeroSection({
     const heroTags = [...activityTags, ...vibeTags].slice(0, 5);
 
     return (
-        <section className="overflow-hidden rounded-2xl sm:rounded-[32px] border border-[#EBE5DC] bg-white shadow-md">
-            <div className="relative min-h-[300px] overflow-hidden bg-gradient-to-b from-[#2B1D15] to-[#120B07] text-white sm:min-h-[460px] lg:min-h-[520px]">
+        <section className="overflow-hidden rounded-xl sm:rounded-[32px] border border-[#EBE5DC] bg-white shadow-sm sm:shadow-md">
+            <div className="relative min-h-[250px] overflow-hidden bg-gradient-to-b from-[#2B1D15] to-[#120B07] text-white sm:min-h-[460px] lg:min-h-[520px]">
                 <Image
                     src={mainImageUrl}
                     alt={place.name}
@@ -334,25 +334,25 @@ function HeroSection({
                 <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/45 to-black/90" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-transparent" />
 
-                <div className="relative z-10 flex min-h-[300px] flex-col justify-between p-4 sm:min-h-[460px] sm:p-8 lg:min-h-[520px] lg:p-10">
-                    <div className="flex flex-wrap items-center gap-2">
+                <div className="relative z-10 flex min-h-[250px] flex-col justify-between p-3.5 sm:min-h-[460px] sm:p-8 lg:min-h-[520px] lg:p-10">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                         {category ? (
                             <Link
                                 href={`/places?category=${category.slug}`}
-                                className="rounded-full border border-white/20 bg-white/95 px-3.5 py-1.5 text-xs font-bold text-[#19120D] shadow-sm backdrop-blur transition hover:bg-white"
+                                className="rounded-full border border-white/20 bg-white/95 px-2.5 py-1 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-bold text-[#19120D] shadow-xs backdrop-blur transition hover:bg-white"
                             >
                                 {category.name}
                             </Link>
                         ) : null}
 
                         {place.price_range ? (
-                            <span className="rounded-full border border-white/20 bg-[#FDBA74] px-3.5 py-1.5 text-xs font-bold text-[#19120D] shadow-sm">
+                            <span className="rounded-full border border-white/20 bg-[#FDBA74] px-2.5 py-1 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-bold text-[#19120D] shadow-xs">
                                 {place.price_range}
                             </span>
                         ) : null}
 
                         {place.area ? (
-                            <span className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/15 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm backdrop-blur">
+                            <span className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/15 px-2.5 py-1 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-bold text-white shadow-xs backdrop-blur">
                                 <MapPin className="h-3 w-3 text-[#FDBA74]" />
                                 {place.area}
                             </span>
@@ -363,26 +363,26 @@ function HeroSection({
                         {place.is_featured ? (
                             <span
                                 title="Tempat Pilihan (Featured)"
-                                className="grid h-7 w-7 place-items-center rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.18)] transition hover:scale-110"
+                                className="grid h-6 w-6 sm:h-7 sm:w-7 place-items-center rounded-full bg-white shadow-xs transition hover:scale-110"
                                 aria-label="Featured place"
                             >
-                                <Star className="h-4 w-4 fill-amber-400 text-amber-500" />
+                                <Star className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-amber-400 text-amber-500" />
                             </span>
                         ) : null}
                     </div>
 
                     <div className="max-w-4xl">
-                        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#FF5C35]/40 bg-[#FF5C35]/20 px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-[#FDBA74] backdrop-blur">
-                            <Star className="h-3.5 w-3.5 text-[#FF5C35]" />
+                        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#FF5C35]/40 bg-[#FF5C35]/20 px-2.5 py-0.5 sm:px-3.5 sm:py-1 text-[10px] sm:text-xs font-extrabold uppercase tracking-wider text-[#FDBA74] backdrop-blur">
+                            <Star className="h-3 w-3 text-[#FF5C35]" />
                             Spot Pilihan Padang
                         </div>
 
-                        <h1 className="mt-3 font-sans text-2xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+                        <h1 className="mt-1.5 font-sans text-xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
                             {place.name}
                         </h1>
 
-                        <p className="mt-2.5 flex items-center gap-1.5 text-xs font-medium leading-relaxed text-stone-300 sm:text-sm">
-                            <MapPin className="h-4 w-4 shrink-0 text-[#FF5C35]" />
+                        <p className="mt-1.5 flex items-center gap-1 text-[11px] font-medium leading-relaxed text-stone-300 sm:mt-2.5 sm:gap-1.5 sm:text-sm">
+                            <MapPin className="h-3.5 w-3.5 shrink-0 text-[#FF5C35]" />
                             <span>
                                 {[place.area, place.city || "Padang"].filter(Boolean).join(", ")}
                                 {place.address ? ` · ${place.address}` : ""}
@@ -390,14 +390,14 @@ function HeroSection({
                         </p>
 
                         {heroTags.length > 0 ? (
-                            <div className="mt-4 flex flex-wrap gap-1.5 sm:mt-5 sm:gap-2">
+                            <div className="mt-2.5 flex flex-wrap gap-1 sm:mt-5 sm:gap-2">
                                 {heroTags.map((tag) => (
                                     <Link
                                         key={`${tag}-hero`}
                                         href={`/places?category=coffee-shop&tags=${encodeURIComponent(
                                             tagToSlug(tag)
                                         )}`}
-                                        className="rounded-lg border border-white/10 bg-white/10 px-2.5 py-1 text-[11px] font-medium text-stone-200 transition hover:bg-white/20 sm:px-3 sm:text-xs"
+                                        className="rounded-lg border border-white/10 bg-white/10 px-2 py-0.5 text-[10.5px] font-medium text-stone-200 transition hover:bg-white/20 sm:px-3 sm:py-1 sm:text-xs"
                                     >
                                         {tag}
                                     </Link>
@@ -408,7 +408,7 @@ function HeroSection({
                 </div>
             </div>
 
-            <div className="grid gap-2.5 border-t border-[#EBE5DC] bg-white p-3.5 sm:gap-3 sm:grid-cols-2 sm:p-5 lg:grid-cols-4">
+            <div className="grid gap-2 border-t border-[#EBE5DC] bg-white p-3 sm:gap-3 sm:grid-cols-2 sm:p-5 lg:grid-cols-4">
                 <HeroAction
                     label="Buka di Google Maps"
                     icon="maps"
@@ -432,9 +432,9 @@ function HeroSection({
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#EBE5DC] bg-white px-5 py-3 text-sm font-bold text-[#19120D] transition hover:bg-[#19120D] hover:text-white"
+                    className="inline-flex min-h-9.5 sm:min-h-12 items-center justify-center gap-2 rounded-full border border-[#EBE5DC] bg-white px-3.5 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-[#19120D] transition hover:bg-[#19120D] hover:text-white"
                 >
-                    <Share2 className="h-4 w-4" />
+                    <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     Share ke WhatsApp
                 </a>
 
@@ -463,7 +463,7 @@ function HeroAction({
 }) {
     if (!href) {
         return (
-            <span className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#EBE5DC] bg-[#FAF6F0] px-5 py-3 text-sm font-bold text-[#756A63]">
+            <span className="inline-flex min-h-9.5 sm:min-h-12 items-center justify-center rounded-full border border-[#EBE5DC] bg-[#FAF6F0] px-3.5 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-[#756A63]">
                 {disabledLabel}
             </span>
         );
@@ -483,12 +483,12 @@ function HeroAction({
             }}
             className={
                 primary
-                    ? "inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#FF5C35] hover:bg-[#D8431F] px-5 py-3 text-sm font-bold text-white shadow-sm transition-all active:scale-95"
-                    : "inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#EBE5DC] bg-white px-5 py-3 text-sm font-bold text-[#19120D] transition hover:bg-[#19120D] hover:text-white"
+                    ? "inline-flex min-h-9.5 sm:min-h-12 items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-[#FF5C35] hover:bg-[#D8431F] px-3.5 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-white shadow-xs transition-all active:scale-95"
+                    : "inline-flex min-h-9.5 sm:min-h-12 items-center justify-center gap-1.5 sm:gap-2 rounded-full border border-[#EBE5DC] bg-white px-3.5 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-[#19120D] transition hover:bg-[#19120D] hover:text-white"
             }
         >
-            {icon === "maps" ? <MapPin className="h-4 w-4" /> : null}
-            {icon === "instagram" ? <InstagramIcon className="h-4 w-4" /> : null}
+            {icon === "maps" ? <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : null}
+            {icon === "instagram" ? <InstagramIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : null}
             <span>{label}</span>
         </TrackedExternalLink>
     );
@@ -991,7 +991,7 @@ function MobileStickyActions({
     categorySlug?: string | null;
 }) {
     return (
-        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[#EBE5DC] bg-white/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-16px_40px_rgba(25,18,13,0.14)] backdrop-blur-md md:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[#EBE5DC] bg-white/95 px-3.5 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2 shadow-[0_-8px_25px_rgba(25,18,13,0.1)] backdrop-blur-md md:hidden">
             <div className="mx-auto flex max-w-md items-center gap-2">
                 <BookmarkButton place={place as unknown as Place} />
 
@@ -1008,13 +1008,13 @@ function MobileStickyActions({
                             city,
                             category: categorySlug ?? null,
                         }}
-                        className="flex-1 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#FF5C35] hover:bg-[#D8431F] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all duration-150 active:scale-95"
+                        className="flex-1 inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#FF5C35] hover:bg-[#D8431F] px-3.5 py-2 text-xs font-bold text-white shadow-xs transition-all duration-150 active:scale-95"
                     >
-                        <MapPin className="h-4 w-4 shrink-0" />
+                        <MapPin className="h-3.5 w-3.5 shrink-0" />
                         <span>Petunjuk Arah</span>
                     </TrackedExternalLink>
                 ) : (
-                    <span className="flex-1 inline-flex min-h-12 items-center justify-center rounded-full bg-[#FAF6F0] px-4 py-2.5 text-xs font-bold text-[#756A63]">
+                    <span className="flex-1 inline-flex min-h-10 items-center justify-center rounded-full bg-[#FAF6F0] px-3 py-2 text-xs font-bold text-[#756A63]">
                         Maps Belum Tersedia
                     </span>
                 )}
@@ -1032,9 +1032,9 @@ function MobileStickyActions({
                             city,
                             category: categorySlug ?? null,
                         }}
-                        className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-full border border-[#E7D8C8] bg-white px-4 py-2.5 text-xs font-bold text-[#201813] transition-all duration-150 active:scale-95"
+                        className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full border border-[#E7D8C8] bg-white px-3 py-2 text-xs font-bold text-[#201813] transition-all duration-150 active:scale-95"
                     >
-                        <InstagramIcon className="h-4 w-4 shrink-0" />
+                        <InstagramIcon className="h-3.5 w-3.5 shrink-0" />
                         <span className="hidden sm:inline">Instagram</span>
                     </TrackedExternalLink>
                 ) : null}
@@ -1043,10 +1043,10 @@ function MobileStickyActions({
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-full bg-[#201813] px-4 py-2.5 text-xs font-bold text-white transition-all duration-150 active:scale-95"
+                    className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#201813] px-3 py-2 text-xs font-bold text-white transition-all duration-150 active:scale-95"
                     aria-label="Bagikan ke WhatsApp"
                 >
-                    <Share2 className="h-4 w-4 shrink-0" />
+                    <Share2 className="h-3.5 w-3.5 shrink-0" />
                     <span className="hidden sm:inline">Share</span>
                 </a>
             </div>

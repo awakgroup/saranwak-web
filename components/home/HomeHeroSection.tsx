@@ -80,14 +80,14 @@ export function HomeHeroSection() {
 
     return (
         <>
-            {/* Mobile Hero - Exact Match to Stitch Screen 3f54a1c6760d4badb78d709f20d14900 */}
+            {/* Mobile Hero - Compact Native App Discovery Canvas */}
             <div className="block sm:hidden w-full">
-                <div className="px-4 pt-2 pb-1 flex flex-col relative">
+                <div className="px-3.5 pt-2 pb-1 flex flex-col relative">
                     {/* Floating Coffee Cup Illustration with Steam & Beans */}
-                    <div className="absolute right-1 -top-1 pointer-events-none select-none z-10 w-28 h-28 flex items-center justify-center animate-coffee-float">
-                        <div className="absolute w-20 h-20 rounded-full bg-[#ffdbd1]/50 blur-xl -top-1 -right-1" />
-                        <div className="absolute w-16 h-16 rounded-full bg-[#ffddb8]/40 blur-lg bottom-1 left-2" />
-                        <svg className="relative w-24 h-24 drop-shadow-[0_8px_16px_rgba(172,51,17,0.18)]" fill="none" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+                    <div className="absolute right-1 -top-1 pointer-events-none select-none z-10 w-20 h-20 flex items-center justify-center animate-coffee-float">
+                        <div className="absolute w-16 h-16 rounded-full bg-[#ffdbd1]/50 blur-lg -top-1 -right-1" />
+                        <div className="absolute w-12 h-12 rounded-full bg-[#ffddb8]/40 blur-md bottom-1 left-2" />
+                        <svg className="relative w-18 h-18 drop-shadow-[0_6px_12px_rgba(172,51,17,0.16)]" fill="none" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
                             <g className="animate-steam" opacity="0.75">
                                 <path d="M68 44C66 36 71 31 70 23" opacity="0.6" stroke="#ac3311" strokeDasharray="2 4" strokeLinecap="round" strokeWidth="2" />
                                 <path d="M84 40C88 32 83 25 87 18" opacity="0.7" stroke="#ff6e48" strokeLinecap="round" strokeWidth="2.5" />
@@ -127,75 +127,73 @@ export function HomeHeroSection() {
 
                     {/* Script Cursive Eyebrow */}
                     <p
-                        className="text-[#ac3311] text-[18px] leading-tight font-bold tracking-wide"
+                        className="text-[#ac3311] text-[15px] leading-tight font-bold tracking-wide"
                         style={{ fontFamily: "var(--font-caveat), 'Caveat', cursive" }}
                     >
                         Jelajahi Kota Padang
                     </p>
 
                     {/* Bold Punchy Headline */}
-                    <h1 className="text-[#0d0401] text-[28px] leading-[32px] font-extrabold tracking-tight mt-0.5 mb-1.5">
-                        Jelajahi.<br />
-                        Ngopi.<br />
-                        <span className="text-[#ac3311]">Produktif.</span>
+                    <h1 className="text-[#0d0401] text-[22px] leading-[26px] font-extrabold tracking-tight mt-0.5 mb-1">
+                        Jelajahi. Ngopi. <span className="text-[#ac3311]">Produktif.</span>
                     </h1>
 
                     {/* Subtitle */}
-                    <p className="text-[#4e4540] text-[12px] leading-relaxed max-w-[260px] mb-3.5">
+                    <p className="text-[#4e4540] text-[11.5px] leading-relaxed max-w-[240px] mb-2.5">
                         Kurasi ruang ngopi &amp; spot WFC terbaik di Ranah Minang, dibuat khusus untuk fokus dan santai tanpa zonk.
                     </p>
 
                     {/* Search Bar Capsule */}
                     <form
                         onSubmit={handleMobileSearch}
-                        className="w-full bg-white shadow-[0_4px_16px_rgba(41,28,20,0.06)] border border-[#e4e2de]/60 rounded-full p-1 pl-3.5 flex items-center justify-between transition-all focus-within:ring-2 focus-within:ring-[#ac3311]/30"
+                        className="w-full bg-white shadow-[0_2px_12px_rgba(41,28,20,0.06)] border border-[#e4e2de]/70 rounded-full h-10 p-1 pl-3.5 flex items-center justify-between transition-all focus-within:ring-2 focus-within:ring-[#ac3311]/30"
                     >
-                        <div className="flex items-center gap-2 flex-1 min-w-0 mr-1.5">
-                            <Search className="h-4 w-4 text-[#80756f] shrink-0" />
+                        <div className="flex items-center gap-2 flex-1 min-w-0 mr-1">
+                            <Search className="h-3.5 w-3.5 text-[#80756f] shrink-0" />
                             <input
                                 type="text"
                                 value={mobileSearchQuery}
                                 onChange={(e) => setMobileSearchQuery(e.target.value)}
                                 placeholder="Cari spot ngopi, area, vibe..."
-                                className="w-full bg-transparent text-[#0d0401] placeholder-[#80756f]/70 text-[12px] font-medium outline-none"
+                                className="w-full bg-transparent text-[#0d0401] placeholder-[#80756f]/70 text-[11.5px] font-medium outline-none"
                             />
                         </div>
                         <button
                             type="submit"
                             aria-label="Cari"
-                            className="w-9 h-9 rounded-full bg-[#ac3311] hover:bg-[#881f00] text-white flex items-center justify-center shadow-xs transition-transform active:scale-95 shrink-0 cursor-pointer"
+                            className="w-8 h-8 rounded-full bg-[#ac3311] hover:bg-[#881f00] text-white flex items-center justify-center shadow-xs transition-transform active:scale-95 shrink-0 cursor-pointer"
                         >
-                            <Search className="h-3.5 w-3.5" />
+                            <Search className="h-3 w-3" />
                         </button>
                     </form>
                 </div>
 
-                {/* 4 Circular Category Quick Icons matching Stitch 3f54a1c6760d4badb78d709f20d14900 */}
-                <div className="px-4 mt-3 mb-1">
-                    <div className="grid grid-cols-4 gap-2 text-center">
+                {/* 4 Circular Category Quick Icons */}
+                <div className="px-3.5 mt-2.5 mb-0.5">
+                    <div className="grid grid-cols-4 gap-1.5 text-center">
                         <Link href="/places?tags=wfc" className="flex flex-col items-center group">
-                            <div className="w-12 h-12 rounded-full bg-[#ff6e48]/20 group-hover:bg-[#ff6e48]/30 flex items-center justify-center text-[#ac3311] transition-all group-active:scale-95 shadow-xs mb-1">
-                                <Laptop className="h-5 w-5" />
+                            <div className="w-11 h-11 rounded-full bg-[#ff6e48]/15 group-hover:bg-[#ff6e48]/25 flex items-center justify-center text-[#ac3311] transition-all group-active:scale-95 shadow-xs mb-1">
+                                <Laptop className="h-4.5 w-4.5" />
                             </div>
-                            <span className="text-[11px] font-semibold text-[#0d0401]">WFC &amp; Nugas</span>
+                            <span className="text-[10px] font-semibold text-[#0d0401]">WFC &amp; Nugas</span>
                         </Link>
                         <Link href="/places?category=coffee-shop" className="flex flex-col items-center group">
-                            <div className="w-12 h-12 rounded-full bg-[#ffddb8] group-hover:bg-[#ffb95f] flex items-center justify-center text-[#653e00] transition-all group-active:scale-95 shadow-xs mb-1">
-                                <Coffee className="h-5 w-5" />
+                            <div className="w-11 h-11 rounded-full bg-[#ffddb8]/80 group-hover:bg-[#ffb95f] flex items-center justify-center text-[#653e00] transition-all group-active:scale-95 shadow-xs mb-1">
+                                <Coffee className="h-4.5 w-4.5" />
                             </div>
-                            <span className="text-[11px] font-semibold text-[#0d0401]">Specialty</span>
+                            <span className="text-[10px] font-semibold text-[#0d0401]">Specialty</span>
                         </Link>
                         <Link href="/places?tags=24-jam" className="flex flex-col items-center group">
-                            <div className="w-12 h-12 rounded-full bg-[#291c14] group-hover:bg-[#4e4540] flex items-center justify-center text-[#ffdbd1] transition-all group-active:scale-95 shadow-xs mb-1">
-                                <Moon className="h-5 w-5" />
+                            <div className="w-11 h-11 rounded-full bg-[#291c14] group-hover:bg-[#4e4540] flex items-center justify-center text-[#ffdbd1] transition-all group-active:scale-95 shadow-xs mb-1">
+                                <Moon className="h-4.5 w-4.5" />
                             </div>
-                            <span className="text-[11px] font-semibold text-[#0d0401]">24 Jam</span>
+                            <span className="text-[10px] font-semibold text-[#0d0401]">24 Jam</span>
                         </Link>
                         <Link href="/places?tags=outdoor" className="flex flex-col items-center group">
-                            <div className="w-12 h-12 rounded-full bg-[#ffdbd1] group-hover:bg-[#ffb4a1] flex items-center justify-center text-[#ac3311] transition-all group-active:scale-95 shadow-xs mb-1">
-                                <Trees className="h-5 w-5" />
+                            <div className="w-11 h-11 rounded-full bg-[#ffdbd1]/80 group-hover:bg-[#ffb4a1] flex items-center justify-center text-[#ac3311] transition-all group-active:scale-95 shadow-xs mb-1">
+                                <Trees className="h-4.5 w-4.5" />
                             </div>
-                            <span className="text-[11px] font-semibold text-[#0d0401]">Outdoor</span>
+                            <span className="text-[10px] font-semibold text-[#0d0401]">Outdoor</span>
                         </Link>
                     </div>
                 </div>

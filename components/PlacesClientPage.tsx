@@ -380,38 +380,38 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     return (
         <main className="min-h-screen bg-[#F4F1EA] px-3.5 pb-24 pt-2 text-[#201813] sm:px-6 sm:pb-16 sm:pt-6 lg:px-8 lg:pb-20 lg:pt-8">
             <section className="mx-auto max-w-7xl">
-                {/* Mobile Page Header - Exact match to Stitch Screen cc723c2f64fa4f15a1e83985ce597c47 */}
-                <div className="block sm:hidden w-full mb-2">
-                    <section className="px-1 pt-1 pb-1">
+                {/* Mobile Page Header - Compact Mobile App Header */}
+                <div className="block sm:hidden w-full mb-1.5">
+                    <section className="px-0.5 pt-0.5 pb-1">
                         <p
-                            className="text-[#ac3311] text-[17px] leading-tight font-bold tracking-wide"
+                            className="text-[#ac3311] text-[15px] leading-tight font-bold tracking-wide"
                             style={{ fontFamily: "var(--font-caveat), 'Caveat', cursive" }}
                         >
                             Jelajahi Kota Padang
                         </p>
-                        <h1 className="text-[#0d0401] text-[22px] leading-[26px] font-extrabold tracking-tight mt-0.5 mb-1">
-                            Spot Kopi &amp; Ruang WFC Pilihan
+                        <h1 className="text-[#0d0401] text-[20px] leading-[24px] font-extrabold tracking-tight mt-0.5 mb-1">
+                            Spot Kopi &amp; Ruang WFC
                         </h1>
-                        <p className="text-[#4e4540] text-[12px] leading-relaxed max-w-sm">
+                        <p className="text-[#4e4540] text-[11.5px] leading-relaxed max-w-sm">
                             Temukan tempat kerja kondusif, kopi berkualitas, dan suasana senja santai di seantero Padang.
                         </p>
                     </section>
 
                     {/* Sticky Mobile Search & Filter Chips Bar */}
-                    <div className="sticky top-0 z-30 bg-[#F4F1EA]/95 backdrop-blur-md pt-1.5 pb-2 flex flex-col gap-2">
+                    <div className="sticky top-0 z-30 bg-[#F4F1EA]/95 backdrop-blur-md pt-1 pb-1.5 flex flex-col gap-1.5">
                         {/* Search Bar Pill */}
                         <form
                             onSubmit={handleSearchSubmit}
-                            className="w-full bg-white shadow-[0_4px_16px_rgba(41,28,20,0.06)] border border-[#e4e2de]/60 rounded-full p-1 pl-3.5 flex items-center justify-between transition-all focus-within:ring-2 focus-within:ring-[#ac3311]/30"
+                            className="w-full bg-white shadow-[0_2px_10px_rgba(41,28,20,0.05)] border border-[#e4e2de]/70 rounded-full h-9.5 p-1 pl-3 flex items-center justify-between transition-all focus-within:ring-2 focus-within:ring-[#ac3311]/30"
                         >
-                            <div className="flex items-center gap-2 flex-1 min-w-0 mr-1.5">
-                                <Search className="h-4 w-4 text-[#80756f] shrink-0" />
+                            <div className="flex items-center gap-2 flex-1 min-w-0 mr-1">
+                                <Search className="h-3.5 w-3.5 text-[#80756f] shrink-0" />
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Cari spot ngopi, area, vibe..."
-                                    className="w-full bg-transparent text-[#0d0401] placeholder-[#80756f]/70 text-[12px] font-medium outline-none"
+                                    className="w-full bg-transparent text-[#0d0401] placeholder-[#80756f]/70 text-[11.5px] font-medium outline-none"
                                 />
                             </div>
                             {searchQuery ? (
@@ -426,9 +426,9 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             <button
                                 type="submit"
                                 aria-label="Cari"
-                                className="w-9 h-9 rounded-full bg-[#ac3311] hover:bg-[#881f00] text-white flex items-center justify-center shadow-xs active:scale-95 shrink-0 cursor-pointer"
+                                className="w-7.5 h-7.5 rounded-full bg-[#ac3311] hover:bg-[#881f00] text-white flex items-center justify-center shadow-xs active:scale-95 shrink-0 cursor-pointer"
                             >
-                                <Search className="h-3.5 w-3.5" />
+                                <Search className="h-3 w-3" />
                             </button>
                         </form>
 
@@ -436,7 +436,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
                             <Link
                                 href="/places/?category=coffee-shop"
-                                className={`whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] transition-all font-semibold shadow-xs ${
+                                className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] transition-all font-semibold shadow-xs ${
                                     selectedTags.length === 0 && !effectiveParams.area && !effectiveParams.price
                                         ? "bg-[#ac3311] text-white"
                                         : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
@@ -916,7 +916,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                     onClearSearch={handleClearSearch}
                                 />
                             ) : (
-                                <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                                <div className="grid gap-3 sm:gap-5 sm:grid-cols-2 xl:grid-cols-3">
                                     {places.map((place, index) => (
                                         <PlaceCard
                                             key={place.id}

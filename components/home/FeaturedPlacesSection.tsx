@@ -66,7 +66,7 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                         <article
                             key={place.id}
                             onClick={() => router.push(`/places/${place.slug}`)}
-                            className="group relative flex h-[215px] w-[155px] shrink-0 snap-start cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#0d0401] p-3 text-white shadow-xs transition-all duration-300 hover:border-[#FF5C35]/50 active:scale-[0.98] sm:h-96 sm:w-auto sm:rounded-3xl sm:p-5 sm:shadow-bento"
+                            className="group relative flex h-[195px] w-[150px] shrink-0 snap-start cursor-pointer flex-col justify-between overflow-hidden rounded-xl border border-white/10 bg-[#0d0401] p-3 text-white shadow-xs transition-all duration-300 hover:border-[#FF5C35]/50 active:scale-[0.98] sm:h-96 sm:w-auto sm:rounded-3xl sm:p-5 sm:shadow-bento"
                         >
                             {/* Accessible Link overlay for crawlers & keyboard navigation */}
                             <Link

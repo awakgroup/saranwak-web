@@ -109,19 +109,19 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
     return (
         <main className="min-h-screen bg-[#FAF7F2] px-3.5 pb-24 pt-2 sm:px-6 sm:pb-16 sm:pt-6 lg:px-8 lg:pb-24">
             <div className="mx-auto max-w-7xl">
-                {/* Mobile Top Controls - Exact Match to Stitch Screen 252863f1beb84271b57c384f171e43ac */}
-                <div className="block sm:hidden w-full mb-2.5">
-                    <div className="sticky top-0 z-30 bg-[#FAF7F2]/95 backdrop-blur-md pt-0.5 pb-2 flex flex-col gap-2">
+                {/* Mobile Top Controls - Sleek Mobile App Navigation & Filter Chips */}
+                <div className="block sm:hidden w-full mb-2">
+                    <div className="sticky top-0 z-30 bg-[#FAF7F2]/95 backdrop-blur-md pt-0.5 pb-1.5 flex flex-col gap-1.5">
                         {/* Search Pill */}
-                        <div className="flex items-center gap-2">
-                            <div className="flex-1 h-10 bg-white rounded-full shadow-[0_4px_16px_rgba(41,28,20,0.06)] border border-[#e4e2de]/60 flex items-center px-3.5 gap-2">
-                                <Search className="h-4 w-4 text-[#FF5C35] shrink-0" />
+                        <div className="flex items-center gap-1.5">
+                            <div className="flex-1 h-9 bg-white rounded-full shadow-[0_2px_10px_rgba(41,28,20,0.05)] border border-[#e4e2de]/70 flex items-center px-3 gap-2">
+                                <Search className="h-3.5 w-3.5 text-[#FF5C35] shrink-0" />
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Cari spot ngopi, jalan, area di Padang..."
-                                    className="w-full bg-transparent text-[#0d0401] placeholder-[#80756f]/70 text-[12px] font-medium outline-none"
+                                    className="w-full bg-transparent text-[#0d0401] placeholder-[#80756f]/70 text-[11.5px] font-medium outline-none"
                                 />
                                 {searchQuery && (
                                     <button
@@ -129,7 +129,7 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                                         onClick={() => setSearchQuery("")}
                                         className="text-[#80756f] hover:text-[#0d0401]"
                                     >
-                                        <X className="h-3.5 w-3.5" />
+                                        <X className="h-3 w-3" />
                                     </button>
                                 )}
                             </div>
@@ -140,22 +140,22 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                                 onClick={handleLocateUser}
                                 disabled={isLocating}
                                 aria-label="Lokasi Terdekat"
-                                className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm active:scale-95 transition-all cursor-pointer shrink-0 ${
+                                className={`w-9 h-9 rounded-full flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer shrink-0 ${
                                     isNearbyActive
                                         ? "bg-[#FF5C35] text-white"
-                                        : "bg-white border border-[#e4e2de]/60 text-[#0d0401]"
+                                        : "bg-white border border-[#e4e2de]/70 text-[#0d0401]"
                                 }`}
                             >
-                                <Navigation className={`h-4 w-4 ${isLocating ? "animate-spin" : ""}`} />
+                                <Navigation className={`h-3.5 w-3.5 ${isLocating ? "animate-spin" : ""}`} />
                             </button>
                         </div>
 
                         {/* Horizontal Filter Chips */}
-                        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
                             <button
                                 type="button"
                                 onClick={() => setSelectedArea("all")}
-                                className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[11px] font-bold shadow-xs transition-all ${
+                                className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] font-bold shadow-xs transition-all ${
                                     selectedArea === "all"
                                         ? "bg-[#ac3311] text-white"
                                         : "bg-white border border-[#e4e2de]/60 text-[#4e4540]"
@@ -166,7 +166,7 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                             <button
                                 type="button"
                                 onClick={() => setSelectedArea("Padang Timur")}
-                                className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[11px] font-bold shadow-xs transition-all ${
+                                className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] font-bold shadow-xs transition-all ${
                                     selectedArea === "Padang Timur"
                                         ? "bg-[#ac3311] text-white"
                                         : "bg-white border border-[#e4e2de]/60 text-[#4e4540]"
@@ -177,7 +177,7 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                             <button
                                 type="button"
                                 onClick={() => setSelectedArea("Padang Barat")}
-                                className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[11px] font-bold shadow-xs transition-all ${
+                                className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] font-bold shadow-xs transition-all ${
                                     selectedArea === "Padang Barat"
                                         ? "bg-[#ac3311] text-white"
                                         : "bg-white border border-[#e4e2de]/60 text-[#4e4540]"
@@ -188,7 +188,7 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                             <button
                                 type="button"
                                 onClick={() => setSelectedArea("Padang Selatan")}
-                                className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[11px] font-bold shadow-xs transition-all ${
+                                className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] font-bold shadow-xs transition-all ${
                                     selectedArea === "Padang Selatan"
                                         ? "bg-[#ac3311] text-white"
                                         : "bg-white border border-[#e4e2de]/60 text-[#4e4540]"
@@ -199,7 +199,7 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                             <button
                                 type="button"
                                 onClick={() => setSelectedArea("Padang Utara")}
-                                className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[11px] font-bold shadow-xs transition-all ${
+                                className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] font-bold shadow-xs transition-all ${
                                     selectedArea === "Padang Utara"
                                         ? "bg-[#ac3311] text-white"
                                         : "bg-white border border-[#e4e2de]/60 text-[#4e4540]"
@@ -338,17 +338,17 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                 />
 
                 {/* Mobile Bottom Horizontal Snapping Place Cards Carousel - Aligned with Stitch Screen 252863f1beb84271b57c384f171e43ac */}
-                <div className="mt-4 block sm:hidden">
-                    <div className="mb-2.5 flex items-center justify-between px-1">
-                        <span className="text-[13px] font-extrabold text-[#0d0401]">
+                <div className="mt-3 block sm:hidden">
+                    <div className="mb-2 flex items-center justify-between px-1">
+                        <span className="text-[12px] font-extrabold text-[#0d0401]">
                             Spot Kopi di Peta ({filteredPlaces.length})
                         </span>
-                        <span className="text-[11px] font-medium text-[#756A63]">Geser kartu ➔</span>
+                        <span className="text-[10.5px] font-medium text-[#756A63]">Geser kartu ➔</span>
                     </div>
 
-                    <div className="no-scrollbar -mx-3 flex gap-3 overflow-x-auto px-3 pb-2 snap-x snap-mandatory">
+                    <div className="no-scrollbar -mx-3 flex gap-2.5 overflow-x-auto px-3 pb-2 snap-x snap-mandatory">
                         {filteredPlaces.slice(0, 10).map((place) => (
-                            <div key={place.id} className="w-[82vw] max-w-[300px] shrink-0 snap-center">
+                            <div key={place.id} className="w-[72vw] max-w-[260px] shrink-0 snap-center">
                                 <PlaceCard place={place} />
                             </div>
                         ))}

@@ -72,20 +72,20 @@ export function SavedPlacesPageClient() {
                             </span>
                         </div>
 
-                        <h1 className="font-sans text-2xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl lg:text-4xl">
+                        <h1 className="font-sans text-xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl lg:text-4xl">
                             Tempat Tersimpan
                         </h1>
-                        <p className="mt-1 max-w-2xl text-xs text-[#756A63] sm:text-sm">
+                        <p className="mt-0.5 max-w-2xl text-[11.5px] text-[#756A63] sm:text-sm">
                             {savedCount} kedai kopi &amp; ruang kerja favorit kamu di Padang.
                         </p>
                     </div>
 
                     {savedPlaces.length > 0 && (
-                        <div className="flex flex-wrap items-center gap-2.5">
+                        <div className="flex flex-wrap items-center gap-2">
                             <button
                                 type="button"
                                 onClick={handleShareWhatsApp}
-                                className="inline-flex items-center gap-2 rounded-full border border-[#EBE5DC] bg-white px-4 py-2 text-xs font-bold text-[#19120D] shadow-sm transition hover:border-[#FF5C35] hover:text-[#FF5C35] active:scale-95"
+                                className="inline-flex items-center gap-1.5 rounded-full border border-[#EBE5DC] bg-white px-3.5 py-1.5 text-[11px] font-bold text-[#19120D] shadow-xs transition hover:border-[#FF5C35] hover:text-[#FF5C35] active:scale-95 sm:px-4 sm:py-2 sm:text-xs"
                             >
                                 <Share2 className="h-3.5 w-3.5 text-[#FF5C35]" />
                                 <span>Bagikan Daftar</span>
@@ -98,7 +98,7 @@ export function SavedPlacesPageClient() {
                                         clearAllSavedPlaces();
                                     }
                                 }}
-                                className="inline-flex items-center gap-1.5 rounded-full border border-transparent px-3 py-2 text-xs font-bold text-[#9E3922] transition hover:bg-[#FFEAE5] active:scale-95"
+                                className="inline-flex items-center gap-1.5 rounded-full border border-transparent px-2.5 py-1.5 text-[11px] font-bold text-[#9E3922] transition hover:bg-[#FFEAE5] active:scale-95 sm:px-3 sm:py-2 sm:text-xs"
                             >
                                 <Trash2 className="h-3.5 w-3.5" />
                                 <span>Hapus Semua</span>
@@ -109,13 +109,13 @@ export function SavedPlacesPageClient() {
 
                 {/* Filter Pills */}
                 {savedPlaces.length > 0 && (
-                    <div className="no-scrollbar mb-6 flex items-center gap-2 overflow-x-auto pb-1">
+                    <div className="no-scrollbar mb-4 flex items-center gap-1.5 overflow-x-auto pb-1 sm:mb-6 sm:gap-2">
                         <button
                             type="button"
                             onClick={() => setActiveFilter("all")}
-                            className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${
+                            className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all sm:px-4 sm:py-1.5 sm:text-xs ${
                                 activeFilter === "all"
-                                    ? "bg-[#19120D] text-white shadow-sm"
+                                    ? "bg-[#19120D] text-white shadow-xs"
                                     : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
                             }`}
                         >
@@ -124,9 +124,9 @@ export function SavedPlacesPageClient() {
                         <button
                             type="button"
                             onClick={() => setActiveFilter("wfc")}
-                            className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${
+                            className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all sm:px-4 sm:py-1.5 sm:text-xs ${
                                 activeFilter === "wfc"
-                                    ? "bg-[#19120D] text-white shadow-sm"
+                                    ? "bg-[#19120D] text-white shadow-xs"
                                     : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
                             }`}
                         >
@@ -135,13 +135,13 @@ export function SavedPlacesPageClient() {
                         <button
                             type="button"
                             onClick={() => setActiveFilter("sunset")}
-                            className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${
+                            className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all sm:px-4 sm:py-1.5 sm:text-xs ${
                                 activeFilter === "sunset"
-                                    ? "bg-[#19120D] text-white shadow-sm"
+                                    ? "bg-[#19120D] text-white shadow-xs"
                                     : "border border-[#EBE5DC] bg-white text-[#756A63] hover:text-[#19120D]"
                             }`}
                         >
-                            🌅 Nongkrong & Sunset
+                            🌅 Nongkrong &amp; Sunset
                         </button>
                     </div>
                 )}
@@ -183,14 +183,14 @@ export function SavedPlacesPageClient() {
 
                 {/* Saved Places Grid */}
                 {isLoaded && filteredPlaces.length > 0 && (
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-3 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
                         {filteredPlaces.map((place) => {
                             const imageUrl = getSafePlaceImageUrl(place.image_url);
 
                             return (
                                 <article
                                     key={place.id}
-                                    className="group relative flex h-[260px] sm:h-auto cursor-pointer flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl border border-[#EBE5DC] bg-white sm:p-4 shadow-sm transition-all duration-300 hover:border-[#FF5C35]/40 hover:shadow-xl"
+                                    className="group relative flex h-[195px] sm:h-auto cursor-pointer flex-col justify-between overflow-hidden rounded-xl sm:rounded-3xl border border-[#EBE5DC] bg-white sm:p-4 shadow-xs transition-all duration-300 hover:border-[#FF5C35]/40 hover:shadow-xl"
                                 >
                                     {/* Mobile Full-Bleed Image / Desktop Header Photo */}
                                     <div className="relative h-full w-full overflow-hidden bg-[#0d0401] sm:h-52 sm:rounded-2xl">
@@ -204,7 +204,7 @@ export function SavedPlacesPageClient() {
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent sm:from-black/70 sm:via-black/20" />
 
                                         {/* Top Badges */}
-                                        <div className="absolute inset-x-3 top-3 z-10 flex items-center justify-between">
+                                        <div className="absolute inset-x-3 top-2.5 z-10 flex items-center justify-between">
                                             <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
                                             <button
                                                 type="button"
@@ -214,35 +214,35 @@ export function SavedPlacesPageClient() {
                                                 }}
                                                 title="Hapus dari tersimpan"
                                                 aria-label={`Hapus ${place.name}`}
-                                                className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/90 sm:bg-black/40 text-[#ac3311] sm:text-white backdrop-blur-md transition hover:bg-[#FF5C35] hover:text-white active:scale-90 shadow-sm"
+                                                className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/90 sm:bg-black/40 text-[#ac3311] sm:text-white backdrop-blur-md transition hover:bg-[#FF5C35] hover:text-white active:scale-90 shadow-xs"
                                             >
-                                                <Trash2 className="h-4 w-4" />
+                                                <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                             </button>
                                         </div>
 
                                         {/* Mobile Bottom Content Overlay (sm:hidden) */}
-                                        <div className="absolute inset-x-4 bottom-4 z-10 block sm:hidden text-white">
-                                            <span className="block text-[10px] font-bold uppercase tracking-wider text-[#ffdbd1] mb-1">
+                                        <div className="absolute inset-x-3.5 bottom-3 z-10 block sm:hidden text-white">
+                                            <span className="block text-[9px] font-bold uppercase tracking-wider text-[#ffdbd1] mb-0.5">
                                                 {place.area || "Padang"}
                                             </span>
                                             <Link href={`/places/${place.slug}`}>
-                                                <h3 className="font-sans text-xl font-bold leading-tight text-white hover:text-[#ffddb8] transition-colors">
+                                                <h3 className="font-sans text-[14.5px] font-bold leading-tight text-white hover:text-[#ffddb8] transition-colors">
                                                     {place.name}
                                                 </h3>
                                             </Link>
-                                            <p className="mt-1 text-xs text-white/80 line-clamp-1">
+                                            <p className="mt-0.5 text-[10.5px] text-white/80 line-clamp-1">
                                                 {place.opening_hours ? `🕒 ${place.opening_hours}` : "Tempat ngopi & ruang kerja santai"}
                                             </p>
-                                            <div className="mt-3 flex items-center justify-between border-t border-white/20 pt-2.5">
-                                                <span className="text-xs font-bold text-[#ffddb8]">
+                                            <div className="mt-2 flex items-center justify-between border-t border-white/20 pt-1.5">
+                                                <span className="text-[11px] font-bold text-[#ffddb8]">
                                                     {place.price_range || "Mulai Rp 20k"}
                                                 </span>
                                                 <Link
                                                     href={`/places/${place.slug}`}
-                                                    className="inline-flex items-center gap-1 text-xs font-bold text-white hover:underline"
+                                                    className="inline-flex items-center gap-1 text-[11px] font-bold text-white hover:underline"
                                                 >
                                                     <span>Lihat Detail</span>
-                                                    <ArrowRight className="h-3.5 w-3.5 text-[#ffddb8]" />
+                                                    <ArrowRight className="h-3 w-3 text-[#ffddb8]" />
                                                 </Link>
                                             </div>
                                         </div>
