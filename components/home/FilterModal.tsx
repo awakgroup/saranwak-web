@@ -10,6 +10,8 @@ export type FilterModalProps = {
     initialTags?: string[];
     initialOpenNow?: boolean;
     initialPrice?: string;
+    initialQuery?: string;
+    initialArea?: string;
 };
 
 type FilterItem = {
@@ -87,6 +89,8 @@ export function FilterModal({
     initialTags = [],
     initialOpenNow = false,
     initialPrice = "",
+    initialQuery = "",
+    initialArea = "",
 }: FilterModalProps) {
     const router = useRouter();
     const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
@@ -95,6 +99,9 @@ export function FilterModal({
 
     useEffect(() => {
         if (isOpen) {
+            setSelectedTags(initialTags);
+            setIsOpenNowSelected(initialOpenNow);
+            setSelectedPrice(initialPrice || "");
             document.body.style.overflow = "hidden";
         } else {
             document.body.style.overflow = "";
@@ -102,7 +109,7 @@ export function FilterModal({
         return () => {
             document.body.style.overflow = "";
         };
-    }, [isOpen]);
+    }, [isOpen, initialTags, initialOpenNow, initialPrice]);
 
     if (!isOpen) return null;
 
@@ -130,11 +137,19 @@ export function FilterModal({
         const params = new URLSearchParams();
         params.set("category", "coffee-shop");
 
+        if (initialQuery?.trim()) {
+            params.set("q", initialQuery.trim());
+        }
+
+        if (initialArea) {
+            params.set("area", initialArea);
+        }
+
         if (isOpenNowSelected) {
             params.set("openNow", "true");
         }
 
-        if (selectedPrice) {
+        if (selectedPrice && selectedPrice !== "all") {
             params.set("price", selectedPrice);
         }
 
@@ -143,7 +158,7 @@ export function FilterModal({
         }
 
         onClose();
-        router.push(`/places?${params.toString()}`);
+        router.push(`/places/?${params.toString()}`);
     }
 
     const totalActive =

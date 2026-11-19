@@ -95,13 +95,33 @@ type PlaceWithFlexibleTags = Place & {
     category_slug?: string | null;
 };
 
-const quickMoodOptions = [
-    { label: "💻 WFC & Nugas", tag: "wfc" },
-    { label: "☕ Specialty & Manual Brew", tag: "specialty-coffee" },
-    { label: "❄️ Indoor AC", tag: "ac" },
-    { label: "🌿 Outdoor Asri", tag: "outdoor" },
-    { label: "👥 Meeting Room", tag: "meeting" },
-    { label: "💰 Budget < 20rb", price: "under-20k" },
+const QUICK_FILTER_CHIPS: Array<{
+    label: string;
+    tag?: string;
+    isOpenNow?: boolean;
+}> = [
+    { label: "Buka Sekarang", isOpenNow: true },
+    { label: "WFC", tag: "wfc" },
+    { label: "Nugas", tag: "nugas" },
+    { label: "Nongkrong", tag: "nongkrong" },
+    { label: "Nge-date", tag: "nge-date" },
+    { label: "Tenang", tag: "tenang" },
+    { label: "Outdoor", tag: "outdoor" },
+    { label: "Indoor", tag: "indoor" },
+    { label: "AC", tag: "ac" },
+    { label: "WiFi", tag: "wifi" },
+    { label: "Colokan", tag: "colokan" },
+    { label: "Musholla", tag: "musholla" },
+    { label: "Smoking Area", tag: "smoking-area" },
+    { label: "Aesthetic", tag: "aesthetic" },
+    { label: "Cozy", tag: "cozy" },
+    { label: "Meeting", tag: "meeting" },
+    { label: "Live Musik", tag: "live-musik" },
+    { label: "Indoor Smoking", tag: "indoor-smoking" },
+    { label: "Photobox", tag: "photobox" },
+    { label: "Minimalis", tag: "minimalis" },
+    { label: "Industrial", tag: "industrial" },
+    { label: "Healing", tag: "healing" },
 ];
 
 export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
@@ -442,65 +462,60 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                         </form>
 
                         {/* Horizontal Filter Chips */}
-                        <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-0.5 overscroll-x-contain">
+                        <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-1 overscroll-x-contain">
                             <Link
-                                href="/places?category=coffee-shop"
-                                className={`chip-filter whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
-                                    selectedTags.length === 0 && !effectiveParams.area && !effectiveParams.price
+                                href="/places/?category=coffee-shop"
+                                className={`chip-filter shrink-0 whitespace-nowrap px-4 py-1.5 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
+                                    selectedTags.length === 0 &&
+                                    !effectiveParams.area &&
+                                    !effectiveParams.price &&
+                                    effectiveParams.openNow !== "true"
                                         ? "bg-[#ac3311] text-white shadow-sm"
                                         : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
                                 }`}
                             >
                                 Semua ({livePlacesData.length})
                             </Link>
-                            <Link
-                                href={buildFilterHref(effectiveParams, {
-                                    tag: selectedTags.includes("wfc") ? undefined : "wfc",
-                                })}
-                                className={`chip-filter whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
-                                    selectedTags.includes("wfc")
-                                        ? "bg-[#ac3311] text-white shadow-sm"
-                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
-                                }`}
-                            >
-                                WFC &amp; Nugas
-                            </Link>
-                            <Link
-                                href={buildFilterHref(effectiveParams, {
-                                    tag: selectedTags.includes("specialty-coffee") ? undefined : "specialty-coffee",
-                                })}
-                                className={`chip-filter whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
-                                    selectedTags.includes("specialty-coffee")
-                                        ? "bg-[#ac3311] text-white shadow-sm"
-                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
-                                }`}
-                            >
-                                Specialty
-                            </Link>
-                            <Link
-                                href={buildFilterHref(effectiveParams, {
-                                    tag: selectedTags.includes("24-jam") ? undefined : "24-jam",
-                                })}
-                                className={`chip-filter whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
-                                    selectedTags.includes("24-jam")
-                                        ? "bg-[#ac3311] text-white shadow-sm"
-                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
-                                }`}
-                            >
-                                24 Jam
-                            </Link>
-                            <Link
-                                href={buildFilterHref(effectiveParams, {
-                                    tag: selectedTags.includes("outdoor") ? undefined : "outdoor",
-                                })}
-                                className={`chip-filter whitespace-nowrap px-4 py-2 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
-                                    selectedTags.includes("outdoor")
-                                        ? "bg-[#ac3311] text-white shadow-sm"
-                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
-                                }`}
-                            >
-                                Outdoor
-                            </Link>
+                            {QUICK_FILTER_CHIPS.map((chip) => {
+                                if (chip.isOpenNow) {
+                                    const active = effectiveParams.openNow === "true";
+                                    return (
+                                        <Link
+                                            key="chip-open-now"
+                                            href={buildFilterHref(effectiveParams, {
+                                                openNow: active ? undefined : "true",
+                                            })}
+                                            className={`chip-filter shrink-0 whitespace-nowrap px-3.5 py-1.5 rounded-full text-[12px] transition-all font-semibold shadow-xs inline-flex items-center gap-1.5 ${
+                                                active
+                                                    ? "bg-[#ac3311] text-white shadow-sm"
+                                                    : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
+                                            }`}
+                                        >
+                                            <span className={`h-2 w-2 rounded-full ${active ? "bg-white" : "bg-[#10B981]"}`} />
+                                            <span>{chip.label}</span>
+                                            {active && <Check className="h-3 w-3 shrink-0" />}
+                                        </Link>
+                                    );
+                                }
+
+                                if (!chip.tag) return null;
+                                const active = selectedTags.includes(chip.tag);
+
+                                return (
+                                    <Link
+                                        key={chip.tag}
+                                        href={buildTagHref(effectiveParams, chip.tag)}
+                                        className={`chip-filter shrink-0 whitespace-nowrap px-3.5 py-1.5 rounded-full text-[12px] transition-all font-semibold shadow-xs inline-flex items-center gap-1.5 ${
+                                            active
+                                                ? "bg-[#ac3311] text-white shadow-sm"
+                                                : "bg-white border border-[#e4e2de]/60 text-[#4e4540] hover:text-[#0d0401]"
+                                        }`}
+                                    >
+                                        {active && <Check className="h-3 w-3 shrink-0" />}
+                                        <span>{chip.label}</span>
+                                    </Link>
+                                );
+                            })}
                         </div>
 
                         {/* Count & Action summary */}
@@ -645,6 +660,8 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                                 <option value="Padang Selatan">Padang Selatan</option>
                                                 <option value="Padang Utara">Padang Utara</option>
                                                 <option value="Koto Tangah">Koto Tangah / Kuranji</option>
+                                                <option value="Nanggalo">Nanggalo</option>
+                                                <option value="Lubuk Begalung">Lubuk Begalung</option>
                                             </select>
                                             <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#756A63]" />
                                         </div>
@@ -656,26 +673,52 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                     <SlidersHorizontal className="h-5 w-5 shrink-0 text-[#FF5C35]" />
                                     <div className="flex w-full flex-col">
                                         <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#756A63]">
-                                            Suasana
+                                            Kebutuhan &amp; Vibe
                                         </span>
                                         <div className="relative">
                                             <select
                                                 value={selectedTags[0] || ""}
                                                 onChange={(e) => {
                                                     const tagVal = e.target.value;
-                                                    const newHref = tagVal
-                                                        ? buildFilterHref(effectiveParams, { tags: tagVal })
-                                                        : buildFilterHref(effectiveParams, { tags: undefined });
+                                                    const newHref = buildFilterHref(effectiveParams, {
+                                                        tags: tagVal || undefined,
+                                                        tag: undefined,
+                                                    });
                                                     router.push(newHref);
                                                 }}
                                                 className="w-full cursor-pointer appearance-none border-none bg-transparent p-0 pr-5 text-xs font-bold text-[#19120D] outline-none focus:ring-0 sm:text-sm"
                                             >
-                                                <option value="">Semua Vibe</option>
-                                                <option value="wfc">Tenang &amp; Nugas (WFC)</option>
-                                                <option value="nongkrong">Nongkrong Santai</option>
-                                                <option value="nge-date">Aesthetic &amp; Date</option>
-                                                <option value="outdoor">Outdoor Asri</option>
-                                                <option value="tenang">Tenang / Me-time</option>
+                                                <option value="">Semua Vibe &amp; Tag</option>
+                                                <optgroup label="Aktivitas">
+                                                    <option value="wfc">WFC (Work from Cafe)</option>
+                                                    <option value="nugas">Nugas</option>
+                                                    <option value="nongkrong">Nongkrong Santai</option>
+                                                    <option value="nge-date">Nge-date</option>
+                                                    <option value="me-time">Me-time</option>
+                                                    <option value="meeting">Meeting Room</option>
+                                                    <option value="live-musik">Live Musik</option>
+                                                </optgroup>
+                                                <optgroup label="Suasana &amp; Vibes">
+                                                    <option value="tenang">Tenang</option>
+                                                    <option value="cozy">Cozy</option>
+                                                    <option value="aesthetic">Aesthetic</option>
+                                                    <option value="minimalis">Minimalis</option>
+                                                    <option value="industrial">Industrial</option>
+                                                    <option value="rame">Rame / Hidup</option>
+                                                    <option value="healing">Healing</option>
+                                                </optgroup>
+                                                <optgroup label="Fasilitas Populer">
+                                                    <option value="outdoor">Outdoor Asri</option>
+                                                    <option value="indoor">Indoor</option>
+                                                    <option value="ac">Ruang Ber-AC</option>
+                                                    <option value="wifi">WiFi Cepat</option>
+                                                    <option value="colokan">Banyak Colokan</option>
+                                                    <option value="musholla">Musholla</option>
+                                                    <option value="smoking-area">Smoking Area</option>
+                                                    <option value="indoor-smoking">Indoor Smoking</option>
+                                                    <option value="photobox">Photobox</option>
+                                                    <option value="board-game">Board Game</option>
+                                                </optgroup>
                                             </select>
                                             <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#756A63]" />
                                         </div>
@@ -1043,6 +1086,8 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                 initialTags={selectedTags}
                 initialOpenNow={effectiveParams.openNow === "true"}
                 initialPrice={effectiveParams.price}
+                initialQuery={effectiveParams.q}
+                initialArea={effectiveParams.area}
             />
         </main>
     );
@@ -1649,24 +1694,28 @@ function buildFilterHref(params: PageParams, updates: Partial<PageParams>) {
         ...updates,
     };
 
+    const category = nextParams.category || "coffee-shop";
+    searchParams.set("category", category);
+
     if (nextParams.q) searchParams.set("q", nextParams.q);
     if (nextParams.area) searchParams.set("area", nextParams.area);
-    if (nextParams.category) searchParams.set("category", nextParams.category);
 
-    if (nextParams.tags) {
+    if ("tags" in updates) {
+        if (updates.tags) {
+            searchParams.set("tags", updates.tags);
+        }
+    } else if (nextParams.tags) {
         searchParams.set("tags", nextParams.tags);
-    }
-
-    if (nextParams.tag) {
-        searchParams.set("tag", nextParams.tag);
+    } else if (nextParams.tag) {
+        searchParams.set("tags", nextParams.tag);
     }
 
     if (nextParams.price && nextParams.price !== "all") {
         searchParams.set("price", nextParams.price);
     }
 
-    if (nextParams.openNow) {
-        searchParams.set("openNow", nextParams.openNow);
+    if (nextParams.openNow === "true") {
+        searchParams.set("openNow", "true");
     }
 
     const queryString = searchParams.toString();

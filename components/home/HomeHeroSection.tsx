@@ -186,13 +186,13 @@ export function HomeHeroSection() {
                             <div className="w-12 h-12 rounded-full bg-[#ffddb8] group-hover:bg-[#ffb95f] flex items-center justify-center text-[#653e00] transition-all group-active:scale-95 shadow-xs mb-1">
                                 <Coffee className="h-5 w-5" />
                             </div>
-                            <span className="text-[11px] font-semibold text-[#0d0401]">Specialty</span>
+                            <span className="text-[11px] font-semibold text-[#0d0401]">Semua Spot</span>
                         </Link>
-                        <Link href="/places?tags=24-jam" className="flex flex-col items-center group">
+                        <Link href="/places?openNow=true" className="flex flex-col items-center group">
                             <div className="w-12 h-12 rounded-full bg-[#291c14] group-hover:bg-[#4e4540] flex items-center justify-center text-[#ffdbd1] transition-all group-active:scale-95 shadow-xs mb-1">
                                 <Moon className="h-5 w-5" />
                             </div>
-                            <span className="text-[11px] font-semibold text-[#0d0401]">24 Jam</span>
+                            <span className="text-[11px] font-semibold text-[#0d0401]">Buka Sekarang</span>
                         </Link>
                         <Link href="/places?tags=outdoor" className="flex flex-col items-center group">
                             <div className="w-12 h-12 rounded-full bg-[#ffdbd1] group-hover:bg-[#ffb4a1] flex items-center justify-center text-[#ac3311] transition-all group-active:scale-95 shadow-xs mb-1">
