@@ -38,7 +38,7 @@
     "price_min": 25000,
     "price_max": 85000,
     "opening_hours": "Senin - Jumat 14.00 - 23.30, Sabtu 16.00 - 02.00 WIB",
-    "is_featured": true,
+    "is_featured": false,
     "is_verified": true,
     "is_published": true,
     "created_at": "2026-11-16 10:45:00+00",
@@ -428,7 +428,7 @@
     "price_min": 22000,
     "price_max": 48000,
     "opening_hours": "Senin - Minggu 10.00 - 23.00 WIB",
-    "is_featured": true,
+    "is_featured": false,
     "is_verified": true,
     "is_published": true,
     "created_at": "2026-11-16 13:50:00+00",
@@ -613,7 +613,7 @@
     "price_min": 20000,
     "price_max": 45000,
     "opening_hours": "Buka Setiap Hari 09.00 - 23.30 WIB",
-    "is_featured": true,
+    "is_featured": false,
     "is_verified": true,
     "is_published": true,
     "created_at": "2026-11-16 13:50:00+00",
@@ -1078,7 +1078,7 @@
     "price_min": 25000,
     "price_max": 66000,
     "opening_hours": "08.00 - 22.00",
-    "is_featured": false,
+    "is_featured": true,
     "is_verified": false,
     "is_published": true,
     "created_at": "2026-05-12 15:24:04.439988+00",
@@ -2284,7 +2284,7 @@
     "price_min": 22000,
     "price_max": 42000,
     "opening_hours": "09.00 - 00.00",
-    "is_featured": true,
+    "is_featured": false,
     "is_verified": false,
     "is_published": true,
     "created_at": "2026-05-15 13:06:43.303726+00",
@@ -8188,5 +8188,285 @@
     "source": "curation_seed",
     "latitude": -0.9471,
     "longitude": 100.4172
+  },
+  {
+    "id": "246929da-f549-41d1-b378-4a34f3560dcc",
+    "name": "Endorphins Space",
+    "slug": "endorphins-space",
+    "description": "Endorphine Space dihadirkan sebagai sebuah ruang temu ramah tempat produktivitas dan kenyamanan dapat dirasakan sekaligus. Di sini, ruang yang tepat telah dipersiapkan dengan tulus untuk Anda, baik saat tenggat tugas sedang didekap erat, keseruan game kesukaan sedang dirayakan, maupun saat ketenangan paling sunyi sedang dicari untuk melepaskan penat. Di sudut ini, kebahagiaan bersantap dan hangatnya kebersamaan dapat dinikmati tanpa pernah diberatkan oleh bayang-bayang harga.",
+    "short_description": "Ruang temu ramah untuk produktivitas, nugas, dan kenyamanan di Padang Timur.",
+    "characteristics": [
+      {
+        "title": "Ruang Produktif & Ramah",
+        "description": "Dirancang sebagai ruang temu yang nyaman untuk mengerjakan tugas, bekerja, maupun sekadar beristirahat dengan suasana tenang."
+      },
+      {
+        "title": "Fasilitas Lengkap",
+        "description": "Dilengkapi dengan AC sejuk, banyak colokan, koneksi WiFi, serta area indoor smoking yang nyaman."
+      },
+      {
+        "title": "Menu Bersahabat",
+        "description": "Menyajikan aneka kopi dan santapan lezat dengan rentang harga terjangkau yang ramah di kantong."
+      }
+    ],
+    "address": "Jl. Jati 1 No.24, Sawahan, Kec. Padang Timur, Kota Padang, Sumatera Barat 25129",
+    "area": "Padang Timur",
+    "city": "Padang",
+    "image_url": "https://drive.google.com/file/d/1ZbE-NpqrJpTvIqYhL15IxQJafrXTmyeV/view?usp=drive_link",
+    "main_image_url": "https://drive.google.com/file/d/1ZbE-NpqrJpTvIqYhL15IxQJafrXTmyeV/view?usp=drive_link",
+    "google_maps_url": "https://maps.app.goo.gl/yBXT9rwZkFDkPYHE6",
+    "instagram_url": "https://www.instagram.com/endorphinsspace?igsh=cmM5YndwN2htajVl",
+    "price_range": "Rp15k - Rp55k",
+    "price_min": 15000,
+    "price_max": 55000,
+    "opening_hours": "08.00 - 00.00",
+    "is_featured": true,
+    "is_verified": false,
+    "is_published": true,
+    "created_at": "2026-06-18T13:54:39.515Z",
+    "updated_at": "2026-06-18T14:48:24.526Z",
+    "categories": {
+      "id": "3fff9d59-eb4d-4d58-a3fd-0b94ee412ee5",
+      "name": "Coffee Shop",
+      "slug": "coffee-shop",
+      "icon": "coffee"
+    },
+    "place_tags": [
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-ed331b75-08e4-46d0-a9a1-7d583c300560",
+        "tag_id": "ed331b75-08e4-46d0-a9a1-7d583c300560",
+        "tags": {
+          "id": "ed331b75-08e4-46d0-a9a1-7d583c300560",
+          "name": "Me-time",
+          "slug": "me-time",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-33870e90-b97b-439a-ba92-f42a44ef695d",
+        "tag_id": "33870e90-b97b-439a-ba92-f42a44ef695d",
+        "tags": {
+          "id": "33870e90-b97b-439a-ba92-f42a44ef695d",
+          "name": "Meeting",
+          "slug": "meeting",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-5b4daff9-8fcd-4799-b23e-cf80a41f3376",
+        "tag_id": "5b4daff9-8fcd-4799-b23e-cf80a41f3376",
+        "tags": {
+          "id": "5b4daff9-8fcd-4799-b23e-cf80a41f3376",
+          "name": "Nge-date",
+          "slug": "nge-date",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-d32ddb31-b92b-4968-8f57-94834f873f41",
+        "tag_id": "d32ddb31-b92b-4968-8f57-94834f873f41",
+        "tags": {
+          "id": "d32ddb31-b92b-4968-8f57-94834f873f41",
+          "name": "Nongkrong",
+          "slug": "nongkrong",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-48b8f0d3-830a-4011-8f40-2bf22a1cb91b",
+        "tag_id": "48b8f0d3-830a-4011-8f40-2bf22a1cb91b",
+        "tags": {
+          "id": "48b8f0d3-830a-4011-8f40-2bf22a1cb91b",
+          "name": "Nugas",
+          "slug": "nugas",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-0dee3434-90df-45e7-855f-b896c866762c",
+        "tag_id": "0dee3434-90df-45e7-855f-b896c866762c",
+        "tags": {
+          "id": "0dee3434-90df-45e7-855f-b896c866762c",
+          "name": "WFC",
+          "slug": "wfc",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-6ba823b6-24f3-4385-8d59-67e019ba002b",
+        "tag_id": "6ba823b6-24f3-4385-8d59-67e019ba002b",
+        "tags": {
+          "id": "6ba823b6-24f3-4385-8d59-67e019ba002b",
+          "name": "AC",
+          "slug": "ac",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-0ea4a96b-179f-4632-9afc-ef98cdd9cb1b",
+        "tag_id": "0ea4a96b-179f-4632-9afc-ef98cdd9cb1b",
+        "tags": {
+          "id": "0ea4a96b-179f-4632-9afc-ef98cdd9cb1b",
+          "name": "Colokan",
+          "slug": "colokan",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-1318851f-58c0-413a-bbef-c9fc99ab56b2",
+        "tag_id": "1318851f-58c0-413a-bbef-c9fc99ab56b2",
+        "tags": {
+          "id": "1318851f-58c0-413a-bbef-c9fc99ab56b2",
+          "name": "Indoor",
+          "slug": "indoor",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-4a0d8823-4185-4758-bc36-b36082e33077",
+        "tag_id": "4a0d8823-4185-4758-bc36-b36082e33077",
+        "tags": {
+          "id": "4a0d8823-4185-4758-bc36-b36082e33077",
+          "name": "Indoor Smoking",
+          "slug": "indoor-smoking",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-2777944a-8de2-4013-8db2-06ff2366cc91",
+        "tag_id": "2777944a-8de2-4013-8db2-06ff2366cc91",
+        "tags": {
+          "id": "2777944a-8de2-4013-8db2-06ff2366cc91",
+          "name": "Musholla",
+          "slug": "musholla",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-770dd8a2-9cc8-4fde-abdb-b4bf3307a45d",
+        "tag_id": "770dd8a2-9cc8-4fde-abdb-b4bf3307a45d",
+        "tags": {
+          "id": "770dd8a2-9cc8-4fde-abdb-b4bf3307a45d",
+          "name": "Outdoor",
+          "slug": "outdoor",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-d4d6cb33-3692-4482-9450-bcebd328fd96",
+        "tag_id": "d4d6cb33-3692-4482-9450-bcebd328fd96",
+        "tags": {
+          "id": "d4d6cb33-3692-4482-9450-bcebd328fd96",
+          "name": "Smoking Area",
+          "slug": "smoking-area",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-b92499b7-880d-4c02-8aac-a4073c213a4c",
+        "tag_id": "b92499b7-880d-4c02-8aac-a4073c213a4c",
+        "tags": {
+          "id": "b92499b7-880d-4c02-8aac-a4073c213a4c",
+          "name": "Toilet",
+          "slug": "toilet",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-b50b3f65-221b-4414-a95b-3f861176d5f9",
+        "tag_id": "b50b3f65-221b-4414-a95b-3f861176d5f9",
+        "tags": {
+          "id": "b50b3f65-221b-4414-a95b-3f861176d5f9",
+          "name": "WiFi",
+          "slug": "wifi",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-f8fd5878-9b02-4fdd-9217-32857f396acb",
+        "tag_id": "f8fd5878-9b02-4fdd-9217-32857f396acb",
+        "tags": {
+          "id": "f8fd5878-9b02-4fdd-9217-32857f396acb",
+          "name": "Healing",
+          "slug": "healing",
+          "type": "mood"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-d30f0c87-4384-474d-ae52-976300282f7a",
+        "tag_id": "d30f0c87-4384-474d-ae52-976300282f7a",
+        "tags": {
+          "id": "d30f0c87-4384-474d-ae52-976300282f7a",
+          "name": "Cozy",
+          "slug": "cozy",
+          "type": "vibe"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-aaf7132f-7daa-4461-8c91-355409f07f17",
+        "tag_id": "aaf7132f-7daa-4461-8c91-355409f07f17",
+        "tags": {
+          "id": "aaf7132f-7daa-4461-8c91-355409f07f17",
+          "name": "Minimalis",
+          "slug": "minimalis",
+          "type": "vibe"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-b0cae3e1-888b-4d2d-9197-e99ada42ff44",
+        "tag_id": "b0cae3e1-888b-4d2d-9197-e99ada42ff44",
+        "tags": {
+          "id": "b0cae3e1-888b-4d2d-9197-e99ada42ff44",
+          "name": "Rame",
+          "slug": "rame",
+          "type": "vibe"
+        }
+      },
+      {
+        "id": "246929da-f549-41d1-b378-4a34f3560dcc-0fa44681-f5da-4dcb-9656-31b714bd20f4",
+        "tag_id": "0fa44681-f5da-4dcb-9656-31b714bd20f4",
+        "tags": {
+          "id": "0fa44681-f5da-4dcb-9656-31b714bd20f4",
+          "name": "Tenang",
+          "slug": "tenang",
+          "type": "vibe"
+        }
+      }
+    ],
+    "place_photos": [
+      {
+        "id": "55db4379-63b9-49db-9c5a-890dcd29330b",
+        "image_url": "https://drive.google.com/file/d/17p8qjkNWyILnAqoDi11dG-IfmI4bI3-u/view?usp=drive_link",
+        "caption": "Endorphins Space photo 1",
+        "sort_order": 0
+      },
+      {
+        "id": "d1767890-c1c6-4733-8fb2-4b4fe2ba3249",
+        "image_url": "https://drive.google.com/file/d/1tbC5WlozRTK80bfFiL_pJkqgnVCJ9uhP/view?usp=drive_link",
+        "caption": "Endorphins Space photo 2",
+        "sort_order": 1
+      },
+      {
+        "id": "ce0b42ba-4b78-4e1d-9cbb-52ff6c1893d2",
+        "image_url": "https://drive.google.com/file/d/19Lxtvq9xld-kxPGTpedsgvlPJE2cMJUc/view?usp=drive_link",
+        "caption": "Endorphins Space photo 3",
+        "sort_order": 2
+      },
+      {
+        "id": "8d1a6fd7-a31e-44ad-935a-78ff4febc63f",
+        "image_url": "https://drive.google.com/file/d/1RTNZTJ4VMOYv6ECd35d5_Ivs7aPGRUYS/view?usp=drive_link",
+        "caption": "Endorphins Space photo 4",
+        "sort_order": 3
+      },
+      {
+        "id": "4b68e2f1-628d-4a84-884d-2cb974261fa3",
+        "image_url": "https://drive.google.com/file/d/120MXpG8cP0UircVvwioYEnffqml6Jges/view?usp=drive_link",
+        "caption": "Endorphins Space photo 5",
+        "sort_order": 4
+      }
+    ],
+    "source": "curation_seed",
+    "latitude": -0.9412,
+    "longitude": 100.3705
   }
 ]

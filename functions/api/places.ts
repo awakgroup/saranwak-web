@@ -79,7 +79,7 @@ async function ensureBatAndArrow(db: D1Database) {
                   NULL,
                   NULL,
                   'Senin - Jumat 14.00 - 23.30, Sabtu 16.00 - 02.00 WIB',
-                  1,
+                  0,
                   1,
                   '2026-11-16 10:45:00+00',
                   '2026-11-16 10:45:00+00'
@@ -224,7 +224,7 @@ async function ensureLalitoAndKubik(db: D1Database) {
                   NULL,
                   NULL,
                   'Senin - Minggu 10.00 - 23.00 WIB',
-                  1,
+                  0,
                   1,
                   '2026-11-16 13:50:00+00',
                   '2026-11-16 13:50:00+00'
@@ -285,7 +285,7 @@ async function ensureLalitoAndKubik(db: D1Database) {
                   NULL,
                   NULL,
                   'Buka Setiap Hari 09.00 - 23.30 WIB',
-                  1,
+                  0,
                   1,
                   '2026-11-16 13:50:00+00',
                   '2026-11-16 13:50:00+00'

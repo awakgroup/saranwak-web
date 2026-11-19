@@ -1,5 +1,12 @@
 import type { Place } from "@/types/database";
 
+export const FEATURED_PLACE_SLUGS = new Set([
+    "hq-coffee-eatery",
+    "endorphins-space",
+    "jiwani-coffee",
+    "maison-merjer",
+]);
+
 export type ApiTag = {
     id: string;
     name: string;
@@ -156,7 +163,7 @@ export function mapApiPlaceToLegacyPlace(place: ApiPlace): Place {
          */
         maps_url: place.google_maps_url,
         is_published: Boolean(place.is_active),
-        is_featured: Boolean(place.is_featured),
+        is_featured: FEATURED_PLACE_SLUGS.has(place.slug),
 
         /**
          * Adapter kategori.

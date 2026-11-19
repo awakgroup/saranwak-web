@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Bookmark } from "lucide-react";
+import { ArrowRight, Bookmark, Star } from "lucide-react";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import { useSavedPlaces, savePlaceToStorage } from "@/lib/saved-places";
 import { OpenStatusBadge } from "@/components/OpenStatusBadge";
@@ -89,7 +89,18 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
 
                             {/* Top Badges */}
                             <div className="pointer-events-none relative z-20 flex items-center justify-between">
-                                <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
+                                <div className="flex items-center gap-1.5">
+                                    <OpenStatusBadge openingHours={place.opening_hours} mode="compact" />
+
+                                    {place.is_featured ? (
+                                        <span
+                                            title="Tempat Pilihan"
+                                            className="grid h-6 w-6 place-items-center rounded-full bg-white shadow-sm"
+                                        >
+                                            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-500" />
+                                        </span>
+                                    ) : null}
+                                </div>
 
                                 <button
                                     type="button"

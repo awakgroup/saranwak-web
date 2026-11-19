@@ -44,14 +44,15 @@ export function Navbar() {
         return null;
     }
 
-    // Cek apakah sedang berada di halaman detail tempat (/places/[slug])
-    const isPlaceDetailPage =
-        pathname.startsWith("/places/") && pathname.split("/").filter(Boolean).length === 2;
+    // Normalisasi pathname agar kompatibel dengan trailingSlash: true
+    const cleanPathname = (pathname ? pathname.replace(/\/+$/, "") : "") || "/";
+    const pathSegments = cleanPathname.split("/").filter(Boolean);
+    const isPlaceDetailPage = pathSegments.length === 2 && pathSegments[0] === "places";
 
-    const isMapView = pathname === "/map" || (pathname === "/places" && isViewMapParam);
-    const isExploreView = pathname === "/places" && !isViewMapParam;
-    const isHome = pathname === "/";
-    const isAbout = pathname.startsWith("/about");
+    const isMapView = cleanPathname === "/map" || (cleanPathname === "/places" && isViewMapParam);
+    const isExploreView = cleanPathname === "/places" && !isViewMapParam;
+    const isHome = cleanPathname === "/";
+    const isAbout = cleanPathname === "/about" || cleanPathname.startsWith("/about/");
 
     const mobileBottomNavItems = [
         {

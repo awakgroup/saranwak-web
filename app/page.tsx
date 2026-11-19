@@ -138,26 +138,49 @@ export default async function Home() {
   );
 }
 
+const TARGET_FEATURED_SLUGS = [
+  "hq-coffee-eatery",
+  "endorphins-space",
+  "jiwani-coffee",
+  "maison-merjer",
+];
+
 async function getHomeFeaturedPlaces(): Promise<Place[]> {
+  // 1. Coba baca data lokal public/data/places.json sebagai sumber utama kurasi
   try {
-    const places = await getFeaturedPlaces(6);
+    const filePath = path.join(process.cwd(), "public", "data", "places.json");
+    const fileContent = await fs.readFile(filePath, "utf8");
+    const jsonPlaces = JSON.parse(fileContent) as Place[];
+
+    const placeMap = new Map(jsonPlaces.map((p) => [p.slug, p]));
+    const targetPlaces = TARGET_FEATURED_SLUGS.map((slug) => placeMap.get(slug)).filter(
+      (p): p is Place => Boolean(p)
+    );
+
+    if (targetPlaces.length === TARGET_FEATURED_SLUGS.length) {
+      return targetPlaces;
+    }
+
+    const featuredPlaces = jsonPlaces.filter((p) => p.is_featured);
+    if (featuredPlaces.length > 0) {
+      return featuredPlaces.slice(0, 4);
+    }
+  } catch (fileError) {
+    console.error("Featured places JSON read error:", fileError);
+  }
+
+  // 2. Fallback fetch API jika file JSON tidak dapat dibaca
+  try {
+    const places = await getFeaturedPlaces(4);
 
     if (places && places.length > 0) {
       return places.map(mapApiPlaceToLegacyPlace);
     }
   } catch (error) {
-    console.error("Featured places D1 fetch error:", error);
+    console.error("Featured places API fetch error:", error);
   }
 
-  try {
-    const filePath = path.join(process.cwd(), "public", "data", "places.json");
-    const fileContent = await fs.readFile(filePath, "utf8");
-    const jsonPlaces = JSON.parse(fileContent) as Place[];
-    return jsonPlaces.filter((p) => p.is_featured).slice(0, 6);
-  } catch (fallbackError) {
-    console.error("Featured places JSON fallback error:", fallbackError);
-    return [];
-  }
+  return [];
 }
 
 function mapApiPlaceToLegacyPlace(place: ApiPlace): Place {

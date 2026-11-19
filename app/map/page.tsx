@@ -6,6 +6,7 @@ import { MapPageClient } from "@/components/MapPageClient";
 import {
     getPlaces as getPlacesFromApi,
     mapApiPlaceToLegacyPlace,
+    FEATURED_PLACE_SLUGS,
 } from "@/lib/api/places";
 import type { Place } from "@/types/database";
 
@@ -83,11 +84,17 @@ async function getPublishedPlaces(): Promise<Place[]> {
             const map = new Map<string, Place>();
             jsonPlaces.forEach((p) => map.set(p.slug, p));
             apiPlaces.forEach((p) => map.set(p.slug, p));
-            return Array.from(map.values());
+            return Array.from(map.values()).map((p) => ({
+                ...p,
+                is_featured: FEATURED_PLACE_SLUGS.has(p.slug),
+            }));
         }
     } catch (apiError) {
         console.error("Map API fetch error:", apiError);
     }
 
-    return jsonPlaces;
+    return jsonPlaces.map((p) => ({
+        ...p,
+        is_featured: FEATURED_PLACE_SLUGS.has(p.slug),
+    }));
 }
