@@ -72,7 +72,7 @@ const aboutJsonLd = {
 const TEAM_MEMBERS = [
     {
         name: "Viky Fandreano",
-        role: "Developer / Pengembang",
+        role: "Fullstack Tech",
         badge: "Tech & UX",
         skill: "Fullstack & Architecture",
         handle: "@vikyfand",
@@ -81,7 +81,7 @@ const TEAM_MEMBERS = [
     },
     {
         name: "Gozi Yuzakki Adli",
-        role: "Business Development",
+        role: "Bisnis Development",
         badge: "Partnership",
         skill: "Partnership & Community",
         handle: "@goziyzk",
@@ -90,38 +90,32 @@ const TEAM_MEMBERS = [
     },
     {
         name: "Randika Junivan Putra",
-        role: "Marketing & Creative",
+        role: "Marketing & Partnership",
         badge: "Brand & Social",
         skill: "Content & Community Lead",
         handle: "@randikajunivan",
         desc: "Mengelola narasi visual, identitas brand, liputan on-ground kedai kopi, dan engagement media sosial agar rekomendasi Saranwak selalu dekat dengan generasi muda Padang.",
-        image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB6ENm718po190cRwWrSKMxBa6FBsGQdN0qa1wbWf4Z04Jk_iqg8lrKn2nB32aIorh8zfM9OXbNQZ9iO0mREWYK6gH1aqgL5aTVqLddDwTZeUL3fCCIoaKpX3GRtzT6mVc17q8sVe2YP7zKwuUCZW6Wp5WqyVOrjMtS-d393TDHHAFZYvvRC4S66XZ1OYgHYtblYwgTuTJiMLtgqVlBsSC9raRjzw6P-Uv3JDbu5w",
     },
 ];
 
 const MOBILE_FOUNDERS = [
     {
-        name: "Farhan Dwi Satria",
-        role: "Product & Curator",
-        desc: "Pecandu filter coffee & penjelajah kedai tersembunyi.",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDTtVCP5Nm4V0CQoMfbzVr7iZ09LtBHX1_npax3AntVXOVxQQhw3FQpSbVO7URI-B6Qdh-XZ663TC6ZBRq-cHeeL6T6GDPfDwl1tGiOOTbCUVMKKwMVzuPtr6UdDTj1naJzR1L4SNhQe6yWhC0r298hneA63TXOLh9XJt7ggbjv_HFvzWcOJe_QWTehh3PNAF6oQp7rFeryyzBlGC4xrruTk6T0p5QY_V4SinIugA",
+        name: "Viky Fandreano",
+        role: "Fullstack Tech",
+        desc: "Merancang arsitektur sistem, platform website, dan antarmuka responsif yang seamless di semua perangkat.",
+        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDdyHhzCmvYP8ZGixJYrVIZr1zG1eWO60WbT8WX7B2A7xiRX3EKFMhOF6bYlIlwHGxI85uGhLIV7fWn__22ArKbtfIgpLDkXjPNCD6H2XOeENSXSXl_dKLpqxFmVG7zyCd1Tq-A8aDCPvFVzirIrz8DY3XqsJIfApy8MqDZPHVte1u8fZRGrfh_4VxwvzpWmMx5GhxL-jWBKBbh8_USp6SJ_lqegp5HY82O9lSS3w",
     },
     {
-        name: "Ghazian Tsani",
-        role: "Tech & Operations",
-        desc: "Merajut arsitektur data pencarian spot Saranwak.",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDsXy-f8fOshXGKPsUy7jskhCbnMSR7RXUDOuuMAB2ArnJJW5eLqrQ8pBS0n7fcO5fK7D2FX1MGEImK3JXloI_qf-CJEaDpQK2pe0RIrPtWQJUOWi6lI3pVFlNe9br0fS7tZ4vbOj3jvmrP2O5j8mufrV2rujXfl1aUFjbSBeqbRaY2Ckq_11shSWmWNVII-IKLJ2xkBiFkP9TocRSHFtuAxnMYc1RxEHZn9SE7Qg",
+        name: "Gozi Yuzakki Adli",
+        role: "Bisnis Development",
+        desc: "Menjalin kemitraan dengan pemilik kedai kopi lokal Padang dan merumuskan ekosistem pertumbuhan Saranwak.",
+        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDNoQFuT0qtbA8GXFyV7OtEU3JEVS7q6ccjPUiArrxBa-fgZvYx7fO6rKox8PzyozkjywqW2YKvsFy0yaHJuBq9Yh5E9U3BW4xhr59H99OPhMyYLHAGhZFHl-1It8YpwPSCMWqaLTDFrVMc8Zl33OS3eUnjPNpGFvJ6tofyfM1Ae5biJ6wzQ9xgj6mDnt7qKS4l-Qci_Gg3ic-Lx97yNJ0KUmVcm0ZAiYtcm-Lixg",
     },
     {
-        name: "M. Zaki Adli",
-        role: "Business Development",
-        desc: "Menjaga relasi hangat dengan pemilik kedai dan mitra.",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB44W3x4_ec3XCMGlxcXtT-JyWDknfEc8MnGPh8Sr1lpEHM_I-84xp2BTW9Nvzj562irs6ZT24jETgCv59MBP6xcQNATWz_PJ-T2V67yb4FsX_DMPtDnyYSEsHE7nHCMEJwf5OzLDlkoejFxLiKtA6873TYxOBfX9nt5vxcOzuUUQ154jOJB2wK_gjW76L1jF-LWxuu20PwnosNA6RyNChO8pFjKxSc_H3xRMl-Hw",
-    },
-    {
-        name: "Randika Junivan P.",
-        role: "Marketing & Community",
-        desc: "Menghubungkan kawan WFC dan skena kopi muda Padang.",
+        name: "Randika Junivan Putra",
+        role: "Marketing & Partnership",
+        desc: "Mengelola narasi visual, identitas brand, liputan on-ground kedai kopi, dan engagement skena kopi muda Padang.",
         image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB6ENm718po190cRwWrSKMxBa6FBsGQdN0qa1wbWf4Z04Jk_iqg8lrKn2nB32aIorh8zfM9OXbNQZ9iO0mREWYK6gH1aqgL5aTVqLddDwTZeUL3fCCIoaKpX3GRtzT6mVc17q8sVe2YP7zKwuUCZW6Wp5WqyVOrjMtS-d393TDHHAFZYvvRC4S66XZ1OYgHYtblYwgTuTJiMLtgqVlBsSC9raRjzw6P-Uv3JDbu5w",
     },
 ];
@@ -277,27 +271,45 @@ export default function AboutPage() {
                             <span className="w-1.5 h-4 rounded-full bg-[#ac3311]" />
                             <h2 className="text-[18px] text-[#0d0401] font-bold tracking-tight">Kolektif di Balik Saranwak</h2>
                         </div>
-                        <span className="px-2 py-0.5 rounded-full bg-[#ffdbd1] text-[#3c0800] text-[10px] font-bold">4 Founders</span>
+                        <span className="px-2 py-0.5 rounded-full bg-[#ffdbd1] text-[#3c0800] text-[10px] font-bold">3 Founders</span>
                     </div>
                     <p className="text-[12px] text-[#4e4540] mb-4">
                         Anak muda Minang yang memadukan kecintaan pada kopi, teknologi, dan eksplorasi sudut kota.
                     </p>
                     <div className="grid grid-cols-2 gap-3">
-                        {MOBILE_FOUNDERS.map((founder) => (
-                            <div key={founder.name} className="bg-white p-3 rounded-2xl border border-[#e4e2de]/40 shadow-xs flex flex-col">
-                                <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-2.5 bg-[#efeeea]">
-                                    <Image
-                                        src={founder.image}
-                                        alt={founder.name}
-                                        fill
-                                        className="object-cover"
-                                    />
+                        {MOBILE_FOUNDERS.map((founder, index) => {
+                            const isThird = index === 2;
+                            return (
+                                <div
+                                    key={founder.name}
+                                    className={`bg-white p-3 rounded-2xl border border-[#e4e2de]/40 shadow-xs ${
+                                        isThird
+                                            ? "col-span-2 flex flex-row items-center gap-3.5"
+                                            : "flex flex-col"
+                                    }`}
+                                >
+                                    <div
+                                        className={`relative rounded-xl overflow-hidden bg-[#efeeea] shrink-0 ${
+                                            isThird
+                                                ? "w-24 h-24 aspect-square"
+                                                : "w-full aspect-square mb-2.5"
+                                        }`}
+                                    >
+                                        <Image
+                                            src={founder.image}
+                                            alt={founder.name}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
+                                    <div className={isThird ? "min-w-0 flex-1" : ""}>
+                                        <h3 className="text-[13px] text-[#0d0401] font-bold truncate">{founder.name}</h3>
+                                        <p className="text-[11px] text-[#ac3311] font-semibold truncate">{founder.role}</p>
+                                        <p className="text-[11px] text-[#4e4540] mt-0.5 line-clamp-2 leading-snug">{founder.desc}</p>
+                                    </div>
                                 </div>
-                                <h3 className="text-[13px] text-[#0d0401] font-bold truncate">{founder.name}</h3>
-                                <p className="text-[11px] text-[#ac3311] font-semibold truncate">{founder.role}</p>
-                                <p className="text-[11px] text-[#4e4540] mt-0.5 line-clamp-2 leading-snug">{founder.desc}</p>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </section>
 
