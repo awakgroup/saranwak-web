@@ -77,7 +77,7 @@ const TEAM_MEMBERS = [
         skill: "Fullstack & Architecture",
         handle: "@vikyfand",
         desc: "Merancang arsitektur sistem, platform website, dan antarmuka responsif yang seamless di semua perangkat agar pengguna menemukan spot kafe dalam hitungan detik.",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDdyHhzCmvYP8ZGixJYrVIZr1zG1eWO60WbT8WX7B2A7xiRX3EKFMhOF6bYlIlwHGxI85uGhLIV7fWn__22ArKbtfIgpLDkXjPNCD6H2XOeENSXSXl_dKLpqxFmVG7zyCd1Tq-A8aDCPvFVzirIrz8DY3XqsJIfApy8MqDZPHVte1u8fZRGrfh_4VxwvzpWmMx5GhxL-jWBKBbh8_USp6SJ_lqegp5HY82O9lSS3w",
+        image: "/images/founder-placeholder.png",
     },
     {
         name: "Gozi Yuzakki Adli",
@@ -86,7 +86,7 @@ const TEAM_MEMBERS = [
         skill: "Partnership & Community",
         handle: "@goziyzk",
         desc: "Menjalin kemitraan dengan pemilik kedai kopi lokal Padang dan merumuskan ekosistem pertumbuhan Saranwak agar UMKM kopi Minang bertumbuh sehat bersama.",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDNoQFuT0qtbA8GXFyV7OtEU3JEVS7q6ccjPUiArrxBa-fgZvYx7fO6rKox8PzyozkjywqW2YKvsFy0yaHJuBq9Yh5E9U3BW4xhr59H99OPhMyYLHAGhZFHl-1It8YpwPSCMWqaLTDFrVMc8Zl33OS3eUnjPNpGFvJ6tofyfM1Ae5biJ6wzQ9xgj6mDnt7qKS4l-Qci_Gg3ic-Lx97yNJ0KUmVcm0ZAiYtcm-Lixg",
+        image: "/images/founder-placeholder.png",
     },
     {
         name: "Randika Junivan Putra",
@@ -95,7 +95,7 @@ const TEAM_MEMBERS = [
         skill: "Content & Community Lead",
         handle: "@randikajunivan",
         desc: "Mengelola narasi visual, identitas brand, liputan on-ground kedai kopi, dan engagement media sosial agar rekomendasi Saranwak selalu dekat dengan generasi muda Padang.",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB6ENm718po190cRwWrSKMxBa6FBsGQdN0qa1wbWf4Z04Jk_iqg8lrKn2nB32aIorh8zfM9OXbNQZ9iO0mREWYK6gH1aqgL5aTVqLddDwTZeUL3fCCIoaKpX3GRtzT6mVc17q8sVe2YP7zKwuUCZW6Wp5WqyVOrjMtS-d393TDHHAFZYvvRC4S66XZ1OYgHYtblYwgTuTJiMLtgqVlBsSC9raRjzw6P-Uv3JDbu5w",
+        image: "/images/founder-placeholder.png",
     },
 ];
 
@@ -104,19 +104,19 @@ const MOBILE_FOUNDERS = [
         name: "Viky Fandreano",
         role: "Fullstack Tech",
         desc: "Merancang arsitektur sistem, platform website, dan antarmuka responsif yang seamless di semua perangkat.",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDdyHhzCmvYP8ZGixJYrVIZr1zG1eWO60WbT8WX7B2A7xiRX3EKFMhOF6bYlIlwHGxI85uGhLIV7fWn__22ArKbtfIgpLDkXjPNCD6H2XOeENSXSXl_dKLpqxFmVG7zyCd1Tq-A8aDCPvFVzirIrz8DY3XqsJIfApy8MqDZPHVte1u8fZRGrfh_4VxwvzpWmMx5GhxL-jWBKBbh8_USp6SJ_lqegp5HY82O9lSS3w",
+        image: "/images/founder-placeholder.png",
     },
     {
         name: "Gozi Yuzakki Adli",
         role: "Bisnis Development",
         desc: "Menjalin kemitraan dengan pemilik kedai kopi lokal Padang dan merumuskan ekosistem pertumbuhan Saranwak.",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDNoQFuT0qtbA8GXFyV7OtEU3JEVS7q6ccjPUiArrxBa-fgZvYx7fO6rKox8PzyozkjywqW2YKvsFy0yaHJuBq9Yh5E9U3BW4xhr59H99OPhMyYLHAGhZFHl-1It8YpwPSCMWqaLTDFrVMc8Zl33OS3eUnjPNpGFvJ6tofyfM1Ae5biJ6wzQ9xgj6mDnt7qKS4l-Qci_Gg3ic-Lx97yNJ0KUmVcm0ZAiYtcm-Lixg",
+        image: "/images/founder-placeholder.png",
     },
     {
         name: "Randika Junivan Putra",
         role: "Marketing & Partnership",
         desc: "Mengelola narasi visual, identitas brand, liputan on-ground kedai kopi, dan engagement skena kopi muda Padang.",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB6ENm718po190cRwWrSKMxBa6FBsGQdN0qa1wbWf4Z04Jk_iqg8lrKn2nB32aIorh8zfM9OXbNQZ9iO0mREWYK6gH1aqgL5aTVqLddDwTZeUL3fCCIoaKpX3GRtzT6mVc17q8sVe2YP7zKwuUCZW6Wp5WqyVOrjMtS-d393TDHHAFZYvvRC4S66XZ1OYgHYtblYwgTuTJiMLtgqVlBsSC9raRjzw6P-Uv3JDbu5w",
+        image: "/images/founder-placeholder.png",
     },
 ];
 

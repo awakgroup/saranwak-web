@@ -1,0 +1,37 @@
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="800" y2="800" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F7F4EE"/>
+      <stop offset="100%" stop-color="#ECE5DA"/>
+    </linearGradient>
+    <linearGradient id="avatarGrad" x1="400" y1="220" x2="400" y2="560" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#9C897D"/>
+      <stop offset="100%" stop-color="#7B685C"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="800" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle Inner Framing Ring -->
+  <circle cx="400" cy="380" r="210" fill="#E3DAD0" opacity="0.6"/>
+  <circle cx="400" cy="380" r="210" stroke="#D8CFC5" stroke-width="3" stroke-dasharray="6 6"/>
+
+  <!-- Avatar Head -->
+  <circle cx="400" cy="305" r="82" fill="url(#avatarGrad)"/>
+
+  <!-- Avatar Shoulders -->
+  <path d="M255 535 C 255 445, 315 415, 400 415 C 485 415, 545 445, 545 535 C 545 545, 535 550, 520 550 L 280 550 C 265 550, 255 545, 255 535 Z" fill="url(#avatarGrad)"/>
+
+  <!-- Little Coffee Emblem Accent Badge -->
+  <circle cx="485" cy="485" r="40" fill="#AC3311" stroke="#F7F4EE" stroke-width="6"/>
+  <!-- Coffee cup glyph in badge -->
+  <path d="M474 476 H492 C494 476 495 478 495 480 V487 C495 492 491 496 486 496 C481 496 477 492 477 487 V478 C477 477 478 476 479 476 Z" fill="#FFFDF8"/>
+  <path d="M492 479 H498 C500.5 479 501.5 480.5 501.5 482.5 C501.5 484.5 500.5 486 498 486 H492" stroke="#FFFDF8" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Steam lines -->
+  <path d="M480 470 V473 M485 469 V473 M490 470 V473" stroke="#FFFDF8" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Bottom Tag Text -->
+  <rect x="290" y="625" width="220" height="42" rx="21" fill="#E2D8CC"/>
+  <text x="400" y="653" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="800" fill="#6B5E55" letter-spacing="2">SARANWAK</text>
+</svg>
