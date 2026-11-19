@@ -30,6 +30,7 @@ import { OpenStatusBadge } from "@/components/OpenStatusBadge";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { TrackedExternalLink } from "@/components/TrackedExternalLink";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
+import { ImageLightboxModal } from "./ImageLightboxModal";
 
 type Category = {
     id: string;
@@ -192,14 +193,17 @@ export function MobilePlaceDetailView({
             <main className="flex-1 flex flex-col w-full">
                 {/* 1. Top Hero Media Gallery */}
                 <section className="relative w-full">
-                    <div className="relative w-full aspect-[4/3] bg-[#eae8e4] overflow-hidden shadow-xs">
+                    <div
+                        onClick={() => setSelectedPhotoIndex(0)}
+                        className="relative w-full aspect-[4/3] bg-[#eae8e4] overflow-hidden shadow-xs cursor-pointer group"
+                    >
                         <Image
                             src={mainImageUrl}
                             alt={place.name}
                             fill
                             priority
                             sizes="100vw"
-                            className="object-cover"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
 
                         {/* Gradient Scrim */}
@@ -216,7 +220,10 @@ export function MobilePlaceDetailView({
                         </div>
 
                         {/* Gallery Thumbnail Floating Dock Bottom */}
-                        <div className="absolute bottom-3 left-4 right-4 flex items-center gap-2">
+                        <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute bottom-3 left-4 right-4 flex items-center gap-2"
+                        >
                             {allPhotos.slice(0, 3).map((photo, i) => (
                                 <button
                                     key={i}
@@ -628,39 +635,14 @@ export function MobilePlaceDetailView({
                 </div>
             </aside>
 
-            {/* Fullscreen Photo Modal */}
-            {selectedPhotoIndex !== null && (
-                <div
-                    onClick={() => setSelectedPhotoIndex(null)}
-                    className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col justify-between p-4"
-                >
-                    <div className="flex items-center justify-between text-white pt-safe">
-                        <span className="text-sm font-semibold">
-                            Foto {selectedPhotoIndex + 1} dari {allPhotos.length}
-                        </span>
-                        <button
-                            type="button"
-                            onClick={() => setSelectedPhotoIndex(null)}
-                            className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white"
-                        >
-                            <X className="h-5 w-5" />
-                        </button>
-                    </div>
-
-                    <div className="relative w-full h-[65vh] my-auto">
-                        <Image
-                            src={getSafePlaceImageUrl(allPhotos[selectedPhotoIndex].image_url)}
-                            alt={allPhotos[selectedPhotoIndex].caption || place.name}
-                            fill
-                            className="object-contain"
-                        />
-                    </div>
-
-                    <div className="text-center text-white/90 text-sm pb-safe px-4">
-                        <p>{allPhotos[selectedPhotoIndex].caption || place.name}</p>
-                    </div>
-                </div>
-            )}
+            {/* Fullscreen Photo Lightbox Modal */}
+            <ImageLightboxModal
+                isOpen={selectedPhotoIndex !== null}
+                onClose={() => setSelectedPhotoIndex(null)}
+                photos={allPhotos}
+                initialIndex={selectedPhotoIndex ?? 0}
+                placeName={place.name}
+            />
         </div>
     );
 }

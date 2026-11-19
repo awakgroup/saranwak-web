@@ -28,6 +28,7 @@ import { TrackedExternalLink } from "@/components/TrackedExternalLink";
 import { OpenStatusBadge } from "@/components/OpenStatusBadge";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { MobilePlaceDetailView } from "@/components/MobilePlaceDetailView";
+import { DesktopGallerySection } from "@/components/DesktopGallerySection";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import {
     getPlaceBySlug as getPlaceBySlugFromApi,
@@ -283,7 +284,7 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
                             ) : null}
 
                             {galleryImages.length > 0 ? (
-                                <GallerySection images={galleryImages} placeName={place.name} />
+                                <DesktopGallerySection images={galleryImages} placeName={place.name} />
                             ) : null}
 
                             {groupedTags.length > 0 ? (
@@ -654,59 +655,6 @@ function DescriptionSection({ description }: { description: string }) {
 
             <div className="mt-3 whitespace-pre-line text-xs font-normal leading-relaxed text-[#756A63] sm:mt-4 sm:text-base">
                 {description}
-            </div>
-        </section>
-    );
-}
-
-function GallerySection({
-    images,
-    placeName,
-}: {
-    images: PlacePhoto[];
-    placeName: string;
-}) {
-    return (
-        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-xs sm:p-7">
-            <div className="mb-3.5 flex items-center justify-between sm:mb-4">
-                <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#756A63]">
-                        Dokumentasi
-                    </p>
-
-                    <h2 className="mt-1 font-sans text-lg font-extrabold text-[#19120D] sm:text-2xl">
-                        Foto &amp; Suasana Tempat
-                    </h2>
-                </div>
-
-                <span className="rounded-full bg-[#FAF6F0] px-3 py-1 text-xs font-bold text-[#19120D]">
-                    {images.length} Foto
-                </span>
-            </div>
-
-            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
-                {images.slice(0, 6).map((photo, index) => (
-                    <figure
-                        key={photo.id || `${photo.image_url}-${index}`}
-                        className="group overflow-hidden rounded-xl sm:rounded-2xl border border-[#EBE5DC] bg-[#FAF6F0]"
-                    >
-                        <div className="relative h-48 sm:h-60 w-full overflow-hidden bg-[#EAE4DC]">
-                            <Image
-                                src={getSafePlaceImageUrl(photo.image_url)}
-                                alt={photo.caption || `${placeName} ${index + 1}`}
-                                fill
-                                sizes="(max-width: 640px) 100vw, 50vw"
-                                className="object-cover transition duration-700 group-hover:scale-105"
-                            />
-                        </div>
-
-                        {photo.caption ? (
-                            <figcaption className="px-3.5 py-2 text-xs font-medium text-[#756A63] sm:px-4 sm:py-2.5">
-                                {photo.caption}
-                            </figcaption>
-                        ) : null}
-                    </figure>
-                ))}
             </div>
         </section>
     );
