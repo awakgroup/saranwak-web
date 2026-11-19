@@ -12,12 +12,18 @@ import {
     Search,
     SlidersHorizontal,
     X,
+    Coffee,
+    Laptop,
+    Zap,
+    Moon,
+    Sun,
 } from "lucide-react";
 import type { Place } from "@/types/database";
 import {
     calculateDistanceKm,
     getPlaceCoordinates,
 } from "@/lib/place-coordinates";
+import { getPlaceOpenStatus } from "@/lib/opening-hours";
 
 const PlacesMapView = dynamic(
     () => import("@/components/PlacesMapView").then((mod) => mod.PlacesMapView),
@@ -43,6 +49,8 @@ interface MapPageClientProps {
 export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedArea, setSelectedArea] = useState<string>("all");
+    const [activeFilterChip, setActiveFilterChip] = useState<"all" | "wfc" | "open" | "plug" | "24h" | "sunset">("all");
+    const [isAreaModalOpen, setIsAreaModalOpen] = useState(false);
     const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
     const [isLocating, setIsLocating] = useState(false);
     const [isNearbyActive, setIsNearbyActive] = useState(false);
@@ -83,13 +91,41 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
         if (searchQuery.trim()) {
             const q = searchQuery.toLowerCase().trim();
             result = result.filter((p) => {
-                const combined = `${p.name} ${p.area || ""} ${p.address || ""} ${p.short_description || ""}`.toLowerCase();
+                const combined = `${p.name} ${p.area || ""} ${p.address || ""} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
                 return combined.includes(q);
             });
         }
 
         if (selectedArea !== "all") {
-            result = result.filter((p) => p.area === selectedArea);
+            result = result.filter((p) => (p.area || "").toLowerCase().includes(selectedArea.toLowerCase()));
+        }
+
+        if (activeFilterChip === "wfc") {
+            result = result.filter((p) => {
+                const s = `${p.name} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
+                return s.includes("wfc") || s.includes("nugas") || s.includes("kerja") || s.includes("laptop") || s.includes("wifi");
+            });
+        } else if (activeFilterChip === "open") {
+            result = result.filter((p) => {
+                const status = getPlaceOpenStatus(p.opening_hours);
+                return status.isOpen;
+            });
+        } else if (activeFilterChip === "plug") {
+            result = result.filter((p) => {
+                const s = `${p.name} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
+                return s.includes("colokan") || s.includes("stopkontak") || s.includes("listrik") || s.includes("steker") || s.includes("plug");
+            });
+        } else if (activeFilterChip === "24h") {
+            result = result.filter((p) => {
+                const status = getPlaceOpenStatus(p.opening_hours);
+                const s = `${p.opening_hours || ""} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
+                return status.is24Hours || s.includes("24 jam");
+            });
+        } else if (activeFilterChip === "sunset") {
+            result = result.filter((p) => {
+                const s = `${p.name} ${p.short_description || ""} ${p.description || ""} ${p.area || ""}`.toLowerCase();
+                return s.includes("outdoor") || s.includes("sunset") || s.includes("pantai") || s.includes("senja") || s.includes("taplau") || s.includes("rooftop");
+            });
         }
 
         if (isNearbyActive && userCoords) {
@@ -103,115 +139,181 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
         }
 
         return result;
-    }, [initialPlaces, searchQuery, selectedArea, isNearbyActive, userCoords]);
+    }, [initialPlaces, searchQuery, selectedArea, activeFilterChip, isNearbyActive, userCoords]);
 
     return (
-        <main className="min-h-screen bg-[#FAF7F2] px-3.5 pb-24 pt-2 sm:px-6 sm:pb-16 sm:pt-6 lg:px-8 lg:pb-24">
+        <main className="min-h-screen bg-[#FAF7F2] px-0 pb-20 sm:px-6 sm:pb-16 sm:pt-6 lg:px-8 lg:pb-24">
             <div className="mx-auto max-w-7xl">
-                {/* Mobile Top Controls - Sleek Mobile App Navigation & Filter Chips */}
-                <div className="block sm:hidden w-full mb-2">
-                    <div className="sticky top-0 z-30 bg-[#FAF7F2]/95 backdrop-blur-md pt-0.5 pb-1.5 flex flex-col gap-1.5">
-                        {/* Search Pill */}
-                        <div className="flex items-center gap-1.5">
-                            <div className="flex-1 h-9 bg-white rounded-full shadow-[0_2px_10px_rgba(41,28,20,0.05)] border border-[#e4e2de]/70 flex items-center px-3 gap-2">
-                                <Search className="h-3.5 w-3.5 text-[#FF5C35] shrink-0" />
-                                <input
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder="Cari spot ngopi, jalan, area di Padang..."
-                                    className="w-full bg-transparent text-[#0d0401] placeholder-[#80756f]/70 text-[11.5px] font-medium outline-none"
-                                />
-                                {searchQuery && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setSearchQuery("")}
-                                        className="text-[#80756f] hover:text-[#0d0401]"
-                                    >
-                                        <X className="h-3 w-3" />
-                                    </button>
-                                )}
-                            </div>
-
-                            {/* GPS Button */}
-                            <button
-                                type="button"
-                                onClick={handleLocateUser}
-                                disabled={isLocating}
-                                aria-label="Lokasi Terdekat"
-                                className={`w-9 h-9 rounded-full flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer shrink-0 ${
-                                    isNearbyActive
-                                        ? "bg-[#FF5C35] text-white"
-                                        : "bg-white border border-[#e4e2de]/70 text-[#0d0401]"
-                                }`}
-                            >
-                                <Navigation className={`h-3.5 w-3.5 ${isLocating ? "animate-spin" : ""}`} />
-                            </button>
+                {/* Top Floating Controls: Search & Horizontal Filter Bar - Aligned with Stitch 252863f1beb84271b57c384f171e43ac */}
+                <div className="block lg:hidden w-full sticky top-0 z-30 px-3.5 pt-1.5 pb-2 bg-[#FAF7F2]/95 backdrop-blur-md">
+                    {/* Floating Search & Filter Pill */}
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className="flex-1 h-12 bg-white rounded-full shadow-[0_4px_20px_-2px_rgba(41,28,20,0.08),0_1px_3px_0px_rgba(41,28,20,0.04)] border border-[#e4e2de]/60 flex items-center px-4 gap-2.5">
+                            <Search className="h-5 w-5 text-[#ac3311] shrink-0" />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Cari spot ngopi, jalan, area di Padang..."
+                                className="w-full bg-transparent text-[#0d0401] placeholder-[#4e4540]/60 text-[13px] font-medium outline-none"
+                            />
+                            {searchQuery && (
+                                <button
+                                    type="button"
+                                    onClick={() => setSearchQuery("")}
+                                    className="text-[#4e4540]/60 hover:text-[#0d0401] transition-colors p-1"
+                                >
+                                    <X className="h-4 w-4" />
+                                </button>
+                            )}
                         </div>
 
-                        {/* Horizontal Filter Chips */}
-                        <div className="no-scrollbar flex items-center gap-1 overflow-x-auto py-0.5 overscroll-x-contain">
-                            <button
-                                type="button"
-                                onClick={() => setSelectedArea("all")}
-                                className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] font-bold shadow-xs transition-all ${
-                                    selectedArea === "all"
-                                        ? "bg-[#ac3311] text-white"
-                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540]"
-                                }`}
-                            >
-                                Semua Spot ({initialPlaces.length})
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setSelectedArea("Padang Timur")}
-                                className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] font-bold shadow-xs transition-all ${
-                                    selectedArea === "Padang Timur"
-                                        ? "bg-[#ac3311] text-white"
-                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540]"
-                                }`}
-                            >
-                                Padang Timur
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setSelectedArea("Padang Barat")}
-                                className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] font-bold shadow-xs transition-all ${
-                                    selectedArea === "Padang Barat"
-                                        ? "bg-[#ac3311] text-white"
-                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540]"
-                                }`}
-                            >
-                                Padang Barat
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setSelectedArea("Padang Selatan")}
-                                className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] font-bold shadow-xs transition-all ${
-                                    selectedArea === "Padang Selatan"
-                                        ? "bg-[#ac3311] text-white"
-                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540]"
-                                }`}
-                            >
-                                Padang Selatan
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setSelectedArea("Padang Utara")}
-                                className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10.5px] font-bold shadow-xs transition-all ${
-                                    selectedArea === "Padang Utara"
-                                        ? "bg-[#ac3311] text-white"
-                                        : "bg-white border border-[#e4e2de]/60 text-[#4e4540]"
-                                }`}
-                            >
-                                Padang Utara
-                            </button>
-                        </div>
+                        {/* Quick Filter Action Trigger */}
+                        <button
+                            type="button"
+                            aria-label="Filter Wilayah"
+                            onClick={() => setIsAreaModalOpen(!isAreaModalOpen)}
+                            className={`w-12 h-12 rounded-full shadow-[0_4px_20px_-2px_rgba(41,28,20,0.08)] flex items-center justify-center transition-transform active:scale-95 shrink-0 border ${
+                                selectedArea !== "all"
+                                    ? "bg-[#ac3311] text-white border-[#ac3311]"
+                                    : "bg-white text-[#0d0401] border-[#e4e2de]/60"
+                            }`}
+                        >
+                            <SlidersHorizontal className="h-5 w-5" />
+                        </button>
                     </div>
+
+                    {/* Horizontal Scrolling Filter Chips */}
+                    <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-0.5 -mx-3.5 px-3.5 overscroll-x-contain">
+                        {/* Semua Spot */}
+                        <button
+                            type="button"
+                            onClick={() => setActiveFilterChip("all")}
+                            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-semibold text-[12px] shrink-0 shadow-xs transition-all ${
+                                activeFilterChip === "all"
+                                    ? "bg-[#0d0401] text-white"
+                                    : "bg-white text-[#1b1c1a] border border-[#e4e2de]/60 hover:bg-[#efeeea]"
+                            }`}
+                        >
+                            <Coffee className={`h-4 w-4 ${activeFilterChip === "all" ? "text-white" : "text-[#ac3311]"}`} />
+                            <span>Semua Spot</span>
+                            {activeFilterChip === "all" && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#ff6e48]"></span>
+                            )}
+                        </button>
+
+                        {/* Prioritas WFC */}
+                        <button
+                            type="button"
+                            onClick={() => setActiveFilterChip("wfc")}
+                            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-semibold text-[12px] shrink-0 shadow-xs transition-all ${
+                                activeFilterChip === "wfc"
+                                    ? "bg-[#0d0401] text-white"
+                                    : "bg-white text-[#1b1c1a] border border-[#e4e2de]/60 hover:bg-[#efeeea]"
+                            }`}
+                        >
+                            <Laptop className="h-4 w-4 text-[#ac3311]" />
+                            <span>Prioritas WFC</span>
+                            {activeFilterChip === "wfc" && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#ff6e48]"></span>
+                            )}
+                        </button>
+
+                        {/* Buka Sekarang */}
+                        <button
+                            type="button"
+                            onClick={() => setActiveFilterChip("open")}
+                            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-semibold text-[12px] shrink-0 shadow-xs transition-all ${
+                                activeFilterChip === "open"
+                                    ? "bg-[#0d0401] text-white"
+                                    : "bg-white text-[#1b1c1a] border border-[#e4e2de]/60 hover:bg-[#efeeea]"
+                            }`}
+                        >
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>Buka Sekarang</span>
+                            {activeFilterChip === "open" && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#ff6e48]"></span>
+                            )}
+                        </button>
+
+                        {/* Colokan Melimpah */}
+                        <button
+                            type="button"
+                            onClick={() => setActiveFilterChip("plug")}
+                            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-semibold text-[12px] shrink-0 shadow-xs transition-all ${
+                                activeFilterChip === "plug"
+                                    ? "bg-[#0d0401] text-white"
+                                    : "bg-white text-[#1b1c1a] border border-[#e4e2de]/60 hover:bg-[#efeeea]"
+                            }`}
+                        >
+                            <Zap className="h-4 w-4 text-[#ac3311]" />
+                            <span>Colokan Melimpah</span>
+                            {activeFilterChip === "plug" && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#ff6e48]"></span>
+                            )}
+                        </button>
+
+                        {/* 24 Jam */}
+                        <button
+                            type="button"
+                            onClick={() => setActiveFilterChip("24h")}
+                            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-semibold text-[12px] shrink-0 shadow-xs transition-all ${
+                                activeFilterChip === "24h"
+                                    ? "bg-[#0d0401] text-white"
+                                    : "bg-white text-[#1b1c1a] border border-[#e4e2de]/60 hover:bg-[#efeeea]"
+                            }`}
+                        >
+                            <Moon className="h-4 w-4 text-amber-600" />
+                            <span>24 Jam</span>
+                            {activeFilterChip === "24h" && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#ff6e48]"></span>
+                            )}
+                        </button>
+
+                        {/* Outdoor & Sunset */}
+                        <button
+                            type="button"
+                            onClick={() => setActiveFilterChip("sunset")}
+                            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-semibold text-[12px] shrink-0 shadow-xs transition-all ${
+                                activeFilterChip === "sunset"
+                                    ? "bg-[#0d0401] text-white"
+                                    : "bg-white text-[#1b1c1a] border border-[#e4e2de]/60 hover:bg-[#efeeea]"
+                            }`}
+                        >
+                            <Sun className="h-4 w-4 text-[#ac3311]" />
+                            <span>Outdoor &amp; Sunset</span>
+                            {activeFilterChip === "sunset" && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#ff6e48]"></span>
+                            )}
+                        </button>
+                    </div>
+
+                    {/* Dropdown / Pills for Area Filter when tune is active or area !== 'all' */}
+                    {isAreaModalOpen && (
+                        <div className="mt-2 p-2.5 bg-white rounded-2xl border border-[#e4e2de] shadow-md flex flex-wrap gap-1.5 animate-fadeIn">
+                            {["all", "Padang Barat", "Padang Timur", "Padang Selatan", "Padang Utara", "Koto Tangah"].map((areaKey) => (
+                                <button
+                                    key={areaKey}
+                                    type="button"
+                                    onClick={() => {
+                                        setSelectedArea(areaKey);
+                                        setIsAreaModalOpen(false);
+                                    }}
+                                    className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
+                                        selectedArea === areaKey
+                                            ? "bg-[#ac3311] text-white"
+                                            : "bg-[#efeeea] text-[#4e4540] hover:bg-[#e4e2de]"
+                                    }`}
+                                >
+                                    {areaKey === "all" ? "Semua Wilayah" : areaKey}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Desktop Breadcrumbs & Hero Header */}
-                <div className="hidden sm:block">
+                <div className="hidden lg:block">
                     <nav
                         aria-label="Breadcrumb"
                         className="mb-4 flex items-center gap-1.5 text-xs font-semibold text-[#756A63]"
@@ -310,8 +412,8 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                     </header>
                 </div>
 
-                {/* Sub-toolbar: Results count & switch to grid */}
-                <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-sm">
+                {/* Sub-toolbar: Results count & switch to grid (Desktop) */}
+                <div className="mb-6 hidden lg:flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-sm">
                     <div className="flex items-center gap-2">
                         <span className="flex h-2.5 w-2.5 rounded-full bg-[#10B981] animate-pulse" />
                         <span className="font-sans text-sm font-bold text-[#19120D]">

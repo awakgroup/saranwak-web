@@ -16,6 +16,12 @@ import {
     ArrowRight,
     Megaphone,
     Sparkles,
+    Bookmark,
+    Wifi,
+    Zap,
+    Layers,
+    Plus,
+    Minus,
 } from "lucide-react";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
@@ -25,6 +31,7 @@ import {
     getPlaceCoordinates,
 } from "@/lib/place-coordinates";
 import { getPlaceOpenStatus } from "@/lib/opening-hours";
+import { useSavedPlaces } from "@/lib/saved-places";
 import "leaflet/dist/leaflet.css";
 
 interface PlacesMapViewProps {
@@ -75,21 +82,45 @@ const registerCafeUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURICompon
 
 function createPinIcon(L: typeof import("leaflet"), place: Place, isSelected: boolean) {
     const safeName = (place.name || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    let priceText = "";
+    if (place.price_range) {
+        priceText = " • " + place.price_range.replace(/Rp\s*/i, "").replace(/000\b/g, "k");
+    }
+
+    const coffeeSvg = `<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>`;
+
+    if (isSelected) {
+        return L.divIcon({
+            className: "saranwak-marker-container",
+            html: `
+                <div class="saranwak-pin-wrapper selected">
+                    <div class="flex items-center gap-1.5 bg-[#0d0401] text-white pl-1.5 pr-3 py-1 rounded-full shadow-[0_8px_20px_-2px_rgba(13,4,1,0.35)] scale-105 ring-2 ring-[#ff6e48]">
+                        <div class="w-4.5 h-4.5 rounded-full bg-[#ff6e48] text-[#291c14] flex items-center justify-center shrink-0">
+                            ${coffeeSvg}
+                        </div>
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                        <span class="text-[11.5px] font-bold tracking-tight whitespace-nowrap max-w-[130px] truncate">${safeName}${priceText}</span>
+                    </div>
+                    <div class="w-2.5 h-2.5 bg-[#0d0401] rotate-45 -mt-1 rounded-xs shadow-sm"></div>
+                </div>
+            `,
+            iconSize: [0, 0],
+            iconAnchor: [0, 0],
+        });
+    }
+
     return L.divIcon({
         className: "saranwak-marker-container",
         html: `
-            <div class="saranwak-pin-wrapper ${isSelected ? "selected" : ""}">
-                <div class="saranwak-pin ${
-                    isSelected
-                        ? "!bg-[#FF5C35] !text-white ring-4 ring-[#FF5C35]/35 !scale-110 !border-[#FF5C35] shadow-lg"
-                        : ""
-                }">
-                    <span class="saranwak-pin-dot ${isSelected ? "!bg-white" : ""}"></span>
-                    <span class="saranwak-pin-label font-bold">${safeName}</span>
+            <div class="saranwak-pin-wrapper">
+                <div class="flex items-center gap-1.5 bg-white text-[#0d0401] pl-1.5 pr-2.5 py-1 rounded-full shadow-[0_4px_14px_rgba(41,28,20,0.12)] border border-[#e4e2de]/80 hover:scale-105 transition-transform">
+                    <div class="w-4 h-4 rounded-full bg-[#ffdbd1] text-[#ac3311] flex items-center justify-center shrink-0">
+                        ${coffeeSvg}
+                    </div>
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                    <span class="text-[11px] font-semibold whitespace-nowrap max-w-[110px] truncate">${safeName}${priceText}</span>
                 </div>
-                <div class="saranwak-pin-pointer ${
-                    isSelected ? "!border-t-[#FF5C35] !bg-[#FF5C35]" : ""
-                }"></div>
+                <div class="w-2 h-2 bg-white rotate-45 -mt-1 shadow-xs border-r border-b border-[#e4e2de]/80"></div>
             </div>
         `,
         iconSize: [0, 0],
@@ -109,6 +140,7 @@ export function PlacesMapView({
     const [selectedPlace, setSelectedPlace] = useState<Place | null>(places[0] || null);
     const [isMapReady, setIsMapReady] = useState(false);
     const [activeTab, setActiveTab] = useState<"semua" | "nugas" | "santai">("semua");
+    const { isPlaceSaved, togglePlace } = useSavedPlaces();
 
     // Sync selectedPlace if places change and current selectedPlace is not in list
     useEffect(() => {
@@ -336,7 +368,7 @@ export function PlacesMapView({
 
         // Auto-scroll the active card into view in horizontal carousel or desktop list
         if (typeof document !== "undefined") {
-            const activeCardEl = document.getElementById(`map-card-${place.id}`);
+            const activeCardEl = document.getElementById(`mobile-map-card-${place.id}`) || document.getElementById(`map-card-${place.id}`);
             if (activeCardEl) {
                 activeCardEl.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
             }
@@ -509,14 +541,69 @@ export function PlacesMapView({
                 </aside>
 
                 {/* KOLOM KANAN (col-span-7): Interactive Map Canvas */}
-                <div className="relative h-[440px] sm:h-[500px] w-full overflow-hidden rounded-3xl border border-[#EBE5DC] bg-[#EDE8E1] shadow-sm select-none lg:col-span-7 lg:h-full">
+                <div className="relative h-[580px] sm:h-[620px] w-full overflow-hidden rounded-3xl border border-[#EBE5DC] bg-[#EDE8E1] shadow-sm select-none lg:col-span-7 lg:h-full">
                     <div
                         ref={mapContainerRef}
                         className="absolute inset-0 h-full w-full z-0"
                     />
 
-                    {/* Top Overlay Badge & Reset Button */}
-                    <div className="pointer-events-none absolute left-4 top-4 z-10 flex flex-wrap items-center gap-2 sm:left-6 sm:top-6">
+                    {/* Floating Map Control Buttons (Top Right of Map) - Aligned with Stitch 252863f1beb84271b57c384f171e43ac */}
+                    <div className="absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-20 flex flex-col gap-2">
+                        {/* Compass / Layer / Reset View Button */}
+                        <button
+                            type="button"
+                            aria-label="Pusatkan Peta"
+                            onClick={handleResetView}
+                            className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md shadow-[0_4px_16px_rgba(41,28,20,0.12)] border border-[#e4e2de]/70 flex items-center justify-center text-[#0d0401] hover:bg-white active:scale-90 transition-transform cursor-pointer"
+                            title="Pusatkan Peta"
+                        >
+                            <Layers className="h-4.5 w-4.5 text-[#0d0401]" />
+                        </button>
+
+                        {/* GPS / My Location Button */}
+                        <button
+                            type="button"
+                            aria-label="Lokasi Saya"
+                            onClick={() => {
+                                if (userCoords && mapInstanceRef.current) {
+                                    mapInstanceRef.current.setView([userCoords.lat, userCoords.lng], 15, { animate: true });
+                                } else if (places.length > 0 && mapInstanceRef.current) {
+                                    const c = getPlaceCoordinates(places[0]);
+                                    mapInstanceRef.current.setView([c.lat, c.lng], 14, { animate: true });
+                                }
+                            }}
+                            className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md shadow-[0_4px_16px_rgba(41,28,20,0.12)] border border-[#e4e2de]/70 flex items-center justify-center text-[#ac3311] hover:bg-white active:scale-90 transition-transform cursor-pointer"
+                            title="Lokasi Terdekat"
+                        >
+                            <Navigation className="h-4.5 w-4.5 text-[#ac3311]" />
+                        </button>
+
+                        {/* Zoom In & Out Block */}
+                        <div className="flex flex-col bg-white/95 backdrop-blur-md rounded-full shadow-[0_4px_16px_rgba(41,28,20,0.12)] border border-[#e4e2de]/70 overflow-hidden">
+                            <button
+                                type="button"
+                                aria-label="Perbesar"
+                                onClick={() => mapInstanceRef.current?.zoomIn()}
+                                className="w-10 h-9 flex items-center justify-center text-[#0d0401] hover:bg-[#efeeea] active:scale-95 transition-colors cursor-pointer"
+                                title="Perbesar"
+                            >
+                                <Plus className="h-4 w-4" />
+                            </button>
+                            <div className="w-5 h-[1px] bg-[#e4e2de] self-center" />
+                            <button
+                                type="button"
+                                aria-label="Perkecil"
+                                onClick={() => mapInstanceRef.current?.zoomOut()}
+                                className="w-10 h-9 flex items-center justify-center text-[#0d0401] hover:bg-[#efeeea] active:scale-95 transition-colors cursor-pointer"
+                                title="Perkecil"
+                            >
+                                <Minus className="h-4 w-4" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Top Overlay Badge & Reset Button (Desktop only) */}
+                    <div className="hidden lg:flex pointer-events-none absolute left-4 top-4 z-10 flex-wrap items-center gap-2 sm:left-6 sm:top-6">
                         <div className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-[#EBE5DC] bg-white/95 px-4 py-2 text-xs font-bold text-[#19120D] shadow-md backdrop-blur">
                             <span className="h-2 w-2 rounded-full bg-[#10B981]" />
                             <span>{places.length} Cafe di Peta Padang</span>
@@ -533,9 +620,9 @@ export function PlacesMapView({
                         </button>
                     </div>
 
-                    {/* Floating Preview Card when a Place is Selected */}
+                    {/* Floating Preview Card when a Place is Selected (Desktop only) */}
                     {selectedPlace && (
-                        <div className="pointer-events-auto absolute inset-x-4 bottom-4 z-20 mx-auto max-w-md sm:bottom-6">
+                        <div className="hidden lg:block pointer-events-auto absolute inset-x-4 bottom-4 z-20 mx-auto max-w-md sm:bottom-6">
                             <div className="group relative flex cursor-pointer items-center gap-4 rounded-3xl border border-[#EBE5DC] bg-white/95 p-3.5 shadow-xl backdrop-blur-xl sm:p-4 transition hover:border-[#FF5C35]/50">
                                 {/* Stretched Link for the entire preview card */}
                                 <Link
@@ -609,105 +696,149 @@ export function PlacesMapView({
                 </div>
             </div>
 
-            {/* Mobile Bottom Horizontal Snapping Place Cards Carousel - Aligned with Stitch Screen 252863f1beb84271b57c384f171e43ac */}
-            <div className="block lg:hidden -mt-6">
-                <div className="mb-2.5 flex items-center justify-between px-1">
-                    <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-extrabold text-[#19120D]">
-                            Daftar Spot di Peta
-                        </span>
-                        <span className="rounded-full bg-[#FFEAE5] px-2 py-0.5 text-[10px] font-bold text-[#FF5C35]">
-                            {filteredPlaces.length}
+            {/* Mobile Bottom Floating Preview Card Carousel (Overlaid Above Map) - Aligned with Stitch 252863f1beb84271b57c384f171e43ac */}
+            <div className="block lg:hidden -mt-48 z-20 w-full pb-2 relative px-3 sm:px-0">
+                {/* Carousel Header Badge Pill */}
+                <div className="mb-2 flex items-center justify-between px-1">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md shadow-xs border border-[#e4e2de]/60">
+                        <span className="w-2 h-2 rounded-full bg-[#ac3311] animate-pulse" />
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-[#0d0401]">
+                            {places.length} Spot di Sekitarmu
                         </span>
                     </div>
-                    <span className="text-[11px] font-medium text-[#756A63]">
-                        Ketuk untuk arahkan peta 📍
+                    <span className="text-[10.5px] font-medium text-[#4e4540] bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-md border border-[#e4e2de]/60 shadow-xs">
+                        Geser kartu ➔
                     </span>
                 </div>
 
-                <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-3 pt-1 snap-x snap-mandatory overscroll-x-contain">
-                    {filteredPlaces.map((place) => {
+                {/* Horizontal Cards Track */}
+                <div className="no-scrollbar flex gap-3 overflow-x-auto px-1 pb-3 pt-1 snap-x snap-mandatory overscroll-x-contain">
+                    {places.map((place) => {
                         const isSelected = selectedPlace?.id === place.id;
                         const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
                         const openStatus = getPlaceOpenStatus(place.opening_hours);
+                        const coords = getPlaceCoordinates(place);
+                        const distKm = userCoords ? calculateDistanceKm(userCoords.lat, userCoords.lng, coords.lat, coords.lng) : null;
+                        const distText = distKm !== null ? `${formatDistance(distKm)} • ` : "";
+                        const priceText = place.price_range ? place.price_range.replace(/Rp\s*/i, "").replace(/000\b/g, "k") : "18k";
 
                         return (
-                            <div
+                            <article
                                 key={place.id}
-                                id={`map-card-${place.id}`}
+                                id={`mobile-map-card-${place.id}`}
                                 onClick={() => handleFocusPlace(place)}
-                                className={`w-[78vw] max-w-[280px] shrink-0 snap-center cursor-pointer rounded-2xl p-3 transition-all duration-200 ${
+                                className={`cafe-card snap-center shrink-0 w-[86vw] max-w-[340px] bg-white rounded-2xl p-3 shadow-[0_12px_32px_-4px_rgba(41,28,20,0.14),0_4px_12px_-2px_rgba(41,28,20,0.06)] flex flex-col gap-2.5 transition-all cursor-pointer ${
                                     isSelected
-                                        ? "border-2 border-[#FF5C35] bg-white ring-2 ring-[#FF5C35]/25 shadow-md"
-                                        : "border border-[#EBE5DC] bg-[#FAF6F0] hover:border-[#FF5C35]/40 hover:bg-white"
+                                        ? "ring-2 ring-[#ac3311]"
+                                        : "border border-[#e4e2de]/70"
                                 }`}
                             >
-                                <div className="flex gap-3">
-                                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[#19120D]">
-                                        <img
-                                            src={imageUrl}
-                                            alt={place.name}
-                                            className="h-full w-full object-cover"
-                                            loading="lazy"
+                                {/* Card Image Segment */}
+                                <div className="relative w-full h-36 rounded-xl overflow-hidden bg-[#efeeea]">
+                                    <Image
+                                        src={imageUrl}
+                                        alt={place.name}
+                                        fill
+                                        sizes="340px"
+                                        className="object-cover"
+                                    />
+                                    {/* Frosted Status Badge */}
+                                    <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md shadow-xs">
+                                        <span
+                                            className={`w-2 h-2 rounded-full ${
+                                                openStatus.variant === "24hours"
+                                                    ? "bg-amber-500 animate-pulse"
+                                                    : openStatus.isOpen
+                                                    ? "bg-emerald-500 animate-pulse"
+                                                    : "bg-[#80756f]"
+                                            }`}
                                         />
-                                        <span className={`absolute left-1.5 top-1.5 rounded-md px-1.5 py-0.5 text-[9px] font-extrabold text-white ${
-                                            isSelected ? "bg-[#FF5C35]" : "bg-[#19120D]/80"
-                                        }`}>
-                                            {isSelected ? "Aktif" : "Spot"}
+                                        <span className="text-[11px] font-bold text-[#0d0401]">
+                                            {openStatus.is24Hours
+                                                ? "Buka 24 Jam"
+                                                : openStatus.isOpen
+                                                ? "Buka"
+                                                : "Tutup"}
                                         </span>
                                     </div>
+                                    {/* Bookmark Action */}
+                                    <button
+                                        type="button"
+                                        aria-label={`Simpan ${place.name}`}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            togglePlace(place);
+                                        }}
+                                        className={`absolute top-2.5 right-2.5 w-8 h-8 rounded-full backdrop-blur-md flex items-center justify-center transition-colors shadow-xs ${
+                                            isPlaceSaved(place.slug)
+                                                ? "bg-[#ac3311] text-white"
+                                                : "bg-white/90 text-[#0d0401] hover:text-[#ac3311]"
+                                        }`}
+                                    >
+                                        <Bookmark className={`h-4 w-4 ${isPlaceSaved(place.slug) ? "fill-current" : ""}`} />
+                                    </button>
+                                </div>
 
-                                    <div className="flex min-w-0 flex-1 flex-col justify-between">
-                                        <div>
-                                            <div className="flex items-center gap-1.5">
-                                                <span
-                                                    className={`h-2 w-2 rounded-full ${
-                                                        openStatus.variant === "24hours"
-                                                            ? "bg-amber-500 animate-pulse"
-                                                            : openStatus.isOpen
-                                                            ? "bg-[#10B981] animate-pulse"
-                                                            : "bg-[#A39B95]"
-                                                    }`}
-                                                />
-                                                <span
-                                                    className={`text-[10px] font-semibold ${
-                                                        openStatus.isOpen ? "text-[#10B981]" : "text-[#756A63]"
-                                                    }`}
-                                                >
-                                                    {openStatus.isOpen ? "Buka" : "Tutup"}
-                                                </span>
-                                            </div>
-                                            <h4 className="mt-0.5 truncate font-sans text-sm font-bold text-[#19120D]">
+                                {/* Details Info */}
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div className="min-w-0 flex-1">
+                                            <h3 className="font-bold text-[15.5px] text-[#0d0401] truncate leading-snug">
                                                 {place.name}
-                                            </h4>
-                                            <p className="truncate text-[11px] text-[#756A63]">
-                                                {place.area || "Padang"}
+                                            </h3>
+                                            <p className="text-[11.5px] text-[#4e4540] truncate">
+                                                {place.vibe || "Coffee Shop"} • {distText}{place.area || "Padang"}
                                             </p>
                                         </div>
-
-                                        <div className="flex items-center justify-between border-t border-[#EBE5DC]/70 pt-1.5">
-                                            <span className="text-[11px] font-bold text-[#FF5C35]">
-                                                {place.price_range || "Rp 18k+"}
-                                            </span>
-                                            <Link
-                                                href={`/places/${place.slug}`}
-                                                onClick={(e) => e.stopPropagation()}
-                                                className="inline-flex items-center gap-0.5 text-[10.5px] font-bold text-[#19120D] hover:text-[#FF5C35]"
-                                            >
-                                                <span>Detail</span>
-                                                <ArrowRight className="h-3 w-3" />
-                                            </Link>
+                                        <div className="shrink-0 text-right">
+                                            <span className="text-[9.5px] text-[#80756f] block uppercase tracking-wider font-semibold">Mulai</span>
+                                            <span className="text-[14px] text-[#ac3311] font-bold">Rp {priceText}</span>
                                         </div>
                                     </div>
+
+                                    {/* Feature Chips */}
+                                    <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[10.5px] font-semibold">
+                                            <Wifi className="h-3 w-3" /> Wi-Fi
+                                        </span>
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#efeeea] text-[#4e4540] text-[10.5px] font-semibold">
+                                            <Zap className="h-3 w-3 text-[#ac3311]" /> Stopkontak
+                                        </span>
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#ffdbd1]/60 text-[#ac3311] text-[10.5px] font-semibold">
+                                            {place.vibe || "Kondusif"}
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
+
+                                {/* Dual Action Buttons */}
+                                <div className="grid grid-cols-2 gap-2 pt-1">
+                                    <a
+                                        href={place.google_maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${place.name} Padang`)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="h-10 rounded-lg bg-[#efeeea] text-[#0d0401] text-[12px] font-bold flex items-center justify-center gap-1.5 active:bg-[#eae8e4] transition-colors"
+                                    >
+                                        <Navigation className="h-3.5 w-3.5 text-[#ac3311]" />
+                                        <span>Rute (Maps)</span>
+                                    </a>
+                                    <Link
+                                        href={`/places/${place.slug}`}
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="h-10 rounded-lg bg-[#ac3311] text-white text-[12px] font-bold flex items-center justify-center gap-1 active:bg-[#962c0e] transition-colors shadow-xs"
+                                    >
+                                        <span>Detail Kafe</span>
+                                        <ArrowRight className="h-3.5 w-3.5" />
+                                    </Link>
+                                </div>
+                            </article>
                         );
                     })}
                 </div>
             </div>
 
             {/* Eksplorasi Berdasarkan Karakter Area - Aligned with Stitch 6b54b60a2a4846d38bc2c9cfe2c993f3 */}
-            <section className="border-t border-[#EBE5DC] pt-10">
+            <section className="hidden lg:block border-t border-[#EBE5DC] pt-10">
                 <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                     <div>
                         <div className="mb-1.5 flex items-center gap-2">
@@ -765,7 +896,7 @@ export function PlacesMapView({
             </section>
 
             {/* Owner CTA Banner */}
-            <section className="pt-4">
+            <section className="hidden lg:block pt-4">
                 <div className="relative flex flex-col items-center justify-between gap-8 overflow-hidden rounded-[2.5rem] border border-[#FF5C35]/30 bg-gradient-to-r from-[#1E130B] via-[#2A180E] to-[#140D08] p-8 text-white shadow-2xl md:flex-row sm:p-12">
                     <div className="relative z-10 max-w-xl">
                         <div className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-[#FF5C35]/40 bg-[#FF5C35]/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#FDBA74]">
