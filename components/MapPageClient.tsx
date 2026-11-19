@@ -14,7 +14,6 @@ import {
     X,
 } from "lucide-react";
 import type { Place } from "@/types/database";
-import { PlaceCard } from "@/components/PlaceCard";
 import {
     calculateDistanceKm,
     getPlaceCoordinates,
@@ -336,24 +335,6 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                     places={filteredPlaces}
                     userCoords={userCoords}
                 />
-
-                {/* Mobile Bottom Horizontal Snapping Place Cards Carousel - Aligned with Stitch Screen 252863f1beb84271b57c384f171e43ac */}
-                <div className="mt-3 block sm:hidden">
-                    <div className="mb-2 flex items-center justify-between px-1">
-                        <span className="text-[12px] font-extrabold text-[#0d0401]">
-                            Spot Kopi di Peta ({filteredPlaces.length})
-                        </span>
-                        <span className="text-[10.5px] font-medium text-[#756A63]">Geser kartu ➔</span>
-                    </div>
-
-                    <div className="no-scrollbar -mx-3 flex gap-2.5 overflow-x-auto px-3 pb-2 snap-x snap-mandatory">
-                        {filteredPlaces.slice(0, 10).map((place) => (
-                            <div key={place.id} className="w-[72vw] max-w-[260px] shrink-0 snap-center">
-                                <PlaceCard place={place} />
-                            </div>
-                        ))}
-                    </div>
-                </div>
             </div>
         </main>
     );

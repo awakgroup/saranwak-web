@@ -81,9 +81,19 @@ export function PlacesMapView({
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<L.Map | null>(null);
     const markersLayerRef = useRef<L.LayerGroup | null>(null);
+    const markersRef = useRef<Map<string, L.Marker>>(new Map());
     const [selectedPlace, setSelectedPlace] = useState<Place | null>(places[0] || null);
     const [isMapReady, setIsMapReady] = useState(false);
     const [activeTab, setActiveTab] = useState<"semua" | "nugas" | "santai">("semua");
+
+    // Sync selectedPlace if places change and current selectedPlace is not in list
+    useEffect(() => {
+        if (places.length > 0) {
+            if (!selectedPlace || !places.some((p) => p.id === selectedPlace.id)) {
+                setSelectedPlace(places[0]);
+            }
+        }
+    }, [places]);
 
     // Filter list kafe di sebelah kiri peta berdasarkan quick filter tab
     const filteredPlaces = useMemo(() => {
@@ -174,6 +184,7 @@ export function PlacesMapView({
 
             map.invalidateSize();
             markersLayer.clearLayers();
+            markersRef.current.clear();
 
             if (places.length === 0 && !userCoords) return;
 
@@ -233,15 +244,17 @@ export function PlacesMapView({
                     iconAnchor: [0, 0],
                 });
 
-                const marker = L.marker([lat, lng], { icon: customIcon });
+                const marker = L.marker([lat, lng], {
+                    icon: customIcon,
+                    zIndexOffset: isSelected ? 1000 : 0,
+                });
 
                 marker.on("click", () => {
-                    setSelectedPlace(place);
-                    if (onSelectPlace) onSelectPlace(place);
-                    map.panTo([lat, lng], { animate: true, duration: 0.5 });
+                    handleFocusPlace(place);
                 });
 
                 markersLayer.addLayer(marker);
+                markersRef.current.set(place.id, marker);
             });
 
             // Fit map to markers bounds
@@ -254,18 +267,80 @@ export function PlacesMapView({
         }).catch((err) => {
             console.error("Gagal memperbarui markers peta:", err);
         });
-    }, [places, isMapReady, userCoords]); // Hapus selectedPlace?.id agar tidak reset bounds saat kafe diklik
+    }, [places, isMapReady, userCoords]);
 
     const handleFocusPlace = (place: Place) => {
         setSelectedPlace(place);
         if (onSelectPlace) onSelectPlace(place);
+
         if (mapInstanceRef.current) {
             const coords = getPlaceCoordinates(place);
-            mapInstanceRef.current.panTo([coords.lat, coords.lng], {
+            // Smoothly fly to the marker at zoom 16
+            mapInstanceRef.current.flyTo([coords.lat, coords.lng], 16, {
                 animate: true,
-                duration: 0.5,
+                duration: 0.8,
             });
-            mapInstanceRef.current.setZoom(15);
+
+            // Update DOM classes and z-index for all markers
+            markersRef.current.forEach((marker, id) => {
+                const isCurrent = id === place.id;
+                marker.setZIndexOffset(isCurrent ? 1000 : 0);
+                const el = marker.getElement();
+                if (el) {
+                    const pinWrapper = el.querySelector(".saranwak-pin-wrapper");
+                    const pin = el.querySelector(".saranwak-pin");
+                    const pinDot = el.querySelector(".saranwak-pin-dot");
+                    const pinPointer = el.querySelector(".saranwak-pin-pointer");
+                    if (pinWrapper) {
+                        if (isCurrent) {
+                            pinWrapper.classList.add("selected");
+                        } else {
+                            pinWrapper.classList.remove("selected");
+                        }
+                    }
+                    if (pin) {
+                        if (isCurrent) {
+                            pin.classList.add("!bg-[#FF5C35]", "!text-white", "ring-4", "ring-[#FF5C35]/30");
+                        } else {
+                            pin.classList.remove("!bg-[#FF5C35]", "!text-white", "ring-4", "ring-[#FF5C35]/30");
+                        }
+                    }
+                    if (pinDot) {
+                        if (isCurrent) {
+                            pinDot.classList.add("!bg-white");
+                        } else {
+                            pinDot.classList.remove("!bg-white");
+                        }
+                    }
+                    if (pinPointer) {
+                        if (isCurrent) {
+                            pinPointer.classList.add("!border-t-[#FF5C35]", "!bg-[#FF5C35]");
+                        } else {
+                            pinPointer.classList.remove("!border-t-[#FF5C35]", "!bg-[#FF5C35]");
+                        }
+                    }
+                }
+            });
+        }
+
+        // Auto-scroll the active card into view in horizontal carousel or desktop list
+        if (typeof document !== "undefined") {
+            const activeCardEl = document.getElementById(`map-card-${place.id}`);
+            if (activeCardEl) {
+                activeCardEl.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+            }
+            const activeDesktopCardEl = document.getElementById(`map-desktop-card-${place.id}`);
+            if (activeDesktopCardEl) {
+                activeDesktopCardEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+        }
+
+        // On mobile, smoothly scroll map into view if it's out of viewport
+        if (typeof window !== "undefined" && window.innerWidth < 1024 && mapContainerRef.current) {
+            const rect = mapContainerRef.current.getBoundingClientRect();
+            if (rect.top < 50 || rect.bottom > window.innerHeight) {
+                mapContainerRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
         }
     };
 
@@ -291,8 +366,8 @@ export function PlacesMapView({
         <div className="w-full space-y-12">
             {/* Split Layout: Kolom Kiri List & Kolom Kanan Peta Interaktif - Aligned with Stitch 6b54b60a2a4846d38bc2c9cfe2c993f3 */}
             <div className="grid h-auto w-full grid-cols-1 gap-6 lg:h-[660px] lg:grid-cols-12">
-                {/* KOLOM KIRI (col-span-5): Daftar Kafe Terdekat & Terkurasi */}
-                <aside className="flex h-[420px] flex-col overflow-hidden rounded-3xl border border-[#EBE5DC] bg-[#FAF6F0] p-4 shadow-sm sm:p-5 lg:col-span-5 lg:h-full">
+                {/* KOLOM KIRI (col-span-5): Daftar Kafe Terdekat & Terkurasi (Hanya tampil di Desktop/lg) */}
+                <aside className="hidden lg:flex flex-col overflow-hidden rounded-3xl border border-[#EBE5DC] bg-[#FAF6F0] p-4 shadow-sm sm:p-5 lg:col-span-5 lg:h-full">
                     {/* List Header */}
                     <div className="flex items-center justify-between border-b border-[#EBE5DC] pb-3.5">
                         <div>
@@ -353,6 +428,7 @@ export function PlacesMapView({
                             return (
                                 <article
                                     key={place.id}
+                                    id={`map-desktop-card-${place.id}`}
                                     onClick={() => handleFocusPlace(place)}
                                     className={`group cursor-pointer rounded-2xl p-3.5 transition-all ${
                                         isSelected
@@ -422,7 +498,7 @@ export function PlacesMapView({
                 </aside>
 
                 {/* KOLOM KANAN (col-span-7): Interactive Map Canvas */}
-                <div className="relative h-[500px] w-full overflow-hidden rounded-3xl border border-[#EBE5DC] bg-[#EDE8E1] shadow-sm select-none lg:col-span-7 lg:h-full">
+                <div className="relative h-[440px] sm:h-[500px] w-full overflow-hidden rounded-3xl border border-[#EBE5DC] bg-[#EDE8E1] shadow-sm select-none lg:col-span-7 lg:h-full">
                     <div
                         ref={mapContainerRef}
                         className="absolute inset-0 h-full w-full z-0"
@@ -519,6 +595,103 @@ export function PlacesMapView({
                             </div>
                         </div>
                     )}
+                </div>
+            </div>
+
+            {/* Mobile Bottom Horizontal Snapping Place Cards Carousel - Aligned with Stitch Screen 252863f1beb84271b57c384f171e43ac */}
+            <div className="block lg:hidden -mt-6">
+                <div className="mb-2.5 flex items-center justify-between px-1">
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-extrabold text-[#19120D]">
+                            Daftar Spot di Peta
+                        </span>
+                        <span className="rounded-full bg-[#FFEAE5] px-2 py-0.5 text-[10px] font-bold text-[#FF5C35]">
+                            {filteredPlaces.length}
+                        </span>
+                    </div>
+                    <span className="text-[11px] font-medium text-[#756A63]">
+                        Ketuk untuk arahkan peta 📍
+                    </span>
+                </div>
+
+                <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-3 pt-1 snap-x snap-mandatory">
+                    {filteredPlaces.map((place) => {
+                        const isSelected = selectedPlace?.id === place.id;
+                        const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
+                        const openStatus = getPlaceOpenStatus(place.opening_hours);
+
+                        return (
+                            <div
+                                key={place.id}
+                                id={`map-card-${place.id}`}
+                                onClick={() => handleFocusPlace(place)}
+                                className={`w-[78vw] max-w-[280px] shrink-0 snap-center cursor-pointer rounded-2xl p-3 transition-all duration-200 ${
+                                    isSelected
+                                        ? "border-2 border-[#FF5C35] bg-white ring-2 ring-[#FF5C35]/25 shadow-md"
+                                        : "border border-[#EBE5DC] bg-[#FAF6F0] hover:border-[#FF5C35]/40 hover:bg-white"
+                                }`}
+                            >
+                                <div className="flex gap-3">
+                                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[#19120D]">
+                                        <img
+                                            src={imageUrl}
+                                            alt={place.name}
+                                            className="h-full w-full object-cover"
+                                            loading="lazy"
+                                        />
+                                        <span className={`absolute left-1.5 top-1.5 rounded-md px-1.5 py-0.5 text-[9px] font-extrabold text-white ${
+                                            isSelected ? "bg-[#FF5C35]" : "bg-[#19120D]/80"
+                                        }`}>
+                                            {isSelected ? "Aktif" : "Spot"}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex min-w-0 flex-1 flex-col justify-between">
+                                        <div>
+                                            <div className="flex items-center gap-1.5">
+                                                <span
+                                                    className={`h-2 w-2 rounded-full ${
+                                                        openStatus.variant === "24hours"
+                                                            ? "bg-amber-500 animate-pulse"
+                                                            : openStatus.isOpen
+                                                            ? "bg-[#10B981] animate-pulse"
+                                                            : "bg-[#A39B95]"
+                                                    }`}
+                                                />
+                                                <span
+                                                    className={`text-[10px] font-semibold ${
+                                                        openStatus.isOpen ? "text-[#10B981]" : "text-[#756A63]"
+                                                    }`}
+                                                >
+                                                    {openStatus.isOpen ? "Buka" : "Tutup"}
+                                                </span>
+                                            </div>
+                                            <h4 className="mt-0.5 truncate font-sans text-sm font-bold text-[#19120D]">
+                                                {place.name}
+                                            </h4>
+                                            <p className="truncate text-[11px] text-[#756A63]">
+                                                {place.area || "Padang"}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-center justify-between border-t border-[#EBE5DC]/70 pt-1.5">
+                                            <span className="text-[11px] font-bold text-[#FF5C35]">
+                                                {place.price_range || "Rp 18k+"}
+                                            </span>
+                                            <Link
+                                                href={`/places/${place.slug}`}
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="inline-flex items-center gap-0.5 text-[10.5px] font-bold text-[#19120D] hover:text-[#FF5C35]"
+                                            >
+                                                <span>Detail</span>
+                                                <ArrowRight className="h-3 w-3" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 
