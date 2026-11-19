@@ -291,7 +291,7 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                     {/* Dropdown / Pills for Area Filter when tune is active or area !== 'all' */}
                     {isAreaModalOpen && (
                         <div className="mt-2 p-2.5 bg-white rounded-2xl border border-[#e4e2de] shadow-md flex flex-wrap gap-1.5 animate-fadeIn">
-                            {["all", "Padang Barat", "Padang Timur", "Padang Selatan", "Padang Utara", "Koto Tangah"].map((areaKey) => (
+                            {["all", "Padang Barat", "Padang Timur", "Padang Selatan", "Padang Utara", "Nanggalo", "Koto Tangah"].map((areaKey) => (
                                 <button
                                     key={areaKey}
                                     type="button"
@@ -382,6 +382,7 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                                     <option value="Padang Timur" className="bg-[#19120D] text-white">Padang Timur</option>
                                     <option value="Padang Selatan" className="bg-[#19120D] text-white">Padang Selatan</option>
                                     <option value="Padang Utara" className="bg-[#19120D] text-white">Padang Utara</option>
+                                    <option value="Nanggalo" className="bg-[#19120D] text-white">Nanggalo / Siteba</option>
                                     <option value="Koto Tangah" className="bg-[#19120D] text-white">Koto Tangah / Kuranji</option>
                                 </select>
                             </div>

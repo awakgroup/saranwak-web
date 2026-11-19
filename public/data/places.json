@@ -8468,5 +8468,243 @@
     "source": "curation_seed",
     "latitude": -0.9412,
     "longitude": 100.3705
+  },
+  {
+    "id": "a7d8c521-48e2-4f39-9d18-84ec92b15e01",
+    "name": "HQ Coffee & Eatery (Siteba)",
+    "slug": "hq-coffee-eatery-siteba",
+    "description": "HQ Coffee & Eatery Cabang Siteba hadir sebagai destinasi kopi dan ruang nongkrong modern di kawasan Nanggalo, Kota Padang. Memadukan arsitektur minimalis bertingkat dengan sentuhan roster industrial, HQ Siteba menyediakan pilihan area yang fleksibel: ruang indoor ber-AC dengan meja kayu luas yang sangat mendukung produktivitas (WFC/nugas), area semi-outdoor lantai dua yang sejuk, hingga halaman outdoor beralas koral asri yang pas untuk kongko santai sore hingga malam hari.",
+    "short_description": "Coffee shop & eatery modern berlantai dua di Siteba dengan ruang indoor AC nyaman untuk WFC serta area outdoor koral yang asri.",
+    "characteristics": [
+      {
+        "title": "Ruang Indoor AC Produktif & Nyaman",
+        "description": "Dilengkapi meja kayu luas, colokan memadai, pencahayaan hangat, dan pendingin ruangan yang ideal untuk kerja jarak jauh (WFC) atau nugas skripsi."
+      },
+      {
+        "title": "Area Semi-Outdoor Lantai Dua yang Lega",
+        "description": "Menyuguhkan bukaan udara segar dengan dinding kaca dan partisi roster modern untuk menikmati suasana sore Siteba."
+      },
+      {
+        "title": "Courtyard Outdoor Beralas Koral Asri",
+        "description": "Halaman terbuka dengan bebatuan koral, kanopi peneduh, dan tanaman hijau yang syahdu untuk hangout santai bersama kawan."
+      },
+      {
+        "title": "Pilihan Kopi & Makanan Lengkap",
+        "description": "Menyajikan racikan espresso-based, aneka minuman kekinian, aneka kudapan ringan, hingga sajian makanan berat yang ramah di kantong."
+      },
+      {
+        "title": "Fasilitas Komplit & Akses Mudah di Siteba",
+        "description": "Area parkir motor yang luas, rak helm terorganisir, musala/toilet bersih, dan akses lokasi strategis di jalur utama Siteba."
+      }
+    ],
+    "address": "Jl. Raya Siteba, Surau Gadang, Kec. Nanggalo, Kota Padang, Sumatera Barat 25143",
+    "area": "Nanggalo",
+    "city": "Padang",
+    "image_url": "https://drive.google.com/file/d/1WIGtteX3a2UVWmfi-jzU9nHq6ucVZoBR/view?usp=drive_link",
+    "main_image_url": "https://drive.google.com/file/d/1WIGtteX3a2UVWmfi-jzU9nHq6ucVZoBR/view?usp=drive_link",
+    "google_maps_url": "https://maps.app.goo.gl/Z7aJbnMTKvSBwtR59",
+    "instagram_url": "https://www.instagram.com/hq_coffeeandeatery/",
+    "price_range": "Rp21k - Rp56k",
+    "price_min": 21000,
+    "price_max": 56000,
+    "opening_hours": "Setiap Hari 10.00 - 23.00 WIB",
+    "is_featured": false,
+    "is_verified": true,
+    "is_published": true,
+    "created_at": "2026-11-20 01:00:00+00",
+    "updated_at": "2026-11-20 01:00:00+00",
+    "categories": {
+      "id": "3fff9d59-eb4d-4d58-a3fd-0b94ee412ee5",
+      "name": "Coffee Shop",
+      "slug": "coffee-shop",
+      "icon": "coffee"
+    },
+    "place_tags": [
+      {
+        "id": "a7d8c521-tag-wfc",
+        "tag_id": "0dee3434-90df-45e7-855f-b896c866762c",
+        "tags": {
+          "id": "0dee3434-90df-45e7-855f-b896c866762c",
+          "name": "WFC",
+          "slug": "wfc",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-nugas",
+        "tag_id": "48b8f0d3-830a-4011-8f40-2bf22a1cb91b",
+        "tags": {
+          "id": "48b8f0d3-830a-4011-8f40-2bf22a1cb91b",
+          "name": "Nugas",
+          "slug": "nugas",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-nongkrong",
+        "tag_id": "d32ddb31-b92b-4968-8f57-94834f873f41",
+        "tags": {
+          "id": "d32ddb31-b92b-4968-8f57-94834f873f41",
+          "name": "Nongkrong",
+          "slug": "nongkrong",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-meeting",
+        "tag_id": "33870e90-b97b-439a-ba92-f42a44ef695d",
+        "tags": {
+          "id": "33870e90-b97b-439a-ba92-f42a44ef695d",
+          "name": "Meeting",
+          "slug": "meeting",
+          "type": "activity"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-outdoor",
+        "tag_id": "770dd8a2-9cc8-4fde-abdb-b4bf3307a45d",
+        "tags": {
+          "id": "770dd8a2-9cc8-4fde-abdb-b4bf3307a45d",
+          "name": "Outdoor",
+          "slug": "outdoor",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-indoor",
+        "tag_id": "1318851f-58c0-413a-bbef-c9fc99ab56b2",
+        "tags": {
+          "id": "1318851f-58c0-413a-bbef-c9fc99ab56b2",
+          "name": "Indoor",
+          "slug": "indoor",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-ac",
+        "tag_id": "6ba823b6-24f3-4385-8d59-67e019ba002b",
+        "tags": {
+          "id": "6ba823b6-24f3-4385-8d59-67e019ba002b",
+          "name": "AC",
+          "slug": "ac",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-wifi",
+        "tag_id": "b50b3f65-221b-4414-a95b-3f861176d5f9",
+        "tags": {
+          "id": "b50b3f65-221b-4414-a95b-3f861176d5f9",
+          "name": "WiFi",
+          "slug": "wifi",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-colokan",
+        "tag_id": "0ea4a96b-179f-4632-9afc-ef98cdd9cb1b",
+        "tags": {
+          "id": "0ea4a96b-179f-4632-9afc-ef98cdd9cb1b",
+          "name": "Colokan",
+          "slug": "colokan",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-smoking-area",
+        "tag_id": "d4d6cb33-3692-4482-9450-bcebd328fd96",
+        "tags": {
+          "id": "d4d6cb33-3692-4482-9450-bcebd328fd96",
+          "name": "Smoking Area",
+          "slug": "smoking-area",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-toilet",
+        "tag_id": "b92499b7-880d-4c02-8aac-a4073c213a4c",
+        "tags": {
+          "id": "b92499b7-880d-4c02-8aac-a4073c213a4c",
+          "name": "Toilet",
+          "slug": "toilet",
+          "type": "facility"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-cozy",
+        "tag_id": "d30f0c87-4384-474d-ae52-976300282f7a",
+        "tags": {
+          "id": "d30f0c87-4384-474d-ae52-976300282f7a",
+          "name": "Cozy",
+          "slug": "cozy",
+          "type": "vibe"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-industrial",
+        "tag_id": "6a8e1d9e-88fb-48aa-a9c1-5a68935dc297",
+        "tags": {
+          "id": "6a8e1d9e-88fb-48aa-a9c1-5a68935dc297",
+          "name": "Industrial",
+          "slug": "industrial",
+          "type": "vibe"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-minimalis",
+        "tag_id": "aaf7132f-7daa-4461-8c91-355409f07f17",
+        "tags": {
+          "id": "aaf7132f-7daa-4461-8c91-355409f07f17",
+          "name": "Minimalis",
+          "slug": "minimalis",
+          "type": "vibe"
+        }
+      },
+      {
+        "id": "a7d8c521-tag-aesthetic",
+        "tag_id": "d0765037-ba39-4f2b-90cd-a536a9cd46c9",
+        "tags": {
+          "id": "d0765037-ba39-4f2b-90cd-a536a9cd46c9",
+          "name": "Aesthetic",
+          "slug": "aesthetic",
+          "type": "vibe"
+        }
+      }
+    ],
+    "place_photos": [
+      {
+        "id": "a7d8c521-photo-001",
+        "image_url": "https://drive.google.com/file/d/1WIGtteX3a2UVWmfi-jzU9nHq6ucVZoBR/view?usp=drive_link",
+        "caption": "Fasad modern minimalis HQ Coffee & Eatery Siteba dengan area parkir dan suasana hangat",
+        "sort_order": 0
+      },
+      {
+        "id": "a7d8c521-photo-002",
+        "image_url": "https://drive.google.com/file/d/1lZvupUscayePaDKIo0llXa1I8RIwByBE/view?usp=drive_link",
+        "caption": "Area indoor ber-AC yang tenang dan nyaman dengan meja kayu komunal untuk WFC dan nugas",
+        "sort_order": 1
+      },
+      {
+        "id": "a7d8c521-photo-003",
+        "image_url": "https://drive.google.com/file/d/1h9Dat_DePm98-ckIU5QIpSsgP0usLxNj/view?usp=drive_link",
+        "caption": "Lantai dua luas dengan jendela kaca besar dan perpaduan seating semi-outdoor",
+        "sort_order": 2
+      },
+      {
+        "id": "a7d8c521-photo-004",
+        "image_url": "https://drive.google.com/file/d/1Cr-iZ4Rsm3D2x2Rgcu9O-4QDsFKX_tyC/view?usp=drive_link",
+        "caption": "Courtyard outdoor beralas koral estetik di bawah kanopi dengan tanaman hijau",
+        "sort_order": 3
+      },
+      {
+        "id": "a7d8c521-photo-005",
+        "image_url": "https://drive.google.com/file/d/1TQdJzQeNwIq0n7utBgAJTVBKwr9owVRi/view?usp=drive_link",
+        "caption": "Sudut semi-outdoor beratap dengan partisi roster beton industrial dan lampu gantung",
+        "sort_order": 4
+      }
+    ],
+    "source": "curation_seed",
+    "latitude": -0.8970406,
+    "longitude": 100.3659713
   }
 ]

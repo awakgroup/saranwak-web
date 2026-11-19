@@ -2,6 +2,10 @@ import type { Place } from "@/types/database";
 
 // Koordinat presisi untuk seluruh spot cafe di Padang
 export const PADANG_PLACE_COORDINATES: Record<string, { lat: number; lng: number }> = {
+    "hq-coffee-eatery-siteba": {
+        "lat": -0.8970406,
+        "lng": 100.3659713
+    },
     "bat-and-arrow": {
         "lat": -0.9628,
         "lng": 100.3635

@@ -501,6 +501,120 @@ async function ensureKubikSlug(db: D1Database) {
     hasEnsuredKubikSlug = true;
 }
 
+let hasEnsuredHqSitebaSlug = false;
+
+async function ensureHqSitebaSlug(db: D1Database) {
+    if (hasEnsuredHqSitebaSlug) return;
+    try {
+        const existing = await db.prepare("SELECT id FROM places WHERE slug = 'hq-coffee-eatery-siteba'").first();
+        const mainPhotoUrl = 'https://drive.google.com/file/d/1WIGtteX3a2UVWmfi-jzU9nHq6ucVZoBR/view?usp=drive_link';
+
+        if (!existing) {
+            await db.prepare(`
+                INSERT OR IGNORE INTO places (
+                  id, name, slug, description, short_description, characteristics,
+                  category_id, address, area, city, price_min, price_max, price_range,
+                  image_url, instagram_url, google_maps_url, whatsapp_url, website_url,
+                  opening_hours, is_featured, is_active, created_at, updated_at
+                ) VALUES (
+                  'a7d8c521-48e2-4f39-9d18-84ec92b15e01',
+                  'HQ Coffee & Eatery (Siteba)',
+                  'hq-coffee-eatery-siteba',
+                  'HQ Coffee & Eatery Cabang Siteba hadir sebagai destinasi kopi dan ruang nongkrong modern di kawasan Nanggalo, Kota Padang. Memadukan arsitektur minimalis bertingkat dengan sentuhan roster industrial, HQ Siteba menyediakan pilihan area yang fleksibel: ruang indoor ber-AC dengan meja kayu luas yang sangat mendukung produktivitas (WFC/nugas), area semi-outdoor lantai dua yang sejuk, hingga halaman outdoor beralas koral asri yang pas untuk kongko santai sore hingga malam hari.',
+                  'Coffee shop & eatery modern berlantai dua di Siteba dengan ruang indoor AC nyaman untuk WFC serta area outdoor koral yang asri.',
+                  '[{"title":"Ruang Indoor AC Produktif & Nyaman","description":"Dilengkapi meja kayu luas, colokan memadai, pencahayaan hangat, dan pendingin ruangan yang ideal untuk kerja jarak jauh (WFC) atau nugas skripsi."},{"title":"Area Semi-Outdoor Lantai Dua yang Lega","description":"Menyuguhkan bukaan udara segar dengan dinding kaca dan partisi roster modern untuk menikmati suasana sore Siteba."},{"title":"Courtyard Outdoor Beralas Koral Asri","description":"Halaman terbuka dengan bebatuan koral, kanopi peneduh, dan tanaman hijau yang syahdu untuk hangout santai bersama kawan."},{"title":"Pilihan Kopi & Makanan Lengkap","description":"Menyajikan racikan espresso-based, aneka minuman kekinian, aneka kudapan ringan, hingga sajian makanan berat yang ramah di kantong."},{"title":"Fasilitas Komplit & Akses Mudah di Siteba","description":"Area parkir motor yang luas, rak helm terorganisir, musala/toilet bersih, dan akses lokasi strategis di jalur utama Siteba."}]',
+                  '3fff9d59-eb4d-4d58-a3fd-0b94ee412ee5',
+                  'Jl. Raya Siteba, Surau Gadang, Kec. Nanggalo, Kota Padang, Sumatera Barat 25143',
+                  'Nanggalo',
+                  'Padang',
+                  21000,
+                  56000,
+                  'Rp21k - Rp56k',
+                  ?,
+                  'https://www.instagram.com/hq_coffeeandeatery/',
+                  'https://maps.app.goo.gl/Z7aJbnMTKvSBwtR59',
+                  NULL,
+                  NULL,
+                  'Setiap Hari 10.00 - 23.00 WIB',
+                  0,
+                  1,
+                  '2026-11-20 01:00:00+00',
+                  '2026-11-20 01:00:00+00'
+                )
+            `).bind(mainPhotoUrl).run();
+
+            const tagIds = [
+                '0dee3434-90df-45e7-855f-b896c866762c',
+                '48b8f0d3-830a-4011-8f40-2bf22a1cb91b',
+                'd32ddb31-b92b-4968-8f57-94834f873f41',
+                '33870e90-b97b-439a-ba92-f42a44ef695d',
+                '770dd8a2-9cc8-4fde-abdb-b4bf3307a45d',
+                '1318851f-58c0-413a-bbef-c9fc99ab56b2',
+                '6ba823b6-24f3-4385-8d59-67e019ba002b',
+                'b50b3f65-221b-4414-a95b-3f861176d5f9',
+                '0ea4a96b-179f-4632-9afc-ef98cdd9cb1b',
+                'd4d6cb33-3692-4482-9450-bcebd328fd96',
+                'b92499b7-880d-4c02-8aac-a4073c213a4c',
+                'd30f0c87-4384-474d-ae52-976300282f7a',
+                '6a8e1d9e-88fb-48aa-a9c1-5a68935dc297',
+                'aaf7132f-7daa-4461-8c91-355409f07f17',
+                'd0765037-ba39-4f2b-90cd-a536a9cd46c9',
+            ];
+            for (const tagId of tagIds) {
+                await db.prepare('INSERT OR IGNORE INTO place_tags (place_id, tag_id) VALUES (?, ?)')
+                    .bind('a7d8c521-48e2-4f39-9d18-84ec92b15e01', tagId)
+                    .run();
+            }
+        }
+
+        await db.prepare("UPDATE places SET image_url = ? WHERE slug = 'hq-coffee-eatery-siteba' AND (image_url IS NULL OR image_url = '')")
+            .bind(mainPhotoUrl)
+            .run();
+
+        const galleries = [
+            {
+                id: 'a7d8c521-photo-001',
+                url: 'https://drive.google.com/file/d/1WIGtteX3a2UVWmfi-jzU9nHq6ucVZoBR/view?usp=drive_link',
+                caption: 'Fasad modern minimalis HQ Coffee & Eatery Siteba dengan area parkir dan suasana hangat',
+                order: 0
+            },
+            {
+                id: 'a7d8c521-photo-002',
+                url: 'https://drive.google.com/file/d/1lZvupUscayePaDKIo0llXa1I8RIwByBE/view?usp=drive_link',
+                caption: 'Area indoor ber-AC yang tenang dan nyaman dengan meja kayu komunal untuk WFC dan nugas',
+                order: 1
+            },
+            {
+                id: 'a7d8c521-photo-003',
+                url: 'https://drive.google.com/file/d/1h9Dat_DePm98-ckIU5QIpSsgP0usLxNj/view?usp=drive_link',
+                caption: 'Lantai dua luas dengan jendela kaca besar dan perpaduan seating semi-outdoor',
+                order: 2
+            },
+            {
+                id: 'a7d8c521-photo-004',
+                url: 'https://drive.google.com/file/d/1Cr-iZ4Rsm3D2x2Rgcu9O-4QDsFKX_tyC/view?usp=drive_link',
+                caption: 'Courtyard outdoor beralas koral estetik di bawah kanopi dengan tanaman hijau',
+                order: 3
+            },
+            {
+                id: 'a7d8c521-photo-005',
+                url: 'https://drive.google.com/file/d/1TQdJzQeNwIq0n7utBgAJTVBKwr9owVRi/view?usp=drive_link',
+                caption: 'Sudut semi-outdoor beratap dengan partisi roster beton industrial dan lampu gantung',
+                order: 4
+            }
+        ];
+
+        for (const g of galleries) {
+            await db.prepare('INSERT OR IGNORE INTO galleries (id, place_id, image_url, alt_text, sort_order) VALUES (?, ?, ?, ?, ?)')
+                .bind(g.id, 'a7d8c521-48e2-4f39-9d18-84ec92b15e01', g.url, g.caption, g.order)
+                .run();
+        }
+    } catch {
+        // Ignored
+    }
+    hasEnsuredHqSitebaSlug = true;
+}
+
 export const onRequestGet: PagesFunction<Env> = async (context) => {
     try {
         const slug = context.params.slug;
@@ -524,6 +638,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
             await ensureLalitoSlug(context.env.DB);
         } else if (slug === "kubik-koffie") {
             await ensureKubikSlug(context.env.DB);
+        } else if (slug === "hq-coffee-eatery-siteba") {
+            await ensureHqSitebaSlug(context.env.DB);
         }
 
         const place = await context.env.DB
