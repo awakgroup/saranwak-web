@@ -367,8 +367,14 @@ export default function AboutPage() {
                 {/* Footer Branding Presisi */}
                 <div className="px-5 mt-8 pt-5 border-t border-[#e4e2de]/40 flex flex-col items-center text-center relative">
                     <div className="flex items-center gap-1.5 mb-1.5">
-                        <div className="w-5 h-5 rounded-md bg-[#0d0401] flex items-center justify-center text-[#ff6e48]">
-                            <Coffee className="h-3 w-3" />
+                        <div className="relative w-5 h-5 rounded-md overflow-hidden shrink-0 shadow-xs">
+                            <Image
+                                src="/icon-192.png"
+                                alt="Saranwak"
+                                fill
+                                sizes="20px"
+                                className="object-cover"
+                            />
                         </div>
                         <span className="text-[14px] text-[#0d0401] font-bold">Saranwak</span>
                     </div>

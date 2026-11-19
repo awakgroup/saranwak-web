@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Coffee, Navigation, ArrowRight } from "lucide-react";
 import { useSavedPlaces } from "@/lib/saved-places";
 
@@ -26,8 +27,14 @@ export function Footer() {
                     {/* About Column */}
                     <div className="flex flex-col gap-4 md:col-span-5">
                         <Link href="/" className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FF5C35] text-white shadow-sm">
-                                <Coffee className="h-5 w-5" />
+                            <div className="relative flex h-9 w-9 shrink-0 overflow-hidden rounded-xl shadow-xs">
+                                <Image
+                                    src="/icon-192.png"
+                                    alt="Saranwak Logo"
+                                    fill
+                                    sizes="36px"
+                                    className="object-cover"
+                                />
                             </div>
                             <span className="font-sans text-xl font-extrabold tracking-tight text-white">
                                 Saranwak

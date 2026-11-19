@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
     Home,
@@ -98,8 +99,15 @@ export function Navbar() {
                     {/* Brand & Location Pill */}
                     <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
                         <Link href="/" className="group flex items-center gap-2.5 sm:gap-3">
-                            <div className="flex h-8 w-8 sm:h-11 sm:w-11 items-center justify-center rounded-full sm:rounded-2xl bg-[#ac3311] sm:bg-gradient-to-tr sm:from-[#D8431F] sm:via-[#FF5C35] sm:to-[#FF7E5F] text-white shadow-sm sm:shadow-md transition-transform group-hover:scale-105">
-                                <Coffee className="h-4.5 w-4.5 sm:h-6 sm:w-6" />
+                            <div className="relative flex h-8 w-8 sm:h-11 sm:w-11 shrink-0 overflow-hidden rounded-xl sm:rounded-2xl shadow-xs sm:shadow-md transition-transform group-hover:scale-105">
+                                <Image
+                                    src="/icon-192.png"
+                                    alt="Saranwak Logo"
+                                    fill
+                                    sizes="(max-width: 640px) 32px, 44px"
+                                    priority
+                                    className="object-cover"
+                                />
                             </div>
 
                             <div className="flex flex-col">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Download, Share2, PlusSquare, X } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -145,8 +146,14 @@ export function PwaRegister() {
         </button>
 
         <div className="flex items-start gap-3.5 pr-5">
-          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-[#201813] text-white shadow-md">
-            <span className="text-lg">☕</span>
+          <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-2xl shadow-md border border-[#E7D8C8]">
+            <Image
+              src="/icon-192.png"
+              alt="Saranwak App Icon"
+              fill
+              sizes="44px"
+              className="object-cover"
+            />
           </div>
 
           <div className="min-w-0 flex-1">

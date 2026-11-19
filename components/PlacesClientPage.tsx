@@ -1055,8 +1055,14 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                     {/* Mobile Editorial Footer (SCREEN_10 style) */}
                                     <div className="mt-8 pt-6 pb-6 border-t border-[#e4e2de]/60 flex flex-col items-center text-center sm:hidden">
                                         <div className="flex items-center gap-1.5 mb-1.5">
-                                            <div className="w-6 h-6 rounded-md bg-[#0d0401] flex items-center justify-center text-[#ff6e48] shadow-xs">
-                                                <Coffee className="h-3.5 w-3.5 text-white" />
+                                            <div className="relative w-6 h-6 rounded-md overflow-hidden shrink-0 shadow-xs">
+                                                <Image
+                                                    src="/icon-192.png"
+                                                    alt="Saranwak Logo"
+                                                    fill
+                                                    sizes="24px"
+                                                    className="object-cover"
+                                                />
                                             </div>
                                             <span className="text-[14px] text-[#0d0401] font-bold">Saranwak</span>
                                         </div>
