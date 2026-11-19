@@ -151,22 +151,20 @@ export async function generateMetadata({
             url: canonicalUrl,
             siteName: "Saranwak",
             type: "article",
-            images: imageUrl
-                ? [
-                    {
-                        url: imageUrl,
-                        width: 1200,
-                        height: 630,
-                        alt: place.name,
-                    },
-                ]
-                : undefined,
+            images: [
+                {
+                    url: imageUrl || `${siteUrl}/og-saranwak-banner.png`,
+                    width: 1200,
+                    height: 630,
+                    alt: place.name,
+                },
+            ],
         },
         twitter: {
             card: "summary_large_image",
             title: `${place.name} | Saranwak`,
             description: seoDescription,
-            images: imageUrl ? [imageUrl] : undefined,
+            images: [imageUrl || `${siteUrl}/og-saranwak-banner.png`],
         },
     };
 }

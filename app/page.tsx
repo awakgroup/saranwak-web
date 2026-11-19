@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { promises as fs } from "fs";
 import path from "path";
+import Image from "next/image";
 import { Coffee } from "lucide-react";
 
 import { FeaturedPlacesSection } from "@/components/home/FeaturedPlacesSection";
@@ -51,7 +52,7 @@ const homeJsonLd = {
       "name": "Saranwak",
       "alternateName": ["Saran Wak", "Saranwak Padang"],
       "url": "https://saranwak.com",
-      "logo": "https://saranwak.com/favicon.png",
+      "logo": "https://saranwak.com/icon-512.png",
       "description":
         "Panduan lokal terkurasi untuk menemukan coffee shop, cafe, dan tempat nongkrong di Padang sesuai mood dan kebutuhan.",
       "disambiguatingDescription":
@@ -143,8 +144,14 @@ export default async function Home() {
           {/* Section 6: Mobile Compact Editorial Footer */}
           <div className="block sm:hidden px-4 mt-6 pt-5 pb-4 border-t border-[#e4e2de]/70 flex flex-col items-center text-center relative">
             <div className="flex items-center gap-1.5 mb-1.5">
-              <div className="w-5 h-5 rounded-md bg-[#0d0401] flex items-center justify-center text-[#ff6e48]">
-                <Coffee className="h-3.5 w-3.5 text-[#ff6e48]" />
+              <div className="relative w-5 h-5 rounded-md overflow-hidden shrink-0 shadow-xs">
+                <Image
+                  src="/icon-192.png"
+                  alt="Saranwak Logo"
+                  fill
+                  sizes="20px"
+                  className="object-cover"
+                />
               </div>
               <span className="text-[13px] text-[#0d0401] font-bold">Saranwak</span>
             </div>
