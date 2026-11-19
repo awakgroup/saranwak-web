@@ -107,21 +107,21 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
     }, [initialPlaces, searchQuery, selectedArea, isNearbyActive, userCoords]);
 
     return (
-        <main className="min-h-screen bg-[#FAF7F2] px-3 pb-28 pt-2 sm:px-6 sm:pb-16 sm:pt-6 lg:px-8 lg:pb-24">
+        <main className="min-h-screen bg-[#FAF7F2] px-3.5 pb-24 pt-2 sm:px-6 sm:pb-16 sm:pt-6 lg:px-8 lg:pb-24">
             <div className="mx-auto max-w-7xl">
                 {/* Mobile Top Controls - Exact Match to Stitch Screen 252863f1beb84271b57c384f171e43ac */}
-                <div className="block sm:hidden w-full mb-3">
-                    <div className="sticky top-0 z-30 bg-[#FAF7F2]/95 backdrop-blur-md pt-1 pb-2 flex flex-col gap-2">
+                <div className="block sm:hidden w-full mb-2.5">
+                    <div className="sticky top-0 z-30 bg-[#FAF7F2]/95 backdrop-blur-md pt-0.5 pb-2 flex flex-col gap-2">
                         {/* Search Pill */}
                         <div className="flex items-center gap-2">
-                            <div className="flex-1 h-11 bg-white rounded-full shadow-[0_4px_16px_rgba(41,28,20,0.06)] border border-[#e4e2de]/60 flex items-center px-4 gap-2.5">
+                            <div className="flex-1 h-10 bg-white rounded-full shadow-[0_4px_16px_rgba(41,28,20,0.06)] border border-[#e4e2de]/60 flex items-center px-3.5 gap-2">
                                 <Search className="h-4 w-4 text-[#FF5C35] shrink-0" />
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Cari spot ngopi, jalan, area di Padang..."
-                                    className="w-full bg-transparent text-[#0d0401] placeholder-[#80756f]/70 text-[13px] font-medium outline-none"
+                                    className="w-full bg-transparent text-[#0d0401] placeholder-[#80756f]/70 text-[12px] font-medium outline-none"
                                 />
                                 {searchQuery && (
                                     <button
@@ -140,7 +140,7 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
                                 onClick={handleLocateUser}
                                 disabled={isLocating}
                                 aria-label="Lokasi Terdekat"
-                                className={`w-11 h-11 rounded-full flex items-center justify-center shadow-sm active:scale-95 transition-all cursor-pointer shrink-0 ${
+                                className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm active:scale-95 transition-all cursor-pointer shrink-0 ${
                                     isNearbyActive
                                         ? "bg-[#FF5C35] text-white"
                                         : "bg-white border border-[#e4e2de]/60 text-[#0d0401]"

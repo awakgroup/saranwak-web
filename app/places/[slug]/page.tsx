@@ -195,7 +195,7 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
     const jsonLd = makePlaceJsonLd(place, tags, category, galleryImages);
 
     return (
-        <main className="min-h-screen bg-[#FAF7F2] px-4 pb-28 pt-5 text-[#19120D] sm:px-5 sm:pb-16 sm:pt-8 md:pb-16 lg:px-8">
+        <main className="min-h-screen bg-[#FAF7F2] px-3.5 pb-24 pt-3 text-[#19120D] sm:px-5 sm:pb-16 sm:pt-8 md:pb-16 lg:px-8">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
@@ -253,8 +253,8 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
                     whatsappShareUrl={whatsappShareUrl}
                 />
 
-                <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
-                    <article className="min-w-0 space-y-6">
+                <div className="mt-5 grid gap-5 sm:mt-8 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
+                    <article className="min-w-0 space-y-4 sm:space-y-6">
                         <QuickSummarySection summary={quickSummary} />
 
                         {characteristics.length > 0 ? (
@@ -320,8 +320,8 @@ function HeroSection({
     const heroTags = [...activityTags, ...vibeTags].slice(0, 5);
 
     return (
-        <section className="overflow-hidden rounded-[32px] border border-[#EBE5DC] bg-white shadow-md">
-            <div className="relative min-h-[380px] overflow-hidden bg-gradient-to-b from-[#2B1D15] to-[#120B07] text-white sm:min-h-[460px] lg:min-h-[520px]">
+        <section className="overflow-hidden rounded-2xl sm:rounded-[32px] border border-[#EBE5DC] bg-white shadow-md">
+            <div className="relative min-h-[300px] overflow-hidden bg-gradient-to-b from-[#2B1D15] to-[#120B07] text-white sm:min-h-[460px] lg:min-h-[520px]">
                 <Image
                     src={mainImageUrl}
                     alt={place.name}
@@ -334,7 +334,7 @@ function HeroSection({
                 <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/45 to-black/90" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-transparent" />
 
-                <div className="relative z-10 flex min-h-[380px] flex-col justify-between p-6 sm:min-h-[460px] sm:p-8 lg:min-h-[520px] lg:p-10">
+                <div className="relative z-10 flex min-h-[300px] flex-col justify-between p-4 sm:min-h-[460px] sm:p-8 lg:min-h-[520px] lg:p-10">
                     <div className="flex flex-wrap items-center gap-2">
                         {category ? (
                             <Link
@@ -377,11 +377,11 @@ function HeroSection({
                             Spot Pilihan Padang
                         </div>
 
-                        <h1 className="mt-3 font-sans text-3xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+                        <h1 className="mt-3 font-sans text-2xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
                             {place.name}
                         </h1>
 
-                        <p className="mt-3 flex items-center gap-1.5 text-xs font-medium leading-relaxed text-stone-300 sm:text-sm">
+                        <p className="mt-2.5 flex items-center gap-1.5 text-xs font-medium leading-relaxed text-stone-300 sm:text-sm">
                             <MapPin className="h-4 w-4 shrink-0 text-[#FF5C35]" />
                             <span>
                                 {[place.area, place.city || "Padang"].filter(Boolean).join(", ")}
@@ -390,14 +390,14 @@ function HeroSection({
                         </p>
 
                         {heroTags.length > 0 ? (
-                            <div className="mt-5 flex flex-wrap gap-2">
+                            <div className="mt-4 flex flex-wrap gap-1.5 sm:mt-5 sm:gap-2">
                                 {heroTags.map((tag) => (
                                     <Link
                                         key={`${tag}-hero`}
                                         href={`/places?category=coffee-shop&tags=${encodeURIComponent(
                                             tagToSlug(tag)
                                         )}`}
-                                        className="rounded-lg border border-white/10 bg-white/10 px-3 py-1 text-xs font-medium text-stone-200 transition hover:bg-white/20"
+                                        className="rounded-lg border border-white/10 bg-white/10 px-2.5 py-1 text-[11px] font-medium text-stone-200 transition hover:bg-white/20 sm:px-3 sm:text-xs"
                                     >
                                         {tag}
                                     </Link>
@@ -408,7 +408,7 @@ function HeroSection({
                 </div>
             </div>
 
-            <div className="grid gap-3 border-t border-[#EBE5DC] bg-white p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4">
+            <div className="grid gap-2.5 border-t border-[#EBE5DC] bg-white p-3.5 sm:gap-3 sm:grid-cols-2 sm:p-5 lg:grid-cols-4">
                 <HeroAction
                     label="Buka di Google Maps"
                     icon="maps"
@@ -498,18 +498,18 @@ function QuickSummarySection({ summary }: { summary: string }) {
     if (!summary) return null;
 
     return (
-        <section className="relative overflow-hidden rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-xs sm:p-7">
+        <section className="relative overflow-hidden rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-xs sm:p-7">
             <div className="relative z-10">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
                     <Sparkles className="h-4 w-4 text-[#FF5C35]" />
                     <span>Ringkasan Cepat</span>
                 </div>
 
-                <h2 className="mt-2 font-sans text-xl font-extrabold text-[#19120D] sm:text-2xl">
+                <h2 className="mt-2 font-sans text-lg font-extrabold text-[#19120D] sm:text-2xl">
                     Cocok Buat Apa?
                 </h2>
 
-                <div className="mt-3 rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] p-4 text-sm leading-relaxed text-[#19120D] sm:p-5 sm:text-base">
+                <div className="mt-3 rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] p-3.5 text-xs leading-relaxed text-[#19120D] sm:p-5 sm:text-base">
                     {summary}
                 </div>
             </div>
@@ -593,21 +593,21 @@ function CharacteristicsSection({
     characteristics: Characteristic[];
 }) {
     return (
-        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-xs sm:p-7">
+        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-xs sm:p-7">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
                 <span className="h-2 w-2 rounded-full bg-[#FF5C35]" />
                 <span>Keunggulan Utama</span>
             </div>
 
-            <h2 className="mt-2 font-sans text-xl font-extrabold text-[#19120D] sm:text-2xl">
+            <h2 className="mt-2 font-sans text-lg font-extrabold text-[#19120D] sm:text-2xl">
                 Karakteristik Tempat
             </h2>
 
-            <div className="mt-5 grid gap-3.5 sm:grid-cols-2">
+            <div className="mt-4 grid gap-3 sm:mt-5 sm:gap-3.5 sm:grid-cols-2">
                 {characteristics.map((item, index) => (
                     <div
                         key={`${item.title}-${index}`}
-                        className="group relative flex flex-col rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] p-4.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#FF5C35]/50 hover:bg-white hover:shadow-sm"
+                        className="group relative flex flex-col rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#FF5C35]/50 hover:bg-white hover:shadow-sm sm:p-4.5"
                     >
                         <div className="mb-3 flex items-center justify-between">
                             <div className="grid h-8 w-8 place-items-center rounded-xl border border-[#EBE5DC] bg-white shadow-xs">
@@ -638,16 +638,16 @@ function CharacteristicsSection({
 
 function DescriptionSection({ description }: { description: string }) {
     return (
-        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-xs sm:p-7">
+        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-xs sm:p-7">
             <p className="text-xs font-bold uppercase tracking-wider text-[#756A63]">
                 Deskripsi
             </p>
 
-            <h2 className="mt-1 font-sans text-xl font-extrabold text-[#19120D] sm:text-2xl">
+            <h2 className="mt-1 font-sans text-lg font-extrabold text-[#19120D] sm:text-2xl">
                 Tentang Tempat Ini
             </h2>
 
-            <div className="mt-4 whitespace-pre-line text-sm font-normal leading-relaxed text-[#756A63] sm:text-base">
+            <div className="mt-3 whitespace-pre-line text-xs font-normal leading-relaxed text-[#756A63] sm:mt-4 sm:text-base">
                 {description}
             </div>
         </section>
@@ -662,14 +662,14 @@ function GallerySection({
     placeName: string;
 }) {
     return (
-        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-xs sm:p-7">
-            <div className="mb-4 flex items-center justify-between">
+        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-xs sm:p-7">
+            <div className="mb-3.5 flex items-center justify-between sm:mb-4">
                 <div>
                     <p className="text-xs font-bold uppercase tracking-wider text-[#756A63]">
                         Dokumentasi
                     </p>
 
-                    <h2 className="mt-1 font-sans text-xl font-extrabold text-[#19120D] sm:text-2xl">
+                    <h2 className="mt-1 font-sans text-lg font-extrabold text-[#19120D] sm:text-2xl">
                         Foto &amp; Suasana Tempat
                     </h2>
                 </div>
@@ -679,13 +679,13 @@ function GallerySection({
                 </span>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
                 {images.slice(0, 6).map((photo, index) => (
                     <figure
                         key={photo.id || `${photo.image_url}-${index}`}
-                        className="group overflow-hidden rounded-2xl border border-[#EBE5DC] bg-[#FAF6F0]"
+                        className="group overflow-hidden rounded-xl sm:rounded-2xl border border-[#EBE5DC] bg-[#FAF6F0]"
                     >
-                        <div className="relative h-60 w-full overflow-hidden bg-[#EAE4DC]">
+                        <div className="relative h-48 sm:h-60 w-full overflow-hidden bg-[#EAE4DC]">
                             <Image
                                 src={getSafePlaceImageUrl(photo.image_url)}
                                 alt={photo.caption || `${placeName} ${index + 1}`}
@@ -696,7 +696,7 @@ function GallerySection({
                         </div>
 
                         {photo.caption ? (
-                            <figcaption className="px-4 py-2.5 text-xs font-medium text-[#756A63]">
+                            <figcaption className="px-3.5 py-2 text-xs font-medium text-[#756A63] sm:px-4 sm:py-2.5">
                                 {photo.caption}
                             </figcaption>
                         ) : null}
@@ -713,20 +713,20 @@ function TagGroupsSection({
     groupedTags: [string, Tag[]][];
 }) {
     return (
-        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-xs sm:p-7">
+        <section className="rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-xs sm:p-7">
             <p className="text-xs font-bold uppercase tracking-wider text-[#756A63]">
                 Kelengkapan &amp; Vibes
             </p>
 
-            <h2 className="mt-1 font-sans text-xl font-extrabold text-[#19120D] sm:text-2xl">
+            <h2 className="mt-1 font-sans text-lg font-extrabold text-[#19120D] sm:text-2xl">
                 Fasilitas, Suasana, &amp; Aktivitas
             </h2>
 
-            <div className="mt-5 grid gap-4">
+            <div className="mt-3.5 grid gap-3 sm:mt-5 sm:gap-4">
                 {groupedTags.map(([type, tags]) => (
                     <div
                         key={type}
-                        className="rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] p-4.5"
+                        className="rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] p-3.5 sm:p-4.5"
                     >
                         <div className="mb-3">
                             <h3 className="font-sans text-base font-bold text-[#19120D]">
@@ -766,7 +766,7 @@ function PlaceSidebar({
     whatsappShareUrl: string;
 }) {
     return (
-        <aside className="h-fit rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-xs lg:sticky lg:top-24">
+        <aside className="h-fit rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-xs sm:p-6 lg:sticky lg:top-24">
             <div className="flex items-center gap-2">
                 <Coffee className="h-4 w-4 text-[#FF5C35]" />
                 <p className="text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
@@ -774,11 +774,11 @@ function PlaceSidebar({
                 </p>
             </div>
 
-            <h2 className="mt-1 font-sans text-xl font-extrabold text-[#19120D]">
+            <h2 className="mt-1 font-sans text-lg font-extrabold text-[#19120D] sm:text-xl">
                 Quick Info
             </h2>
 
-            <div className="mt-5 space-y-2.5">
+            <div className="mt-4 space-y-2 sm:mt-5 sm:space-y-2.5">
                 <InfoItem icon="tag" label="Kategori" value={category?.name || "Coffee Shop"} />
                 <InfoItem icon="map" label="Area & Kota" value={`${place.area || "-"}, ${place.city || "Padang"}`} />
                 <InfoItem icon="wallet" label="Perkiraan Harga" value={place.price_range || "-"} />
@@ -790,7 +790,7 @@ function PlaceSidebar({
                 <InfoItem icon="pin" label="Alamat Lengkap" value={place.address || "-"} />
             </div>
 
-            <div className="mt-6 grid gap-2.5">
+            <div className="mt-5 grid gap-2 sm:mt-6 sm:gap-2.5">
                 {place.google_maps_url ? (
                     <TrackedExternalLink
                         href={place.google_maps_url}
@@ -843,7 +843,7 @@ function PlaceSidebar({
             </div>
 
             {/* Owner Claim Listing Card */}
-            <div className="mt-8 overflow-hidden rounded-2xl border border-[#EBE5DC] bg-[#FAF6F0] p-5 shadow-xs">
+            <div className="mt-6 overflow-hidden rounded-2xl border border-[#EBE5DC] bg-[#FAF6F0] p-4 shadow-xs sm:mt-8 sm:p-5">
                 <div className="flex items-start gap-3">
                     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#FFECE5] text-xl text-[#FF5C35]">
                         💼
@@ -907,21 +907,21 @@ function InfoItem({
 
 function RelatedPlacesSection({ places }: { places: Place[] }) {
     return (
-        <section className="mt-14 border-t border-[#EBE5DC] pt-10">
-            <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <section className="mt-8 border-t border-[#EBE5DC] pt-6 sm:mt-14 sm:pt-10">
+            <div className="mb-4 flex flex-col gap-2.5 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <div className="flex items-center gap-2 mb-1.5">
+                    <div className="flex items-center gap-2 mb-1">
                         <span className="text-xs font-black uppercase tracking-wider text-[#FF5C35]">
                             Rekomendasi Lain
                         </span>
                         <span>☕</span>
                     </div>
 
-                    <h2 className="font-sans text-2xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl">
+                    <h2 className="font-sans text-xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl">
                         Tempat Serupa di Padang
                     </h2>
 
-                    <p className="mt-1 text-xs text-[#756A63] sm:text-sm">
+                    <p className="mt-0.5 text-xs text-[#756A63] sm:mt-1 sm:text-sm">
                         Pilihan coffee shop lain di sekitar area atau dengan suasana serupa.
                     </p>
                 </div>
@@ -935,7 +935,7 @@ function RelatedPlacesSection({ places }: { places: Place[] }) {
                 </Link>
             </div>
 
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3.5 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {places.map((place, index) => (
                     <PlaceCard
                         key={place.id}

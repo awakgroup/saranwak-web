@@ -86,20 +86,20 @@ export function Navbar() {
         <>
             {/* Top Header Navbar - Aligned with Stitch Landing Page dec9997f853d48fb839362e5da60ed89 */}
             <header className="sticky top-0 z-50 w-full border-b border-[#EBE5DC] bg-[#FAF7F2]/85 backdrop-blur-xl transition-all duration-300">
-                <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-5 sm:px-8 lg:px-12">
+                <div className="mx-auto flex h-14 sm:h-20 max-w-7xl items-center justify-between gap-3 sm:gap-4 px-4 sm:px-8 lg:px-12">
                     {/* Brand & Location Pill */}
-                    <div className="flex items-center gap-4 lg:gap-6">
-                        <Link href="/" className="group flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#D8431F] via-[#FF5C35] to-[#FF7E5F] text-white shadow-md shadow-[#FF5C35]/25 transition-transform group-hover:scale-105 group-hover:rotate-3">
-                                <Coffee className="h-6 w-6" />
+                    <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
+                        <Link href="/" className="group flex items-center gap-2.5 sm:gap-3">
+                            <div className="flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-tr from-[#D8431F] via-[#FF5C35] to-[#FF7E5F] text-white shadow-md shadow-[#FF5C35]/25 transition-transform group-hover:scale-105 group-hover:rotate-3">
+                                <Coffee className="h-5 w-5 sm:h-6 sm:w-6" />
                             </div>
 
                             <div className="flex flex-col">
-                                <div className="flex items-center gap-2">
-                                    <span className="font-sans text-xl font-extrabold tracking-tight text-[#19120D]">
+                                <div className="flex items-center gap-1.5 sm:gap-2">
+                                    <span className="font-sans text-lg sm:text-xl font-extrabold tracking-tight text-[#19120D]">
                                         Saranwak
                                     </span>
-                                    <span className="rounded-full bg-[#FFECE5] px-2 py-0.5 text-[11px] font-bold tracking-wide uppercase text-[#D8431F]">
+                                    <span className="rounded-full bg-[#FFECE5] px-2 py-0.5 text-[10px] sm:text-[11px] font-bold tracking-wide uppercase text-[#D8431F]">
                                         Padang
                                     </span>
                                 </div>
@@ -198,10 +198,10 @@ export function Navbar() {
                             href="/saved"
                             aria-label={`Lihat ${savedCount} tempat tersimpan`}
                             title={`${savedCount} Tempat Tersimpan`}
-                            className="group relative flex h-11 w-11 items-center justify-center rounded-full border border-[#EBE5DC] bg-white text-[#19120D] shadow-sm transition-all hover:border-[#FF5C35]/50 hover:bg-[#FAF4EE] hover:text-[#FF5C35] active:scale-95"
+                            className="group relative flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-[#EBE5DC] bg-white text-[#19120D] shadow-sm transition-all hover:border-[#FF5C35]/50 hover:bg-[#FAF4EE] hover:text-[#FF5C35] active:scale-95"
                         >
-                            <Bookmark className={`h-5 w-5 text-[#FF5C35] transition-transform group-hover:scale-110 ${savedCount > 0 ? "fill-current" : ""}`} />
-                            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-[#FF5C35] text-[10px] font-black text-white shadow-sm">
+                            <Bookmark className={`h-4 w-4 sm:h-5 sm:w-5 text-[#FF5C35] transition-transform group-hover:scale-110 ${savedCount > 0 ? "fill-current" : ""}`} />
+                            <span className="absolute -right-1 -top-1 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full border-2 border-white bg-[#FF5C35] text-[9px] sm:text-[10px] font-black text-white shadow-sm">
                                 {savedCount}
                             </span>
                         </Link>

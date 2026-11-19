@@ -57,10 +57,10 @@ export function SavedPlacesPageClient() {
     }
 
     return (
-        <main className="min-h-screen bg-[#FAF7F2] px-4 pb-28 pt-4 text-[#19120D] sm:px-6 sm:pb-20 sm:pt-6 lg:px-12 lg:pt-8">
+        <main className="min-h-screen bg-[#FAF7F2] px-3.5 pb-24 pt-3 text-[#19120D] sm:px-6 sm:pb-20 sm:pt-6 lg:px-12 lg:pt-8">
             <div className="mx-auto max-w-7xl">
                 {/* Header Section matching Stitch 5802802fb7f84fa2a44fec11c12b872b & 3e1e47bf28a6433fb552b27f81be35f5 */}
-                <div className="mb-6 flex flex-col justify-between gap-4 border-b border-[#EBE5DC] pb-6 sm:mb-8 sm:flex-row sm:items-end">
+                <div className="mb-4 flex flex-col justify-between gap-3 border-b border-[#EBE5DC] pb-4 sm:mb-8 sm:flex-row sm:items-end sm:pb-6">
                     <div>
                         <div className="mb-2 flex items-center gap-2">
                             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ffdbd1] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#ac3311]">
@@ -190,7 +190,7 @@ export function SavedPlacesPageClient() {
                             return (
                                 <article
                                     key={place.id}
-                                    className="group relative flex h-80 sm:h-auto cursor-pointer flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl border border-[#EBE5DC] bg-white sm:p-4 shadow-sm transition-all duration-300 hover:border-[#FF5C35]/40 hover:shadow-xl"
+                                    className="group relative flex h-[260px] sm:h-auto cursor-pointer flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl border border-[#EBE5DC] bg-white sm:p-4 shadow-sm transition-all duration-300 hover:border-[#FF5C35]/40 hover:shadow-xl"
                                 >
                                     {/* Mobile Full-Bleed Image / Desktop Header Photo */}
                                     <div className="relative h-full w-full overflow-hidden bg-[#0d0401] sm:h-52 sm:rounded-2xl">

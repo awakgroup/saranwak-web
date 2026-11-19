@@ -27,34 +27,34 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
     return (
         <section className="relative w-full" id="rekomendasi-populer">
             {/* Header matching Stitch Landing Page */}
-            <div className="mb-6 flex flex-col justify-between gap-4 sm:mb-8 sm:flex-row sm:items-end">
+            <div className="mb-3.5 flex items-end justify-between sm:mb-8">
                 <div>
-                    <div className="mb-1.5 flex items-center gap-2">
-                        <span className="text-xs font-black uppercase tracking-wider text-[#FF5C35]">
+                    <div className="mb-1 flex items-center gap-1.5 sm:gap-2">
+                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#FF5C35]">
                             POPULAR DESTINATIONS
                         </span>
-                        <span>☕</span>
+                        <span className="text-xs">☕</span>
                     </div>
 
-                    <h2 className="font-sans text-2xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl">
-                        Rekomendasi Terpopuler
+                    <h2 className="font-sans text-xl sm:text-3xl font-extrabold tracking-tight text-[#19120D]">
+                        Rekomendasi
                     </h2>
-                    <p className="mt-1 text-xs text-[#756A63] sm:text-sm">
+                    <p className="mt-0.5 hidden sm:block text-xs text-[#756A63] sm:text-sm">
                         Handpicked coffee shops di Padang dengan suasana kondusif dan rasa teruji.
                     </p>
                 </div>
 
                 <Link
                     href="/places?category=coffee-shop"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#FF5C35] transition-colors hover:text-[#D8431F] sm:text-sm"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-[#FF5C35] transition-colors hover:text-[#D8431F] sm:text-sm shrink-0"
                 >
                     <span>Lihat Semua</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Link>
             </div>
 
-            {/* 4 Cards: Mobile Horizontal Snap Carousel (160x220), Desktop 4-Column Grid - Aligned with Stitch 3f54a1c6760d4badb78d709f20d14900 & dec9997f853d48fb839362e5da60ed89 */}
-            <div className="no-scrollbar -mx-4 flex gap-3.5 overflow-x-auto px-5 pb-2 snap-x snap-mandatory sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
+            {/* 4 Cards: Mobile Horizontal Snap Carousel (155x215), Desktop 4-Column Grid */}
+            <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-1.5 snap-x snap-mandatory sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
                 {displayPlaces.map((place) => {
                     const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
                     const district = getDistrictName(place);
@@ -66,7 +66,7 @@ export function FeaturedPlacesSection({ places }: FeaturedPlacesSectionProps) {
                         <article
                             key={place.id}
                             onClick={() => router.push(`/places/${place.slug}`)}
-                            className="group relative flex h-[220px] w-[160px] shrink-0 snap-start cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#0d0401] p-3 text-white shadow-sm transition-all duration-300 hover:border-[#FF5C35]/50 active:scale-[0.98] sm:h-96 sm:w-auto sm:rounded-3xl sm:p-5 sm:shadow-bento"
+                            className="group relative flex h-[215px] w-[155px] shrink-0 snap-start cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#0d0401] p-3 text-white shadow-xs transition-all duration-300 hover:border-[#FF5C35]/50 active:scale-[0.98] sm:h-96 sm:w-auto sm:rounded-3xl sm:p-5 sm:shadow-bento"
                         >
                             {/* Accessible Link overlay for crawlers & keyboard navigation */}
                             <Link

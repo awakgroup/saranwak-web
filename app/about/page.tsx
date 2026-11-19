@@ -306,18 +306,18 @@ export default function AboutPage() {
             </section>
 
             {/* 2. Misi & Dampak Nyata */}
-            <section className="w-full border-b border-[#EBE5DC] bg-[#F5F0E8] py-14 md:py-16">
-                <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-                    <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
+            <section className="w-full border-b border-[#EBE5DC] bg-[#F5F0E8] py-8 sm:py-14 md:py-16">
+                <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12">
+                    <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12 lg:gap-12">
                         <div className="lg:col-span-5">
-                            <span className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#FF5C35]">
+                            <span className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-[#FF5C35]">
                                 MISI &amp; DAMPAK NYATA
                             </span>
-                            <h2 className="font-sans text-2xl font-extrabold leading-tight tracking-tight text-[#19120D] sm:text-3xl">
+                            <h2 className="font-sans text-xl font-extrabold leading-tight tracking-tight text-[#19120D] sm:text-3xl">
                                 Hadir agar tak ada lagi waktu terbuang karena salah pilih tempat.
                             </h2>
                         </div>
-                        <div className="flex flex-col gap-3 text-sm leading-relaxed text-[#756A63] lg:col-span-7 sm:text-base">
+                        <div className="flex flex-col gap-2.5 text-xs leading-relaxed text-[#756A63] lg:col-span-7 sm:text-base">
                             <p>
                                 Hadirnya Saranwak bertujuan mempermudah mahasiswa, pekerja remote, freelancer,
                                 dan warga dalam menemukan tempat yang tepat tanpa rasa kecewa (tanpa zonk).
@@ -335,34 +335,34 @@ export default function AboutPage() {
             </section>
 
             {/* 3. Empat Tolok Ukur Kurasi Saranwak */}
-            <section className="w-full py-16 lg:py-20">
-                <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-                    <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <section className="w-full py-8 sm:py-16 lg:py-20">
+                <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12">
+                    <div className="mb-6 flex flex-col justify-between gap-2.5 sm:mb-10 sm:gap-4 md:flex-row md:items-end">
                         <div>
                             <span className="mb-1 block text-xs font-bold uppercase tracking-widest text-[#FF5C35]">
                                 NILAI &amp; TOLOK UKUR KURASI
                             </span>
-                            <h2 className="font-sans text-2xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl">
+                            <h2 className="font-sans text-xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl">
                                 Empat Tolok Ukur Saranwak
                             </h2>
                         </div>
-                        <p className="max-w-md text-sm leading-relaxed text-[#756A63]">
+                        <p className="max-w-md text-xs leading-relaxed text-[#756A63] sm:text-sm">
                             Setiap rekomendasi yang Anda temukan di Saranwak telah melewati kualifikasi ketat
                             tanpa kompromi demi pengalaman ngopi terbaik Anda.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-3.5 sm:gap-5 md:grid-cols-2 lg:grid-cols-4">
                         {/* 01 */}
-                        <div className="group flex flex-col justify-between rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-sm transition-all hover:border-[#FF5C35]/50 hover:shadow-md">
+                        <div className="group flex flex-col justify-between rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-sm transition-all hover:border-[#FF5C35]/50 hover:shadow-md sm:p-6">
                             <div>
-                                <div className="mb-5 flex items-center justify-between">
-                                    <span className="font-sans text-2xl font-black tracking-tight text-[#FF5C35]">01</span>
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F8F5F0] text-[#19120D] transition-colors group-hover:bg-[#FFECE5] group-hover:text-[#FF5C35]">
-                                        <CheckCircle2 className="h-5 w-5" />
+                                <div className="mb-3.5 flex items-center justify-between sm:mb-5">
+                                    <span className="font-sans text-xl font-black tracking-tight text-[#FF5C35] sm:text-2xl">01</span>
+                                    <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-[#F8F5F0] text-[#19120D] transition-colors group-hover:bg-[#FFECE5] group-hover:text-[#FF5C35]">
+                                        <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </div>
                                 </div>
-                                <h3 className="mb-2 font-sans text-base font-bold leading-snug text-[#19120D]">
+                                <h3 className="mb-1.5 font-sans text-sm font-bold leading-snug text-[#19120D] sm:text-base">
                                     Kebutuhan Spesifik &amp; Fasilitas Riil
                                 </h3>
                                 <p className="text-xs leading-relaxed text-[#756A63] sm:text-[13px]">
@@ -370,22 +370,22 @@ export default function AboutPage() {
                                     di setiap meja, Wi-Fi kencang, serta pemisahan area smoking dan indoor ber-AC.
                                 </p>
                             </div>
-                            <div className="mt-5 flex items-center gap-1.5 border-t border-[#F0EAE1] pt-4 text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
+                            <div className="mt-4 flex items-center gap-1.5 border-t border-[#F0EAE1] pt-3 text-xs font-bold uppercase tracking-wider text-[#FF5C35] sm:mt-5 sm:pt-4">
                                 <ShieldCheck className="h-4 w-4" />
                                 <span>Fasilitas Terkonfirmasi</span>
                             </div>
                         </div>
 
                         {/* 02 */}
-                        <div className="group flex flex-col justify-between rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-sm transition-all hover:border-[#FF5C35]/50 hover:shadow-md">
+                        <div className="group flex flex-col justify-between rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-sm transition-all hover:border-[#FF5C35]/50 hover:shadow-md sm:p-6">
                             <div>
-                                <div className="mb-5 flex items-center justify-between">
-                                    <span className="font-sans text-2xl font-black tracking-tight text-[#FF5C35]">02</span>
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F8F5F0] text-[#19120D] transition-colors group-hover:bg-[#FFECE5] group-hover:text-[#FF5C35]">
-                                        <Laptop className="h-5 w-5" />
+                                <div className="mb-3.5 flex items-center justify-between sm:mb-5">
+                                    <span className="font-sans text-xl font-black tracking-tight text-[#FF5C35] sm:text-2xl">02</span>
+                                    <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-[#F8F5F0] text-[#19120D] transition-colors group-hover:bg-[#FFECE5] group-hover:text-[#FF5C35]">
+                                        <Laptop className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </div>
                                 </div>
-                                <h3 className="mb-2 font-sans text-base font-bold leading-snug text-[#19120D]">
+                                <h3 className="mb-1.5 font-sans text-sm font-bold leading-snug text-[#19120D] sm:text-base">
                                     Solusi untuk Nugas &amp; Ngerjain Skripsi
                                 </h3>
                                 <p className="text-xs leading-relaxed text-[#756A63] sm:text-[13px]">
@@ -393,22 +393,22 @@ export default function AboutPage() {
                                     suasana kondusif tanpa musik memekakkan telinga, dan harga menu yang bersahabat.
                                 </p>
                             </div>
-                            <div className="mt-5 flex items-center gap-1.5 border-t border-[#F0EAE1] pt-4 text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
+                            <div className="mt-4 flex items-center gap-1.5 border-t border-[#F0EAE1] pt-3 text-xs font-bold uppercase tracking-wider text-[#FF5C35] sm:mt-5 sm:pt-4">
                                 <Coffee className="h-4 w-4" />
                                 <span>Kondusif &amp; Teruji</span>
                             </div>
                         </div>
 
                         {/* 03 */}
-                        <div className="group flex flex-col justify-between rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-sm transition-all hover:border-[#FF5C35]/50 hover:shadow-md">
+                        <div className="group flex flex-col justify-between rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-sm transition-all hover:border-[#FF5C35]/50 hover:shadow-md sm:p-6">
                             <div>
-                                <div className="mb-5 flex items-center justify-between">
-                                    <span className="font-sans text-2xl font-black tracking-tight text-[#FF5C35]">03</span>
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F8F5F0] text-[#19120D] transition-colors group-hover:bg-[#FFECE5] group-hover:text-[#FF5C35]">
-                                        <Users className="h-5 w-5" />
+                                <div className="mb-3.5 flex items-center justify-between sm:mb-5">
+                                    <span className="font-sans text-xl font-black tracking-tight text-[#FF5C35] sm:text-2xl">03</span>
+                                    <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-[#F8F5F0] text-[#19120D] transition-colors group-hover:bg-[#FFECE5] group-hover:text-[#FF5C35]">
+                                        <Users className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </div>
                                 </div>
-                                <h3 className="mb-2 font-sans text-base font-bold leading-snug text-[#19120D]">
+                                <h3 className="mb-1.5 font-sans text-sm font-bold leading-snug text-[#19120D] sm:text-base">
                                     Pemisahan Area yang Nyaman
                                 </h3>
                                 <p className="text-xs leading-relaxed text-[#756A63] sm:text-[13px]">
@@ -416,22 +416,22 @@ export default function AboutPage() {
                                     dan area semi-outdoor bagi yang ingin bersantai bersama teman.
                                 </p>
                             </div>
-                            <div className="mt-5 flex items-center gap-1.5 border-t border-[#F0EAE1] pt-4 text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
+                            <div className="mt-4 flex items-center gap-1.5 border-t border-[#F0EAE1] pt-3 text-xs font-bold uppercase tracking-wider text-[#FF5C35] sm:mt-5 sm:pt-4">
                                 <Sparkles className="h-4 w-4" />
                                 <span>Zonasi Jelas</span>
                             </div>
                         </div>
 
                         {/* 04 */}
-                        <div className="group flex flex-col justify-between rounded-2xl border border-[#EBE5DC] bg-white p-6 shadow-sm transition-all hover:border-[#FF5C35]/50 hover:shadow-md">
+                        <div className="group flex flex-col justify-between rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-sm transition-all hover:border-[#FF5C35]/50 hover:shadow-md sm:p-6">
                             <div>
-                                <div className="mb-5 flex items-center justify-between">
-                                    <span className="font-sans text-2xl font-black tracking-tight text-[#FF5C35]">04</span>
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F8F5F0] text-[#19120D] transition-colors group-hover:bg-[#FFECE5] group-hover:text-[#FF5C35]">
-                                        <Building2 className="h-5 w-5" />
+                                <div className="mb-3.5 flex items-center justify-between sm:mb-5">
+                                    <span className="font-sans text-xl font-black tracking-tight text-[#FF5C35] sm:text-2xl">04</span>
+                                    <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-[#F8F5F0] text-[#19120D] transition-colors group-hover:bg-[#FFECE5] group-hover:text-[#FF5C35]">
+                                        <Building2 className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </div>
                                 </div>
-                                <h3 className="mb-2 font-sans text-base font-bold leading-snug text-[#19120D]">
+                                <h3 className="mb-1.5 font-sans text-sm font-bold leading-snug text-[#19120D] sm:text-base">
                                     Transparansi Harga &amp; Menu Riil
                                 </h3>
                                 <p className="text-xs leading-relaxed text-[#756A63] sm:text-[13px]">
@@ -439,7 +439,7 @@ export default function AboutPage() {
                                     sehingga Anda bisa merencanakan nongkrong atau kerja dengan tenang.
                                 </p>
                             </div>
-                            <div className="mt-5 flex items-center gap-1.5 border-t border-[#F0EAE1] pt-4 text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
+                            <div className="mt-4 flex items-center gap-1.5 border-t border-[#F0EAE1] pt-3 text-xs font-bold uppercase tracking-wider text-[#FF5C35] sm:mt-5 sm:pt-4">
                                 <CheckCircle2 className="h-4 w-4" />
                                 <span>Bebas Kejutan</span>
                             </div>
@@ -449,18 +449,18 @@ export default function AboutPage() {
             </section>
 
             {/* 4. Visi Kompas Kopi Terpercaya Banner */}
-            <section className="w-full pb-16 lg:pb-20">
-                <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-                    <div className="relative overflow-hidden rounded-3xl border border-[#382B22] bg-[#1F1610] p-8 text-[#F6DED0] shadow-xl md:p-12">
+            <section className="w-full pb-8 sm:pb-16 lg:pb-20">
+                <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12">
+                    <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-[#382B22] bg-[#1F1610] p-5 text-[#F6DED0] shadow-xl sm:p-8 md:p-12">
                         <div className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-[#FF5C35] opacity-25 blur-3xl" />
                         <div className="relative z-10 max-w-2xl">
-                            <span className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#FDBA74]">
+                            <span className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-[#FDBA74]">
                                 VISI JANGKA PANJANG
                             </span>
-                            <h2 className="mb-4 font-sans text-2xl font-extrabold text-white md:text-3xl">
+                            <h2 className="mb-2 font-sans text-xl font-extrabold text-white sm:text-2xl md:text-3xl">
                                 Menjadi Kompas Kopi Terpercaya di Kota Padang
                             </h2>
-                            <p className="text-sm leading-relaxed text-[#D6CECA]">
+                            <p className="text-xs leading-relaxed text-[#D6CECA] sm:text-sm">
                                 Kami berikhtiar mendokumentasikan setiap denyut kopi Kota Padang — dari gang sempit
                                 di pecinan Pondok, sentra edukasi Khatib Sulaiman, hingga tepi sungai Batang Arau.
                                 Menjadikan Padang destinasi coffee tourism berkelas dengan kearifan lokal yang terjaga.
@@ -471,29 +471,29 @@ export default function AboutPage() {
             </section>
 
             {/* 5. Mengenal Tim yang Membangun Saranwak */}
-            <section className="w-full border-t border-[#EBE5DC] py-16 lg:py-20">
-                <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-                    <div className="mb-12 max-w-2xl">
+            <section className="w-full border-t border-[#EBE5DC] py-8 sm:py-16 lg:py-20">
+                <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12">
+                    <div className="mb-6 max-w-2xl sm:mb-12">
                         <span className="mb-1 block text-xs font-bold uppercase tracking-widest text-[#FF5C35]">
                             ORANG DI BALIK LAYAR
                         </span>
-                        <h2 className="font-sans text-2xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl">
+                        <h2 className="font-sans text-xl font-extrabold tracking-tight text-[#19120D] sm:text-3xl">
                             Mengenal Tim yang Membangun Saranwak
                         </h2>
-                        <p className="mt-2 text-sm leading-relaxed text-[#756A63]">
+                        <p className="mt-1.5 text-xs leading-relaxed text-[#756A63] sm:text-sm">
                             Pemuda yang mendedikasikan waktu, teknologi, dan kecintaan pada kota Padang
                             untuk menghadirkan direktori kafe terlengkap.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
                         {TEAM_MEMBERS.map((member) => (
                             <div
                                 key={member.name}
-                                className="group flex flex-col justify-between rounded-3xl border border-[#EBE5DC] bg-white p-5 shadow-sm transition-all hover:border-[#FF5C35]/50 hover:shadow-md sm:p-6"
+                                className="group flex flex-col justify-between rounded-2xl sm:rounded-3xl border border-[#EBE5DC] bg-white p-4 shadow-sm transition-all hover:border-[#FF5C35]/50 hover:shadow-md sm:p-6"
                             >
                                 <div>
-                                    <div className="relative mb-5 aspect-[4/3] w-full overflow-hidden rounded-2xl bg-[#F5F0E8]">
+                                    <div className="relative mb-3.5 aspect-[4/3] w-full overflow-hidden rounded-xl sm:mb-5 sm:rounded-2xl bg-[#F5F0E8]">
                                         <Image
                                             src={member.image}
                                             alt={member.name}
@@ -501,12 +501,12 @@ export default function AboutPage() {
                                             sizes="(max-width: 768px) 100vw, 33vw"
                                             className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
                                         />
-                                        <span className="absolute bottom-3 left-3 rounded-full bg-[#1B120C]/85 px-3 py-1 text-[11px] font-bold text-white backdrop-blur-md">
+                                        <span className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 rounded-full bg-[#1B120C]/85 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-[11px] font-bold text-white backdrop-blur-md">
                                             {member.role}
                                         </span>
                                     </div>
-                                    <div className="mb-1.5 flex items-center justify-between">
-                                        <h3 className="font-sans text-lg font-bold text-[#19120D]">
+                                    <div className="mb-1 flex items-center justify-between sm:mb-1.5">
+                                        <h3 className="font-sans text-base font-bold text-[#19120D] sm:text-lg">
                                             {member.name}
                                         </h3>
                                         <span className="text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
@@ -517,7 +517,7 @@ export default function AboutPage() {
                                         {member.desc}
                                     </p>
                                 </div>
-                                <div className="mt-5 flex items-center justify-between border-t border-[#F0EAE1] pt-4 text-xs font-medium text-[#756A63]">
+                                <div className="mt-4 flex items-center justify-between border-t border-[#F0EAE1] pt-3 text-xs font-medium text-[#756A63] sm:mt-5 sm:pt-4">
                                     <span className="flex items-center gap-1.5">
                                         <Code className="h-3.5 w-3.5 text-[#FF5C35]" />
                                         <span>{member.skill}</span>
@@ -533,17 +533,17 @@ export default function AboutPage() {
             </section>
 
             {/* 6. Tanya Jawab Saranwak */}
-            <section className="w-full border-y border-[#EBE5DC] bg-[#F5F0E8] py-16 lg:py-20">
-                <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+            <section className="w-full border-y border-[#EBE5DC] bg-[#F5F0E8] py-8 sm:py-16 lg:py-20">
+                <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-12">
                         <div className="lg:col-span-5">
                             <span className="mb-1 block text-xs font-bold uppercase tracking-widest text-[#FF5C35]">
                                 TANYA JAWAB SARANWAK
                             </span>
-                            <h2 className="mb-4 font-sans text-2xl font-extrabold leading-tight text-[#19120D] sm:text-3xl">
+                            <h2 className="mb-2 font-sans text-xl font-extrabold leading-tight text-[#19120D] sm:text-3xl sm:mb-4">
                                 Keterbukaan &amp; Standar Kerja Saranwak
                             </h2>
-                            <p className="mb-6 text-sm leading-relaxed text-[#756A63]">
+                            <p className="mb-4 text-xs leading-relaxed text-[#756A63] sm:text-sm sm:mb-6">
                                 Pertanyaan umum seputar kurasi, pendaftaran kafe, objektivitas rekomendasi,
                                 dan keterlibatan komunitas di Kota Padang.
                             </p>
@@ -551,20 +551,20 @@ export default function AboutPage() {
                                 href={registerCafeUrl}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-2 rounded-2xl bg-[#19120D] px-5 py-3 text-xs font-bold text-white shadow-sm transition hover:bg-[#FF5C35]"
+                                className="inline-flex items-center gap-2 rounded-xl sm:rounded-2xl bg-[#19120D] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#FF5C35] sm:px-5 sm:py-3"
                             >
                                 <span>Punya Pertanyaan Lain? Hubungi Kami</span>
                                 <ArrowRight className="h-4 w-4" />
                             </a>
                         </div>
 
-                        <div className="flex flex-col gap-4 lg:col-span-7">
+                        <div className="flex flex-col gap-3 sm:gap-4 lg:col-span-7">
                             {FAQS.map((faq) => (
                                 <div
                                     key={faq.q}
-                                    className="rounded-2xl border border-[#EBE5DC] bg-white p-5 shadow-xs transition-all hover:border-[#FF5C35]/40"
+                                    className="rounded-xl sm:rounded-2xl border border-[#EBE5DC] bg-white p-4 shadow-xs transition-all hover:border-[#FF5C35]/40 sm:p-5"
                                 >
-                                    <h3 className="mb-2 font-sans text-base font-bold text-[#19120D]">
+                                    <h3 className="mb-1.5 font-sans text-sm font-bold text-[#19120D] sm:text-base sm:mb-2">
                                         {faq.q}
                                     </h3>
                                     <p className="text-xs leading-relaxed text-[#756A63] sm:text-sm">
@@ -578,15 +578,15 @@ export default function AboutPage() {
             </section>
 
             {/* 7. CTA Pemilik Kafe */}
-            <section className="w-full py-16 lg:py-20">
-                <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-                    <div className="relative flex flex-col items-center justify-between gap-8 overflow-hidden rounded-[2.5rem] border border-[#FF5C35]/30 bg-gradient-to-r from-[#1E130B] via-[#2A180E] to-[#140D08] p-8 text-white shadow-2xl md:flex-row sm:p-12">
-                        <div className="relative z-10 max-w-xl">
-                            <div className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-[#FF5C35]/40 bg-[#FF5C35]/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#FDBA74]">
+            <section className="w-full pt-8 pb-28 sm:py-16 lg:py-20">
+                <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12">
+                    <div className="relative flex flex-col items-center justify-between gap-6 overflow-hidden rounded-2xl sm:rounded-[2.5rem] border border-[#FF5C35]/30 bg-gradient-to-r from-[#1E130B] via-[#2A180E] to-[#140D08] p-5 text-white shadow-2xl sm:p-12 md:flex-row">
+                        <div className="relative z-10 max-w-xl text-center md:text-left">
+                            <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-[#FF5C35]/40 bg-[#FF5C35]/20 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#FDBA74]">
                                 <Megaphone className="h-3.5 w-3.5 text-[#FF5C35]" />
                                 <span>KHUSUS PEMILIK KAFE</span>
                             </div>
-                            <h2 className="mb-2 font-sans text-2xl font-extrabold leading-tight text-white sm:text-3xl">
+                            <h2 className="mb-2 font-sans text-lg font-extrabold leading-tight text-white sm:text-3xl">
                                 Punya Coffee Shop atau Usaha Kedai Kopi di Padang? Daftarkan Spot Kamu Secara Terbuka.
                             </h2>
                             <p className="text-xs leading-relaxed text-[#D4C9C3] sm:text-sm">
@@ -595,12 +595,12 @@ export default function AboutPage() {
                             </p>
                         </div>
 
-                        <div className="relative z-10 shrink-0">
+                        <div className="relative z-10 shrink-0 w-full md:w-auto">
                             <a
                                 href={registerCafeUrl}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-2 rounded-2xl bg-[#FF5C35] px-7 py-3.5 text-xs font-bold text-white shadow-[0_12px_32px_-4px_rgba(255,92,53,0.35)] transition-all duration-300 hover:scale-105 hover:bg-[#D8431F] hover:shadow-2xl active:scale-95 sm:text-sm"
+                                className="inline-flex w-full md:w-auto justify-center items-center gap-2 rounded-xl sm:rounded-2xl bg-[#FF5C35] px-6 py-3 text-xs font-bold text-white shadow-[0_12px_32px_-4px_rgba(255,92,53,0.35)] transition-all duration-300 hover:scale-105 hover:bg-[#D8431F] hover:shadow-2xl active:scale-95 sm:px-7 sm:py-3.5 sm:text-sm"
                             >
                                 <span>Daftarkan Tempat Gratis</span>
                                 <ArrowRight className="h-4 w-4" />

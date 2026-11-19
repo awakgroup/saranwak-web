@@ -109,18 +109,20 @@ export default async function Home() {
       <div className="relative z-10">
         <HomeHeroSection />
 
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 pb-20 sm:gap-12 sm:px-8 sm:pb-20 lg:gap-14 lg:px-12">
-          {/* Section 2: 4 Pilar Feature Highlights */}
-          <HomeFeaturePillars />
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 sm:gap-12 px-4 pb-24 sm:px-8 sm:pb-20 lg:gap-14 lg:px-12">
+          {/* Section 2: 4 Pilar Feature Highlights (Desktop) */}
+          <div className="hidden sm:block">
+            <HomeFeaturePillars />
+          </div>
 
-          {/* Section 3: Promo & Special Offers Bento Grid */}
-          <SectionBlock variant="compact">
-            <HomePromoBento />
-          </SectionBlock>
-
-          {/* Section 4: Popular Destinations (Top Places) */}
+          {/* Section 3: Popular Destinations (Top Places) - Immediately follows Hero on mobile */}
           <SectionBlock>
             <FeaturedPlacesSection places={places} />
+          </SectionBlock>
+
+          {/* Section 4: Promo & Special Offers Bento Grid */}
+          <SectionBlock variant="compact">
+            <HomePromoBento />
           </SectionBlock>
 
           {/* Section 5: Curved Owner Promo Banner */}
