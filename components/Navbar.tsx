@@ -11,6 +11,7 @@ import {
     Bookmark,
     Megaphone,
     Coffee,
+    Download,
 } from "lucide-react";
 import { useSavedPlaces } from "@/lib/saved-places";
 import { SavedPlacesModal } from "@/components/SavedPlacesModal";
@@ -26,6 +27,7 @@ export function Navbar() {
     const [isViewMapParam, setIsViewMapParam] = useState(false);
     const { savedCount } = useSavedPlaces();
     const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
+    const [isStandalone, setIsStandalone] = useState(false);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -34,6 +36,12 @@ export function Navbar() {
                 setIsViewMapParam(params.get("view") === "map");
             };
             checkMap();
+
+            const standalone =
+                window.matchMedia("(display-mode: standalone)").matches ||
+                (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+            setIsStandalone(Boolean(standalone));
+
             window.addEventListener("popstate", checkMap);
             return () => window.removeEventListener("popstate", checkMap);
         }
@@ -208,6 +216,31 @@ export function Navbar() {
                     </div>
                 </div>
             </header>
+
+            {/* Floating Install App Pill */}
+            {!isPlaceDetailPage && !isStandalone && (
+                <div
+                    className="fixed right-3.5 z-40 block md:hidden transition-all duration-300"
+                    style={{ bottom: "calc(4.25rem + env(safe-area-inset-bottom, 0px))" }}
+                >
+                    <button
+                        type="button"
+                        onClick={() => {
+                            if (typeof window !== "undefined") {
+                                window.dispatchEvent(new CustomEvent("saranwak:install-pwa"));
+                            }
+                        }}
+                        aria-label="Pasang Aplikasi Saranwak"
+                        className="relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#291c14] hover:bg-[#0d0401] text-[#ffdbd1] shadow-[0_8px_20px_rgba(41,28,20,0.25)] border border-[#ffdbd1]/30 transition-all duration-200 active:scale-95 group cursor-pointer backdrop-blur-md"
+                    >
+                        <Download className="h-3.5 w-3.5 text-[#ffdbd1] group-hover:scale-110 transition-transform" />
+                        <span className="text-[11px] font-semibold text-[#ffdbd1] tracking-wide whitespace-nowrap">
+                            Install App
+                        </span>
+                        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#ac3311] border-2 border-[#FAF7F2] animate-pulse" />
+                    </button>
+                </div>
+            )}
 
             {/* Mobile Bottom Fixed Navigation Dock - Grounded firmly to bottom */}
             {!isPlaceDetailPage && (
