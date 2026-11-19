@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { promises as fs } from "fs";
 import path from "path";
+import { Coffee } from "lucide-react";
 
 import { FeaturedPlacesSection } from "@/components/home/FeaturedPlacesSection";
 import { HomeHeroSection } from "@/components/home/HomeHeroSection";
@@ -109,7 +110,7 @@ export default async function Home() {
       <div className="relative z-10">
         <HomeHeroSection />
 
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 sm:gap-12 px-4 pb-24 sm:px-8 sm:pb-20 lg:gap-14 lg:px-12">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-0 sm:gap-12 px-0 sm:px-8 pb-24 sm:pb-20 lg:gap-14 lg:px-12">
           {/* Section 2: 4 Pilar Feature Highlights (Desktop) */}
           <div className="hidden sm:block">
             <HomeFeaturePillars />
@@ -125,15 +126,35 @@ export default async function Home() {
             <HomePromoBento />
           </SectionBlock>
 
-          {/* Section 5: Curved Owner Promo Banner */}
-          <SectionBlock>
-            <OwnerBusinessSection />
-          </SectionBlock>
+          {/* Section 5: Curved Owner Promo Banner (Desktop) */}
+          <div className="hidden sm:block">
+            <SectionBlock>
+              <OwnerBusinessSection />
+            </SectionBlock>
+          </div>
 
-          {/* Frequently Asked Questions (Maintains 100% SEO & FAQ Structured Data) */}
-          <SectionBlock variant="last">
-            <HomeFaqSection />
-          </SectionBlock>
+          {/* Frequently Asked Questions (Desktop - Maintains 100% SEO & FAQ Structured Data) */}
+          <div className="hidden sm:block">
+            <SectionBlock variant="last">
+              <HomeFaqSection />
+            </SectionBlock>
+          </div>
+
+          {/* Section 6: Mobile Compact Editorial Footer matching Stitch 3f54a1c6760d4badb78d709f20d14900 */}
+          <div className="block sm:hidden px-5 mt-8 pt-5 border-t border-[#e4e2de]/60 flex flex-col items-center text-center relative">
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <div className="w-5 h-5 rounded-md bg-[#0d0401] flex items-center justify-center text-[#ff6e48]">
+                <Coffee className="h-3.5 w-3.5 text-[#ff6e48]" />
+              </div>
+              <span className="text-[14px] text-[#0d0401] font-bold">Saranwak</span>
+            </div>
+            <p className="text-[11px] text-[#4e4540] max-w-xs mb-2 leading-relaxed">
+              Kurasi independen kopi &amp; spot WFC Kota Padang. Dibuat dengan kecintaan pada seduhan jujur.
+            </p>
+            <span className="text-[10px] text-[#80756f] leading-tight">
+              © 2025 Saranwak Padang. Seluruh hak cipta dilindungi.
+            </span>
+          </div>
         </div>
       </div>
     </main>

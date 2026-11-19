@@ -20,7 +20,7 @@ export function Footer() {
     const { savedCount } = useSavedPlaces();
 
     return (
-        <footer className="w-full border-t border-[#2A1D15] bg-[#140D08] text-[#F2F0ED]">
+        <footer className="hidden sm:block w-full border-t border-[#2A1D15] bg-[#140D08] text-[#F2F0ED]">
             <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12 lg:py-16">
                 <div className="grid grid-cols-1 gap-8 pb-12 md:grid-cols-12 lg:gap-12">
                     {/* About Column */}
