@@ -19,6 +19,9 @@ import {
     Building2,
     Zap,
     ExternalLink,
+    BookOpen,
+    MessageCircle,
+    Mail,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -40,6 +43,9 @@ export const metadata: Metadata = {
 const WHATSAPP_NUMBER = "6281932097214";
 const registerCafeUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
     "Hi SaranWak, saya pemilik coffee shop di Padang dan tertarik mendaftarkan tempat saya di Saranwak."
+)}`;
+const suggestSpotUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    "Halo Saranwak, saya punya saran spot ngopi di Padang"
 )}`;
 
 const aboutJsonLd = {
@@ -93,6 +99,33 @@ const TEAM_MEMBERS = [
     },
 ];
 
+const MOBILE_FOUNDERS = [
+    {
+        name: "Farhan Dwi Satria",
+        role: "Product & Curator",
+        desc: "Pecandu filter coffee & penjelajah kedai tersembunyi.",
+        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDTtVCP5Nm4V0CQoMfbzVr7iZ09LtBHX1_npax3AntVXOVxQQhw3FQpSbVO7URI-B6Qdh-XZ663TC6ZBRq-cHeeL6T6GDPfDwl1tGiOOTbCUVMKKwMVzuPtr6UdDTj1naJzR1L4SNhQe6yWhC0r298hneA63TXOLh9XJt7ggbjv_HFvzWcOJe_QWTehh3PNAF6oQp7rFeryyzBlGC4xrruTk6T0p5QY_V4SinIugA",
+    },
+    {
+        name: "Ghazian Tsani",
+        role: "Tech & Operations",
+        desc: "Merajut arsitektur data pencarian spot Saranwak.",
+        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDsXy-f8fOshXGKPsUy7jskhCbnMSR7RXUDOuuMAB2ArnJJW5eLqrQ8pBS0n7fcO5fK7D2FX1MGEImK3JXloI_qf-CJEaDpQK2pe0RIrPtWQJUOWi6lI3pVFlNe9br0fS7tZ4vbOj3jvmrP2O5j8mufrV2rujXfl1aUFjbSBeqbRaY2Ckq_11shSWmWNVII-IKLJ2xkBiFkP9TocRSHFtuAxnMYc1RxEHZn9SE7Qg",
+    },
+    {
+        name: "M. Zaki Adli",
+        role: "Business Development",
+        desc: "Menjaga relasi hangat dengan pemilik kedai dan mitra.",
+        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB44W3x4_ec3XCMGlxcXtT-JyWDknfEc8MnGPh8Sr1lpEHM_I-84xp2BTW9Nvzj562irs6ZT24jETgCv59MBP6xcQNATWz_PJ-T2V67yb4FsX_DMPtDnyYSEsHE7nHCMEJwf5OzLDlkoejFxLiKtA6873TYxOBfX9nt5vxcOzuUUQ154jOJB2wK_gjW76L1jF-LWxuu20PwnosNA6RyNChO8pFjKxSc_H3xRMl-Hw",
+    },
+    {
+        name: "Randika Junivan P.",
+        role: "Marketing & Community",
+        desc: "Menghubungkan kawan WFC dan skena kopi muda Padang.",
+        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB6ENm718po190cRwWrSKMxBa6FBsGQdN0qa1wbWf4Z04Jk_iqg8lrKn2nB32aIorh8zfM9OXbNQZ9iO0mREWYK6gH1aqgL5aTVqLddDwTZeUL3fCCIoaKpX3GRtzT6mVc17q8sVe2YP7zKwuUCZW6Wp5WqyVOrjMtS-d393TDHHAFZYvvRC4S66XZ1OYgHYtblYwgTuTJiMLtgqVlBsSC9raRjzw6P-Uv3JDbu5w",
+    },
+];
+
 const FAQS = [
     {
         q: "Bagaimana cara Saranwak memverifikasi kafe?",
@@ -122,61 +155,224 @@ export default function AboutPage() {
                 }}
             />
 
-            {/* Mobile About Hero - Compact Native App Profile Screen */}
-            <div className="block sm:hidden px-3.5 pt-2 pb-3">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#ffdbd1]/50 text-[#ac3311] text-[9.5px] uppercase tracking-wider font-bold mb-2 w-fit">
-                    <Sparkles className="h-3 w-3 text-[#ac3311]" />
-                    <span>CERITA &amp; MISI</span>
-                </div>
-                <h1 className="text-[#0d0401] text-[20px] leading-[25px] font-extrabold tracking-tight mb-2.5">
-                    Berawal dari Keresahan Mencari Ruang Kerja yang Jujur.
-                </h1>
+            {/* Mobile About View - Aligned with Stitch fac1082d1e264cb6a4139ff81bd297a0 */}
+            <div className="block sm:hidden w-full pb-28">
+                {/* Hero Section Tentang Kami */}
+                <section className="px-5 pt-3 pb-5 flex flex-col">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffdbd1]/50 text-[#ac3311] text-[10px] uppercase tracking-wider font-bold mb-3 w-fit">
+                        <BookOpen className="h-3.5 w-3.5 text-[#ac3311]" />
+                        <span>CERITA &amp; MISI</span>
+                    </div>
+                    <h1 className="text-[#0d0401] text-[28px] leading-[34px] font-extrabold tracking-tight mb-3">
+                        Berawal dari Keresahan Mencari Ruang Kerja yang Jujur.
+                    </h1>
 
-                {/* Editorial Warm Image Banner */}
-                <div className="relative w-full h-40 rounded-xl overflow-hidden shadow-xs mb-3 bg-[#291c14]">
-                    <Image
-                        src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80"
-                        alt="Suasana kedai kopi artisanal specialty di Padang"
-                        fill
-                        className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d0401]/90 via-[#0d0401]/30 to-transparent flex items-end p-3">
-                        <div className="flex items-center gap-1.5 text-white">
-                            <ShieldCheck className="h-3.5 w-3.5 text-[#ff6e48]" />
-                            <span className="text-[11px] font-bold">Kurasi Independen Ranah Minang</span>
+                    {/* Editorial Warm Image Banner */}
+                    <div className="relative w-full h-48 rounded-2xl overflow-hidden shadow-xs mb-4 bg-[#291c14]">
+                        <Image
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_W8IxEEGUJwF8xLHEs0n93Df_G4_4o5fYtA7k1MQeon3M42l3C2k1jbLuGM9gjWeC5vmFR9jG_UUFeE8tkOWYp5vMFj5GvRY5nNEdNIhGluSlZWhapgCb4qo9UDDy4xh11BcW1MTtGP69fnI6WBXAD9e0NXhwFYONdFMeworUUVR2O-SsqZgNP2x94yvd-CWhz5-8vYH0_nGzg1wTZ1ZXTZsGLJ1g2bVthA1z_w"
+                            alt="Suasana kedai kopi artisanal specialty di Padang"
+                            fill
+                            className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0401]/85 via-[#0d0401]/30 to-transparent flex items-end p-4">
+                            <div className="flex items-center gap-2 text-white">
+                                <ShieldCheck className="h-4.5 w-4.5 text-[#ff6e48]" />
+                                <span className="text-[13px] font-semibold">Kurasi Independen Ranah Minang</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Story Description Card */}
+                    <div className="bg-white p-4 rounded-2xl border border-[#e4e2de]/40 shadow-xs space-y-2.5">
+                        <p className="text-[13px] text-[#1b1c1a] leading-relaxed">
+                            <strong className="text-[#ac3311] font-bold">Saranwak</strong> lahir dari rutinitas harian kami yang kerap kali diuji oleh realitas: janji <span className="italic text-[#0d0401] font-semibold">&ldquo;cocok untuk kerja&rdquo;</span> yang berujung colokan minim, Wi-Fi lambat, atau musik yang terlalu hingar-bingar di sudut Kota Padang.
+                        </p>
+                        <p className="text-[13px] text-[#4e4540] leading-relaxed">
+                            Kami percaya setiap perantau, pegiat lepas, dan mahasiswa berhak mendapatkan ruang jujur tanpa rasa takut &lsquo;zonk&rsquo;—tempat di mana aroma seduhan kopi lokal berpadu serasi dengan ketenangan menuntaskan karya.
+                        </p>
+                    </div>
+
+                    {/* Stats Ringkas */}
+                    <div className="grid grid-cols-3 gap-2.5 mt-4">
+                        <div className="bg-white border border-[#e4e2de]/40 p-3 rounded-xl text-center shadow-xs">
+                            <span className="block text-[20px] font-extrabold text-[#ac3311]">45+</span>
+                            <span className="text-[11px] text-[#4e4540] font-medium">Spot Teruji</span>
+                        </div>
+                        <div className="bg-white border border-[#e4e2de]/40 p-3 rounded-xl text-center shadow-xs">
+                            <span className="block text-[20px] font-extrabold text-[#0d0401]">100%</span>
+                            <span className="text-[11px] text-[#4e4540] font-medium">Cek Lapangan</span>
+                        </div>
+                        <div className="bg-white border border-[#e4e2de]/40 p-3 rounded-xl text-center shadow-xs">
+                            <span className="block text-[20px] font-extrabold text-[#bc7700]">Padang</span>
+                            <span className="text-[11px] text-[#4e4540] font-medium">Fokus Penuh</span>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 3 Pilar Nilai Kurasi */}
+                <section className="px-5 py-5 bg-[#f5f3ef]/70">
+                    <div className="flex items-center gap-2 mb-1.5">
+                        <span className="w-1.5 h-4 rounded-full bg-[#ac3311]" />
+                        <h2 className="text-[18px] text-[#0d0401] font-bold tracking-tight">3 Pilar Nilai Kurasi</h2>
+                    </div>
+                    <p className="text-[12px] text-[#4e4540] mb-4">
+                        Standar ketat yang kami gunakan sebelum sebuah kedai masuk katalog rekomendasi Saranwak.
+                    </p>
+                    <div className="space-y-3">
+                        {/* Pilar 1 */}
+                        <div className="bg-white p-4 rounded-2xl border border-[#e4e2de]/40 shadow-xs flex items-start gap-3.5">
+                            <div className="w-10 h-10 rounded-xl bg-[#ffdbd1] shrink-0 flex items-center justify-center text-[#ac3311]">
+                                <MapPin className="h-5 w-5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5 mb-1">
+                                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#ac3311]/10 text-[#ac3311] font-bold">01</span>
+                                    <h3 className="text-[13px] text-[#0d0401] font-bold">Verifikasi Langsung ke Kedai</h3>
+                                </div>
+                                <p className="text-[12px] text-[#4e4540] leading-relaxed">
+                                    Setiap tempat dikunjungi dan diuji langsung oleh tim kurator kami. Tak ada ulasan berbayar siluman atau rating palsu.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Pilar 2 */}
+                        <div className="bg-white p-4 rounded-2xl border border-[#e4e2de]/40 shadow-xs flex items-start gap-3.5">
+                            <div className="w-10 h-10 rounded-xl bg-[#ffddb8] shrink-0 flex items-center justify-center text-[#653e00]">
+                                <Zap className="h-5 w-5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5 mb-1">
+                                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#ac3311]/10 text-[#ac3311] font-bold">02</span>
+                                    <h3 className="text-[13px] text-[#0d0401] font-bold">Kebutuhan WFC Pasti</h3>
+                                </div>
+                                <p className="text-[12px] text-[#4e4540] leading-relaxed">
+                                    Kejelasan rasio stopkontak per meja, uji kecepatan Wi-Fi riil (Mbps), kestabilan kursi ergonomis, serta tingkat desibel kebisingan.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Pilar 3 */}
+                        <div className="bg-white p-4 rounded-2xl border border-[#e4e2de]/40 shadow-xs flex items-start gap-3.5">
+                            <div className="w-10 h-10 rounded-xl bg-[#ff6e48]/20 shrink-0 flex items-center justify-center text-[#ac3311]">
+                                <Handshake className="h-5 w-5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5 mb-1">
+                                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#ac3311]/10 text-[#ac3311] font-bold">03</span>
+                                    <h3 className="text-[13px] text-[#0d0401] font-bold">Dukungan Kedai Lokal</h3>
+                                </div>
+                                <p className="text-[12px] text-[#4e4540] leading-relaxed">
+                                    Mendorong pertumbuhan ekosistem kedai kopi independen dan roastery artisan lokal di seantero Ranah Minang agar kian berdaya.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Tim Pendiri (Kolektif di Balik Saranwak) */}
+                <section className="px-5 pt-6 pb-2">
+                    <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-2">
+                            <span className="w-1.5 h-4 rounded-full bg-[#ac3311]" />
+                            <h2 className="text-[18px] text-[#0d0401] font-bold tracking-tight">Kolektif di Balik Saranwak</h2>
+                        </div>
+                        <span className="px-2 py-0.5 rounded-full bg-[#ffdbd1] text-[#3c0800] text-[10px] font-bold">4 Founders</span>
+                    </div>
+                    <p className="text-[12px] text-[#4e4540] mb-4">
+                        Anak muda Minang yang memadukan kecintaan pada kopi, teknologi, dan eksplorasi sudut kota.
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                        {MOBILE_FOUNDERS.map((founder) => (
+                            <div key={founder.name} className="bg-white p-3 rounded-2xl border border-[#e4e2de]/40 shadow-xs flex flex-col">
+                                <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-2.5 bg-[#efeeea]">
+                                    <Image
+                                        src={founder.image}
+                                        alt={founder.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                                <h3 className="text-[13px] text-[#0d0401] font-bold truncate">{founder.name}</h3>
+                                <p className="text-[11px] text-[#ac3311] font-semibold truncate">{founder.role}</p>
+                                <p className="text-[11px] text-[#4e4540] mt-0.5 line-clamp-2 leading-snug">{founder.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* Kartu Ajakan & Mitra (Bento Banner Kolaborasi) */}
+                <div className="px-5 mt-6 w-full">
+                    <div className="relative rounded-2xl overflow-hidden bg-[#291c14] p-5 text-[#fbf9f5] shadow-[0_12px_32px_-4px_rgba(41,28,20,0.2)] border border-[#e4e2de]/20 flex flex-col justify-between group">
+                        <div
+                            className="absolute inset-0 bg-cover bg-center opacity-20 mix-blend-overlay"
+                            style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuDte2czXe38gSMiqAXgaS9kDMbc00R0hpfJ4OwZ0z2BExLusE3_uWBEV1duOroCmm7zCPT5atvGhcv2BtxLK7UBQgzeZZ_8YWXU2DeCqe9-ktX5RK3FZnVRqj5TzMutwi4HnS2ua-K1WdYPMzaC91cOhvcTdjQ99OJmWlPcldHsrWwwZxzXA59pWsypWuZhmi2gHF5MQRQabWKYr78W8mrEiQoVfS1RqJaxOzjhNw')` }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#0d0401] via-[#0d0401]/90 to-[#0d0401]/50" />
+                        <div className="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-[#ff6e48]/20 blur-2xl pointer-events-none" />
+
+                        <div className="relative z-10 flex items-start justify-between gap-3 mb-2.5">
+                            <div className="flex flex-col items-start flex-1 min-w-0">
+                                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#ac3311]/30 backdrop-blur-sm border border-[#ffdbd1]/30 text-[#ffddb8] text-[10px] font-bold tracking-wider uppercase mb-2">
+                                    <Handshake className="h-3.5 w-3.5 text-[#ffb95f]" />
+                                    <span>KOLABORASI &amp; KOMUNITAS</span>
+                                </div>
+                                <h3 className="text-[17px] font-extrabold text-white tracking-tight leading-tight">
+                                    Punya Saran Spot Baru atau Ingin Bermitra? <span className="text-[15px]">✨</span>
+                                </h3>
+                                <p className="text-[12px] text-[#e4e2de]/95 mt-1.5 leading-snug">
+                                    Tahu kedai tersembunyi yang punya colokan melimpah, atau kedaimu ingin dikunjungi kurator kami? Mari duduk bersama.
+                                </p>
+                            </div>
+                            <div className="shrink-0 relative flex flex-col items-center justify-center">
+                                <div className="w-14 h-14 rounded-2xl bg-[#ac3311]/25 backdrop-blur-md border border-dashed border-[#ffdbd1]/60 flex items-center justify-center text-center shadow-inner">
+                                    <Users className="h-6 w-6 text-[#ffdbd1]" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-3.5 mt-2 border-t border-[#e4e2de]/20">
+                            <a
+                                href={suggestSpotUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-[#ac3311] hover:bg-[#651400] text-white text-[13px] font-bold shadow-[0_4px_16px_rgba(172,51,17,0.35)] transition-all active:scale-[0.98]"
+                            >
+                                <MessageCircle className="h-4 w-4" />
+                                <span className="truncate">Chat Admin WhatsApp</span>
+                            </a>
+                            <a
+                                href="mailto:redaksi@saranwak.id?subject=Rekomendasi%20Kedai%20Saranwak"
+                                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white text-[12px] font-semibold transition-all active:scale-[0.98] backdrop-blur-sm"
+                            >
+                                <Mail className="h-4 w-4 text-[#ffdbd1]" />
+                                <span className="truncate">Email Redaksi Saranwak</span>
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                {/* Story Description Card */}
-                <div className="bg-white p-3 rounded-xl border border-[#e4e2de]/60 shadow-xs space-y-2 mb-3">
-                    <p className="text-[12px] text-[#0d0401] leading-relaxed">
-                        <strong className="text-[#ac3311] font-bold">Saranwak</strong> lahir dari rutinitas harian kami yang kerap kali diuji oleh realitas: janji <span className="italic font-semibold">&ldquo;cocok untuk kerja&rdquo;</span> yang berujung colokan minim, Wi-Fi lambat, atau musik yang terlalu hingar-bingar di sudut Kota Padang.
+                {/* Footer Branding Presisi */}
+                <div className="px-5 mt-8 pt-5 border-t border-[#e4e2de]/40 flex flex-col items-center text-center relative">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                        <div className="w-5 h-5 rounded-md bg-[#0d0401] flex items-center justify-center text-[#ff6e48]">
+                            <Coffee className="h-3 w-3" />
+                        </div>
+                        <span className="text-[14px] text-[#0d0401] font-bold">Saranwak</span>
+                    </div>
+                    <p className="text-[11px] text-[#4e4540] max-w-xs mb-2 leading-relaxed">
+                        Kurasi independen kopi &amp; spot WFC Kota Padang. Dibuat dengan kecintaan pada seduhan jujur.
                     </p>
-                    <p className="text-[12px] text-[#4e4540] leading-relaxed">
-                        Kami percaya setiap perantau, pegiat lepas, dan mahasiswa berhak mendapatkan ruang jujur tanpa rasa takut &lsquo;zonk&rsquo;—tempat di mana aroma seduhan kopi lokal berpadu serasi dengan ketenangan menuntaskan karya.
-                    </p>
-                </div>
-
-                {/* 3 Quick Stats Cards */}
-                <div className="grid grid-cols-3 gap-1.5">
-                    <div className="bg-white border border-[#e4e2de]/60 p-2 rounded-lg text-center shadow-xs">
-                        <span className="block text-[16px] font-extrabold text-[#ac3311]">45+</span>
-                        <span className="text-[9.5px] text-[#4e4540] font-medium">Spot Teruji</span>
-                    </div>
-                    <div className="bg-white border border-[#e4e2de]/60 p-2 rounded-lg text-center shadow-xs">
-                        <span className="block text-[16px] font-extrabold text-[#0d0401]">100%</span>
-                        <span className="text-[9.5px] text-[#4e4540] font-medium">Bebas Titipan</span>
-                    </div>
-                    <div className="bg-white border border-[#e4e2de]/60 p-2 rounded-lg text-center shadow-xs">
-                        <span className="block text-[16px] font-extrabold text-[#ac3311]">4</span>
-                        <span className="text-[9.5px] text-[#4e4540] font-medium">Kolektif</span>
-                    </div>
+                    <span className="text-[10px] text-[#80756f] leading-tight">
+                        &copy; 2025 Saranwak Padang. Seluruh hak cipta dilindungi.
+                    </span>
                 </div>
             </div>
 
-            {/* 1. Hero Story Section - Aligned with Stitch 5e380a33d20e4572b25e089a4b05f834 (Desktop) */}
-            <section className="hidden sm:block relative w-full overflow-hidden border-b border-[#EBE5DC] pb-16 pt-10 lg:pb-20">
+            {/* Desktop Sections */}
+            <div className="hidden sm:block">
+                {/* 1. Hero Story Section - Aligned with Stitch 5e380a33d20e4572b25e089a4b05f834 (Desktop) */}
+                <section className="relative w-full overflow-hidden border-b border-[#EBE5DC] pb-16 pt-10 lg:pb-20">
                 <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
                     {/* Category Badge & Breadcrumb */}
                     <div className="mb-6 flex flex-wrap items-center gap-2">
@@ -609,6 +805,7 @@ export default function AboutPage() {
                     </div>
                 </div>
             </section>
+            </div>
         </main>
     );
 }
