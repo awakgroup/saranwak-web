@@ -136,13 +136,15 @@ export function HomeHeroSection() {
                         Jelajahi Kota Padang
                     </p>
 
-                    {/* Bold Punchy Headline */}
-                    <h1 className="text-[#0d0401] text-[26px] leading-[30px] font-extrabold tracking-tight mt-0.5 mb-1">
-                        Jelajahi. Ngopi. <span className="text-[#ac3311]">Produktif.</span>
+                    {/* Bold Punchy Headline - Stacked 3 lines to never collide with illustration */}
+                    <h1 className="text-[#0d0401] text-[27px] leading-[32px] font-extrabold tracking-tight mt-1 mb-2 max-w-[190px]">
+                        Jelajahi.<br />
+                        Ngopi.<br />
+                        <span className="text-[#ac3311]">Produktif.</span>
                     </h1>
 
                     {/* Subtitle */}
-                    <p className="text-[#4e4540] text-[12px] leading-relaxed max-w-[250px] mb-3">
+                    <p className="text-[#4e4540] text-[12px] leading-relaxed max-w-[260px] mb-3.5">
                         Kurasi ruang ngopi &amp; spot WFC terbaik di Ranah Minang, dibuat khusus untuk fokus dan santai tanpa zonk.
                     </p>
 
