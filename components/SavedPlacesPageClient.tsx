@@ -365,16 +365,22 @@ function getSavedPlaceTags(place: SavedPlaceItem) {
 
     const pills: Array<{ label: string; icon: React.ReactNode }> = [];
 
+    if (text.includes("colokan") || text.includes("stopkontak") || text.includes("wfc") || text.includes("endorphins") || text.includes("hq")) {
+        pills.push({
+            label: "Colokan",
+            icon: <Zap className="h-3.5 w-3.5 text-amber-400" />,
+        });
+    }
     if (text.includes("wifi") || text.includes("internet") || text.includes("wfc") || text.includes("endorphins")) {
         pills.push({
-            label: "Wi-Fi",
+            label: "WiFi",
             icon: <Wifi className="h-3.5 w-3.5 text-emerald-400" />,
         });
     }
-    if (text.includes("colokan") || text.includes("stopkontak") || text.includes("wfc") || text.includes("endorphins") || text.includes("hq")) {
+    if (text.includes("wfc") || text.includes("nugas") || text.includes("kerja")) {
         pills.push({
-            label: "Stopkontak Meja",
-            icon: <Zap className="h-3.5 w-3.5 text-amber-400" />,
+            label: "WFC",
+            icon: <Coffee className="h-3.5 w-3.5 text-amber-300" />,
         });
     }
     if (text.includes("tenang") || text.includes("fokus") || text.includes("nugas") || text.includes("endorphins")) {
@@ -383,16 +389,16 @@ function getSavedPlaceTags(place: SavedPlaceItem) {
             icon: <VolumeX className="h-3.5 w-3.5 text-[#ffddb8]" />,
         });
     }
+    if (text.includes("outdoor") || text.includes("taman") || text.includes("jiwani") || text.includes("rooftop")) {
+        pills.push({
+            label: "Outdoor",
+            icon: <Sun className="h-3.5 w-3.5 text-[#ffddb8]" />,
+        });
+    }
     if (text.includes("sunset") || text.includes("senja") || text.includes("jiwani") || text.includes("barat")) {
         pills.push({
             label: "Sunset Point",
             icon: <Sun className="h-3.5 w-3.5 text-amber-400" />,
-        });
-    }
-    if (text.includes("outdoor") || text.includes("taman") || text.includes("jiwani") || text.includes("rooftop")) {
-        pills.push({
-            label: "Outdoor Seating",
-            icon: <Sun className="h-3.5 w-3.5 text-[#ffddb8]" />,
         });
     }
     if (text.includes("laut") || text.includes("pantai") || text.includes("jiwani") || text.includes("batang arau") || text.includes("selatan")) {
@@ -410,11 +416,11 @@ function getSavedPlaceTags(place: SavedPlaceItem) {
 
     if (pills.length === 0) {
         pills.push({
-            label: "Wi-Fi",
+            label: "WiFi",
             icon: <Wifi className="h-3.5 w-3.5 text-emerald-400" />,
         });
         pills.push({
-            label: "Spot Nyaman",
+            label: "WFC",
             icon: <Coffee className="h-3.5 w-3.5 text-[#ffddb8]" />,
         });
     }

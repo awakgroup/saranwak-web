@@ -10,12 +10,26 @@ import {
     Navigation,
     Zap,
     Wifi,
-    Armchair,
-    Coffee,
-    Sun,
-    Moon,
+    Laptop,
+    BookOpen,
     Users,
-    Utensils,
+    Heart,
+    User,
+    Music,
+    Sun,
+    Wind,
+    Compass,
+    VolumeX,
+    Coffee,
+    Sparkles,
+    Camera,
+    Dices,
+    Home,
+    Cigarette,
+    Building2,
+    Trees,
+    Flame,
+    Layers,
 } from "lucide-react";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
@@ -31,7 +45,7 @@ type PlaceCardProps = {
 
 type HighlightItem = {
     label: string;
-    iconType: "power" | "wifi" | "chair" | "coffee" | "sun" | "moon" | "meeting" | "food";
+    iconType: string;
 };
 
 export function PlaceCard({ place, userDistance }: PlaceCardProps) {
@@ -157,24 +171,108 @@ export function PlaceCard({ place, userDistance }: PlaceCardProps) {
     );
 }
 
-function renderHighlightIcon(type: HighlightItem["iconType"]) {
+const OFFICIAL_TAG_MAP: Record<string, HighlightItem> = {
+    colokan: { label: "Colokan", iconType: "power" },
+    wifi: { label: "WiFi", iconType: "wifi" },
+    wfc: { label: "WFC", iconType: "laptop" },
+    nugas: { label: "Nugas", iconType: "book" },
+    outdoor: { label: "Outdoor", iconType: "sun" },
+    ac: { label: "AC", iconType: "wind" },
+    tenang: { label: "Tenang", iconType: "volume-x" },
+    cozy: { label: "Cozy", iconType: "coffee" },
+    nongkrong: { label: "Nongkrong", iconType: "users" },
+    meeting: { label: "Meeting", iconType: "users" },
+    aesthetic: { label: "Aesthetic", iconType: "sparkles" },
+    "live-musik": { label: "Live Musik", iconType: "music" },
+    photobox: { label: "Photobox", iconType: "camera" },
+    "board-game": { label: "Board Game", iconType: "dices" },
+    musholla: { label: "Musholla", iconType: "compass" },
+    indoor: { label: "Indoor", iconType: "home" },
+    "smoking-area": { label: "Smoking Area", iconType: "cigarette" },
+    "indoor-smoking": { label: "Indoor Smoking", iconType: "cigarette" },
+    minimalis: { label: "Minimalis", iconType: "layers" },
+    industrial: { label: "Industrial", iconType: "building" },
+    "nge-date": { label: "Nge-date", iconType: "heart" },
+    "me-time": { label: "Me-time", iconType: "user" },
+    healing: { label: "Healing", iconType: "trees" },
+    rame: { label: "Rame", iconType: "flame" },
+    toilet: { label: "Toilet", iconType: "sparkles" },
+};
+
+const TAG_PRIORITY: string[] = [
+    "colokan",
+    "wifi",
+    "wfc",
+    "nugas",
+    "outdoor",
+    "ac",
+    "tenang",
+    "cozy",
+    "nongkrong",
+    "meeting",
+    "aesthetic",
+    "live-musik",
+    "photobox",
+    "board-game",
+    "musholla",
+    "indoor",
+    "smoking-area",
+    "indoor-smoking",
+    "minimalis",
+    "industrial",
+    "nge-date",
+    "me-time",
+    "healing",
+    "rame",
+    "toilet",
+];
+
+function renderHighlightIcon(type: string) {
     switch (type) {
         case "power":
             return <Zap className="h-3.5 w-3.5 text-[#ff6e48]" />;
         case "wifi":
             return <Wifi className="h-3.5 w-3.5 text-[#ff6e48]" />;
-        case "chair":
-            return <Armchair className="h-3.5 w-3.5 text-[#ff6e48]" />;
-        case "coffee":
-            return <Coffee className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "laptop":
+            return <Laptop className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "book":
+            return <BookOpen className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "users":
+            return <Users className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "heart":
+            return <Heart className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "user":
+            return <User className="h-3.5 w-3.5 text-[#ff6e48]" />;
         case "sun":
             return <Sun className="h-3.5 w-3.5 text-[#ff6e48]" />;
-        case "moon":
-            return <Moon className="h-3.5 w-3.5 text-[#ff6e48]" />;
-        case "meeting":
-            return <Users className="h-3.5 w-3.5 text-[#ff6e48]" />;
-        case "food":
-            return <Utensils className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "wind":
+            return <Wind className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "volume-x":
+            return <VolumeX className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "coffee":
+            return <Coffee className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "music":
+            return <Music className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "sparkles":
+            return <Sparkles className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "camera":
+            return <Camera className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "dices":
+            return <Dices className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "home":
+            return <Home className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "cigarette":
+            return <Cigarette className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "compass":
+            return <Compass className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "trees":
+            return <Trees className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "flame":
+            return <Flame className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "building":
+            return <Building2 className="h-3.5 w-3.5 text-[#ff6e48]" />;
+        case "layers":
+            return <Layers className="h-3.5 w-3.5 text-[#ff6e48]" />;
         default:
             return <Coffee className="h-3.5 w-3.5 text-[#ff6e48]" />;
     }
@@ -182,20 +280,6 @@ function renderHighlightIcon(type: HighlightItem["iconType"]) {
 
 function getPlaceHighlights(place: Place): HighlightItem[] {
     const highlights: HighlightItem[] = [];
-
-    const text = [
-        place.name,
-        place.short_description || "",
-        place.description || "",
-        place.vibe || "",
-        ...(Array.isArray(place.characteristics)
-            ? place.characteristics.map((c) =>
-                  typeof c === "string" ? c : `${c.title} ${c.description}`
-              )
-            : []),
-    ]
-        .join(" ")
-        .toLowerCase();
 
     const tagSlugs = new Set<string>();
     if (Array.isArray(place.place_tags)) {
@@ -216,54 +300,46 @@ function getPlaceHighlights(place: Place): HighlightItem[] {
         }
     }
 
-    if (tagSlugs.has("colokan") || text.includes("colokan") || text.includes("stopkontak")) {
-        highlights.push({ label: "Banyak Colokan", iconType: "power" });
+    // Fallback deteksi tag jika data relasi place_tags kosong
+    if (tagSlugs.size === 0) {
+        const text = [
+            place.name,
+            place.short_description || "",
+            place.description || "",
+            place.vibe || "",
+            ...(Array.isArray(place.characteristics)
+                ? place.characteristics.map((c) =>
+                      typeof c === "string" ? c : `${c.title} ${c.description}`
+                  )
+                : []),
+        ]
+            .join(" ")
+            .toLowerCase();
+
+        for (const slug of Object.keys(OFFICIAL_TAG_MAP)) {
+            const normalized = slug.replace(/-/g, " ");
+            if (text.includes(slug) || text.includes(normalized)) {
+                tagSlugs.add(slug);
+            }
+        }
+        if (text.includes("colokan") || text.includes("stopkontak")) tagSlugs.add("colokan");
+        if (text.includes("wifi") || text.includes("internet")) tagSlugs.add("wifi");
     }
-    if (tagSlugs.has("wifi") || text.includes("wifi") || text.includes("internet")) {
-        highlights.push({ label: "WiFi Kencang", iconType: "wifi" });
-    }
-    if (
-        tagSlugs.has("24-jam") ||
-        text.includes("24 jam") ||
-        (place.opening_hours && place.opening_hours.toLowerCase().includes("24 jam"))
-    ) {
-        highlights.push({ label: "Buka Nonstop", iconType: "moon" });
-    }
-    if (
-        tagSlugs.has("specialty-coffee") ||
-        text.includes("specialty") ||
-        text.includes("manual brew") ||
-        text.includes("roastery")
-    ) {
-        highlights.push({ label: "Specialty Roastery", iconType: "coffee" });
-    }
-    if (tagSlugs.has("outdoor") || text.includes("outdoor") || text.includes("rooftop") || text.includes("sunset")) {
-        highlights.push({ label: "Outdoor Luas", iconType: "sun" });
-    }
-    if (tagSlugs.has("meeting") || text.includes("meeting") || text.includes("vip")) {
-        highlights.push({ label: "Ruang Meeting", iconType: "meeting" });
-    }
-    if (
-        tagSlugs.has("kursi-ergonomis") ||
-        text.includes("kursi") ||
-        text.includes("ergonomis") ||
-        text.includes("wfc") ||
-        tagSlugs.has("wfc")
-    ) {
-        highlights.push({ label: "Kursi Ergonomis", iconType: "chair" });
-    }
-    if (text.includes("makanan") || text.includes("food") || text.includes("toast") || text.includes("snack")) {
-        highlights.push({ label: "Menu Makanan", iconType: "food" });
+
+    // Ambil maksimal 3 badge tag resmi yang dimiliki kafe
+    for (const slug of TAG_PRIORITY) {
+        if (tagSlugs.has(slug) && OFFICIAL_TAG_MAP[slug]) {
+            highlights.push(OFFICIAL_TAG_MAP[slug]);
+            if (highlights.length >= 3) break;
+        }
     }
 
     if (highlights.length === 0) {
-        highlights.push({ label: "Co-Working & WFC", iconType: "chair" });
-        highlights.push({ label: "Kopi Berkualitas", iconType: "coffee" });
-    } else if (highlights.length === 1) {
-        highlights.push({ label: "Kopi Berkualitas", iconType: "coffee" });
+        highlights.push(OFFICIAL_TAG_MAP["wfc"]);
+        highlights.push(OFFICIAL_TAG_MAP["wifi"]);
     }
 
-    return highlights.slice(0, 3);
+    return highlights;
 }
 
 function getPlaceArea(place: Place): string {
