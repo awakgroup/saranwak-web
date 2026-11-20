@@ -551,29 +551,90 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             })}
                         </div>
 
-                        {/* Count & Action summary */}
-                        <div className="flex items-center justify-between pt-0.5 px-0.5">
-                            <div className="flex items-center gap-1.5 text-[#4e4540]">
-                                <Compass className="h-4 w-4 text-[#ac3311]" />
-                                <span className="text-[12px] font-medium text-[#0d0401]">
-                                    Menampilkan <strong className="font-bold">{places.length} Tempat Kopi</strong>
-                                </span>
-                            </div>
+                        {/* Mobile Quick Action Buttons: Terdekat, Pilihan Acak, Filter */}
+                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-0.5">
+                            {/* Tombol Terdekat */}
+                            <button
+                                type="button"
+                                onClick={handleToggleNearby}
+                                disabled={isLocating}
+                                className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-bold transition-all shadow-xs active:scale-95 ${
+                                    isNearbyActive
+                                        ? "bg-[#19120D] text-white"
+                                        : "bg-white border border-[#e4e2de]/80 text-[#0d0401] hover:border-[#FF5C35]"
+                                }`}
+                            >
+                                <Navigation
+                                    className={`h-3.5 w-3.5 ${
+                                        isLocating
+                                            ? "animate-spin text-[#FF5C35]"
+                                            : isNearbyActive
+                                            ? "text-[#FDBA74]"
+                                            : "text-[#FF5C35]"
+                                    }`}
+                                />
+                                <span>{isLocating ? "Mencari GPS..." : isNearbyActive ? "Terdekat Aktif" : "Terdekat"}</span>
+                            </button>
+
+                            {/* Tombol Pilihan Acak */}
+                            <button
+                                type="button"
+                                onClick={() => setIsRandomOpen(true)}
+                                className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#e4e2de]/80 text-[#0d0401] hover:border-[#FF5C35] hover:text-[#FF5C35] text-[12px] font-bold transition-all shadow-xs active:scale-95"
+                            >
+                                <Dices className="h-3.5 w-3.5 text-[#FF5C35]" />
+                                <span>Pilihan Acak</span>
+                            </button>
+
+                            {/* Tombol Filter Modal */}
                             <button
                                 type="button"
                                 onClick={() => setIsFilterModalOpen(true)}
-                                className="flex items-center gap-1 px-3 py-1 rounded-full bg-[#eae8e4] text-[#0d0401] hover:bg-[#e4e2de] transition-colors active:scale-95 text-[11px] font-semibold cursor-pointer"
+                                className="ml-auto shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#eae8e4] text-[#0d0401] hover:bg-[#e4e2de] text-[12px] font-bold transition-all active:scale-95 cursor-pointer"
                             >
                                 <SlidersHorizontal className="h-3.5 w-3.5 text-[#0d0401]" />
                                 <span>Filter</span>
                                 {activeFilterCount > 0 && (
-                                    <span className="ml-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#ac3311] text-[9px] font-extrabold text-white">
+                                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#FF5C35] text-[9px] font-extrabold text-white">
                                         {activeFilterCount}
                                     </span>
                                 )}
                             </button>
                         </div>
+
+                        {/* Count summary */}
+                        <div className="flex items-center justify-between text-[#80756f] text-[11px] px-0.5 pt-0.5">
+                            <span>
+                                Menampilkan <strong className="font-bold text-[#0d0401]">{places.length} Tempat Kopi</strong>
+                            </span>
+                            {isNearbyActive && (
+                                <span className="text-emerald-700 font-bold flex items-center gap-1">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-ping" />
+                                    Urutan GPS terdekat
+                                </span>
+                            )}
+                        </div>
                     </div>
+
+                    {/* Mobile Indikator Urutan Terdekat Aktif */}
+                    {isNearbyActive && userCoords && (
+                        <div className="mx-5 mt-2 flex items-center justify-between gap-2 rounded-2xl border border-emerald-600/25 bg-emerald-50 px-3.5 py-2 text-xs font-bold text-emerald-800 shadow-xs">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                                <span className="relative flex h-2 w-2 shrink-0">
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-600 opacity-75" />
+                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
+                                </span>
+                                <span className="truncate">Menampilkan cafe paling dekat dengan posisimu</span>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setIsNearbyActive(false)}
+                                className="text-[11px] font-black underline shrink-0 hover:text-emerald-900"
+                            >
+                                Reset
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 {/* 1. EDITORIAL HERO SECTION WITH CURVED WARM BACKDROP & EMBEDDED FILTER BAR (DESKTOP) */}
