@@ -123,6 +123,17 @@ const QUICK_FILTER_CHIPS: Array<{
     { label: "Healing", tag: "healing" },
 ];
 
+const POPULAR_PADANG_AREAS = [
+    { label: "Semua", value: "" },
+    { label: "Padang Barat", value: "Padang Barat" },
+    { label: "Padang Utara", value: "Padang Utara" },
+    { label: "Padang Selatan", value: "Padang Selatan" },
+    { label: "Padang Timur", value: "Padang Timur" },
+    { label: "Koto Tangah", value: "Koto Tangah" },
+    { label: "Nanggalo", value: "Nanggalo" },
+    { label: "Lubuk Begalung", value: "Lubuk Begalung" },
+];
+
 export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -1263,6 +1274,44 @@ function FilterContent({
                         <span>Buka Sekarang</span>
                         {isOpenNow && <Check className="h-3 w-3 shrink-0 text-[#FF5C35]" />}
                     </Link>
+                </div>
+            </div>
+
+            {/* Kawasan & Wilayah Populer Padang */}
+            <div className="border-t border-[#EBE5DC]/80 pt-5">
+                <div className="mb-3 flex items-center justify-between">
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#FF5C35]">
+                        Kawasan di Padang
+                    </p>
+                    <span className="text-[10px] font-bold text-[#756A63]">
+                        {POPULAR_PADANG_AREAS.length - 1} Area
+                    </span>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5">
+                    {POPULAR_PADANG_AREAS.map((item) => {
+                        const active = item.value === "" 
+                            ? !params.area 
+                            : params.area === item.value;
+
+                        return (
+                            <Link
+                                key={item.label}
+                                href={buildFilterHref(params, {
+                                    area: item.value || undefined,
+                                })}
+                                scroll={false}
+                                className={`rounded-full px-3 py-1.5 text-xs font-bold transition duration-150 inline-flex items-center gap-1 ${
+                                    active
+                                        ? "bg-[#19120D] text-white shadow-xs"
+                                        : "border border-[#EBE5DC] bg-white text-[#19120D] hover:border-[#FF5C35] hover:bg-[#FAF7F2]"
+                                }`}
+                            >
+                                <MapPin className={`h-3 w-3 ${active ? "text-[#FF5C35]" : "text-[#80756F]"}`} />
+                                <span>{item.label}</span>
+                            </Link>
+                        );
+                    })}
                 </div>
             </div>
 

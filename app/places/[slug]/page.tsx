@@ -27,6 +27,8 @@ import { PlaceDetailTracker } from "@/components/PlaceDetailTracker";
 import { TrackedExternalLink } from "@/components/TrackedExternalLink";
 import { OpenStatusBadge } from "@/components/OpenStatusBadge";
 import { BookmarkButton } from "@/components/BookmarkButton";
+import { CopyAddressButton } from "@/components/CopyAddressButton";
+import { ReportPlaceCorrection } from "@/components/ReportPlaceCorrection";
 import { MobilePlaceDetailView } from "@/components/MobilePlaceDetailView";
 import { DesktopGallerySection } from "@/components/DesktopGallerySection";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
@@ -385,13 +387,19 @@ function HeroSection({
                             {place.name}
                         </h1>
 
-                        <p className="mt-1.5 flex items-center gap-1 text-[11px] font-medium leading-relaxed text-stone-300 sm:mt-2.5 sm:gap-1.5 sm:text-sm">
+                        <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] font-medium leading-relaxed text-stone-300 sm:mt-2.5 sm:text-sm">
                             <MapPin className="h-3.5 w-3.5 shrink-0 text-[#FF5C35]" />
                             <span>
                                 {[place.area, place.city || "Padang"].filter(Boolean).join(", ")}
                                 {place.address ? ` · ${place.address}` : ""}
                             </span>
-                        </p>
+                            {place.address && (
+                                <CopyAddressButton
+                                    address={place.address}
+                                    className="bg-white/10 text-stone-200 hover:bg-white/20 hover:text-white"
+                                />
+                            )}
+                        </div>
 
                         {heroTags.length > 0 ? (
                             <div className="mt-2.5 flex flex-wrap gap-1 sm:mt-5 sm:gap-2">
@@ -738,7 +746,17 @@ function PlaceSidebar({
                         <OpenStatusBadge openingHours={place.opening_hours} mode="detail" className="mt-2" />
                     ) : null}
                 </InfoItem>
-                <InfoItem icon="pin" label="Alamat Lengkap" value={place.address || "-"} />
+                <InfoItem icon="pin" label="Alamat Lengkap" value={place.address || "-"}>
+                    {place.address && (
+                        <div className="mt-2">
+                            <CopyAddressButton
+                                address={place.address}
+                                variant="button"
+                                className="w-full text-xs"
+                            />
+                        </div>
+                    )}
+                </InfoItem>
             </div>
 
             <div className="mt-5 grid gap-2 sm:mt-6 sm:gap-2.5">
@@ -819,6 +837,13 @@ function PlaceSidebar({
                     <ArrowRight className="h-3.5 w-3.5" />
                 </a>
             </div>
+
+            {/* Laporkan Pembaruan Info Komunitas */}
+            <ReportPlaceCorrection
+                placeName={place.name}
+                placeSlug={place.slug}
+                className="mt-4"
+            />
         </aside>
     );
 }

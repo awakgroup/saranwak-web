@@ -28,6 +28,8 @@ import {
 import type { Place } from "@/types/database";
 import { OpenStatusBadge } from "@/components/OpenStatusBadge";
 import { BookmarkButton } from "@/components/BookmarkButton";
+import { CopyAddressButton } from "@/components/CopyAddressButton";
+import { ReportPlaceCorrection } from "@/components/ReportPlaceCorrection";
 import { TrackedExternalLink } from "@/components/TrackedExternalLink";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
 import { ImageLightboxModal } from "./ImageLightboxModal";
@@ -518,15 +520,27 @@ export function MobilePlaceDetailView({
                         <div className="flex items-start gap-2.5">
                             <Compass className="h-4.5 w-4.5 text-[#ac3311] shrink-0 mt-0.5" />
                             <div className="flex-1 min-w-0">
-                                <span className="font-bold text-[12px] text-[#0d0401]">
-                                    Petunjuk &amp; Alamat
-                                </span>
+                                <div className="flex items-center justify-between">
+                                    <span className="font-bold text-[12px] text-[#0d0401]">
+                                        Petunjuk &amp; Alamat
+                                    </span>
+                                    {place.address && (
+                                        <CopyAddressButton address={place.address} />
+                                    )}
+                                </div>
                                 <p className="text-[11.5px] text-[#4e4540] mt-0.5 leading-relaxed">
                                     {place.address || `${place.area || "Padang Timur"}, Kota Padang, Sumatera Barat`}
                                 </p>
                             </div>
                         </div>
                     </div>
+
+                    {/* Report Data / Crowdsourcing */}
+                    <ReportPlaceCorrection
+                        placeName={place.name}
+                        placeSlug={place.slug}
+                        className="mt-3"
+                    />
                 </section>
 
                 {/* 8. Tempat Serupa di Sekitarnya */}
