@@ -50,12 +50,7 @@ export const placeFilterGroups: PlaceFilterGroup[] = [
         type: "vibe",
         options: [
             { label: "Tenang", tag: "tenang" },
-            { label: "Cozy", tag: "cozy" },
-            { label: "Aesthetic", tag: "aesthetic" },
-            { label: "Minimalis", tag: "minimalis" },
-            { label: "Industrial", tag: "industrial" },
             { label: "Rame", tag: "rame" },
-            { label: "Healing", tag: "healing" },
         ],
     },
 ];

@@ -65,12 +65,7 @@ const FILTER_CATEGORIES: FilterCategory[] = [
         title: "Suasana & Vibes",
         items: [
             { id: "tenang", label: "Tenang", type: "tag" },
-            { id: "cozy", label: "Cozy", type: "tag" },
-            { id: "aesthetic", label: "Aesthetic", type: "tag" },
-            { id: "minimalis", label: "Minimalis", type: "tag" },
-            { id: "industrial", label: "Industrial", type: "tag" },
             { id: "rame", label: "Rame", type: "tag" },
-            { id: "healing", label: "Healing", type: "tag" },
         ],
     },
     {

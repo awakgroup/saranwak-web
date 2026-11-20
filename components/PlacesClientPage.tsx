@@ -20,7 +20,6 @@ import {
     MapPin,
     Wallet,
     ChevronDown,
-    Lightbulb,
 } from "lucide-react";
 import { PlaceCard } from "@/components/PlaceCard";
 import { RandomPlaceModal } from "@/components/RandomPlaceModal";
@@ -734,19 +733,14 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                                 </optgroup>
                                                 <optgroup label="Suasana &amp; Vibes">
                                                     <option value="tenang">Tenang</option>
-                                                    <option value="cozy">Cozy</option>
-                                                    <option value="aesthetic">Aesthetic</option>
-                                                    <option value="minimalis">Minimalis</option>
-                                                    <option value="industrial">Industrial</option>
-                                                    <option value="rame">Rame / Hidup</option>
-                                                    <option value="healing">Healing</option>
+                                                    <option value="rame">Rame</option>
                                                 </optgroup>
                                                 <optgroup label="Fasilitas Populer">
-                                                    <option value="outdoor">Outdoor Asri</option>
+                                                    <option value="outdoor">Outdoor</option>
                                                     <option value="indoor">Indoor</option>
-                                                    <option value="ac">Ruang Ber-AC</option>
-                                                    <option value="wifi">WiFi Cepat</option>
-                                                    <option value="colokan">Banyak Colokan</option>
+                                                    <option value="ac">AC</option>
+                                                    <option value="wifi">WiFi</option>
+                                                    <option value="colokan">Colokan</option>
                                                     <option value="musholla">Musholla</option>
                                                     <option value="smoking-area">Smoking Area</option>
                                                     <option value="indoor-smoking">Indoor Smoking</option>
@@ -1265,17 +1259,6 @@ function FilterContent({
                     </div>
                 </div>
             ))}
-
-            {/* Curator Note Card */}
-            <div className="mt-4 rounded-2xl border border-[#EBE5DC] bg-[#F4EFEA] p-3.5 text-xs text-[#756A63]">
-                <div className="mb-1 flex items-center gap-1.5 font-bold text-[#19120D]">
-                    <Lightbulb className="h-4 w-4 text-[#FF5C35]" />
-                    <span>Catatan Kurator Saranwak</span>
-                </div>
-                <p className="leading-relaxed">
-                    Kafe bertanda verifikasi Saranwak telah diuji langsung ketersediaan stopkontak per meja, kestabilan WiFi, dan kenyamanan kursinya.
-                </p>
-            </div>
 
             {hasFilter ? (
                 <div className="pt-2">
