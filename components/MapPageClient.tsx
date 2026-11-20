@@ -46,6 +46,28 @@ interface MapPageClientProps {
     places: Place[];
 }
 
+function placeMatchesKeywords(place: Place, keywords: string[]): boolean {
+    const normalized = keywords.map((k) => k.toLowerCase().trim());
+
+    // 1. Cek dari place_tags relasi
+    if (place.place_tags && Array.isArray(place.place_tags)) {
+        for (const pt of place.place_tags) {
+            const tagObj = (pt as any)?.tags;
+            if (tagObj) {
+                const slug = (tagObj.slug || "").toLowerCase();
+                const name = (tagObj.name || "").toLowerCase();
+                if (normalized.some((k) => slug === k || name === k || slug.includes(k) || name.includes(k))) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    // 2. Cek dari nama, deskripsi, area, alamat, karakteristik
+    const textBlob = `${place.name} ${place.short_description || ""} ${place.description || ""} ${place.vibe || ""} ${place.area || ""}`.toLowerCase();
+    return normalized.some((k) => textBlob.includes(k));
+}
+
 export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedArea, setSelectedArea] = useState<string>("all");
@@ -92,40 +114,43 @@ export function MapPageClient({ places: initialPlaces }: MapPageClientProps) {
             const q = searchQuery.toLowerCase().trim();
             result = result.filter((p) => {
                 const combined = `${p.name} ${p.area || ""} ${p.address || ""} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
-                return combined.includes(q);
+                return combined.includes(q) || placeMatchesKeywords(p, [q]);
             });
         }
 
         if (selectedArea !== "all") {
-            result = result.filter((p) => (p.area || "").toLowerCase().includes(selectedArea.toLowerCase()));
+            const normalizedArea = selectedArea.toLowerCase().trim();
+            result = result.filter((p) => {
+                const combined = `${p.area || ""} ${p.address || ""} ${p.city || ""}`.toLowerCase();
+                return combined.includes(normalizedArea);
+            });
         }
 
         if (activeFilterChip === "wfc") {
-            result = result.filter((p) => {
-                const s = `${p.name} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
-                return s.includes("wfc") || s.includes("nugas") || s.includes("kerja") || s.includes("laptop") || s.includes("wifi");
-            });
+            result = result.filter((p) =>
+                placeMatchesKeywords(p, ["wfc", "nugas", "wifi", "colokan", "kerja", "laptop"])
+            );
         } else if (activeFilterChip === "open") {
             result = result.filter((p) => {
                 const status = getPlaceOpenStatus(p.opening_hours);
                 return status.isOpen;
             });
         } else if (activeFilterChip === "plug") {
-            result = result.filter((p) => {
-                const s = `${p.name} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
-                return s.includes("colokan") || s.includes("stopkontak") || s.includes("listrik") || s.includes("steker") || s.includes("plug");
-            });
+            result = result.filter((p) =>
+                placeMatchesKeywords(p, ["colokan", "stopkontak", "listrik", "plug", "steker"])
+            );
         } else if (activeFilterChip === "24h") {
             result = result.filter((p) => {
                 const status = getPlaceOpenStatus(p.opening_hours);
                 const s = `${p.opening_hours || ""} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
-                return status.is24Hours || s.includes("24 jam");
+                return status.is24Hours || s.includes("24 jam") || s.includes("24/7");
             });
         } else if (activeFilterChip === "sunset") {
-            result = result.filter((p) => {
-                const s = `${p.name} ${p.short_description || ""} ${p.description || ""} ${p.area || ""}`.toLowerCase();
-                return s.includes("outdoor") || s.includes("sunset") || s.includes("pantai") || s.includes("senja") || s.includes("taplau") || s.includes("rooftop");
-            });
+            result = result.filter(
+                (p) =>
+                    placeMatchesKeywords(p, ["outdoor", "sunset", "pantai", "senja", "taplau", "rooftop", "garden"]) ||
+                    (p.area || "").toLowerCase().includes("barat")
+            );
         }
 
         if (isNearbyActive && userCoords) {

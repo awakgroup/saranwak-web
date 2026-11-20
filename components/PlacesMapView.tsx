@@ -156,13 +156,21 @@ export function PlacesMapView({
         if (activeTab === "nugas") {
             return places.filter((p) => {
                 const s = `${p.name} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
-                return s.includes("wfc") || s.includes("nugas") || s.includes("kerja") || s.includes("colokan") || s.includes("wifi");
+                const hasTag = (p.place_tags as any)?.some((pt: any) => {
+                    const tag = (pt?.tags?.slug || pt?.tags?.name || "").toLowerCase();
+                    return /wfc|nugas|kerja|colokan|wifi/i.test(tag);
+                });
+                return hasTag || s.includes("wfc") || s.includes("nugas") || s.includes("kerja") || s.includes("colokan") || s.includes("wifi");
             });
         }
         if (activeTab === "santai") {
             return places.filter((p) => {
                 const s = `${p.name} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
-                return s.includes("santai") || s.includes("sunset") || s.includes("outdoor") || s.includes("nongkrong");
+                const hasTag = (p.place_tags as any)?.some((pt: any) => {
+                    const tag = (pt?.tags?.slug || pt?.tags?.name || "").toLowerCase();
+                    return /santai|sunset|outdoor|nongkrong/i.test(tag);
+                });
+                return hasTag || s.includes("santai") || s.includes("sunset") || s.includes("outdoor") || s.includes("nongkrong");
             });
         }
         return places;
@@ -462,7 +470,7 @@ export function PlacesMapView({
 
                     {/* Scrollable Cards Stream */}
                     <div className="custom-scroll flex-1 space-y-3 overflow-y-auto pr-1 pt-3.5 overscroll-y-contain">
-                        {filteredPlaces.slice(0, 30).map((place, index) => {
+                        {filteredPlaces.map((place, index) => {
                             const isSelected = selectedPlace?.id === place.id;
                             const imageUrl = getSafePlaceImageUrl(place.image_url || place.main_image_url);
                             const priceText = place.price_range || "Mulai Rp 18k";
