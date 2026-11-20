@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
     Search,
@@ -289,10 +289,14 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const selectedTags = getSelectedTags(effectiveParams);
     const selectedPrice = getSelectedPrice(effectiveParams.price);
     const selectedTagsKey = selectedTags.join(",");
+    const listContainerRef = useRef<HTMLElement | null>(null);
 
-    // Reset pagination ketika filter atau query berubah
+    // Reset pagination dan scroll list container ke posisi teratas saat filter berubah tanpa menggeser window
     useEffect(() => {
         setVisibleCount(8);
+        if (listContainerRef.current) {
+            listContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+        }
     }, [currentQ, effectiveParams.area, effectiveParams.category, effectiveParams.openNow, selectedPrice, selectedTagsKey]);
 
     const places = useMemo(() => {
@@ -465,6 +469,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                         <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-1 overscroll-x-contain">
                             <Link
                                 href="/places/?category=coffee-shop"
+                                scroll={false}
                                 className={`chip-filter shrink-0 whitespace-nowrap px-4 py-1.5 rounded-full text-[12px] transition-all font-semibold shadow-xs ${
                                     selectedTags.length === 0 &&
                                     !effectiveParams.area &&
@@ -485,6 +490,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                             href={buildFilterHref(effectiveParams, {
                                                 openNow: active ? undefined : "true",
                                             })}
+                                            scroll={false}
                                             className={`chip-filter shrink-0 whitespace-nowrap px-3.5 py-1.5 rounded-full text-[12px] transition-all font-semibold shadow-xs inline-flex items-center gap-1.5 ${
                                                 active
                                                     ? "bg-[#ac3311] text-white shadow-sm"
@@ -505,6 +511,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                     <Link
                                         key={chip.tag}
                                         href={buildTagHref(effectiveParams, chip.tag)}
+                                        scroll={false}
                                         className={`chip-filter shrink-0 whitespace-nowrap px-3.5 py-1.5 rounded-full text-[12px] transition-all font-semibold shadow-xs inline-flex items-center gap-1.5 ${
                                             active
                                                 ? "bg-[#ac3311] text-white shadow-sm"
@@ -650,7 +657,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                                     const newHref = buildFilterHref(effectiveParams, {
                                                         area: e.target.value || undefined,
                                                     });
-                                                    router.push(newHref);
+                                                    router.push(newHref, { scroll: false });
                                                 }}
                                                 className="w-full cursor-pointer appearance-none border-none bg-transparent p-0 pr-5 text-xs font-bold text-[#19120D] outline-none focus:ring-0 sm:text-sm"
                                             >
@@ -684,7 +691,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                                         tags: tagVal || undefined,
                                                         tag: undefined,
                                                     });
-                                                    router.push(newHref);
+                                                    router.push(newHref, { scroll: false });
                                                 }}
                                                 className="w-full cursor-pointer appearance-none border-none bg-transparent p-0 pr-5 text-xs font-bold text-[#19120D] outline-none focus:ring-0 sm:text-sm"
                                             >
@@ -740,7 +747,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                                     const newHref = buildFilterHref(effectiveParams, {
                                                         price: priceVal,
                                                     });
-                                                    router.push(newHref);
+                                                    router.push(newHref, { scroll: false });
                                                 }}
                                                 className="w-full cursor-pointer appearance-none border-none bg-transparent p-0 pr-5 text-xs font-bold text-[#19120D] outline-none focus:ring-0 sm:text-sm"
                                             >
@@ -929,7 +936,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             </details>
 
                             {/* Desktop Sticky Filter Card */}
-                            <div className="hidden rounded-3xl border border-[#EBE5DC] bg-white p-6 shadow-bento lg:block">
+                            <div className="hidden rounded-3xl border border-[#EBE5DC] bg-white p-6 shadow-bento lg:block lg:max-h-[calc(100vh-7.5rem)] lg:overflow-y-auto lg:overscroll-contain custom-scroll">
                                 <div className="mb-5 flex items-center justify-between border-b border-[#EBE5DC] pb-4">
                                     <div className="flex items-center gap-2">
                                         <SlidersHorizontal className="h-4 w-4 text-[#FF5C35]" />
@@ -946,6 +953,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                     {hasFilter ? (
                                         <Link
                                             href="/places/?category=coffee-shop"
+                                            scroll={false}
                                             onClick={handleClearSearch}
                                             className="text-xs font-bold text-[#FF5C35] transition hover:text-[#D8431F]"
                                         >
@@ -963,7 +971,11 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             </div>
                         </aside>
 
-                        <section className="min-w-0">
+                        <section
+                            id="places-list"
+                            ref={listContainerRef}
+                            className="min-w-0 lg:max-h-[calc(100vh-7.5rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-2 custom-scroll"
+                        >
                             {/* Interactive Active Filters Bar */}
                             {hasFilter ? (
                                 <ActiveFilters
@@ -1124,6 +1136,7 @@ function FilterContent({
                         href={buildFilterHref(params, {
                             openNow: undefined,
                         })}
+                        scroll={false}
                         className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition duration-150 ${
                             !isOpenNow
                                 ? "bg-[#19120D] text-white shadow-xs"
@@ -1137,6 +1150,7 @@ function FilterContent({
                         href={buildFilterHref(params, {
                             openNow: isOpenNow ? undefined : "true",
                         })}
+                        scroll={false}
                         className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition duration-150 ${
                             isOpenNow
                                 ? "border border-[#FF5C35] bg-[#FFEAE5] text-[#FF5C35] shadow-xs"
@@ -1166,6 +1180,7 @@ function FilterContent({
                                 href={buildFilterHref(params, {
                                     price: option.value,
                                 })}
+                                scroll={false}
                                 className={`flex items-center justify-between rounded-2xl border px-3.5 py-2.5 text-xs font-bold transition duration-200 ${
                                     active
                                         ? "border-[#19120D] bg-[#19120D] text-white shadow-sm"
@@ -1202,6 +1217,7 @@ function FilterContent({
                                 <Link
                                     key={option.tag}
                                     href={buildTagHref(params, option.tag)}
+                                    scroll={false}
                                     className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition duration-150 ${
                                         active
                                             ? "border-[#FF5C35] bg-[#FFEAE5] text-[#FF5C35] shadow-xs"
@@ -1234,6 +1250,7 @@ function FilterContent({
                 <div className="pt-2">
                     <Link
                         href="/places/?category=coffee-shop"
+                        scroll={false}
                         className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-[#19120D] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#FF5C35]"
                     >
                         <RotateCcw className="h-3.5 w-3.5" />
@@ -1329,6 +1346,7 @@ function ActiveFilters({
 
                 <Link
                     href="/places/?category=coffee-shop"
+                    scroll={false}
                     onClick={() => {
                         if (onClearSearch) onClearSearch();
                     }}
@@ -1344,6 +1362,7 @@ function ActiveFilters({
                     <Link
                         key={chip.id}
                         href={chip.removeHref}
+                        scroll={false}
                         onClick={() => {
                             if (chip.id.startsWith("q-") && onClearSearch) {
                                 onClearSearch();
@@ -1403,6 +1422,7 @@ function EmptyPlacesState({
                                     ? buildTagHref(params, item.tag)
                                     : buildFilterHref(params, { price: item.price as PriceFilterValue })
                             }
+                            scroll={false}
                             className="rounded-full border border-[#E7D8C8] bg-white px-3.5 py-1.5 text-xs font-bold text-[#201813] shadow-sm transition hover:border-[#1F5A4A] hover:bg-[#1F5A4A] hover:text-white"
                         >
                             + {item.label}
@@ -1413,6 +1433,7 @@ function EmptyPlacesState({
                 <div className="mt-7 flex justify-center">
                     <Link
                         href="/places/?category=coffee-shop"
+                        scroll={false}
                         onClick={() => {
                             if (onClearSearch) onClearSearch();
                         }}

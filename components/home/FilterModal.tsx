@@ -158,7 +158,7 @@ export function FilterModal({
         }
 
         onClose();
-        router.push(`/places/?${params.toString()}`);
+        router.push(`/places/?${params.toString()}`, { scroll: false });
     }
 
     const totalActive =
