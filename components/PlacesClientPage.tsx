@@ -936,7 +936,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             </details>
 
                             {/* Desktop Sticky Filter Card */}
-                            <div className="hidden rounded-3xl border border-[#EBE5DC] bg-white p-6 shadow-bento lg:block lg:max-h-[calc(100vh-7.5rem)] lg:overflow-y-auto lg:overscroll-contain custom-scroll">
+                            <div className="hidden rounded-3xl border border-[#EBE5DC] bg-white p-6 shadow-bento lg:block">
                                 <div className="mb-5 flex items-center justify-between border-b border-[#EBE5DC] pb-4">
                                     <div className="flex items-center gap-2">
                                         <SlidersHorizontal className="h-4 w-4 text-[#FF5C35]" />
