@@ -886,10 +886,10 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                         <button
                             type="button"
                             onClick={() => setIsRandomOpen(true)}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-[#FF5C35]/30 bg-[#FFF8EF] px-3.5 py-1.5 text-xs font-bold text-[#FF5C35] shadow-xs transition hover:bg-[#FF5C35] hover:text-white active:scale-95"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-[#EBE5DC] bg-white px-3.5 py-1.5 text-xs font-bold text-[#19120D] shadow-xs transition hover:border-[#FF5C35] hover:text-[#FF5C35] active:scale-95"
                         >
-                            <Dices className="h-3.5 w-3.5" />
-                            <span>Pilihin Acak 🎲</span>
+                            <Dices className="h-3.5 w-3.5 text-[#FF5C35]" />
+                            <span>Pilihan Acak</span>
                         </button>
                     </div>
                 </div>

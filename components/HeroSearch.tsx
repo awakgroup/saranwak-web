@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Dices } from "lucide-react";
 import { RandomPlaceModal } from "@/components/RandomPlaceModal";
 import {
     placeFilterGroups,
@@ -224,9 +225,10 @@ export function HeroSearch() {
                         <button
                             type="button"
                             onClick={() => setIsRandomOpen(true)}
-                            className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-2xl border border-[#C8784A] bg-[#C8784A] px-5 py-3 text-sm font-black text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[#B3683D] hover:shadow-md"
+                            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-[#FF5C35]/30 bg-[#FFF8EF] px-5 py-3 text-sm font-bold text-[#FF5C35] shadow-xs transition duration-200 hover:-translate-y-0.5 hover:bg-[#FF5C35] hover:text-white"
                         >
-                            <span>🎲 Bingung Mau ke Mana?</span>
+                            <Dices className="h-4 w-4" />
+                            <span>Pilihan Acak</span>
                         </button>
 
                         {hasActiveFilter ? (

@@ -2,13 +2,18 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
     Dices,
     X,
-    Sparkles,
     RotateCcw,
     ArrowRight,
-    Clock,
+    MapPin,
+    Zap,
+    Wifi,
+    Sun,
+    Coffee,
+    Sparkles,
 } from "lucide-react";
 import type { Place } from "@/types/database";
 import { getSafePlaceImageUrl } from "@/lib/image-url";
@@ -22,20 +27,22 @@ type RandomPlaceModalProps = {
     placesData?: Place[];
 };
 
-const moodOptions = [
-    { label: "Bebas / Semua Mood", value: "all" },
-    { label: "💻 Buat Nugas / WFC", value: "nugas" },
-    { label: "☕ Nongkrong Santai", value: "nongkrong" },
-    { label: "✨ Aesthetic / Nge-date", value: "nge-date" },
-    { label: "🌿 Me-Time / Tenang", value: "me-time" },
+const categoryOptions = [
+    { label: "Semua Kategori", value: "all" },
+    { label: "WFC & Nugas", value: "wfc" },
+    { label: "Nongkrong", value: "nongkrong" },
+    { label: "Nge-date", value: "nge-date" },
+    { label: "Tenang", value: "tenang" },
 ];
 
 const areaOptions = [
-    { label: "Semua Area Padang", value: "all" },
+    { label: "Semua Wilayah", value: "all" },
     { label: "Padang Barat", value: "Padang Barat" },
-    { label: "Padang Utara", value: "Padang Utara" },
     { label: "Padang Timur", value: "Padang Timur" },
+    { label: "Padang Utara", value: "Padang Utara" },
+    { label: "Padang Selatan", value: "Padang Selatan" },
     { label: "Koto Tangah", value: "Koto Tangah" },
+    { label: "Nanggalo", value: "Nanggalo" },
 ];
 
 function extractPlaceTagSlugs(place: Place): string[] {
@@ -78,13 +85,12 @@ export function RandomPlaceModal({
     onClose,
     placesData = [],
 }: RandomPlaceModalProps) {
-    // Inisialisasi langsung dengan staticPlaces agar tidak pernah kosong sedetik pun!
     const [allPlaces, setAllPlaces] = useState<Place[]>(() => {
         if (placesData && placesData.length > 0) return placesData;
         return staticPlaces as unknown as Place[];
     });
 
-    const [selectedMood, setSelectedMood] = useState("all");
+    const [selectedCategory, setSelectedCategory] = useState("all");
     const [selectedArea, setSelectedArea] = useState("all");
     const [onlyOpenNow, setOnlyOpenNow] = useState(true);
 
@@ -111,7 +117,7 @@ export function RandomPlaceModal({
                 }
             })
             .catch(() => {
-                // Tetap gunakan staticPlaces jika API gagal
+                // Fallback staticPlaces
             });
     }, [placesData]);
 
@@ -132,30 +138,29 @@ export function RandomPlaceModal({
             }
         }
 
-        // 2. Filter Mood / Aktivitas
-        if (selectedMood !== "all") {
-            const byMood = filtered.filter((place) => {
+        // 2. Filter Kategori / Tag
+        if (selectedCategory !== "all") {
+            const byCat = filtered.filter((place) => {
                 const tagSlugs = extractPlaceTagSlugs(place);
-                const matchesTag = tagSlugs.some((s) => s.includes(selectedMood));
+                const matchesTag = tagSlugs.some((s) => s.includes(selectedCategory));
 
                 const searchableText = `${place.name} ${place.description || ""} ${place.short_description || ""}`.toLowerCase();
-                const matchesText = searchableText.includes(selectedMood);
+                const matchesText = searchableText.includes(selectedCategory);
 
                 return matchesTag || matchesText;
             });
 
-            if (byMood.length > 0) {
-                filtered = byMood;
+            if (byCat.length > 0) {
+                filtered = byCat;
             }
         }
 
-        // 3. Filter Buka Sekarang (jika dicentang)
+        // 3. Filter Buka Sekarang
         if (onlyOpenNow) {
             const byOpenNow = filtered.filter((place) => {
                 return getPlaceOpenStatus(place.opening_hours).isOpen;
             });
 
-            // Jika ada yang buka, gunakan. Jika tidak ada yang buka sama sekali (misal jam 4 pagi), gunakan filtered
             if (byOpenNow.length > 0) {
                 filtered = byOpenNow;
             }
@@ -167,12 +172,12 @@ export function RandomPlaceModal({
         setHasPicked(false);
         setPickedPlace(null);
 
-        // Animasi kocok slot machine selama ~1.1 detik
+        // Animasi acak nama spot
         let count = 0;
         const maxCount = 14;
         const interval = setInterval(() => {
             const randomSample = finalCandidates[Math.floor(Math.random() * finalCandidates.length)];
-            setShufflingName(randomSample?.name || "Mencari cafe terbaik...");
+            setShufflingName(randomSample?.name || "Mencari spot terbaik...");
             count += 1;
 
             if (count >= maxCount) {
@@ -182,31 +187,31 @@ export function RandomPlaceModal({
                 setIsShuffling(false);
                 setHasPicked(true);
             }
-        }, 80);
+        }, 75);
     }
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             {/* Backdrop Blur */}
             <div
-                className="absolute inset-0 bg-black/65 backdrop-blur-md transition-opacity duration-200"
+                className="absolute inset-0 bg-[#19120D]/80 backdrop-blur-md transition-opacity duration-200"
                 onClick={onClose}
             />
 
             {/* Modal Card */}
-            <div className="custom-scroll relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[32px] border border-[#E7D8C8] bg-[#FFFDF8] p-5 shadow-2xl overscroll-y-contain sm:p-7 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]">
+            <div className="custom-scroll relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[32px] border border-[#EBE5DC] bg-white p-5 shadow-2xl overscroll-y-contain sm:p-7 transition-all">
                 {/* Header Modal */}
-                <div className="flex items-center justify-between border-b border-[#E7D8C8] pb-4">
-                    <div className="flex items-center gap-2.5">
-                        <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#C8784A] text-lg text-white shadow-md">
-                            🎲
-                        </span>
+                <div className="flex items-center justify-between border-b border-[#EBE5DC] pb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#FFECE5] text-[#D8431F]">
+                            <Dices className="h-5 w-5" />
+                        </div>
                         <div>
-                            <h3 className="font-serif text-lg font-bold text-[#201813] sm:text-xl">
-                                Bingung Mau Ngopi Di Mana?
+                            <h3 className="font-sans text-base font-extrabold text-[#19120D] sm:text-lg">
+                                Pilihan Acak Tempat Ngopi
                             </h3>
-                            <p className="text-xs text-[#756A60]">
-                                Biar Saranwak yang pilihin tempat paling pas buat kamu.
+                            <p className="text-xs text-[#756A63]">
+                                Temukan spot ngopi terkurasi di Padang secara acak.
                             </p>
                         </div>
                     </div>
@@ -214,147 +219,158 @@ export function RandomPlaceModal({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="grid h-9 w-9 place-items-center rounded-full bg-[#F4F1EA] text-[#756A60] transition hover:bg-[#E7D8C8] hover:text-[#201813]"
+                        aria-label="Tutup"
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#FAF7F2] text-[#756A63] transition hover:bg-[#EBE5DC] hover:text-[#19120D]"
                     >
-                        <X className="h-5 w-5" />
+                        <X className="h-4 w-4" />
                     </button>
                 </div>
 
                 {/* Konten Pemilihan atau Hasil */}
                 {!hasPicked ? (
                     <div className="mt-5 space-y-4">
-                        {/* Selector Mood */}
+                        {/* Selector Kategori / Aktivitas */}
                         <div>
-                            <label className="mb-2 block text-xs font-black uppercase tracking-wider text-[#C8784A]">
-                                1. Mau Suasana Kayak Gimana?
+                            <label className="mb-2 block text-[11px] font-black uppercase tracking-wider text-[#FF5C35]">
+                                1. Kebutuhan / Suasana
                             </label>
-                            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                                {moodOptions.map((opt) => (
-                                    <button
-                                        key={opt.value}
-                                        type="button"
-                                        onClick={() => setSelectedMood(opt.value)}
-                                        className={[
-                                            "rounded-2xl border px-3.5 py-2.5 text-left text-xs font-bold transition",
-                                            selectedMood === opt.value
-                                                ? "border-[#1F5A4A] bg-[#1F5A4A] text-white shadow-sm"
-                                                : "border-[#E7D8C8] bg-white text-[#4B4038] hover:bg-[#F8F1E8]",
-                                        ].join(" ")}
-                                    >
-                                        {opt.label}
-                                    </button>
-                                ))}
+                            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                {categoryOptions.map((opt) => {
+                                    const active = selectedCategory === opt.value;
+                                    return (
+                                        <button
+                                            key={opt.value}
+                                            type="button"
+                                            onClick={() => setSelectedCategory(opt.value)}
+                                            className={`rounded-2xl border px-3 py-2.5 text-center text-xs font-bold transition active:scale-[0.98] ${
+                                                active
+                                                    ? "border-[#19120D] bg-[#19120D] text-white shadow-sm"
+                                                    : "border-[#EBE5DC] bg-[#FAF7F2] text-[#19120D] hover:border-[#FF5C35]/50 hover:bg-white"
+                                            }`}
+                                        >
+                                            {opt.label}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
 
                         {/* Selector Area */}
                         <div>
-                            <label className="mb-2 block text-xs font-black uppercase tracking-wider text-[#C8784A]">
-                                2. Area Mana di Padang?
+                            <label className="mb-2 block text-[11px] font-black uppercase tracking-wider text-[#FF5C35]">
+                                2. Wilayah di Padang
                             </label>
-                            <div className="flex flex-wrap gap-2">
-                                {areaOptions.map((opt) => (
-                                    <button
-                                        key={opt.value}
-                                        type="button"
-                                        onClick={() => setSelectedArea(opt.value)}
-                                        className={[
-                                            "rounded-full border px-3.5 py-2 text-xs font-bold transition",
-                                            selectedArea === opt.value
-                                                ? "border-[#C8784A] bg-[#C8784A] text-white shadow-sm"
-                                                : "border-[#E7D8C8] bg-white text-[#4B4038] hover:bg-[#F8F1E8]",
-                                        ].join(" ")}
-                                    >
-                                        {opt.label}
-                                    </button>
-                                ))}
+                            <div className="flex flex-wrap gap-1.5">
+                                {areaOptions.map((opt) => {
+                                    const active = selectedArea === opt.value;
+                                    return (
+                                        <button
+                                            key={opt.value}
+                                            type="button"
+                                            onClick={() => setSelectedArea(opt.value)}
+                                            className={`rounded-full border px-3.5 py-1.5 text-xs font-bold transition active:scale-[0.98] ${
+                                                active
+                                                    ? "border-[#FF5C35] bg-[#FFECE5] text-[#D8431F] shadow-xs"
+                                                    : "border-[#EBE5DC] bg-[#FAF7F2] text-[#19120D] hover:border-[#FF5C35] hover:bg-white"
+                                            }`}
+                                        >
+                                            {opt.label}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
 
                         {/* Checkbox Buka Sekarang */}
-                        <div className="rounded-2xl border border-[#E7D8C8] bg-[#F8F1E8]/70 p-3.5">
+                        <div className="rounded-2xl border border-[#EBE5DC] bg-[#FAF7F2] p-3.5">
                             <label className="flex cursor-pointer items-center justify-between gap-3">
-                                <span className="flex items-center gap-2 text-xs font-bold text-[#201813]">
-                                    <Clock className="h-4 w-4 text-[#1F5A4A]" />
+                                <span className="flex items-center gap-2 text-xs font-bold text-[#19120D]">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#10B981] opacity-75" />
+                                        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#10B981]" />
+                                    </span>
                                     <span>Hanya pilih tempat yang buka sekarang</span>
                                 </span>
                                 <input
                                     type="checkbox"
                                     checked={onlyOpenNow}
                                     onChange={(e) => setOnlyOpenNow(e.target.checked)}
-                                    className="h-4 w-4 accent-[#1F5A4A]"
+                                    className="h-4 w-4 accent-[#FF5C35]"
                                 />
                             </label>
                         </div>
 
-                        {/* Shuffle Visual State (Saat Mengocok) */}
+                        {/* Shuffle Visual State (Saat Mengacak) */}
                         {isShuffling ? (
-                            <div className="my-5 rounded-2xl border border-dashed border-[#C8784A] bg-[#FFF8EF] p-5 text-center">
-                                <p className="animate-spin text-3xl">🎲</p>
-                                <p className="mt-2 text-xs font-black uppercase tracking-widest text-[#C8784A]">
-                                    Sedang mengocok pilihan...
+                            <div className="my-4 rounded-2xl border border-dashed border-[#FF5C35]/50 bg-[#FFF8EF] p-5 text-center">
+                                <Dices className="mx-auto h-7 w-7 text-[#FF5C35] animate-spin" />
+                                <p className="mt-2 text-[11px] font-black uppercase tracking-wider text-[#FF5C35]">
+                                    Sedang mengacak pilihan...
                                 </p>
-                                <p className="mt-1 font-serif text-xl font-bold text-[#201813]">
+                                <p className="mt-1 font-sans text-base font-extrabold text-[#19120D]">
                                     {shufflingName}
                                 </p>
                             </div>
                         ) : null}
 
-                        {/* Tombol Kocok */}
+                        {/* Tombol Acak */}
                         <button
                             type="button"
                             onClick={handlePickRandom}
                             disabled={isShuffling}
-                            className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#181818] py-4 text-sm font-black text-white shadow-lg transition hover:bg-[#2A2A2A] active:scale-[0.99] disabled:opacity-50"
+                            className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#19120D] py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#FF5C35] active:scale-[0.99] disabled:opacity-50"
                         >
-                            <Dices className={`h-5 w-5 text-[#F3C48E] ${isShuffling ? "animate-spin" : ""}`} />
-                            <span>{isShuffling ? "Sedang Mengocok..." : "Kocok & Cariin Sekarang!"}</span>
+                            <Dices className={`h-4 w-4 ${isShuffling ? "animate-spin" : ""}`} />
+                            <span>{isShuffling ? "Sedang Mengacak..." : "Pilih Tempat Sekarang"}</span>
                         </button>
                     </div>
                 ) : (
                     /* Hasil Pilihan */
                     pickedPlace && (
                         <div className="mt-5 space-y-4">
-                            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1.5 text-xs font-bold text-amber-800">
-                                <Sparkles className="h-3.5 w-3.5 text-amber-600" />
-                                <span>Rekomendasi Terpilih Buat Kamu! 🎉</span>
+                            <div className="inline-flex items-center gap-1.5 rounded-full border border-[#FF5C35]/30 bg-[#FFECE5] px-3.5 py-1 text-xs font-bold text-[#D8431F]">
+                                <Sparkles className="h-3.5 w-3.5 text-[#FF5C35]" />
+                                <span>Rekomendasi Terpilih</span>
                             </div>
 
                             {/* Card Hasil */}
-                            <div className="overflow-hidden rounded-[26px] border border-[#E7D8C8] bg-white shadow-md">
-                                <div className="relative aspect-[16/9] w-full overflow-hidden bg-neutral-900">
-                                    <img
-                                        src={getSafePlaceImageUrl(pickedPlace.image_url)}
+                            <div className="overflow-hidden rounded-2xl border border-[#EBE5DC] bg-white shadow-sm">
+                                <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#19120D]">
+                                    <Image
+                                        src={getSafePlaceImageUrl(pickedPlace.image_url || pickedPlace.main_image_url)}
                                         alt={pickedPlace.name}
+                                        fill
+                                        sizes="(max-width: 640px) 100vw, 500px"
                                         className="h-full w-full object-cover"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
                                     <div className="absolute left-3 top-3">
                                         <OpenStatusBadge openingHours={pickedPlace.opening_hours} mode="compact" />
                                     </div>
                                     <div className="absolute bottom-3 left-3 right-3 text-white">
-                                        <span className="text-[11px] font-bold text-white/80">
-                                            {pickedPlace.area || "Padang"}
-                                        </span>
-                                        <h4 className="font-serif text-xl font-bold leading-tight">
+                                        <div className="flex items-center gap-1 text-[11px] font-bold text-[#FFDBCE]">
+                                            <MapPin className="h-3 w-3 text-[#FF5C35]" />
+                                            <span>{pickedPlace.area || "Padang"}</span>
+                                        </div>
+                                        <h4 className="font-sans text-lg font-extrabold leading-tight text-white sm:text-xl">
                                             {pickedPlace.name}
                                         </h4>
                                     </div>
                                 </div>
 
                                 <div className="p-4">
-                                    <p className="line-clamp-2 text-xs leading-relaxed text-[#756A60]">
+                                    <p className="line-clamp-2 text-xs leading-relaxed text-[#756A63]">
                                         {pickedPlace.short_description ||
                                             pickedPlace.description ||
-                                            "Tempat ngopi pilihan asik buat nongkrong dan santai di Padang."}
+                                            "Tempat ngopi terkurasi di Kota Padang."}
                                     </p>
 
-                                    <div className="mt-3 flex items-center justify-between border-t border-[#F4F1EA] pt-3 text-xs font-bold text-[#201813]">
-                                        <span className="text-[#C8784A]">
-                                            {pickedPlace.price_range || "Harga terjangkau"}
+                                    <div className="mt-3 flex items-center justify-between border-t border-[#EBE5DC] pt-3 text-xs font-bold text-[#19120D]">
+                                        <span className="text-[#FF5C35]">
+                                            {pickedPlace.price_range || "Mulai Rp 15k"}
                                         </span>
-                                        <span className="text-[#756A60]">
-                                            {pickedPlace.opening_hours || "-"}
+                                        <span className="text-[#756A63]">
+                                            {pickedPlace.opening_hours || "Buka setiap hari"}
                                         </span>
                                     </div>
                                 </div>
@@ -365,7 +381,7 @@ export function RandomPlaceModal({
                                 <Link
                                     href={`/places/${pickedPlace.slug}`}
                                     onClick={onClose}
-                                    className="flex items-center justify-center gap-2 rounded-2xl bg-[#1F5A4A] py-3.5 text-xs font-black text-white shadow-md transition hover:bg-[#164337]"
+                                    className="flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#19120D] text-xs font-bold text-white shadow-sm transition hover:bg-[#FF5C35] active:scale-95"
                                 >
                                     <span>Buka Detail Tempat</span>
                                     <ArrowRight className="h-4 w-4" />
@@ -374,19 +390,19 @@ export function RandomPlaceModal({
                                 <button
                                     type="button"
                                     onClick={handlePickRandom}
-                                    className="flex items-center justify-center gap-2 rounded-2xl border border-[#E7D8C8] bg-white py-3.5 text-xs font-bold text-[#201813] transition hover:bg-[#F8F1E8]"
+                                    className="flex h-11 items-center justify-center gap-2 rounded-2xl border border-[#EBE5DC] bg-white text-xs font-bold text-[#19120D] transition hover:border-[#FF5C35] hover:text-[#FF5C35] active:scale-95"
                                 >
-                                    <RotateCcw className="h-4 w-4 text-[#C8784A]" />
-                                    <span>Kocok Ulang 🎲</span>
+                                    <RotateCcw className="h-4 w-4 text-[#FF5C35]" />
+                                    <span>Pilih Ulang</span>
                                 </button>
                             </div>
 
                             <button
                                 type="button"
                                 onClick={() => setHasPicked(false)}
-                                className="w-full text-center text-xs font-bold text-[#756A60] hover:underline"
+                                className="w-full text-center text-xs font-bold text-[#756A63] hover:text-[#19120D] hover:underline"
                             >
-                                ← Ganti Kriteria Filter
+                                ← Ubah Kriteria Pencarian
                             </button>
                         </div>
                     )
