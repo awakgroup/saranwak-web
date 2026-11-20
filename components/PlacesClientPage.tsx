@@ -290,6 +290,33 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
     const selectedPrice = getSelectedPrice(effectiveParams.price);
     const selectedTagsKey = selectedTags.join(",");
     const listContainerRef = useRef<HTMLElement | null>(null);
+    const filterCardRef = useRef<HTMLDivElement | null>(null);
+    const [filterHeight, setFilterHeight] = useState<number | undefined>(undefined);
+
+    // Sinkronkan tinggi list cafe agar sama persis dengan section filter pada desktop
+    useEffect(() => {
+        const updateHeight = () => {
+            if (typeof window !== "undefined" && window.innerWidth >= 1024 && filterCardRef.current) {
+                setFilterHeight(filterCardRef.current.offsetHeight);
+            } else {
+                setFilterHeight(undefined);
+            }
+        };
+
+        updateHeight();
+
+        if (typeof window === "undefined" || !filterCardRef.current) return;
+        const observer = new ResizeObserver(() => {
+            updateHeight();
+        });
+        observer.observe(filterCardRef.current);
+        window.addEventListener("resize", updateHeight);
+
+        return () => {
+            observer.disconnect();
+            window.removeEventListener("resize", updateHeight);
+        };
+    }, []);
 
     // Reset pagination dan scroll list container ke posisi teratas saat filter berubah tanpa menggeser window
     useEffect(() => {
@@ -900,7 +927,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                     </div>
                 ) : (
                     <div className="grid gap-6 lg:grid-cols-[300px_1fr] lg:items-start xl:grid-cols-[320px_1fr]">
-                        <aside className="lg:sticky lg:top-24">
+                        <aside className="w-full">
                             {/* Mobile Collapsible Filter Drawer */}
                             <details className="group rounded-[26px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_14px_45px_rgba(47,35,25,0.06)] lg:hidden">
                                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
@@ -935,8 +962,11 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                                 </div>
                             </details>
 
-                            {/* Desktop Sticky Filter Card */}
-                            <div className="hidden rounded-3xl border border-[#EBE5DC] bg-white p-6 shadow-bento lg:block">
+                            {/* Desktop Filter Card */}
+                            <div
+                                ref={filterCardRef}
+                                className="hidden rounded-3xl border border-[#EBE5DC] bg-white p-6 shadow-bento lg:block"
+                            >
                                 <div className="mb-5 flex items-center justify-between border-b border-[#EBE5DC] pb-4">
                                     <div className="flex items-center gap-2">
                                         <SlidersHorizontal className="h-4 w-4 text-[#FF5C35]" />
@@ -974,7 +1004,8 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                         <section
                             id="places-list"
                             ref={listContainerRef}
-                            className="min-w-0 lg:max-h-[calc(100vh-7.5rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-2 custom-scroll"
+                            style={filterHeight ? { height: `${filterHeight}px` } : undefined}
+                            className="min-w-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2 lg:pb-4 custom-scroll"
                         >
                             {/* Interactive Active Filters Bar */}
                             {hasFilter ? (
