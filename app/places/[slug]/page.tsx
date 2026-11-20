@@ -436,10 +436,10 @@ function HeroSection({
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-9.5 sm:min-h-12 items-center justify-center gap-2 rounded-full border border-[#EBE5DC] bg-white px-3.5 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-[#19120D] transition hover:bg-[#19120D] hover:text-white"
+                    className="inline-flex min-h-9.5 sm:min-h-12 items-center justify-center gap-2 rounded-full border border-[#EBE5DC] bg-white px-3.5 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-[#19120D] shadow-2xs transition hover:border-[#25D366] hover:bg-[#F0FDF4] hover:text-[#166534]"
                 >
-                    <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    Share ke WhatsApp
+                    <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#25D366]" />
+                    Ajak Teman via WA
                 </a>
 
                 <BookmarkButton place={place as unknown as Place} variant="button" />
@@ -786,10 +786,10 @@ function PlaceSidebar({
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] px-5 py-2.5 text-xs font-bold text-[#19120D] transition hover:bg-[#19120D] hover:text-white"
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#EBE5DC] bg-[#FAF6F0] px-5 py-2.5 text-xs font-bold text-[#19120D] shadow-2xs transition hover:border-[#25D366] hover:bg-[#F0FDF4] hover:text-[#166534]"
                 >
-                    <Share2 className="h-4 w-4" />
-                    Share ke WhatsApp
+                    <Share2 className="h-4 w-4 text-[#25D366]" />
+                    Ajak Teman via WA
                 </a>
             </div>
 
@@ -994,11 +994,11 @@ function MobileStickyActions({
                     href={whatsappShareUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#201813] px-3 py-2 text-xs font-bold text-white transition-all duration-150 active:scale-95"
-                    aria-label="Bagikan ke WhatsApp"
+                    className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#107038] px-3.5 py-2 text-xs font-bold text-white shadow-xs transition-all duration-150 hover:bg-[#0c592c] active:scale-95"
+                    aria-label="Ajak Teman via WhatsApp"
                 >
                     <Share2 className="h-3.5 w-3.5 shrink-0" />
-                    <span className="hidden sm:inline">Share</span>
+                    <span>Ajak Teman</span>
                 </a>
             </div>
         </div>
@@ -1495,13 +1495,15 @@ function makeQuickSummary(place: PlaceDetail, tags: Tag[]) {
 
 function makeWhatsappShareUrl(place: PlaceDetail) {
     const detailUrl = `${siteUrl}/places/${place.slug}`;
+    const areaText = place.area ? ` di ${place.area}` : "";
+    const priceText = place.price_range ? ` (${place.price_range})` : "";
 
     const message = [
-        `Cek ${place.name} di Saranwak:`,
-        detailUrl,
+        `Eh, nongkrong di *${place.name}* yuk! ☕`,
+        `Tempatnya asik${areaText}${priceText}.`,
         "",
-        place.area ? `Area: ${place.area}` : null,
-        place.price_range ? `Harga: ${place.price_range}` : null,
+        `Cek foto, jam buka & lokasinya di sini:`,
+        detailUrl,
     ]
         .filter(Boolean)
         .join("\n");

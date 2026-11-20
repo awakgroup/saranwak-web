@@ -551,8 +551,24 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             })}
                         </div>
 
-                        {/* Mobile Quick Action Buttons: Terdekat, Pilihan Acak, Filter */}
+                        {/* Mobile Quick Action Buttons: Buka Sekarang, Terdekat, Pilihan Acak, Filter */}
                         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-0.5">
+                            {/* Tombol Buka Sekarang */}
+                            <Link
+                                href={buildFilterHref(effectiveParams, {
+                                    openNow: effectiveParams.openNow === "true" ? undefined : "true",
+                                })}
+                                scroll={false}
+                                className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-bold transition-all shadow-xs active:scale-95 ${
+                                    effectiveParams.openNow === "true"
+                                        ? "bg-[#107038] text-white"
+                                        : "bg-white border border-[#e4e2de]/80 text-[#0d0401] hover:border-[#107038]"
+                                }`}
+                            >
+                                <span className={`h-2 w-2 rounded-full ${effectiveParams.openNow === "true" ? "bg-white animate-pulse" : "bg-[#10B981]"}`} />
+                                <span>Buka Sekarang</span>
+                            </Link>
+
                             {/* Tombol Terdekat */}
                             <button
                                 type="button"
@@ -882,6 +898,22 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2.5">
+                        {/* Toggle Buka Sekarang Button (Desktop) */}
+                        <Link
+                            href={buildFilterHref(effectiveParams, {
+                                openNow: effectiveParams.openNow === "true" ? undefined : "true",
+                            })}
+                            scroll={false}
+                            className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-bold shadow-xs transition active:scale-95 ${
+                                effectiveParams.openNow === "true"
+                                    ? "border-[#107038] bg-[#107038] text-white shadow-sm"
+                                    : "border-[#EBE5DC] bg-white text-[#19120D] hover:border-[#107038] hover:text-[#107038]"
+                            }`}
+                        >
+                            <span className={`h-2 w-2 rounded-full ${effectiveParams.openNow === "true" ? "bg-white animate-pulse" : "bg-[#10B981]"}`} />
+                            <span>Buka Sekarang</span>
+                        </Link>
+
                         {/* Toggle Terdekat Button */}
                         <button
                             type="button"

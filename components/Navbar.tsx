@@ -13,9 +13,11 @@ import {
     Megaphone,
     Coffee,
     Download,
+    Search,
 } from "lucide-react";
 import { useSavedPlaces } from "@/lib/saved-places";
 import { SavedPlacesModal } from "@/components/SavedPlacesModal";
+import { QuickSearchModal } from "@/components/QuickSearchModal";
 
 const WHATSAPP_NUMBER = "6281932097214";
 const whatsappPromoMessage = encodeURIComponent(
@@ -28,7 +30,21 @@ export function Navbar() {
     const [isViewMapParam, setIsViewMapParam] = useState(false);
     const { savedCount } = useSavedPlaces();
     const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isStandalone, setIsStandalone] = useState(false);
+
+    // Global keyboard shortcut: Cmd+K / Ctrl+K untuk membuka Quick Search
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+                e.preventDefault();
+                setIsSearchOpen((prev) => !prev);
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, []);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -199,7 +215,31 @@ export function Navbar() {
                     </nav>
 
                     {/* Right Action CTA */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        {/* Quick Search Button (Desktop) */}
+                        <button
+                            type="button"
+                            onClick={() => setIsSearchOpen(true)}
+                            className="hidden md:inline-flex items-center gap-2 rounded-full border border-[#EBE5DC] bg-white px-3.5 py-2 text-xs font-semibold text-[#756A63] shadow-2xs transition-all hover:border-[#FF5C35]/50 hover:bg-[#FAF4EE] hover:text-[#19120D] active:scale-95 cursor-pointer"
+                            title="Cari coffee shop (⌘K)"
+                        >
+                            <Search className="h-3.5 w-3.5 text-[#FF5C35]" />
+                            <span>Cari kafe...</span>
+                            <kbd className="rounded bg-[#EAE4DC] px-1.5 py-0.5 text-[10px] font-bold text-[#80756F]">
+                                ⌘K
+                            </kbd>
+                        </button>
+
+                        {/* Quick Search Button (Mobile) */}
+                        <button
+                            type="button"
+                            onClick={() => setIsSearchOpen(true)}
+                            aria-label="Cari coffee shop"
+                            className="flex md:hidden h-8 w-8 items-center justify-center rounded-full border border-[#EBE5DC] bg-white text-[#19120D] shadow-xs transition-all hover:border-[#FF5C35]/50 hover:bg-[#FAF4EE] hover:text-[#FF5C35] active:scale-95 cursor-pointer"
+                        >
+                            <Search className="h-4 w-4 text-[#756A63]" />
+                        </button>
+
                         <a
                             href={whatsappUrl}
                             target="_blank"
@@ -329,6 +369,12 @@ export function Navbar() {
             <SavedPlacesModal
                 isOpen={isSavedModalOpen}
                 onClose={() => setIsSavedModalOpen(false)}
+            />
+
+            {/* Quick Search Modal */}
+            <QuickSearchModal
+                isOpen={isSearchOpen}
+                onClose={() => setIsSearchOpen(false)}
             />
         </>
     );

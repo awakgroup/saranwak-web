@@ -123,8 +123,8 @@ export function MobilePlaceDetailView({
         if (typeof navigator !== "undefined" && navigator.share) {
             try {
                 await navigator.share({
-                    title: `${place.name} | Saranwak Padang`,
-                    text: `Cek ${place.name} di Saranwak - Panduan Coffee Shop & WFC Padang`,
+                    title: `Nongkrong di ${place.name} yuk! ☕`,
+                    text: `Eh, nongkrong di ${place.name} yuk! Cek detail foto, jam buka & lokasinya di Saranwak:`,
                     url: window.location.href,
                 });
                 return;
@@ -604,7 +604,7 @@ export function MobilePlaceDetailView({
 
             {/* Bottom Sticky Action Bar (Identical to Stitch 9618eb0c068645cdb436c263d4ef2a0b) */}
             <aside className="fixed bottom-0 inset-x-0 z-40 bg-[#fbf9f5]/95 backdrop-blur-xl border-t border-[#e4e2de] pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] pt-2 shadow-[0_-4px_24px_rgba(41,28,20,0.06)] md:hidden">
-                <div className="h-16 px-4 flex items-center gap-3 max-w-md mx-auto">
+                <div className="h-16 px-4 flex items-center gap-2.5 max-w-md mx-auto">
                     {/* Bookmark Square Button */}
                     <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-white border border-[#e4e2de] shadow-xs shrink-0">
                         <BookmarkButton
@@ -612,6 +612,18 @@ export function MobilePlaceDetailView({
                             className="!h-10 !w-10 !bg-transparent !border-none !text-[#ac3311]"
                         />
                     </div>
+
+                    {/* Tombol Ajak Teman via WA */}
+                    <a
+                        href={whatsappShareUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="h-12 inline-flex items-center justify-center gap-1.5 px-3 rounded-xl bg-[#25D366] text-white font-bold text-[12px] shadow-xs transition-transform active:scale-95 shrink-0"
+                        title="Ajak Teman via WhatsApp"
+                    >
+                        <Share2 className="h-4 w-4" />
+                        <span>Ajak Teman</span>
+                    </a>
 
                     {/* Petunjuk Arah Primary Action Button */}
                     {place.google_maps_url ? (
@@ -622,10 +634,10 @@ export function MobilePlaceDetailView({
                             placeName={place.name}
                             placeSlug={place.slug}
                             source="detail_page_mobile_sticky"
-                            className="flex-1 h-12 flex items-center justify-center gap-2 px-4 rounded-xl bg-[#ac3311] hover:bg-[#881f00] text-white font-bold text-[14px] transition-transform active:scale-[0.98] shadow-[0_4px_16px_rgba(172,51,17,0.25)]"
+                            className="flex-1 min-w-0 h-12 flex items-center justify-center gap-1.5 px-3 rounded-xl bg-[#ac3311] hover:bg-[#881f00] text-white font-bold text-[13px] transition-transform active:scale-[0.98] shadow-[0_4px_16px_rgba(172,51,17,0.25)]"
                         >
-                            <Navigation className="h-4.5 w-4.5" />
-                            <span>Petunjuk Arah</span>
+                            <Navigation className="h-4 w-4 shrink-0" />
+                            <span className="truncate">Petunjuk Arah</span>
                         </TrackedExternalLink>
                     ) : (
                         <span className="flex-1 h-12 flex items-center justify-center rounded-xl bg-[#efeeea] text-[#756A63] text-xs font-bold">
