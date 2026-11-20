@@ -10,7 +10,6 @@ import {
     CheckCircle2,
     Laptop,
     Users,
-    Code,
     Handshake,
     Megaphone,
     ShieldCheck,
@@ -74,8 +73,6 @@ const TEAM_MEMBERS = [
         name: "Viky Fandreano",
         role: "Fullstack Tech",
         badge: "Tech & UX",
-        skill: "Fullstack & Architecture",
-        handle: "vikyfand",
         desc: "Merancang arsitektur sistem, platform website, dan antarmuka responsif yang seamless di semua perangkat agar pengguna menemukan spot kafe dalam hitungan detik.",
         image: "/images/founders/viky-fandreano.jpg",
     },
@@ -83,8 +80,6 @@ const TEAM_MEMBERS = [
         name: "Gozi Yuzakki Adli",
         role: "Bisnis Development",
         badge: "Partnership",
-        skill: "Partnership & Community",
-        handle: "goziyzk",
         desc: "Menjalin kemitraan dengan pemilik kedai kopi lokal Padang dan merumuskan ekosistem pertumbuhan Saranwak agar UMKM kopi Minang bertumbuh sehat bersama.",
         image: "/images/founders/gozi-yuzakki-adli.jpg",
     },
@@ -92,8 +87,6 @@ const TEAM_MEMBERS = [
         name: "Randika Junivan Putra",
         role: "Marketing & Partnership",
         badge: "Brand & Social",
-        skill: "Content & Community Lead",
-        handle: "randikajunivan",
         desc: "Mengelola narasi visual, identitas brand, liputan on-ground kedai kopi, dan engagement media sosial agar rekomendasi Saranwak selalu dekat dengan generasi muda Padang.",
         image: "/images/founder-placeholder.png",
     },
@@ -103,18 +96,21 @@ const MOBILE_FOUNDERS = [
     {
         name: "Viky Fandreano",
         role: "Fullstack Tech",
+        badge: "Tech & UX",
         desc: "Merancang arsitektur sistem, platform website, dan antarmuka responsif yang seamless di semua perangkat.",
         image: "/images/founders/viky-fandreano.jpg",
     },
     {
         name: "Gozi Yuzakki Adli",
         role: "Bisnis Development",
+        badge: "Partnership",
         desc: "Menjalin kemitraan dengan pemilik kedai kopi lokal Padang dan merumuskan ekosistem pertumbuhan Saranwak.",
         image: "/images/founders/gozi-yuzakki-adli.jpg",
     },
     {
         name: "Randika Junivan Putra",
         role: "Marketing & Partnership",
+        badge: "Brand & Social",
         desc: "Mengelola narasi visual, identitas brand, liputan on-ground kedai kopi, dan engagement skena kopi muda Padang.",
         image: "/images/founder-placeholder.png",
     },
@@ -272,40 +268,31 @@ export default function AboutPage() {
                     <p className="text-[12px] text-[#4e4540] mb-4">
                         Anak muda Minang yang memadukan kecintaan pada kopi, teknologi, dan eksplorasi sudut kota.
                     </p>
-                    <div className="grid grid-cols-2 gap-3">
-                        {MOBILE_FOUNDERS.map((founder, index) => {
-                            const isThird = index === 2;
-                            return (
-                                <div
-                                    key={founder.name}
-                                    className={`bg-white p-3 rounded-2xl border border-[#e4e2de]/40 shadow-xs ${
-                                        isThird
-                                            ? "col-span-2 flex flex-row items-center gap-3.5"
-                                            : "flex flex-col"
-                                    }`}
-                                >
-                                    <div
-                                        className={`relative rounded-xl overflow-hidden bg-[#efeeea] shrink-0 ${
-                                            isThird
-                                                ? "w-24 h-24 aspect-square"
-                                                : "w-full aspect-square mb-2.5"
-                                        }`}
-                                    >
+                    <div className="flex gap-3.5 overflow-x-auto snap-x snap-mandatory pb-2 -mx-5 px-5 scrollbar-none">
+                        {MOBILE_FOUNDERS.map((founder) => (
+                            <div
+                                key={founder.name}
+                                className="w-[230px] shrink-0 snap-start flex flex-col justify-between bg-white p-3 rounded-2xl border border-[#E7E0D5] shadow-xs"
+                            >
+                                <div>
+                                    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-[#F4EFEB] mb-3">
                                         <Image
                                             src={founder.image}
                                             alt={founder.name}
                                             fill
-                                            className="object-cover"
+                                            className="object-cover object-top"
                                         />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent opacity-70" />
+                                        <span className="absolute bottom-2.5 left-2.5 rounded-full bg-white/95 px-2.5 py-0.5 text-[10px] font-bold text-[#19120D] backdrop-blur-md">
+                                            {founder.role}
+                                        </span>
                                     </div>
-                                    <div className={isThird ? "min-w-0 flex-1" : ""}>
-                                        <h3 className="text-[13px] text-[#0d0401] font-bold truncate">{founder.name}</h3>
-                                        <p className="text-[11px] text-[#ac3311] font-semibold truncate">{founder.role}</p>
-                                        <p className="text-[11px] text-[#4e4540] mt-0.5 line-clamp-2 leading-snug">{founder.desc}</p>
-                                    </div>
+                                    <h3 className="text-[14px] text-[#0d0401] font-bold tracking-tight">{founder.name}</h3>
+                                    <p className="text-[11px] text-[#ac3311] font-semibold mt-0.5">{founder.badge}</p>
+                                    <p className="text-[11px] text-[#5c524b] mt-1.5 line-clamp-3 leading-relaxed">{founder.desc}</p>
                                 </div>
-                            );
-                        })}
+                            </div>
+                        ))}
                     </div>
                 </section>
 
@@ -696,45 +683,39 @@ export default function AboutPage() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-3">
                         {TEAM_MEMBERS.map((member) => (
                             <div
                                 key={member.name}
-                                className="group flex flex-col justify-between rounded-2xl sm:rounded-3xl border border-[#EBE5DC] bg-white p-4 shadow-sm transition-all hover:border-[#FF5C35]/50 hover:shadow-md sm:p-6"
+                                className="group flex flex-col justify-between rounded-3xl border border-[#E7E0D5] bg-white p-4 shadow-[0_4px_20px_-4px_rgba(25,18,13,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-[#FF5C35]/40 hover:shadow-[0_16px_36px_-8px_rgba(25,18,13,0.1)] sm:p-5"
                             >
                                 <div>
-                                    <div className="relative mb-3.5 aspect-[4/3] w-full overflow-hidden rounded-xl sm:mb-5 sm:rounded-2xl bg-[#F5F0E8]">
+                                    <div className="relative mb-4 aspect-[3/4] w-full overflow-hidden rounded-2xl bg-[#F4EFEB]">
                                         <Image
                                             src={member.image}
                                             alt={member.name}
                                             fill
                                             sizes="(max-width: 768px) 100vw, 33vw"
-                                            className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                                            className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
                                         />
-                                        <span className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 rounded-full bg-[#1B120C]/85 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-[11px] font-bold text-white backdrop-blur-md">
-                                            {member.role}
-                                        </span>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-65 transition-opacity duration-300 group-hover:opacity-45" />
+                                        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                                            <span className="rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold text-[#19120D] shadow-xs backdrop-blur-md">
+                                                {member.role}
+                                            </span>
+                                            <span className="rounded-full bg-[#19120D]/75 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-md">
+                                                {member.badge}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="mb-1 flex items-center justify-between sm:mb-1.5">
-                                        <h3 className="font-sans text-base font-bold text-[#19120D] sm:text-lg">
+                                    <div className="px-1 pb-1">
+                                        <h3 className="font-sans text-lg font-bold tracking-tight text-[#19120D] sm:text-xl">
                                             {member.name}
                                         </h3>
-                                        <span className="text-xs font-bold uppercase tracking-wider text-[#FF5C35]">
-                                            {member.badge}
-                                        </span>
+                                        <p className="mt-2 text-xs leading-relaxed text-[#6E635B] sm:text-[13px]">
+                                            {member.desc}
+                                        </p>
                                     </div>
-                                    <p className="text-xs leading-relaxed text-[#756A63] sm:text-[13px]">
-                                        {member.desc}
-                                    </p>
-                                </div>
-                                <div className="mt-4 flex items-center justify-between border-t border-[#F0EAE1] pt-3 text-xs font-medium text-[#756A63] sm:mt-5 sm:pt-4">
-                                    <span className="flex items-center gap-1.5">
-                                        <Code className="h-3.5 w-3.5 text-[#FF5C35]" />
-                                        <span>{member.skill}</span>
-                                    </span>
-                                    <span className="text-[11px] font-semibold text-[#80756F]">
-                                        {member.handle}
-                                    </span>
                                 </div>
                             </div>
                         ))}
