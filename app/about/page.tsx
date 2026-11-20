@@ -75,25 +75,25 @@ const TEAM_MEMBERS = [
         role: "Fullstack Tech",
         badge: "Tech & UX",
         skill: "Fullstack & Architecture",
-        handle: "@vikyfand",
+        handle: "vikyfand",
         desc: "Merancang arsitektur sistem, platform website, dan antarmuka responsif yang seamless di semua perangkat agar pengguna menemukan spot kafe dalam hitungan detik.",
-        image: "/images/founder-placeholder.png",
+        image: "/images/founders/viky-fandreano.jpg",
     },
     {
         name: "Gozi Yuzakki Adli",
         role: "Bisnis Development",
         badge: "Partnership",
         skill: "Partnership & Community",
-        handle: "@goziyzk",
+        handle: "goziyzk",
         desc: "Menjalin kemitraan dengan pemilik kedai kopi lokal Padang dan merumuskan ekosistem pertumbuhan Saranwak agar UMKM kopi Minang bertumbuh sehat bersama.",
-        image: "/images/founder-placeholder.png",
+        image: "/images/founders/gozi-yuzakki-adli.jpg",
     },
     {
         name: "Randika Junivan Putra",
         role: "Marketing & Partnership",
         badge: "Brand & Social",
         skill: "Content & Community Lead",
-        handle: "@randikajunivan",
+        handle: "randikajunivan",
         desc: "Mengelola narasi visual, identitas brand, liputan on-ground kedai kopi, dan engagement media sosial agar rekomendasi Saranwak selalu dekat dengan generasi muda Padang.",
         image: "/images/founder-placeholder.png",
     },
@@ -104,13 +104,13 @@ const MOBILE_FOUNDERS = [
         name: "Viky Fandreano",
         role: "Fullstack Tech",
         desc: "Merancang arsitektur sistem, platform website, dan antarmuka responsif yang seamless di semua perangkat.",
-        image: "/images/founder-placeholder.png",
+        image: "/images/founders/viky-fandreano.jpg",
     },
     {
         name: "Gozi Yuzakki Adli",
         role: "Bisnis Development",
         desc: "Menjalin kemitraan dengan pemilik kedai kopi lokal Padang dan merumuskan ekosistem pertumbuhan Saranwak.",
-        image: "/images/founder-placeholder.png",
+        image: "/images/founders/gozi-yuzakki-adli.jpg",
     },
     {
         name: "Randika Junivan Putra",
@@ -132,10 +132,6 @@ const FAQS = [
     {
         q: "Apakah Saranwak menerima ulasan berbayar (paid review)?",
         a: "Kredibilitas kurasi adalah nyawa Saranwak. Kami tidak menjual penilaian baik. Jika ada penempatan promosi sponsor (banner), akan ditandai secara transparan sebagai Slot Promo.",
-    },
-    {
-        q: "Bagaimana jika informasi jam buka atau fasilitas sudah berubah?",
-        a: "Kamu bisa menghubungi tim kami via WhatsApp atau fitur koreksi di tiap halaman detail kafe. Kami memperbarui data secara rutin bersama komunitas kopi Padang.",
     },
 ];
 
