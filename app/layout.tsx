@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Caveat, Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
@@ -187,6 +188,16 @@ export default function RootLayout({
         {children}
         <Footer />
         <PwaRegister />
+        {process.env.NEXT_PUBLIC_CF_BEACON_TOKEN && (
+          <Script
+            defer
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={JSON.stringify({
+              token: process.env.NEXT_PUBLIC_CF_BEACON_TOKEN,
+            })}
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   );
