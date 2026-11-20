@@ -998,9 +998,9 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                     </div>
                 ) : (
                     <div className="grid gap-6 lg:grid-cols-[300px_1fr] lg:items-start xl:grid-cols-[320px_1fr]">
-                        <aside className="w-full">
+                        <aside className="w-full px-5 lg:px-0">
                             {/* Mobile Collapsible Filter Drawer */}
-                            <details className="group rounded-[26px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_14px_45px_rgba(47,35,25,0.06)] lg:hidden">
+                            <details className="group mb-5 rounded-[26px] border border-[#E7D8C8] bg-[#FFFDF8] p-4 shadow-[0_14px_45px_rgba(47,35,25,0.06)] lg:hidden">
                                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
                                     <div className="flex items-center gap-2.5">
                                         <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#F4F1EA] text-[#1F5A4A]">
