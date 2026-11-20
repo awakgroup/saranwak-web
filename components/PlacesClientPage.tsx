@@ -551,24 +551,8 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                             })}
                         </div>
 
-                        {/* Mobile Quick Action Buttons: Buka Sekarang, Terdekat, Pilihan Acak, Filter */}
+                        {/* Mobile Quick Action Buttons: Terdekat, Pilihan Acak, Filter */}
                         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-0.5">
-                            {/* Tombol Buka Sekarang */}
-                            <Link
-                                href={buildFilterHref(effectiveParams, {
-                                    openNow: effectiveParams.openNow === "true" ? undefined : "true",
-                                })}
-                                scroll={false}
-                                className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-bold transition-all shadow-xs active:scale-95 ${
-                                    effectiveParams.openNow === "true"
-                                        ? "bg-[#107038] text-white"
-                                        : "bg-white border border-[#e4e2de]/80 text-[#0d0401] hover:border-[#107038]"
-                                }`}
-                            >
-                                <span className={`h-2 w-2 rounded-full ${effectiveParams.openNow === "true" ? "bg-white animate-pulse" : "bg-[#10B981]"}`} />
-                                <span>Buka Sekarang</span>
-                            </Link>
-
                             {/* Tombol Terdekat */}
                             <button
                                 type="button"
@@ -634,18 +618,18 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
 
                     {/* Mobile Indikator Urutan Terdekat Aktif */}
                     {isNearbyActive && userCoords && (
-                        <div className="mx-5 mt-2 flex items-center justify-between gap-2 rounded-2xl border border-emerald-600/25 bg-emerald-50 px-3.5 py-2 text-xs font-bold text-emerald-800 shadow-xs">
+                        <div className="mx-5 mt-2.5 flex items-center justify-between gap-2 rounded-2xl border border-emerald-600/25 bg-emerald-50 px-3.5 py-2 text-xs font-bold text-emerald-800 shadow-2xs">
                             <div className="flex items-center gap-1.5 min-w-0">
                                 <span className="relative flex h-2 w-2 shrink-0">
                                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-600 opacity-75" />
                                     <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
                                 </span>
-                                <span className="truncate">Menampilkan cafe paling dekat dengan posisimu</span>
+                                <span className="truncate">Urutan cafe terdekat dari posisimu</span>
                             </div>
                             <button
                                 type="button"
                                 onClick={() => setIsNearbyActive(false)}
-                                className="text-[11px] font-black underline shrink-0 hover:text-emerald-900"
+                                className="text-[11px] font-black underline shrink-0 hover:text-emerald-950 cursor-pointer"
                             >
                                 Reset
                             </button>
@@ -987,9 +971,9 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                     </div>
                 </div>
 
-                {/* Indikator Urutan Terdekat Aktif */}
+                {/* Indikator Urutan Terdekat Aktif (Desktop Only) */}
                 {isNearbyActive && userCoords && (
-                    <div className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-[#1F5A4A]/25 bg-[#F0F8F5] px-4 py-2.5 text-xs font-bold text-[#1F5A4A] shadow-xs">
+                    <div className="hidden sm:flex mb-6 items-center justify-between gap-3 rounded-2xl border border-[#1F5A4A]/25 bg-[#F0F8F5] px-4 py-2.5 text-xs font-bold text-[#1F5A4A] shadow-xs">
                         <div className="flex items-center gap-2">
                             <span className="relative flex h-2.5 w-2.5">
                                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1F5A4A] opacity-75"></span>
@@ -1000,7 +984,7 @@ export function PlacesClientPage({ placesData }: PlacesClientPageProps) {
                         <button
                             type="button"
                             onClick={() => setIsNearbyActive(false)}
-                            className="text-[11px] font-black underline hover:text-[#184639]"
+                            className="text-[11px] font-black underline hover:text-[#184639] cursor-pointer"
                         >
                             Reset Urutan
                         </button>
